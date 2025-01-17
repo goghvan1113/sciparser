@@ -140,6 +140,7 @@ class COCIPaper:
     def __init__(self, cited_doi):
         self.cited_doi = cited_doi
         self._citing_dois = None
+        self._citing_titles = None
         self.COCI_API_BASE = "https://opencitations.net/api/v1/citations"
         self.HTTP_HEADERS = {"authorization": "d3fd9c59-ab37-4c44-ae61-c0af33aea992"}
 
@@ -149,6 +150,38 @@ class COCIPaper:
         if self._citing_dois is None:
             self._citing_dois = self.get_citing_papers_api()
         return self._citing_dois
+
+    @property
+    def citing_titles(self):
+        """Get titles of papers citing this paper."""
+        if self._citing_titles is None:
+            self._citing_titles = self._fetch_titles_from_dois()
+        return self._citing_titles
+
+    def _fetch_titles_from_dois(self):
+        """通过DOI获取论文标题"""
+        titles = []
+        for doi in self.citing_dois:
+            url = f"https://api.crossref.org/works/{doi}"
+            try:
+                response = cached_get(url)
+                if response and response.status_code == 200:
+                    data = response.json()
+                    if 'title' in data['message']:
+                        titles.append(data['message']['title'][0])
+            except Exception as e:
+                print(f"Error fetching title for DOI {doi}: {str(e)}")
+        return titles
+
+    def save_dois_to_file(self, file_path: str = "citing_dois.txt"):
+        """将DOI列表保存到文件"""
+        try:
+            with open(file_path, 'w', encoding='utf-8') as f:
+                for doi in self.citing_dois:
+                    f.write(f"{doi}\n")
+            return f"Successfully saved {len(self.citing_dois)} DOIs to {file_path}"
+        except Exception as e:
+            return f"Error saving DOIs to file: {str(e)}"
 
     @retry(tries=3, delay=2)
     def get_citing_papers_api(self):
@@ -182,8 +215,8 @@ if __name__ == "__main__":
     # 2) Use COCIPaper with that DOI to fetch citing papers
     if cr_paper.doi:
         coci_paper = COCIPaper(cr_paper.doi)
-        citing_api = coci_paper.citing_dois
-        print("\nCiting DOIs from COCI API:", citing_api[:5], f"...(total: {len(citing_api)})")
+        citing_dois = coci_paper.citing_dois
+        print("\nCiting DOIs from COCI API:", citing_dois[:5], f"...(total: {len(citing_dois)})")
 
         # citing_pf = coci_paper.get_citing_papers_paperfetcher()
         # print("\nCiting DOIs from paperfetcher:", citing_pf[:5], f"...(total: {len(citing_pf)})")

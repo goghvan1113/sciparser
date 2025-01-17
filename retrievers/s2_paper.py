@@ -176,6 +176,37 @@ class CachedSemanticScholarWrapper:
         """返回上次请求是否使用了缓存"""
         return self.last_request_cached
 
+    @property
+    def citing_titles(self):
+        """获取引用论文的标题列表"""
+        if not hasattr(self, '_last_results') or not self._last_results:
+            return []
+        return [citation.paper.title for citation in self._last_results._items if citation.paper.title]
+
+    @property
+    def citing_dois(self):
+        """获取引用论文的DOI列表"""
+        if not hasattr(self, '_last_results') or not self._last_results:
+            return []
+        return [citation.paper.doi for citation in self._last_results._items 
+                if citation.paper.doi and citation.paper.doi.strip()]
+
+    def get_paper_citations(self, paper_id, fields=None, limit=100):
+        """修改原有方法以保存最后的结果"""
+        results = super().get_paper_citations(paper_id, fields, limit)
+        self._last_results = results  # 保存结果供属性方法使用
+        return results
+
+    def save_dois_to_file(self, file_path: str = "s2_citing_dois.txt"):
+        """将DOI列表保存到文件"""
+        try:
+            with open(file_path, 'w', encoding='utf-8') as f:
+                for doi in self.citing_dois:
+                    f.write(f"{doi}\n")
+            return f"Successfully saved {len(self.citing_dois)} DOIs to {file_path}"
+        except Exception as e:
+            return f"Error saving DOIs to file: {str(e)}"
+
 
 # 使用示例
 if __name__ == "__main__":
