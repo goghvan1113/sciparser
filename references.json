@@ -1,0 +1,1874 @@
+{
+  "b0": {
+    "reference_details": {
+      "authors": [
+        "B Ahmed",
+        "K Zamli",
+        "W Afzal",
+        "M Bures"
+      ],
+      "title": "Constrained interaction testing: A systematic literature study",
+      "year": "2017"
+    },
+    "citations": [
+      {
+        "section": "Framework for Zero-Shot Distillation",
+        "text_before": "Instead of using all possible combinations of options, which would result in a strongly growing number of images given more options, we perform combinatorial testing",
+        "citation": "[1,",
+        "text_after": ".",
+        "full_context": "Instead of using all possible combinations of options, which would result in a strongly growing number of images given more options, we perform combinatorial testing [1, ."
+      },
+      {
+        "section": "Conclusion",
+        "text_before": "Instead of using all possible combinations of options for the contextual dimensions to generate the prompts, we use combinatorial testing",
+        "citation": "[1,",
+        "text_after": ".",
+        "full_context": "Instead of using all possible combinations of options for the contextual dimensions to generate the prompts, we use combinatorial testing [1, ."
+      }
+    ]
+  },
+  "b1": {
+    "reference_details": {
+      "authors": [
+        "S Azizi",
+        "S Kornblith",
+        "C Saharia",
+        "M Norouzi",
+        "D Fleet"
+      ],
+      "title": "Synthetic data from diffusion models improves imagenet classification",
+      "year": "2023"
+    },
+    "citations": [
+      {
+        "section": "Introduction",
+        "text_before": "However, learning from synthetic images has proven challenging",
+        "citation": "[2,",
+        "text_after": ": using simple class-specific text prompts, like those used for zeroshot classification by CLIP  , yields low-diversity datasets and poor classifiers, as observed in previous studies  .",
+        "full_context": "However, learning from synthetic images has proven challenging [2, : using simple class-specific text prompts, like those used for zeroshot classification by CLIP  , yields low-diversity datasets and poor classifiers, as observed in previous studies  ."
+      },
+      {
+        "section": "Introduction",
+        "text_before": "However, learning from synthetic images has proven challenging  : using simple class-specific text prompts, like those used for zeroshot classification by CLIP  , yields low-diversity datasets and poor classifiers, as observed in previous studies",
+        "citation": "[2,",
+        "text_after": ".",
+        "full_context": "However, learning from synthetic images has proven challenging  : using simple class-specific text prompts, like those used for zeroshot classification by CLIP  , yields low-diversity datasets and poor classifiers, as observed in previous studies [2, ."
+      },
+      {
+        "section": "Introduction",
+        "text_before": "Furthermore, when training on a combination of natural and such low-diversity synthetic images, the overall accuracy starts to decline as synthetic data outweighs real data",
+        "citation": "[2]",
+        "text_after": ".",
+        "full_context": "Furthermore, when training on a combination of natural and such low-diversity synthetic images, the overall accuracy starts to decline as synthetic data outweighs real data [2] ."
+      },
+      {
+        "section": "Related Work",
+        "text_before": "Azizi et al.",
+        "citation": "[2]",
+        "text_after": "demonstrated that images from fine-tuned text-to-image models can be combined with real images to enhance the accuracy of classifiers on ImageNet-1k  .",
+        "full_context": "Azizi et al. [2] demonstrated that images from fine-tuned text-to-image models can be combined with real images to enhance the accuracy of classifiers on ImageNet-1k  ."
+      },
+      {
+        "section": "Framework for Zero-Shot Distillation",
+        "text_before": "The second approach involves training from scratch using either purely synthetic images   or a combination of real and synthetic images",
+        "citation": "[2,",
+        "text_after": ".",
+        "full_context": "The second approach involves training from scratch using either purely synthetic images   or a combination of real and synthetic images [2, ."
+      },
+      {
+        "section": "Conclusion",
+        "text_before": "Cross-Entropy Diversify don't finetune   Accuracy Custom",
+        "citation": "[2]",
+        "text_after": "Accuracy Cross-Entropy DM-KD   Accuracy * KD",
+        "full_context": "Cross-Entropy Diversify don't finetune   Accuracy Custom [2] Accuracy Cross-Entropy DM-KD   Accuracy * KD"
+      },
+      {
+        "section": "Conclusion",
+        "text_before": "Cross-Entropy Diversify don't finetune   Accuracy Custom",
+        "citation": "[2]",
+        "text_after": "Accuracy Cross-Entropy DM-KD   Accuracy * KD",
+        "full_context": "Cross-Entropy Diversify don't finetune   Accuracy Custom [2] Accuracy Cross-Entropy DM-KD   Accuracy * KD"
+      }
+    ]
+  },
+  "b2": {
+    "reference_details": {
+      "authors": [
+        "L Bossard",
+        "M Guillaumin",
+        "L Van Gool"
+      ],
+      "title": "Food-101 -mining discriminative components with random forests",
+      "year": "2014"
+    },
+    "citations": [
+      {
+        "section": "Introduction",
+        "text_before": "4. Using our framework we manage to distill a ViT-B/32 CLIP vision encoder into student models with up to 93% fewer parameters that closely match the classification performance of the teacher and surpass existing baselines on the Oxford Pets  , Flowers-102  , Stanford Cars   and Food-101",
+        "citation": "[3]",
+        "text_after": "datasets.",
+        "full_context": "4. Using our framework we manage to distill a ViT-B/32 CLIP vision encoder into student models with up to 93% fewer parameters that closely match the classification performance of the teacher and surpass existing baselines on the Oxford Pets  , Flowers-102  , Stanford Cars   and Food-101 [3] datasets."
+      },
+      {
+        "section": "Experiments",
+        "text_before": "For fine-tuning, we target the Oxford Pets  , Oxford Flowers  , Food-101",
+        "citation": "[3]",
+        "text_after": "and Stanford Cars   to evaluate or models domain-specific datasets.",
+        "full_context": "For fine-tuning, we target the Oxford Pets  , Oxford Flowers  , Food-101 [3] and Stanford Cars   to evaluate or models domain-specific datasets."
+      }
+    ]
+  },
+  "b3": {
+    "reference_details": {
+      "authors": [
+        "V Da Costa",
+        "N Dall'asen",
+        "Y Wang",
+        "N Sebe",
+        "E Ricci"
+      ],
+      "title": "Diversified in-domain synthesis with efficient fine-tuning for few-shot classification",
+      "year": "2023"
+    },
+    "citations": [
+      {
+        "section": "Related Work",
+        "text_before": "Another approach to diversification in the few-shot setting was presented by Da Costa et al.",
+        "citation": "[4]",
+        "text_after": ", which involved augmentations and low-rank adaptation.",
+        "full_context": "Another approach to diversification in the few-shot setting was presented by Da Costa et al. [4] , which involved augmentations and low-rank adaptation."
+      },
+      {
+        "section": "Framework for Zero-Shot Distillation",
+        "text_before": "This is primarily due to the lack of diversity in the generated images as well as class ambiguity",
+        "citation": "[4]",
+        "text_after": ".",
+        "full_context": "This is primarily due to the lack of diversity in the generated images as well as class ambiguity [4] ."
+      }
+    ]
+  },
+  "b4": {
+    "reference_details": {
+      "authors": [
+        "J Deng",
+        "W Dong",
+        "R Socher",
+        "L Li",
+        "K Li",
+        "L Fei-Fei"
+      ],
+      "title": "Imagenet: A large-scale hierarchical image database",
+      "year": "2009"
+    },
+    "citations": [
+      {
+        "section": "Related Work",
+        "text_before": "Azizi et al.   demonstrated that images from fine-tuned text-to-image models can be combined with real images to enhance the accuracy of classifiers on ImageNet-1k",
+        "citation": "[5]",
+        "text_after": ".",
+        "full_context": "Azizi et al.   demonstrated that images from fine-tuned text-to-image models can be combined with real images to enhance the accuracy of classifiers on ImageNet-1k [5] ."
+      }
+    ]
+  },
+  "b5": {
+    "reference_details": {
+      "authors": [
+        "A Dosovitskiy",
+        "L Beyer",
+        "A Kolesnikov",
+        "D Weissenborn",
+        "X Zhai",
+        "T Unterthiner",
+        "M Dehghani",
+        "M Minderer",
+        "G Heigold",
+        "S Gelly",
+        "J Uszkoreit",
+        "N Houlsby"
+      ],
+      "title": "An image is worth 16x16 words: Transformers for image recognition at scale",
+      "year": "2021"
+    },
+    "citations": [
+      {
+        "section": "Experiments",
+        "text_before": "Student and Teacher Architectures As teacher model, we employ a ViT-B/32",
+        "citation": "[6]",
+        "text_after": "CLIP vision encoder that has been trained on DataComp-XL, a dataset consisting of 12.8 billion image-text pairs from Common Crawl  .",
+        "full_context": "Student and Teacher Architectures As teacher model, we employ a ViT-B/32 [6] CLIP vision encoder that has been trained on DataComp-XL, a dataset consisting of 12.8 billion image-text pairs from Common Crawl  ."
+      }
+    ]
+  },
+  "b6": {
+    "reference_details": {
+      "authors": [
+        "S Gadre",
+        "G Ilharco",
+        "A Fang",
+        "J Hayase",
+        "G Smyrnis",
+        "T Nguyen",
+        "R Marten",
+        "M Wortsman",
+        "D Ghosh",
+        "J Zhang",
+        "E Orgad",
+        "R Entezari",
+        "G Daras",
+        "S Pratt",
+        "V Ramanujan",
+        "Y Bitton",
+        "K Marathe",
+        "S Mussmann",
+        "R Vencu",
+        "M Cherti",
+        "R Krishna",
+        "P Koh",
+        "O Saukh",
+        "A Ratner",
+        "S Song",
+        "H Hajishirzi",
+        "A Farhadi",
+        "R Beaumont",
+        "S Oh",
+        "A Dimakis",
+        "J Jitsev",
+        "Y Carmon",
+        "V Shankar",
+        "L Schmidt"
+      ],
+      "title": "Datacomp: In search of the next generation of multimodal datasets",
+      "year": "2023"
+    },
+    "citations": [
+      {
+        "section": "Introduction",
+        "text_before": "Through one epoch of pre-training on DataComp medium",
+        "citation": "[7]",
+        "text_after": "and subsequent fine-tuning on diverse synthetic datasets generated using diffusion models and prompts from large language models, we achieve superior zero-shot classification performance on four target datasets compared to TinyCLIP  , the current state-of-the-art for distilled CLIP models.",
+        "full_context": "Through one epoch of pre-training on DataComp medium [7] and subsequent fine-tuning on diverse synthetic datasets generated using diffusion models and prompts from large language models, we achieve superior zero-shot classification performance on four target datasets compared to TinyCLIP  , the current state-of-the-art for distilled CLIP models."
+      },
+      {
+        "section": "Framework for Zero-Shot Distillation",
+        "text_before": "The first one involves relying on large-scale data such as common crawl datasets",
+        "citation": "[7,",
+        "text_after": ".",
+        "full_context": "The first one involves relying on large-scale data such as common crawl datasets [7, ."
+      },
+      {
+        "section": "Experiments",
+        "text_before": "For this purpose, we select DataComp medium",
+        "citation": "[7]",
+        "text_after": "and train for a single epoch.",
+        "full_context": "For this purpose, we select DataComp medium [7] and train for a single epoch."
+      },
+      {
+        "section": "Experiments",
+        "text_before": "Student and Teacher Architectures As teacher model, we employ a ViT-B/32   CLIP vision encoder that has been trained on DataComp-XL, a dataset consisting of 12.8 billion image-text pairs from Common Crawl",
+        "citation": "[7]",
+        "text_after": ".",
+        "full_context": "Student and Teacher Architectures As teacher model, we employ a ViT-B/32   CLIP vision encoder that has been trained on DataComp-XL, a dataset consisting of 12.8 billion image-text pairs from Common Crawl [7] ."
+      }
+    ]
+  },
+  "b7": {
+    "reference_details": {
+      "authors": [
+        "Z Gan",
+        "L Li",
+        "C Li",
+        "L Wang",
+        "Z Liu",
+        "J Gao"
+      ],
+      "title": "Vision-language pre-training: Basics, recent advances, and future trends",
+      "year": "2022"
+    },
+    "citations": [
+      {
+        "section": "Framework for Zero-Shot Distillation",
+        "text_before": "Instead of using weight inheritance, we introduce a pre-training step",
+        "citation": "[8]",
+        "text_after": "which is not targeted to a specific domain.",
+        "full_context": "Instead of using weight inheritance, we introduce a pre-training step [8] which is not targeted to a specific domain."
+      }
+    ]
+  },
+  "b8": {
+    "reference_details": {
+      "authors": [
+        "J Gou",
+        "B Yu",
+        "S Maybank",
+        "D Tao"
+      ],
+      "title": "Knowledge distillation: A survey",
+      "year": "2021"
+    },
+    "citations": []
+  },
+  "b9": {
+    "reference_details": {
+      "authors": [
+        "S Goyal",
+        "A Kumar",
+        "S Garg",
+        "Z Kolter",
+        "A Raghunathan"
+      ],
+      "title": "Finetune like you pretrain: Improved finetuning of zero-shot vision models",
+      "year": "2023"
+    },
+    "citations": [
+      {
+        "section": "Framework for Zero-Shot Distillation",
+        "text_before": "For fine-tuning, the CLIP loss function remains the commonly used approach.",
+        "citation": "[10]",
+        "text_after": ".",
+        "full_context": "For fine-tuning, the CLIP loss function remains the commonly used approach. [10] ."
+      }
+    ]
+  },
+  "b10": {
+    "reference_details": {
+      "authors": [
+        "H Hammoud",
+        "H Itani",
+        "F Pizzati",
+        "P Torr",
+        "A Bibi",
+        "B Ghanem"
+      ],
+      "title": "Synthclip: Are we ready for a fully synthetic clip training",
+      "year": "2024"
+    },
+    "citations": [
+      {
+        "section": "Related Work",
+        "text_before": "By scaling up synthetic datasets, Tian et al.   and Hammoud et al.",
+        "citation": "[11]",
+        "text_after": "demonstrated the feasibility of training vision-language foundation models solely using images from text-to-image models.",
+        "full_context": "By scaling up synthetic datasets, Tian et al.   and Hammoud et al. [11] demonstrated the feasibility of training vision-language foundation models solely using images from text-to-image models."
+      },
+      {
+        "section": "Framework for Zero-Shot Distillation",
+        "text_before": "The second approach involves training from scratch using either purely synthetic images",
+        "citation": "[11,",
+        "text_after": "or a combination of real and synthetic images  .",
+        "full_context": "The second approach involves training from scratch using either purely synthetic images [11, or a combination of real and synthetic images  ."
+      },
+      {
+        "section": "Framework for Zero-Shot Distillation",
+        "text_before": "Yet by incorporating few-shot learning",
+        "citation": "[11,",
+        "text_after": "on real images or linear probing   after training on synthetic data, the reported accuracies are no longer truly zero-shot.",
+        "full_context": "Yet by incorporating few-shot learning [11, on real images or linear probing   after training on synthetic data, the reported accuracies are no longer truly zero-shot."
+      },
+      {
+        "section": "Framework for Zero-Shot Distillation",
+        "text_before": "Yet by incorporating few-shot learning   on real images or linear probing",
+        "citation": "[11,",
+        "text_after": "after training on synthetic data, the reported accuracies are no longer truly zero-shot.",
+        "full_context": "Yet by incorporating few-shot learning   on real images or linear probing [11, after training on synthetic data, the reported accuracies are no longer truly zero-shot."
+      },
+      {
+        "section": "Framework for Zero-Shot Distillation",
+        "text_before": "In addition to class names, LLMs are guided by additional inputs for diversification, such as information from a concept bank",
+        "citation": "[11]",
+        "text_after": "or specific requirements related to contextual and style diversification  .",
+        "full_context": "In addition to class names, LLMs are guided by additional inputs for diversification, such as information from a concept bank [11] or specific requirements related to contextual and style diversification  ."
+      },
+      {
+        "section": "Conclusion",
+        "text_before": "In contrast to our framework, previous works",
+        "citation": "[11,",
+        "text_after": "mainly focus on the linear accuracy where the classification head is fitted with real data instead of targeting the true zero-shot setting without any real data which is the more difficult task to accomplish.",
+        "full_context": "In contrast to our framework, previous works [11, mainly focus on the linear accuracy where the classification head is fitted with real data instead of targeting the true zero-shot setting without any real data which is the more difficult task to accomplish."
+      },
+      {
+        "section": "Conclusion",
+        "text_before": "StableRep   Linear probe, few-shot MP SynCLR   Linear probe MP SynthCLIP",
+        "citation": "[11]",
+        "text_after": "Linear probe, few-shot CLIP Fake it till you make it   Zero-Shot Acc.",
+        "full_context": "StableRep   Linear probe, few-shot MP SynCLR   Linear probe MP SynthCLIP [11] Linear probe, few-shot CLIP Fake it till you make it   Zero-Shot Acc."
+      },
+      {
+        "section": "Conclusion",
+        "text_before": "StableRep   Linear probe, few-shot MP SynCLR   Linear probe MP SynthCLIP",
+        "citation": "[11]",
+        "text_after": "Linear probe, few-shot CLIP Fake it till you make it   Zero-Shot Acc.",
+        "full_context": "StableRep   Linear probe, few-shot MP SynCLR   Linear probe MP SynthCLIP [11] Linear probe, few-shot CLIP Fake it till you make it   Zero-Shot Acc."
+      }
+    ]
+  },
+  "b11": {
+    "reference_details": {
+      "authors": [
+        "R He",
+        "S Sun",
+        "J Yang",
+        "S Bai",
+        "X Qi"
+      ],
+      "title": "Knowledge distillation as efficient pretraining: Faster convergence, higher data-efficiency, and better transferability",
+      "year": "2022"
+    },
+    "citations": [
+      {
+        "section": "Related Work",
+        "text_before": "Apart from CLIP-specific techniques, unsupervised distillation based purely on images without labels has been identified as a data-efficient alternative to supervised training for vision encoders",
+        "citation": "[12]",
+        "text_after": "and class-incremental generalization  .",
+        "full_context": "Apart from CLIP-specific techniques, unsupervised distillation based purely on images without labels has been identified as a data-efficient alternative to supervised training for vision encoders [12] and class-incremental generalization  ."
+      },
+      {
+        "section": "Framework for Zero-Shot Distillation",
+        "text_before": "He et al.",
+        "citation": "[12]",
+        "text_after": "observed that pre-training can be shortened significantly by using a feature-based loss.",
+        "full_context": "He et al. [12] observed that pre-training can be shortened significantly by using a feature-based loss."
+      },
+      {
+        "section": "Experiments",
+        "text_before": "This validates the data-efficiency of feature distillation for pre-training",
+        "citation": "[12]",
+        "text_after": ".",
+        "full_context": "This validates the data-efficiency of feature distillation for pre-training [12] ."
+      }
+    ]
+  },
+  "b12": {
+    "reference_details": {
+      "authors": [
+        "D Hendrycks",
+        "T Dietterich"
+      ],
+      "title": "Benchmarking neural network robustness to common corruptions and perturbations",
+      "year": "2019"
+    },
+    "citations": [
+      {
+        "section": "Experiments",
+        "text_before": "We assessed the performance of the classifiers on 15 common corruptions",
+        "citation": "[13]",
+        "text_after": "at a fixed severity level of three, focusing on the pets dataset.",
+        "full_context": "We assessed the performance of the classifiers on 15 common corruptions [13] at a fixed severity level of three, focusing on the pets dataset."
+      }
+    ]
+  },
+  "b13": {
+    "reference_details": {
+      "authors": [
+        "G Hinton",
+        "O Vinyals",
+        "J Dean"
+      ],
+      "title": "Distilling the knowledge in a neural network",
+      "year": "2015"
+    },
+    "citations": [
+      {
+        "section": "Related Work",
+        "text_before": "Knowledge Distillation",
+        "citation": "[14]",
+        "text_after": "is a widely used technique for transferring knowledge from larger teacher models to smaller student models.",
+        "full_context": "Knowledge Distillation [14] is a widely used technique for transferring knowledge from larger teacher models to smaller student models."
+      },
+      {
+        "section": "Framework for Zero-Shot Distillation",
+        "text_before": "Knowledge distillation involves combining a training loss L training with a distillation loss L distillation",
+        "citation": "[14]",
+        "text_after": ".",
+        "full_context": "Knowledge distillation involves combining a training loss L training with a distillation loss L distillation [14] ."
+      },
+      {
+        "section": "Conclusion",
+        "text_before": "To train the models, we optimize the standard cross-entropy loss as well as a sum of cross-entropy loss and the original knowledge distillation loss of Hinton et al.",
+        "citation": "[14]",
+        "text_after": ".",
+        "full_context": "To train the models, we optimize the standard cross-entropy loss as well as a sum of cross-entropy loss and the original knowledge distillation loss of Hinton et al. [14] ."
+      },
+      {
+        "section": "Conclusion",
+        "text_before": "To train the models, we optimize the standard cross-entropy loss as well as a sum of cross-entropy loss and the original knowledge distillation loss of Hinton et al.",
+        "citation": "[14]",
+        "text_after": ".",
+        "full_context": "To train the models, we optimize the standard cross-entropy loss as well as a sum of cross-entropy loss and the original knowledge distillation loss of Hinton et al. [14] ."
+      }
+    ]
+  },
+  "b14": {
+    "reference_details": {
+      "authors": [
+        "X Jiao",
+        "Y Yin",
+        "L Shang",
+        "X Jiang",
+        "X Chen",
+        "L Li",
+        "F Wang",
+        "Q Liu"
+      ],
+      "title": "Tiny-BERT: Distilling BERT for natural language understanding",
+      "year": "2020"
+    },
+    "citations": [
+      {
+        "section": "Related Work",
+        "text_before": "While this approach has been well-established for single-modality tasks including vision   or language",
+        "citation": "[15,",
+        "text_after": ", recent works have extended the concept to the multi-modal setting, specifically in the context of vision-language models.",
+        "full_context": "While this approach has been well-established for single-modality tasks including vision   or language [15, , recent works have extended the concept to the multi-modal setting, specifically in the context of vision-language models."
+      }
+    ]
+  },
+  "b15": {
+    "reference_details": {
+      "authors": [
+        "J Krause",
+        "M Stark",
+        "J Deng",
+        "L Fei-Fei"
+      ],
+      "title": "3d object representations for finegrained categorization",
+      "year": "2013"
+    },
+    "citations": [
+      {
+        "section": "Introduction",
+        "text_before": "4. Using our framework we manage to distill a ViT-B/32 CLIP vision encoder into student models with up to 93% fewer parameters that closely match the classification performance of the teacher and surpass existing baselines on the Oxford Pets  , Flowers-102  , Stanford Cars",
+        "citation": "[16]",
+        "text_after": "and Food-101   datasets.",
+        "full_context": "4. Using our framework we manage to distill a ViT-B/32 CLIP vision encoder into student models with up to 93% fewer parameters that closely match the classification performance of the teacher and surpass existing baselines on the Oxford Pets  , Flowers-102  , Stanford Cars [16] and Food-101   datasets."
+      },
+      {
+        "section": "Experiments",
+        "text_before": "For fine-tuning, we target the Oxford Pets  , Oxford Flowers  , Food-101   and Stanford Cars",
+        "citation": "[16]",
+        "text_after": "to evaluate or models domain-specific datasets.",
+        "full_context": "For fine-tuning, we target the Oxford Pets  , Oxford Flowers  , Food-101   and Stanford Cars [16] to evaluate or models domain-specific datasets."
+      }
+    ]
+  },
+  "b16": {
+    "reference_details": {
+      "authors": [
+        "J Li",
+        "D Li",
+        "S Savarese",
+        "S Hoi"
+      ],
+      "title": "BLIP-2: bootstrapping language-image pretraining with frozen image encoders and large language models",
+      "year": "2023"
+    },
+    "citations": [
+      {
+        "section": "Conclusion",
+        "text_before": "Furthermore, the potential of our small-scale image encoders beyond zero-shot settings could be explored, for instance in architectures that use CLIP image encoders such as BLIP-2",
+        "citation": "[17]",
+        "text_after": "or LLava  .",
+        "full_context": "Furthermore, the potential of our small-scale image encoders beyond zero-shot settings could be explored, for instance in architectures that use CLIP image encoders such as BLIP-2 [17] or LLava  ."
+      }
+    ]
+  },
+  "b17": {
+    "reference_details": {
+      "authors": [
+        "X Li",
+        "Y Fang",
+        "M Liu",
+        "Z Ling",
+        "Z Tu",
+        "H Su"
+      ],
+      "title": "Distilling large vision-language model with out-of-distribution generalizability",
+      "year": "2023"
+    },
+    "citations": [
+      {
+        "section": "Related Work",
+        "text_before": "Apart from CLIP-specific techniques, unsupervised distillation based purely on images without labels has been identified as a data-efficient alternative to supervised training for vision encoders   and class-incremental generalization",
+        "citation": "[18]",
+        "text_after": ".",
+        "full_context": "Apart from CLIP-specific techniques, unsupervised distillation based purely on images without labels has been identified as a data-efficient alternative to supervised training for vision encoders   and class-incremental generalization [18] ."
+      },
+      {
+        "section": "Experiments",
+        "text_before": "Previously, it was observed that the using the CLIP loss hinders the class-incremental generalization of students distilled on real images",
+        "citation": "[18]",
+        "text_after": ".",
+        "full_context": "Previously, it was observed that the using the CLIP loss hinders the class-incremental generalization of students distilled on real images [18] ."
+      },
+      {
+        "section": "Conclusion",
+        "text_before": "Our observations on domain shift mirror the behavior in the class-incremental setting",
+        "citation": "[18]",
+        "text_after": ".",
+        "full_context": "Our observations on domain shift mirror the behavior in the class-incremental setting [18] ."
+      }
+    ]
+  },
+  "b18": {
+    "reference_details": {
+      "authors": [
+        "Z Li",
+        "Y Li",
+        "P Zhao",
+        "R Song",
+        "X Li",
+        "J Yang"
+      ],
+      "title": "Is synthetic data from diffusion models ready for knowledge distillation?",
+      "year": "2023"
+    },
+    "citations": [
+      {
+        "section": "Related Work",
+        "text_before": "For text-to-image generation, diffusion models are commonly employed, particularly for knowledge distillation",
+        "citation": "[19]",
+        "text_after": ".",
+        "full_context": "For text-to-image generation, diffusion models are commonly employed, particularly for knowledge distillation [19] ."
+      },
+      {
+        "section": "Conclusion",
+        "text_before": "Cross-Entropy Diversify don't finetune   Accuracy Custom   Accuracy Cross-Entropy DM-KD",
+        "citation": "[19]",
+        "text_after": "Accuracy * KD",
+        "full_context": "Cross-Entropy Diversify don't finetune   Accuracy Custom   Accuracy Cross-Entropy DM-KD [19] Accuracy * KD"
+      },
+      {
+        "section": "Conclusion",
+        "text_before": "Cross-Entropy Diversify don't finetune   Accuracy Custom   Accuracy Cross-Entropy DM-KD",
+        "citation": "[19]",
+        "text_after": "Accuracy * KD",
+        "full_context": "Cross-Entropy Diversify don't finetune   Accuracy Custom   Accuracy Cross-Entropy DM-KD [19] Accuracy * KD"
+      }
+    ]
+  },
+  "b19": {
+    "reference_details": {
+      "authors": [
+        "W Liang",
+        "Y Zhang",
+        "Y Kwon",
+        "S Yeung",
+        "J Zou"
+      ],
+      "title": "Mind the gap: Understanding the modality gap in multi-modal contrastive representation learning",
+      "year": "2022"
+    },
+    "citations": [
+      {
+        "section": "Framework for Zero-Shot Distillation",
+        "text_before": "For our purpose of training 1-to-1 replacements of CLIP vision encoders, this step has further advantages: by aligning the embeddings of teacher and student, we can mitigate phenomena like the modality gap",
+        "citation": "[20]",
+        "text_after": "where corresponding output vectors are located in different areas of the embedding space.",
+        "full_context": "For our purpose of training 1-to-1 replacements of CLIP vision encoders, this step has further advantages: by aligning the embeddings of teacher and student, we can mitigate phenomena like the modality gap [20] where corresponding output vectors are located in different areas of the embedding space."
+      }
+    ]
+  },
+  "b20": {
+    "reference_details": {
+      "authors": [
+        "H Liu",
+        "C Li",
+        "Y Li",
+        "Y Lee"
+      ],
+      "title": "Improved baselines with visual instruction tuning",
+      "year": "2023"
+    },
+    "citations": [
+      {
+        "section": "Conclusion",
+        "text_before": "Furthermore, the potential of our small-scale image encoders beyond zero-shot settings could be explored, for instance in architectures that use CLIP image encoders such as BLIP-2   or LLava",
+        "citation": "[21]",
+        "text_after": ".",
+        "full_context": "Furthermore, the potential of our small-scale image encoders beyond zero-shot settings could be explored, for instance in architectures that use CLIP image encoders such as BLIP-2   or LLava [21] ."
+      }
+    ]
+  },
+  "b21": {
+    "reference_details": {
+      "authors": [
+        "H Liu",
+        "C Li",
+        "Y Li",
+        "B Li",
+        "Y Zhang",
+        "S Shen",
+        "Y Lee"
+      ],
+      "title": "Llava-next: Improved reasoning, ocr, and world knowledge",
+      "year": "2024"
+    },
+    "citations": [
+      {
+        "section": "Conclusion",
+        "text_before": "Furthermore, the potential of our small-scale image encoders beyond zero-shot settings could be explored, for instance in architectures that use CLIP image encoders such as BLIP-2   or LLava",
+        "citation": "[22]",
+        "text_after": ".",
+        "full_context": "Furthermore, the potential of our small-scale image encoders beyond zero-shot settings could be explored, for instance in architectures that use CLIP image encoders such as BLIP-2   or LLava [22] ."
+      }
+    ]
+  },
+  "b22": {
+    "reference_details": {
+      "authors": [
+        "H Liu",
+        "C Li",
+        "Q Wu",
+        "Y Lee"
+      ],
+      "title": "Visual instruction tuning",
+      "year": "2023"
+    },
+    "citations": [
+      {
+        "section": "Conclusion",
+        "text_before": "Furthermore, the potential of our small-scale image encoders beyond zero-shot settings could be explored, for instance in architectures that use CLIP image encoders such as BLIP-2   or LLava",
+        "citation": "[23]",
+        "text_after": ".",
+        "full_context": "Furthermore, the potential of our small-scale image encoders beyond zero-shot settings could be explored, for instance in architectures that use CLIP image encoders such as BLIP-2   or LLava [23] ."
+      }
+    ]
+  },
+  "b23": {
+    "reference_details": {
+      "authors": [
+        "I Loshchilov",
+        "F Hutter"
+      ],
+      "title": "Decoupled weight decay regularization",
+      "year": "2019"
+    },
+    "citations": [
+      {
+        "section": "Experiments",
+        "text_before": "We train using a batch size of 256 and a constant learning rate of 5 × 10 -4 for the AdamW optimizer",
+        "citation": "[24]",
+        "text_after": ".",
+        "full_context": "We train using a batch size of 256 and a constant learning rate of 5 × 10 -4 for the AdamW optimizer [24] ."
+      },
+      {
+        "section": "Conclusion",
+        "text_before": "We use the AdamW optimizer",
+        "citation": "[24]",
+        "text_after": "with no weight decay and the learning rate is set to 5 × 10 -4 which is the same as used by Wu et al.   for fine-tuning.",
+        "full_context": "We use the AdamW optimizer [24] with no weight decay and the learning rate is set to 5 × 10 -4 which is the same as used by Wu et al.   for fine-tuning."
+      },
+      {
+        "section": "Conclusion",
+        "text_before": "We use the AdamW optimizer",
+        "citation": "[24]",
+        "text_after": "with no weight decay and the learning rate is set to 5 × 10 -4 which is the same as used by Wu et al.   for fine-tuning.",
+        "full_context": "We use the AdamW optimizer [24] with no weight decay and the learning rate is set to 5 × 10 -4 which is the same as used by Wu et al.   for fine-tuning."
+      }
+    ]
+  },
+  "b24": {
+    "reference_details": {
+      "authors": [
+        "S Luo",
+        "Y Tan",
+        "S Patil",
+        "D Gu",
+        "P Von Platen",
+        "A Passos",
+        "L Huang",
+        "J Li",
+        "H Zhao"
+      ],
+      "title": "Lcm-lora: A universal stable-diffusion acceleration module",
+      "year": "2023"
+    },
+    "citations": [
+      {
+        "section": "Experiments",
+        "text_before": "For the generation of the images, we utilize a LCM LoRA",
+        "citation": "[25]",
+        "text_after": "of Stable Diffusion XL   with a guidance scale of 0.5 and prompt weighting.",
+        "full_context": "For the generation of the images, we utilize a LCM LoRA [25] of Stable Diffusion XL   with a guidance scale of 0.5 and prompt weighting."
+      },
+      {
+        "section": "Conclusion",
+        "text_before": "Specifically, we use Stable Diffusion XL   LCM LoRA",
+        "citation": "[25]",
+        "text_after": ".",
+        "full_context": "Specifically, we use Stable Diffusion XL   LCM LoRA [25] ."
+      }
+    ]
+  },
+  "b25": {
+    "reference_details": {
+      "authors": [
+        "J Metzen",
+        "R Hutmacher",
+        "N Hua",
+        "V Boreiko",
+        "D Zhang"
+      ],
+      "title": "Identification of systematic errors of image classifiers on rare subgroups",
+      "year": "2023"
+    },
+    "citations": [
+      {
+        "section": "Conclusion",
+        "text_before": "This approach is inspired by a recent work on systematic error identification",
+        "citation": "[26]",
+        "text_after": ".",
+        "full_context": "This approach is inspired by a recent work on systematic error identification [26] ."
+      }
+    ]
+  },
+  "b26": {
+    "reference_details": {
+      "authors": [
+        "S Mirzadeh",
+        "M Farajtabar",
+        "A Li",
+        "N Levine",
+        "A Matsukawa",
+        "H Ghasemzadeh"
+      ],
+      "title": "Improved knowledge distillation via teacher assistant",
+      "year": "2020"
+    },
+    "citations": [
+      {
+        "section": "Related Work",
+        "text_before": "While this approach has been well-established for single-modality tasks including vision",
+        "citation": "[27,",
+        "text_after": "or language  , recent works have extended the concept to the multi-modal setting, specifically in the context of vision-language models.",
+        "full_context": "While this approach has been well-established for single-modality tasks including vision [27, or language  , recent works have extended the concept to the multi-modal setting, specifically in the context of vision-language models."
+      }
+    ]
+  },
+  "b27": {
+    "reference_details": {
+      "authors": [
+        "G Nayak",
+        "K Mopuri",
+        "V Shaj",
+        "R Babu",
+        "A Chakraborty"
+      ],
+      "title": "Zero-shot knowledge distillation in deep networks",
+      "year": "2019"
+    },
+    "citations": [
+      {
+        "section": "Framework for Zero-Shot Distillation",
+        "text_before": "The term zero-shot distillation has been introduced previously",
+        "citation": "[28]",
+        "text_after": ", yet only in the setting for single-modal classifiers that were trained using the cross-entropy loss.",
+        "full_context": "The term zero-shot distillation has been introduced previously [28] , yet only in the setting for single-modal classifiers that were trained using the cross-entropy loss."
+      }
+    ]
+  },
+  "b28": {
+    "reference_details": {
+      "authors": [
+        "C Nie",
+        "H Leung"
+      ],
+      "title": "A survey of combinatorial testing",
+      "year": "2011"
+    },
+    "citations": [
+      {
+        "section": "Framework for Zero-Shot Distillation",
+        "text_before": "Instead of using all possible combinations of options, which would result in a strongly growing number of images given more options, we perform combinatorial testing",
+        "citation": "29]",
+        "text_after": ".",
+        "full_context": "Instead of using all possible combinations of options, which would result in a strongly growing number of images given more options, we perform combinatorial testing 29] ."
+      },
+      {
+        "section": "Conclusion",
+        "text_before": "Instead of using all possible combinations of options for the contextual dimensions to generate the prompts, we use combinatorial testing",
+        "citation": "29]",
+        "text_after": ".",
+        "full_context": "Instead of using all possible combinations of options for the contextual dimensions to generate the prompts, we use combinatorial testing 29] ."
+      }
+    ]
+  },
+  "b29": {
+    "reference_details": {
+      "authors": [
+        "M Nilsback",
+        "A Zisserman"
+      ],
+      "title": "Automated flower classification over a large number of classes",
+      "year": "2008"
+    },
+    "citations": [
+      {
+        "section": "Introduction",
+        "text_before": "4. Using our framework we manage to distill a ViT-B/32 CLIP vision encoder into student models with up to 93% fewer parameters that closely match the classification performance of the teacher and surpass existing baselines on the Oxford Pets  , Flowers-102",
+        "citation": "[30]",
+        "text_after": ", Stanford Cars   and Food-101   datasets.",
+        "full_context": "4. Using our framework we manage to distill a ViT-B/32 CLIP vision encoder into student models with up to 93% fewer parameters that closely match the classification performance of the teacher and surpass existing baselines on the Oxford Pets  , Flowers-102 [30] , Stanford Cars   and Food-101   datasets."
+      },
+      {
+        "section": "Experiments",
+        "text_before": "For fine-tuning, we target the Oxford Pets  , Oxford Flowers",
+        "citation": "[30]",
+        "text_after": ", Food-101   and Stanford Cars   to evaluate or models domain-specific datasets.",
+        "full_context": "For fine-tuning, we target the Oxford Pets  , Oxford Flowers [30] , Food-101   and Stanford Cars   to evaluate or models domain-specific datasets."
+      }
+    ]
+  },
+  "b30": {
+    "reference_details": {
+      "authors": [
+        "U Ojha",
+        "Y Li",
+        "A Rajan",
+        "Y Liang",
+        "Y Lee"
+      ],
+      "title": "What knowledge gets distilled in knowledge distillation?",
+      "year": "2023"
+    },
+    "citations": [
+      {
+        "section": "Related Work",
+        "text_before": "Knowledge distillation has been observed to not only benefit the test accuracy of the student on the target datasets but transfer other favorable properties of the teacher such as domain generalization",
+        "citation": "[31]",
+        "text_after": ".",
+        "full_context": "Knowledge distillation has been observed to not only benefit the test accuracy of the student on the target datasets but transfer other favorable properties of the teacher such as domain generalization [31] ."
+      },
+      {
+        "section": "Related Work",
+        "text_before": "Even when the student features the same capacity as the the teacher, there can be significant discrepancies in their predictive distributions",
+        "citation": "[31,",
+        "text_after": ".",
+        "full_context": "Even when the student features the same capacity as the the teacher, there can be significant discrepancies in their predictive distributions [31, ."
+      }
+    ]
+  },
+  "b31": {
+    "reference_details": {
+      "authors": [
+        "M Oquab",
+        "T Darcet",
+        "T Moutakanni",
+        "H Vo",
+        "M Szafraniec",
+        "V Khalidov",
+        "P Fernandez",
+        "D Haziza",
+        "F Massa",
+        "A El-Nouby",
+        "R Howes",
+        "P Huang",
+        "H Xu",
+        "V Sharma",
+        "S Li",
+        "W Galuba",
+        "M Rabbat",
+        "M Assran",
+        "N Ballas",
+        "G Synnaeve",
+        "I Misra",
+        "H Jegou",
+        "J Mairal",
+        "P Labatut",
+        "A Joulin",
+        "P Bojanowski"
+      ],
+      "title": "Dinov2: Learning robust visual features without supervision",
+      "year": "2023"
+    },
+    "citations": [
+      {
+        "section": "Introduction",
+        "text_before": "Image classifiers built on top of large vision(-language) foundation models, such as CLIP   or DINOv2",
+        "citation": "[32]",
+        "text_after": ", have shown impressive zero-shot capabilities across various tasks.",
+        "full_context": "Image classifiers built on top of large vision(-language) foundation models, such as CLIP   or DINOv2 [32] , have shown impressive zero-shot capabilities across various tasks."
+      }
+    ]
+  },
+  "b32": {
+    "reference_details": {
+      "authors": [
+        "O Parkhi",
+        "A Vedaldi",
+        "A Zisserman",
+        "C Jawahar"
+      ],
+      "title": "Cats and dogs",
+      "year": "2012"
+    },
+    "citations": [
+      {
+        "section": "Introduction",
+        "text_before": "4. Using our framework we manage to distill a ViT-B/32 CLIP vision encoder into student models with up to 93% fewer parameters that closely match the classification performance of the teacher and surpass existing baselines on the Oxford Pets",
+        "citation": "[33]",
+        "text_after": ", Flowers-102  , Stanford Cars   and Food-101   datasets.",
+        "full_context": "4. Using our framework we manage to distill a ViT-B/32 CLIP vision encoder into student models with up to 93% fewer parameters that closely match the classification performance of the teacher and surpass existing baselines on the Oxford Pets [33] , Flowers-102  , Stanford Cars   and Food-101   datasets."
+      },
+      {
+        "section": "Experiments",
+        "text_before": "For fine-tuning, we target the Oxford Pets",
+        "citation": "[33]",
+        "text_after": ", Oxford Flowers  , Food-101   and Stanford Cars   to evaluate or models domain-specific datasets.",
+        "full_context": "For fine-tuning, we target the Oxford Pets [33] , Oxford Flowers  , Food-101   and Stanford Cars   to evaluate or models domain-specific datasets."
+      }
+    ]
+  },
+  "b33": {
+    "reference_details": {
+      "authors": [
+        "D Podell",
+        "Z English",
+        "K Lacey",
+        "A Blattmann",
+        "T Dockhorn",
+        "J Müller",
+        "J Penna",
+        "R Rombach"
+      ],
+      "title": "Sdxl: Improving latent diffusion models for high-resolution image synthesis",
+      "year": "2023"
+    },
+    "citations": [
+      {
+        "section": "Introduction",
+        "text_before": "For zero-shot distillation, domain-specific data can be obtained from \"generalpurpose\" generative models, such as large-scale latent diffusion models",
+        "citation": "[34]",
+        "text_after": ", by class-aware prompting.",
+        "full_context": "For zero-shot distillation, domain-specific data can be obtained from \"generalpurpose\" generative models, such as large-scale latent diffusion models [34] , by class-aware prompting."
+      },
+      {
+        "section": "Experiments",
+        "text_before": "For the generation of the images, we utilize a LCM LoRA   of Stable Diffusion XL",
+        "citation": "[34]",
+        "text_after": "with a guidance scale of 0.5 and prompt weighting.",
+        "full_context": "For the generation of the images, we utilize a LCM LoRA   of Stable Diffusion XL [34] with a guidance scale of 0.5 and prompt weighting."
+      },
+      {
+        "section": "Conclusion",
+        "text_before": "Specifically, we use Stable Diffusion XL",
+        "citation": "[34]",
+        "text_after": "LCM LoRA  .",
+        "full_context": "Specifically, we use Stable Diffusion XL [34] LCM LoRA  ."
+      }
+    ]
+  },
+  "b34": {
+    "reference_details": {
+      "authors": [
+        "A Radford",
+        "J Kim",
+        "C Hallacy",
+        "A Ramesh",
+        "G Goh",
+        "S Agarwal",
+        "G Sastry",
+        "A Askell",
+        "P Mishkin",
+        "J Clark",
+        "G Krueger",
+        "I Sutskever"
+      ],
+      "title": "Learning transferable visual models from natural language supervision",
+      "year": "2021"
+    },
+    "citations": [
+      {
+        "section": "Introduction",
+        "text_before": "Image classifiers built on top of large vision(-language) foundation models, such as CLIP",
+        "citation": "[35]",
+        "text_after": "or DINOv2  , have shown impressive zero-shot capabilities across various tasks.",
+        "full_context": "Image classifiers built on top of large vision(-language) foundation models, such as CLIP [35] or DINOv2  , have shown impressive zero-shot capabilities across various tasks."
+      },
+      {
+        "section": "Introduction",
+        "text_before": "However, learning from synthetic images has proven challenging  : using simple class-specific text prompts, like those used for zeroshot classification by CLIP",
+        "citation": "[35]",
+        "text_after": ", yields low-diversity datasets and poor classifiers, as observed in previous studies  .",
+        "full_context": "However, learning from synthetic images has proven challenging  : using simple class-specific text prompts, like those used for zeroshot classification by CLIP [35] , yields low-diversity datasets and poor classifiers, as observed in previous studies  ."
+      },
+      {
+        "section": "Framework for Zero-Shot Distillation",
+        "text_before": "Pre-training as for large foundation models like the original CLIP",
+        "citation": "[35]",
+        "text_after": "typically requires substantial computational resources due to the use of billions of images.",
+        "full_context": "Pre-training as for large foundation models like the original CLIP [35] typically requires substantial computational resources due to the use of billions of images."
+      },
+      {
+        "section": "Framework for Zero-Shot Distillation",
+        "text_before": "In this case, we employ the zero-shot captions \"a photo of {class name} which is a type of {superclass}\", which were originally introduced for the zero-shot inference of the original CLIP model",
+        "citation": "[35]",
+        "text_after": ", as T i .",
+        "full_context": "In this case, we employ the zero-shot captions \"a photo of {class name} which is a type of {superclass}\", which were originally introduced for the zero-shot inference of the original CLIP model [35] , as T i ."
+      },
+      {
+        "section": "Experiments",
+        "text_before": "As in the original CLIP paper",
+        "citation": "[35]",
+        "text_after": "random square crops of the resized images are the only data augmentation used during training.",
+        "full_context": "As in the original CLIP paper [35] random square crops of the resized images are the only data augmentation used during training."
+      },
+      {
+        "section": "Experiments",
+        "text_before": "All other hyperparameters were kept consistent with the CLIP training methodology",
+        "citation": "[35]",
+        "text_after": ".",
+        "full_context": "All other hyperparameters were kept consistent with the CLIP training methodology [35] ."
+      },
+      {
+        "section": "Experiments",
+        "text_before": "The corresponding text encoder follows the same architecture as described in the original CLIP paper, with 63 million parameters",
+        "citation": "[35]",
+        "text_after": "and an embedding dimension of 512.",
+        "full_context": "The corresponding text encoder follows the same architecture as described in the original CLIP paper, with 63 million parameters [35] and an embedding dimension of 512."
+      },
+      {
+        "section": "Conclusion",
+        "text_before": "Instead of using the simple zero-shot prompts \"a photo of a ..., which is a type of ...\", we use the prompt ensembles consisting of 79 templates proposed by Radford et al.",
+        "citation": "[35]",
+        "text_after": ".",
+        "full_context": "Instead of using the simple zero-shot prompts \"a photo of a ..., which is a type of ...\", we use the prompt ensembles consisting of 79 templates proposed by Radford et al. [35] ."
+      },
+      {
+        "section": "Conclusion",
+        "text_before": "The hyperparameter sweeps for the regularization are performed on a validation split as in the original CLIP paper",
+        "citation": "[35]",
+        "text_after": ".",
+        "full_context": "The hyperparameter sweeps for the regularization are performed on a validation split as in the original CLIP paper [35] ."
+      }
+    ]
+  },
+  "b35": {
+    "reference_details": {
+      "authors": [
+        "V Sanh",
+        "L Debut",
+        "J Chaumond",
+        "T Wolf"
+      ],
+      "title": "Distilbert, a distilled version of bert: smaller, faster, cheaper and lighter",
+      "year": "2020"
+    },
+    "citations": [
+      {
+        "section": "Related Work",
+        "text_before": "While this approach has been well-established for single-modality tasks including vision   or language",
+        "citation": "36]",
+        "text_after": ", recent works have extended the concept to the multi-modal setting, specifically in the context of vision-language models.",
+        "full_context": "While this approach has been well-established for single-modality tasks including vision   or language 36] , recent works have extended the concept to the multi-modal setting, specifically in the context of vision-language models."
+      }
+    ]
+  },
+  "b36": {
+    "reference_details": {
+      "authors": [
+        "M Sariyildiz",
+        "A Karteek",
+        "D Larlus",
+        "Y Kalantidis"
+      ],
+      "title": "Fake it till you make it: Learning transferable representations from synthetic imagenet clones",
+      "year": "2022"
+    },
+    "citations": [
+      {
+        "section": "Introduction",
+        "text_before": "However, learning from synthetic images has proven challenging",
+        "citation": "37]",
+        "text_after": ": using simple class-specific text prompts, like those used for zeroshot classification by CLIP  , yields low-diversity datasets and poor classifiers, as observed in previous studies  .",
+        "full_context": "However, learning from synthetic images has proven challenging 37] : using simple class-specific text prompts, like those used for zeroshot classification by CLIP  , yields low-diversity datasets and poor classifiers, as observed in previous studies  ."
+      },
+      {
+        "section": "Introduction",
+        "text_before": "However, learning from synthetic images has proven challenging  : using simple class-specific text prompts, like those used for zeroshot classification by CLIP  , yields low-diversity datasets and poor classifiers, as observed in previous studies",
+        "citation": "37]",
+        "text_after": ".",
+        "full_context": "However, learning from synthetic images has proven challenging  : using simple class-specific text prompts, like those used for zeroshot classification by CLIP  , yields low-diversity datasets and poor classifiers, as observed in previous studies 37] ."
+      },
+      {
+        "section": "Framework for Zero-Shot Distillation",
+        "text_before": "However, it has been observed that using only the names to generate images using diffusion models leads to suboptimal performance",
+        "citation": "[37]",
+        "text_after": ".",
+        "full_context": "However, it has been observed that using only the names to generate images using diffusion models leads to suboptimal performance [37] ."
+      },
+      {
+        "section": "Conclusion",
+        "text_before": "StableRep   Linear probe, few-shot MP SynCLR   Linear probe MP SynthCLIP   Linear probe, few-shot CLIP Fake it till you make it",
+        "citation": "[37]",
+        "text_after": "Zero-Shot Acc.",
+        "full_context": "StableRep   Linear probe, few-shot MP SynCLR   Linear probe MP SynthCLIP   Linear probe, few-shot CLIP Fake it till you make it [37] Zero-Shot Acc."
+      },
+      {
+        "section": "Conclusion",
+        "text_before": "StableRep   Linear probe, few-shot MP SynCLR   Linear probe MP SynthCLIP   Linear probe, few-shot CLIP Fake it till you make it",
+        "citation": "[37]",
+        "text_after": "Zero-Shot Acc.",
+        "full_context": "StableRep   Linear probe, few-shot MP SynCLR   Linear probe MP SynthCLIP   Linear probe, few-shot CLIP Fake it till you make it [37] Zero-Shot Acc."
+      }
+    ]
+  },
+  "b37": {
+    "reference_details": {
+      "authors": [
+        "C Schuhmann",
+        "R Vencu",
+        "R Beaumont",
+        "R Kaczmarczyk",
+        "C Mullis",
+        "A Katta",
+        "T Coombes",
+        "J Jitsev",
+        "A Komatsuzaki"
+      ],
+      "title": "Laion-400m: Open dataset of clip-filtered 400 million image-text pairs",
+      "year": "2021"
+    },
+    "citations": [
+      {
+        "section": "Framework for Zero-Shot Distillation",
+        "text_before": "The first one involves relying on large-scale data such as common crawl datasets",
+        "citation": "38]",
+        "text_after": ".",
+        "full_context": "The first one involves relying on large-scale data such as common crawl datasets 38] ."
+      },
+      {
+        "section": "Experiments",
+        "text_before": "Additionally, we report the performance of four TinyCLIP models that have been trained on LAION-400M",
+        "citation": "[38]",
+        "text_after": "or YFCC-15M   datasets.",
+        "full_context": "Additionally, we report the performance of four TinyCLIP models that have been trained on LAION-400M [38] or YFCC-15M   datasets."
+      }
+    ]
+  },
+  "b38": {
+    "reference_details": {
+      "authors": [
+        "S Stanton",
+        "P Izmailov",
+        "P Kirichenko",
+        "A Alemi",
+        "A Wilson"
+      ],
+      "title": "Does knowledge distillation really work?",
+      "year": "2021"
+    },
+    "citations": [
+      {
+        "section": "Related Work",
+        "text_before": "Even when the student features the same capacity as the the teacher, there can be significant discrepancies in their predictive distributions",
+        "citation": "39]",
+        "text_after": ".",
+        "full_context": "Even when the student features the same capacity as the the teacher, there can be significant discrepancies in their predictive distributions 39] ."
+      }
+    ]
+  },
+  "b39": {
+    "reference_details": {
+      "authors": [
+        "M Tan",
+        "Q Le"
+      ],
+      "title": "EfficientNet: Rethinking model scaling for convolutional neural networks",
+      "year": "2019"
+    },
+    "citations": [
+      {
+        "section": "Experiments",
+        "text_before": "For our student models, we utilize two different types of architectures: Efficient-Nets",
+        "citation": "[40]",
+        "text_after": ", which are based on convolutional neural networks, and TinyViTs  , which are hybrid models combining convolutions and transformers.",
+        "full_context": "For our student models, we utilize two different types of architectures: Efficient-Nets [40] , which are based on convolutional neural networks, and TinyViTs  , which are hybrid models combining convolutions and transformers."
+      },
+      {
+        "section": "Experiments",
+        "text_before": "For our student models, we utilize two different types of architectures: Efficient-Nets  , which are based on convolutional neural networks, and TinyViTs",
+        "citation": "[40]",
+        "text_after": ", which are hybrid models combining convolutions and transformers.",
+        "full_context": "For our student models, we utilize two different types of architectures: Efficient-Nets  , which are based on convolutional neural networks, and TinyViTs [40] , which are hybrid models combining convolutions and transformers."
+      }
+    ]
+  },
+  "b40": {
+    "reference_details": {
+      "authors": [
+        "B Thomee",
+        "B Elizalde",
+        "D Shamma",
+        "K Ni",
+        "G Friedland",
+        "D Poland",
+        "D Borth",
+        "L Li"
+      ],
+      "title": "Yfcc100m: the new data in multimedia research",
+      "year": "2016"
+    },
+    "citations": [
+      {
+        "section": "Experiments",
+        "text_before": "Additionally, we report the performance of four TinyCLIP models that have been trained on LAION-400M   or YFCC-15M",
+        "citation": "[41]",
+        "text_after": "datasets.",
+        "full_context": "Additionally, we report the performance of four TinyCLIP models that have been trained on LAION-400M   or YFCC-15M [41] datasets."
+      }
+    ]
+  },
+  "b41": {
+    "reference_details": {
+      "authors": [
+        "Y Tian",
+        "L Fan",
+        "K Chen",
+        "D Katabi",
+        "D Krishnan",
+        "P Isola"
+      ],
+      "title": "Learning vision from models rivals learning vision from data",
+      "year": "2023"
+    },
+    "citations": [
+      {
+        "section": "Related Work",
+        "text_before": "By scaling up synthetic datasets, Tian et al.",
+        "citation": "[42]",
+        "text_after": "and Hammoud et al.   demonstrated the feasibility of training vision-language foundation models solely using images from text-to-image models.",
+        "full_context": "By scaling up synthetic datasets, Tian et al. [42] and Hammoud et al.   demonstrated the feasibility of training vision-language foundation models solely using images from text-to-image models."
+      },
+      {
+        "section": "Framework for Zero-Shot Distillation",
+        "text_before": "The second approach involves training from scratch using either purely synthetic images",
+        "citation": "42,",
+        "text_after": "or a combination of real and synthetic images  .",
+        "full_context": "The second approach involves training from scratch using either purely synthetic images 42, or a combination of real and synthetic images  ."
+      },
+      {
+        "section": "Framework for Zero-Shot Distillation",
+        "text_before": "Yet by incorporating few-shot learning   on real images or linear probing",
+        "citation": "42,",
+        "text_after": "after training on synthetic data, the reported accuracies are no longer truly zero-shot.",
+        "full_context": "Yet by incorporating few-shot learning   on real images or linear probing 42, after training on synthetic data, the reported accuracies are no longer truly zero-shot."
+      },
+      {
+        "section": "Conclusion",
+        "text_before": "In contrast to our framework, previous works",
+        "citation": "42,",
+        "text_after": "mainly focus on the linear accuracy where the classification head is fitted with real data instead of targeting the true zero-shot setting without any real data which is the more difficult task to accomplish.",
+        "full_context": "In contrast to our framework, previous works 42, mainly focus on the linear accuracy where the classification head is fitted with real data instead of targeting the true zero-shot setting without any real data which is the more difficult task to accomplish."
+      },
+      {
+        "section": "Conclusion",
+        "text_before": "StableRep   Linear probe, few-shot MP SynCLR",
+        "citation": "[42]",
+        "text_after": "Linear probe MP SynthCLIP   Linear probe, few-shot CLIP Fake it till you make it   Zero-Shot Acc.",
+        "full_context": "StableRep   Linear probe, few-shot MP SynCLR [42] Linear probe MP SynthCLIP   Linear probe, few-shot CLIP Fake it till you make it   Zero-Shot Acc."
+      },
+      {
+        "section": "Conclusion",
+        "text_before": "StableRep   Linear probe, few-shot MP SynCLR",
+        "citation": "[42]",
+        "text_after": "Linear probe MP SynthCLIP   Linear probe, few-shot CLIP Fake it till you make it   Zero-Shot Acc.",
+        "full_context": "StableRep   Linear probe, few-shot MP SynCLR [42] Linear probe MP SynthCLIP   Linear probe, few-shot CLIP Fake it till you make it   Zero-Shot Acc."
+      }
+    ]
+  },
+  "b42": {
+    "reference_details": {
+      "authors": [
+        "Y Tian",
+        "L Fan",
+        "P Isola",
+        "H Chang",
+        "D Krishnan"
+      ],
+      "title": "Stablerep: Synthetic images from text-to-image models make strong visual representation learners",
+      "year": "2023"
+    },
+    "citations": [
+      {
+        "section": "Framework for Zero-Shot Distillation",
+        "text_before": "The second approach involves training from scratch using either purely synthetic images",
+        "citation": "43]",
+        "text_after": "or a combination of real and synthetic images  .",
+        "full_context": "The second approach involves training from scratch using either purely synthetic images 43] or a combination of real and synthetic images  ."
+      },
+      {
+        "section": "Framework for Zero-Shot Distillation",
+        "text_before": "Yet by incorporating few-shot learning",
+        "citation": "43]",
+        "text_after": "on real images or linear probing   after training on synthetic data, the reported accuracies are no longer truly zero-shot.",
+        "full_context": "Yet by incorporating few-shot learning 43] on real images or linear probing   after training on synthetic data, the reported accuracies are no longer truly zero-shot."
+      },
+      {
+        "section": "Framework for Zero-Shot Distillation",
+        "text_before": "Yet by incorporating few-shot learning   on real images or linear probing",
+        "citation": "43]",
+        "text_after": "after training on synthetic data, the reported accuracies are no longer truly zero-shot.",
+        "full_context": "Yet by incorporating few-shot learning   on real images or linear probing 43] after training on synthetic data, the reported accuracies are no longer truly zero-shot."
+      },
+      {
+        "section": "Framework for Zero-Shot Distillation",
+        "text_before": "An alternative to the CLIP loss is given by the multi-positive contrastive loss introduced in StableRep",
+        "citation": "[43]",
+        "text_after": ".",
+        "full_context": "An alternative to the CLIP loss is given by the multi-positive contrastive loss introduced in StableRep [43] ."
+      },
+      {
+        "section": "Conclusion",
+        "text_before": "In contrast to our framework, previous works",
+        "citation": "43]",
+        "text_after": "mainly focus on the linear accuracy where the classification head is fitted with real data instead of targeting the true zero-shot setting without any real data which is the more difficult task to accomplish.",
+        "full_context": "In contrast to our framework, previous works 43] mainly focus on the linear accuracy where the classification head is fitted with real data instead of targeting the true zero-shot setting without any real data which is the more difficult task to accomplish."
+      },
+      {
+        "section": "Conclusion",
+        "text_before": "StableRep",
+        "citation": "[43]",
+        "text_after": "Linear probe, few-shot MP SynCLR   Linear probe MP SynthCLIP   Linear probe, few-shot CLIP Fake it till you make it   Zero-Shot Acc.",
+        "full_context": "StableRep [43] Linear probe, few-shot MP SynCLR   Linear probe MP SynthCLIP   Linear probe, few-shot CLIP Fake it till you make it   Zero-Shot Acc."
+      },
+      {
+        "section": "Conclusion",
+        "text_before": "StableRep",
+        "citation": "[43]",
+        "text_after": "Linear probe, few-shot MP SynCLR   Linear probe MP SynthCLIP   Linear probe, few-shot CLIP Fake it till you make it   Zero-Shot Acc.",
+        "full_context": "StableRep [43] Linear probe, few-shot MP SynCLR   Linear probe MP SynthCLIP   Linear probe, few-shot CLIP Fake it till you make it   Zero-Shot Acc."
+      }
+    ]
+  },
+  "b43": {
+    "reference_details": {
+      "authors": [
+        "Y Tian",
+        "D Krishnan",
+        "P Isola"
+      ],
+      "title": "Contrastive multiview coding",
+      "year": "2020"
+    },
+    "citations": [
+      {
+        "section": "Conclusion",
+        "text_before": "As an addition to the domain specific datasets discussed in the main paper, we fine-tune the models on ImageNet-100",
+        "citation": "[44]",
+        "text_after": "which is a subset of ImageNet-1k consisting of 100 classes with various objects that do not necessarily belong to a similar domain.",
+        "full_context": "As an addition to the domain specific datasets discussed in the main paper, we fine-tune the models on ImageNet-100 [44] which is a subset of ImageNet-1k consisting of 100 classes with various objects that do not necessarily belong to a similar domain."
+      }
+    ]
+  },
+  "b44": {
+    "reference_details": {
+      "authors": [
+        "H Touvron",
+        "L Martin",
+        "K Stone",
+        "P Albert",
+        "A Almahairi",
+        "Y Babaei",
+        "N Bashlykov",
+        "S Batra",
+        "P Bhargava",
+        "S Bhosale",
+        "D Bikel",
+        "L Blecher",
+        "C Ferrer",
+        "M Chen",
+        "G Cucurull",
+        "D Esiobu",
+        "J Fernandes",
+        "J Fu",
+        "W Fu",
+        "B Fuller",
+        "C Gao",
+        "V Goswami",
+        "N Goyal",
+        "A Hartshorn",
+        "S Hosseini",
+        "R Hou",
+        "H Inan",
+        "M Kardas",
+        "V Kerkez",
+        "M Khabsa",
+        "I Kloumann",
+        "A Korenev",
+        "P Koura",
+        "M Lachaux",
+        "T Lavril",
+        "J Lee",
+        "D Liskovich",
+        "Y Lu",
+        "Y Mao",
+        "X Martinet",
+        "T Mihaylov",
+        "P Mishra",
+        "I Molybog",
+        "Y Nie",
+        "A Poulton",
+        "J Reizenstein",
+        "R Rungta",
+        "K Saladi",
+        "A Schelten",
+        "R Silva",
+        "E Smith",
+        "R Subramanian",
+        "X Tan",
+        "B Tang",
+        "R Taylor",
+        "A Williams",
+        "J Kuan",
+        "P Xu",
+        "Z Yan",
+        "I Zarov",
+        "Y Zhang",
+        "A Fan",
+        "M Kambadur",
+        "S Narang",
+        "A Rodriguez",
+        "R Stojnic",
+        "S Edunov",
+        "T Scialom"
+      ],
+      "title": "Llama 2: Open foundation and fine-tuned chat models",
+      "year": "2023"
+    },
+    "citations": [
+      {
+        "section": "Experiments",
+        "text_before": "As the selection of options for the contextual dimensions and superclasses are relatively simple, we can use a smaller language model Llama-2 7B fine-tuned for chats",
+        "citation": "[45]",
+        "text_after": "and still obtain sufficiently diverse prompts.",
+        "full_context": "As the selection of options for the contextual dimensions and superclasses are relatively simple, we can use a smaller language model Llama-2 7B fine-tuned for chats [45] and still obtain sufficiently diverse prompts."
+      },
+      {
+        "section": "Conclusion",
+        "text_before": "For each of the contextual dimensions we collect 15 or 30 options from Llama 2 7B fine-tuned for chats",
+        "citation": "[45]",
+        "text_after": ".",
+        "full_context": "For each of the contextual dimensions we collect 15 or 30 options from Llama 2 7B fine-tuned for chats [45] ."
+      }
+    ]
+  },
+  "b45": {
+    "reference_details": {
+      "authors": [
+        "P Vasu",
+        "H Pouransari",
+        "F Faghri",
+        "R Vemulapalli",
+        "O Tuzel"
+      ],
+      "title": "Mobileclip: Fast image-text models through multi-modal reinforced training",
+      "year": "2023"
+    },
+    "citations": [
+      {
+        "section": "Related Work",
+        "text_before": "MobileCLIP",
+        "citation": "[46]",
+        "text_after": "further refined the distillation process by incorporating image augmentation, synthetic captions, and dedicated architectural choices.",
+        "full_context": "MobileCLIP [46] further refined the distillation process by incorporating image augmentation, synthetic captions, and dedicated architectural choices."
+      },
+      {
+        "section": "Experiments",
+        "text_before": "At the time of conducting our experiments, we were unable to compare our results with MobileCLIP",
+        "citation": "[46]",
+        "text_after": "and CLIP-KD   as these models are not publicly available.",
+        "full_context": "At the time of conducting our experiments, we were unable to compare our results with MobileCLIP [46] and CLIP-KD   as these models are not publicly available."
+      },
+      {
+        "section": "Conclusion",
+        "text_before": "CLIP, Affinity Mapping MobileCLIP",
+        "citation": "[46]",
+        "text_after": "Zero-Shot Acc.",
+        "full_context": "CLIP, Affinity Mapping MobileCLIP [46] Zero-Shot Acc."
+      },
+      {
+        "section": "Conclusion",
+        "text_before": "CLIP, Affinity Mapping MobileCLIP",
+        "citation": "[46]",
+        "text_after": "Zero-Shot Acc.",
+        "full_context": "CLIP, Affinity Mapping MobileCLIP [46] Zero-Shot Acc."
+      }
+    ]
+  },
+  "b46": {
+    "reference_details": {
+      "authors": [
+        "H Wang",
+        "S Ge",
+        "Z Lipton",
+        "E Xing"
+      ],
+      "title": "Learning robust global representations by penalizing local predictive power",
+      "year": "2019"
+    },
+    "citations": [
+      {
+        "section": "Conclusion",
+        "text_before": "Additionally, we test the models fine-tuned on ImageNet-100 on the corresponding classe of Ima-geNet Sketch",
+        "citation": "[47]",
+        "text_after": ".",
+        "full_context": "Additionally, we test the models fine-tuned on ImageNet-100 on the corresponding classe of Ima-geNet Sketch [47] ."
+      },
+      {
+        "section": "Conclusion",
+        "text_before": "Table  : Zero-Shot accuracy of the models fine-tuned on ImageNet-100 when tested on the 100 corresponding classes in ImageNet Sketch",
+        "citation": "[47]",
+        "text_after": ".",
+        "full_context": "Table  : Zero-Shot accuracy of the models fine-tuned on ImageNet-100 when tested on the 100 corresponding classes in ImageNet Sketch [47] ."
+      }
+    ]
+  },
+  "b47": {
+    "reference_details": {
+      "authors": [
+        "K Wu",
+        "H Peng",
+        "Z Zhou",
+        "B Xiao",
+        "M Liu",
+        "L Yuan",
+        "H Xuan",
+        "M Valenzuela",
+        "X Chen",
+        "X Wang",
+        "H Chao",
+        "H Hu"
+      ],
+      "title": "TinyCLIP: CLIP distillation via affinity mimicking and weight inheritance",
+      "year": "2023"
+    },
+    "citations": [
+      {
+        "section": "Introduction",
+        "text_before": "Through one epoch of pre-training on DataComp medium   and subsequent fine-tuning on diverse synthetic datasets generated using diffusion models and prompts from large language models, we achieve superior zero-shot classification performance on four target datasets compared to TinyCLIP",
+        "citation": "[48]",
+        "text_after": ", the current state-of-the-art for distilled CLIP models.",
+        "full_context": "Through one epoch of pre-training on DataComp medium   and subsequent fine-tuning on diverse synthetic datasets generated using diffusion models and prompts from large language models, we achieve superior zero-shot classification performance on four target datasets compared to TinyCLIP [48] , the current state-of-the-art for distilled CLIP models."
+      },
+      {
+        "section": "Related Work",
+        "text_before": "TinyCLIP",
+        "citation": "[48]",
+        "text_after": "proposed an advanced initialization process using weight inheritance from the teacher to the student as well as a multi-stage progressive distillation culminating in models that are only 1/4 the size of a ViT-B/32 CLIP model.",
+        "full_context": "TinyCLIP [48] proposed an advanced initialization process using weight inheritance from the teacher to the student as well as a multi-stage progressive distillation culminating in models that are only 1/4 the size of a ViT-B/32 CLIP model."
+      },
+      {
+        "section": "Framework for Zero-Shot Distillation",
+        "text_before": "In order to shorten training in comparison to training from scratch, Wu et al.",
+        "citation": "[48]",
+        "text_after": "have introduced weight inheritance as an initialization scheme for distilling CLIP models.",
+        "full_context": "In order to shorten training in comparison to training from scratch, Wu et al. [48] have introduced weight inheritance as an initialization scheme for distilling CLIP models."
+      },
+      {
+        "section": "Conclusion",
+        "text_before": "[14] TinyCLIP",
+        "citation": "[48]",
+        "text_after": "Zero-Shot Acc.",
+        "full_context": "[14] TinyCLIP [48] Zero-Shot Acc."
+      },
+      {
+        "section": "Conclusion",
+        "text_before": "[14] TinyCLIP",
+        "citation": "[48]",
+        "text_after": "Zero-Shot Acc.",
+        "full_context": "[14] TinyCLIP [48] Zero-Shot Acc."
+      }
+    ]
+  },
+  "b48": {
+    "reference_details": {
+      "authors": [
+        "K Wu",
+        "J Zhang",
+        "H Peng",
+        "M Liu",
+        "B Xiao",
+        "J Fu",
+        "L Yuan"
+      ],
+      "title": "Tinyvit: Fast pretraining distillation for small vision transformers",
+      "year": "2022"
+    },
+    "citations": [
+      {
+        "section": "Related Work",
+        "text_before": "While this approach has been well-established for single-modality tasks including vision",
+        "citation": "49]",
+        "text_after": "or language  , recent works have extended the concept to the multi-modal setting, specifically in the context of vision-language models.",
+        "full_context": "While this approach has been well-established for single-modality tasks including vision 49] or language  , recent works have extended the concept to the multi-modal setting, specifically in the context of vision-language models."
+      },
+      {
+        "section": "Conclusion",
+        "text_before": "We use the AdamW optimizer   with no weight decay and the learning rate is set to 5 × 10 -4 which is the same as used by Wu et al.",
+        "citation": "[49]",
+        "text_after": "for fine-tuning.",
+        "full_context": "We use the AdamW optimizer   with no weight decay and the learning rate is set to 5 × 10 -4 which is the same as used by Wu et al. [49] for fine-tuning."
+      },
+      {
+        "section": "Conclusion",
+        "text_before": "We use the AdamW optimizer   with no weight decay and the learning rate is set to 5 × 10 -4 which is the same as used by Wu et al.",
+        "citation": "[49]",
+        "text_after": "for fine-tuning.",
+        "full_context": "We use the AdamW optimizer   with no weight decay and the learning rate is set to 5 × 10 -4 which is the same as used by Wu et al. [49] for fine-tuning."
+      }
+    ]
+  },
+  "b49": {
+    "reference_details": {
+      "authors": [
+        "C Yang",
+        "Z An",
+        "L Huang",
+        "J Bi",
+        "X Yu",
+        "H Yang",
+        "Y Xu"
+      ],
+      "title": "CLIP-KD: An empirical study of distilling clip models",
+      "year": "2023"
+    },
+    "citations": [
+      {
+        "section": "Related Work",
+        "text_before": "CLIP-KD",
+        "citation": "[50]",
+        "text_after": "provides an extensive set of experiments comparing various different loss combinations.",
+        "full_context": "CLIP-KD [50] provides an extensive set of experiments comparing various different loss combinations."
+      },
+      {
+        "section": "Experiments",
+        "text_before": "At the time of conducting our experiments, we were unable to compare our results with MobileCLIP   and CLIP-KD",
+        "citation": "[50]",
+        "text_after": "as these models are not publicly available.",
+        "full_context": "At the time of conducting our experiments, we were unable to compare our results with MobileCLIP   and CLIP-KD [50] as these models are not publicly available."
+      },
+      {
+        "section": "Experiments",
+        "text_before": "On real data, using a sum of the L 2 and a contrastive loss indeed results in the best performance as observed in CLIP-KD",
+        "citation": "[50]",
+        "text_after": ".",
+        "full_context": "On real data, using a sum of the L 2 and a contrastive loss indeed results in the best performance as observed in CLIP-KD [50] ."
+      }
+    ]
+  },
+  "b50": {
+    "reference_details": {
+      "authors": [
+        "Z Yu",
+        "C Zhu",
+        "S Culatana",
+        "R Krishnamoorthi",
+        "F Xiao",
+        "Y Lee"
+      ],
+      "title": "Diversify, don't fine-tune: Scaling up visual recognition training with synthetic images",
+      "year": "2023"
+    },
+    "citations": [
+      {
+        "section": "Introduction",
+        "text_before": "More advanced methods for diversifying prompts with large-language models",
+        "citation": "[51]",
+        "text_after": ", together with a large compute budget for synthetic image generation, allow achieving high accuracy in linear probe or few-shot scenarios, indicating strong representation learning capabilities.",
+        "full_context": "More advanced methods for diversifying prompts with large-language models [51] , together with a large compute budget for synthetic image generation, allow achieving high accuracy in linear probe or few-shot scenarios, indicating strong representation learning capabilities."
+      },
+      {
+        "section": "Related Work",
+        "text_before": "Yu et al.",
+        "citation": "[51]",
+        "text_after": "attributed this decline to the lack of diversity in the used synthetic images.",
+        "full_context": "Yu et al. [51] attributed this decline to the lack of diversity in the used synthetic images."
+      },
+      {
+        "section": "Framework for Zero-Shot Distillation",
+        "text_before": "The second approach involves training from scratch using either purely synthetic images   or a combination of real and synthetic images",
+        "citation": "51]",
+        "text_after": ".",
+        "full_context": "The second approach involves training from scratch using either purely synthetic images   or a combination of real and synthetic images 51] ."
+      },
+      {
+        "section": "Framework for Zero-Shot Distillation",
+        "text_before": "In addition to class names, LLMs are guided by additional inputs for diversification, such as information from a concept bank   or specific requirements related to contextual and style diversification",
+        "citation": "[51]",
+        "text_after": ".",
+        "full_context": "In addition to class names, LLMs are guided by additional inputs for diversification, such as information from a concept bank   or specific requirements related to contextual and style diversification [51] ."
+      },
+      {
+        "section": "Framework for Zero-Shot Distillation",
+        "text_before": "Using the approach from Yu et al.",
+        "citation": "[51]",
+        "text_after": ", we focus on contextual dimensions to achieve diversification.",
+        "full_context": "Using the approach from Yu et al. [51] , we focus on contextual dimensions to achieve diversification."
+      },
+      {
+        "section": "Framework for Zero-Shot Distillation",
+        "text_before": "In contrast to Yu et al.",
+        "citation": "[51]",
+        "text_after": ", we do not prompt the LLM for each caption separately, but ask for different options for each contextual dimension.",
+        "full_context": "In contrast to Yu et al. [51] , we do not prompt the LLM for each caption separately, but ask for different options for each contextual dimension."
+      },
+      {
+        "section": "Conclusion",
+        "text_before": "Cross-Entropy Diversify don't finetune",
+        "citation": "[51]",
+        "text_after": "Accuracy Custom   Accuracy Cross-Entropy DM-KD   Accuracy * KD",
+        "full_context": "Cross-Entropy Diversify don't finetune [51] Accuracy Custom   Accuracy Cross-Entropy DM-KD   Accuracy * KD"
+      },
+      {
+        "section": "Conclusion",
+        "text_before": "Cross-Entropy Diversify don't finetune",
+        "citation": "[51]",
+        "text_after": "Accuracy Custom   Accuracy Cross-Entropy DM-KD   Accuracy * KD",
+        "full_context": "Cross-Entropy Diversify don't finetune [51] Accuracy Custom   Accuracy Cross-Entropy DM-KD   Accuracy * KD"
+      }
+    ]
+  },
+  "b51": {
+    "reference_details": {
+      "authors": [
+        "T Zhang",
+        "Z Wang",
+        "J Huang",
+        "M Tasnim",
+        "W Shi"
+      ],
+      "title": "A survey of diffusion based image generation models: Issues and their solutions",
+      "year": "2023"
+    },
+    "citations": [
+      {
+        "section": "Conclusion",
+        "text_before": "These also showcase some of the known problems with diffusion models such as parts of the prompts which are missing in the image",
+        "citation": "[52]",
+        "text_after": "as in the first example for the food dataset.",
+        "full_context": "These also showcase some of the known problems with diffusion models such as parts of the prompts which are missing in the image [52] as in the first example for the food dataset."
+      }
+    ]
+  },
+  "b52": {
+    "reference_details": {
+      "authors": [
+        "A Zhou",
+        "J Wang",
+        "Y Wang",
+        "H Wang"
+      ],
+      "title": "Distilling out-of-distribution robustness from vision-language foundation models",
+      "year": "2023"
+    },
+    "citations": [
+      {
+        "section": "Conclusion",
+        "text_before": "This setting is comparable to  the experiments performed by Zhou et al.",
+        "citation": "[53]",
+        "text_after": ".",
+        "full_context": "This setting is comparable to  the experiments performed by Zhou et al. [53] ."
+      }
+    ]
+  }
+}

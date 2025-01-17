@@ -1,0 +1,864 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">ASTE-Transformer: Modelling Dependencies in Aspect-Sentiment Triplet Extraction</title>
+				<funder ref="#_8vj9xzM">
+					<orgName type="full">National Center for Research and Development</orgName>
+				</funder>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Iwo</forename><surname>Naglik</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution" key="instit1">Poznan University of Technology</orgName>
+								<orgName type="institution" key="instit2">Institute of Computing Science</orgName>
+								<address>
+									<settlement>Poznań</settlement>
+									<country key="PL">Poland</country>
+								</address>
+							</affiliation>
+							<affiliation key="aff2">
+								<orgName type="department">deepsense.ai</orgName>
+							</affiliation>
+						</author>
+						<author role="corresp">
+							<persName><forename type="first">Mateusz</forename><surname>Lango</surname></persName>
+							<email>lango@ufal.mff.cuni.cz</email>
+							<affiliation key="aff0">
+								<orgName type="institution" key="instit1">Poznan University of Technology</orgName>
+								<orgName type="institution" key="instit2">Institute of Computing Science</orgName>
+								<address>
+									<settlement>Poznań</settlement>
+									<country key="PL">Poland</country>
+								</address>
+							</affiliation>
+							<affiliation key="aff1">
+								<orgName type="department">Institute of Formal and Applied Linguistics</orgName>
+								<orgName type="institution">Charles University</orgName>
+								<address>
+									<settlement>Prague</settlement>
+									<country>Czechia</country>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">ASTE-Transformer: Modelling Dependencies in Aspect-Sentiment Triplet Extraction</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<idno type="MD5">C5E850E309A40547108BAC28D241C4D5</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.2-SNAPSHOT" ident="GROBID" when="2025-01-08T12:35+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Aspect-Sentiment Triplet Extraction (ASTE) is a recently proposed task of aspect-based sentiment analysis that consists in extracting (aspect phrase, opinion phrase, sentiment polarity) triples from a given sentence. Recent state-ofthe-art methods approach this task by first extracting all possible text spans from a given text, then filtering the potential aspect and opinion phrases with a classifier, and finally considering all their pairs with another classifier that additionally assigns sentiment polarity to them. Although several variations of the above scheme have been proposed, the common feature is that the final result is constructed by a sequence of independent classifier decisions. This hinders the exploitation of dependencies between extracted phrases and prevents the use of knowledge about the interrelationships between classifier predictions to improve performance. In this paper, we propose a new ASTE approach consisting of three transformer-inspired layers, which enables the modelling of dependencies both between phrases and between the final classifier decisions. Experimental results show that the method achieves higher performance in terms of F1 measure than other methods studied on popular benchmarks. In addition, we show that a simple pre-training technique further improves the performance of the model.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">Introduction</head><p>Aspect-Sentiment Triplet Extraction (ASTE, <ref type="bibr" target="#b15">Peng et al., 2020</ref>) is a recent task in aspect-based sentiment analysis that involves the extraction of (aspect phrase, opinion phrase, sentiment polarity) triples from text. The aspect phrase denotes features or attributes of the described object, towards which the sentiment is expressed in the opinion phrase. The categorisation of this sentiment into typically three classes (positive/negative/neutral) is the final element of the triple. For example, in the sentence "The hotel was very good" there is only one ASTE</p><p>The room was fine but the staff was rude.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>+ -</head><p>Triplets: (room, fine, Positive), (staff, rude, Negative)</p><p>The menu is limited and extremely pricy.</p><p>--Triplets: (menu, limited, Negative), (menu, extremely pricy, Negative)</p><p>Figure <ref type="figure">1</ref>: Two examples of input sentences and ASTE triplets. The spans highlighted in yellow are opinion phrases, whereas spans highlighted in green are aspect phrases. The +/-sign denote positive/negative sentiment, respectively.</p><p>triple <ref type="bibr">(hotel, very good, positive)</ref>. See Fig <ref type="figure">1</ref> for more examples.</p><p>Since ASTE provides an answer to what? (aspect phrase), how? (sentiment), and why? (opinion phrase) questions regarding sentiment, it is sometimes referred to as a "near complete solution" to sentiment analysis <ref type="bibr" target="#b15">(Peng et al., 2020)</ref> and has attracted considerable research attention. Several types of methods have been proposed, including sequence prediction <ref type="bibr" target="#b20">(Xu et al., 2020)</ref>, cascade processing <ref type="bibr" target="#b3">(Li et al., 2021)</ref>, prompting approaches <ref type="bibr" target="#b24">(Zhang et al., 2021)</ref> or predicting a special word-by-word matrix <ref type="bibr" target="#b18">(Wu et al., 2020)</ref>. However, the approaches that currently achieve the best predictive performance are span-level approaches <ref type="bibr">(Li et al., 2023b;</ref><ref type="bibr" target="#b13">Naglik and Lango, 2023)</ref>, which are the focus of this work.</p><p>Span-level methods <ref type="bibr" target="#b19">(Xu et al., 2021</ref>) typically begin by extracting all possible text spans up to a predefined length from a given text. Each span undergoes evaluation by a classifier to determine whether it contains an aspect phrase, an opinion phrase, or whether it should be excluded from further processing. The method then considers all possible pairs of identified opinion and aspect phrases, with a secondary classifier examining these pairs to discard false matches and assign sentiment polarity to the valid ones.</p><p>Although several modifications of this scheme have been proposed <ref type="bibr" target="#b0">(Chen et al., 2022;</ref><ref type="bibr">Li et al., 2023a;</ref><ref type="bibr" target="#b10">Liang et al., 2023)</ref>, they share the same property: the prediction of ASTE triples consists of dozens of independent classifier decisions, and the dependencies between decisions regarding the analysed spans are not modelled. This limits the predictive performance of these techniques, as some task-related knowledge simply cannot be learned. Such unexploited properties of structured output include both deterministic rules and probabilistic patterns, some examples of which are given below (see more in App. G).</p><p>• An opinion phrase assigned to multiple aspects, typically assign them the same sentiment polarity (see the 2 nd example in Fig <ref type="figure">1</ref>).</p><p>• Two opinion phrases linked with a contrastive conjunction (like "but") and attached to one aspect phrase should have different sentiment polarities. A similar rule applies to opinions linked with correlative conjunctions ("and").</p><p>• Although one-to-many relations between aspect and opinion phrases are possible, the general probabilistic property is that constructing an increasing number of triples with a given phrase should be less and less likely.</p><p>• An aspect phrase should only be extracted if it is associated with an opinion phrase. For instance, consider the word "room" in "The room was fine" and "I was given a single room". In the first sentence, this word should be extracted because it forms part of a triple (see Fig. <ref type="figure">1</ref>), whereas in the second sentence, there is no associated opinion phrase.</p><p>Note that learning these properties requires joint modelling of the decisions to extract or link particular phrases. This is impossible to achieve in the current span-based ASTE frameworks, which often adapt end2end training but make a strong independence assumption and perform multiple independent classifier predictions.</p><p>In this paper, we address the challenge of modeling dependencies between the extracted phrases and between constructed triples by introducing ASTE-Transformer, a novel architecture for ASTE. Unlike conventional span-based ASTE approaches, our method does not perform multiple independent classifications to categorize extracted text spans into aspect/opinion/invalid phrases. Instead, aspectopinion pairs are formed through a search in a specialized embedding space induced by modified self-attention mechanizm, where each span is represented twice: once as a potential aspect and once as a potential opinion phrase. Furthermore, our approach does not construct final triples through independent classifications without considering other candidate triples; instead, for each candidate triple, it produces a representation that depends on all other triples.</p><p>The contributions of this paper are as follows:</p><p>• We propose ASTE-Transformer, a new architecture composed of three types of transformer-inspired layers, that enables modelling the dependencies between the extracted phrases and between the constructed aspectopinion pairs.</p><p>• To address the additional difficulty of training transformer models on relatively small ASTE datasets, we propose the simple idea of using pre-training on noisy supervised data that can be artificially generated from datasets for the more popular sentiment classification task.</p><p>• We carry out a fairly extensive experimental evaluation of the newly proposed method on four standard English benchmarks and two datasets for a more under-resourced language: Polish. Ablation study and error analysis are also performed.</p><p>The experimental results demonstrated the superior predictive performance of ASTE-Transformer compared to other methods under study. Furthermore, the ablation study highlighted the importance of modelling dependencies, which accounted for improvements of up to 5 ppt on F1 score. Lastly, the proposed pre-training technique yielded additional, statistically significant performance improvements over previous state-of-the-art ASTE approaches.</p><p>First, the input sentence is processed by a masked language model (MLM) composed of standard transformer layers that produce an embedding representation for each token. Second, in line with span-based approaches, all text spans up to a certain length are extracted, and their corresponding embedding representations are constructed. Next, the spans are analysed by an aspect-opinion pair construction layer, which searches for corresponding aspect-opinion phrases. Finally, all candidate aspect-opinion pairs are processed by the triplet construction layer. This layer first computes a representation for each candidate pair, then a classifier assigns them a sentiment polarity or filters them out. Importantly, the constructed representation of an aspect-opinion pair depends on all the other candidate pairs.</p><p>All the above-mentioned steps are realized by a single neural architecture, consisting of three types of transformer-like layers. The network is trained in an end-to-end fashion, by optimizing a loss function measuring the quality of constructed triplets and loss functions of additional intermediary tasks. An overview of the proposed neural network is shown in Fig. <ref type="figure" target="#fig_0">2</ref>, and each of its parts is described in the following sections.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Problem</head><p>formulation Given an input sentence w 1 , w 2 , ..., w n , construct a set of ASTE triples {(a i , o i , y i )} i=1,..,m where a i = {w j , w j+1 , ..., w j+|a i | }, o i = {w k , w k+1 , ..., w k+|o i | } are aspect and opinion phrases consisting of one continuous text span, and y i ∈ {P ositive, N egative, N eutral} is the polarity of sentiment expressed by o i towards the aspect mentioned in a i .</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.1">Contextualized representation</head><p>In the first part of our architecture, a distributed representation for each word in the input sentence is constructed by a transformer-based masked language model (MLM). Recall that in the transformer layer, a key k i , value v i and query q i representations are constructed by fully-connected layers for each input word.</p><formula xml:id="formula_0">k i = W K w i v i = W V w i q i = W Q w i</formula><p>Then, according to the similarities between keys and queries (measured by the vector inner-product), a new word embedding e i representation is constructed by a weighted sum of value vectors.</p><formula xml:id="formula_1">e (w) i = σ(QK T ) i V</formula><p>where σ is the softmax function, K and V are matrices containing k i and v i vectors for all input words, respectively. Note, that the word representation e i is dependent on all the input words w 1 , w 2 , ..., w n .</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.2">Span constructor</head><p>In line with other span-based approaches, the next processing step is the extraction of all text spans up to a certain maximum length. For instance, with the maximum length of 3, the following spans would be extracted: {w 1 }, {w 1 , w 2 }, {w 1 , w 2 , w 3 }, {w 2 }, {w 2 , w 3 }, etc. The representation of each extracted span s i is constructed by max-pooling embeddings of words constituting it.</p><formula xml:id="formula_2">s i = max-pooling(e j , e j+1 , ..., e k )</formula><p>where s i is the representation of span starting from j-th word and ending at k-th word.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.3">Aspect-opinion pair construction layer</head><p>To match spans containing corresponding aspectopinion phrases, we introduce a special transformer layer featuring a modified the attention mechanism that performs pair matching. This layer computes the distributed representations of each input span s i as potential aspect phrase a i and potential opinion phrase o i through fully-connected layers:</p><formula xml:id="formula_3">a i = W A s i o i = W O s i</formula><p>These representations are subsequently used to align opinions with their corresponding aspects through a search process, which involves computing similarities between aspect and opinion vectors and matching those with similarities exceeding a predefined threshold τ .</p><formula xml:id="formula_4">p i = [a i ; o j ] = ϕ τ (AO T )</formula><p>where A, O are matrices containing vectors a i , o i for all constructed spans and ϕ τ () is a thresholding operation, similar to attention masking, that from a given similarity matrix S = AO T extracts the indices (i, j) of all the values S i,j &gt; τ above a threshold τ . The output of this layer is a set of extracted aspect-opinion pairs p i , represented as a concatenation of aspect and opinion spans. Note, that during the aspect-opinion pair construction, aspect and opinion phrases are considered jointly. This step lets us avoid initial categorization of spans into aspect and opinions phrases by a separate classifier applied multiple times. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.4">Triplet construction layer</head><p>During the final processing step, each extracted pair p i is either assigned a sentiment (positive, negative, or neutral) to create a triple or is dismissed as invalid. However, using a 4-class classification head for each pair p i on its own does not account for the interdependencies among the aspect-opinion triples while making predictions. For example, as mentioned earlier, all triples with a given opinion phrase tend to have the same sentiment polarity. On the other hand, aspects with two opinions linked with contrasting conjunctions (like "but") will likely have opposite sentiments. It is not possible to model these and similar dependencies if the classification is performed completely independently.</p><p>Therefore, the extracted aspect-opinion pairs p i are processed jointly by an additional bidirectional transformer layer, which proved to be effective in modelling dependencies between the inputs for many tasks <ref type="bibr" target="#b1">(Devlin et al., 2019)</ref>. The input to this layer consists of representations of all extracted pairs p 1 , p 2 , ..., p N without typically added positional encoding, since the prediction should not vary on the arbitrary order of extracted pairs. A classification head is then applied on top of the transformer layer with 4 classes: invalid, positive, negative, and neutral. Predicting one of the last three classes results in the construction of a (aspect, opinion, sentiment) triple.</p><p>More formally, for each input aspect-opinion pair</p><formula xml:id="formula_5">p i = [a i , o j ], a new aspect-opinion embedding representation e (p) i is constructed: k i = W K p i v i = W V p i q i = W Q p i e (p) i = σ(QK T ) i V</formula><p>where σ is the softmax function, K and V are matrices containing k i and v i vectors for all input aspect-opinion pairs, respectively. A softmax classifier then computes the final prediction using the constructed aspect-opinion embedding e (p) i :</p><formula xml:id="formula_6">y i = σ(W e (p) i )</formula><p>Note that the aspect-opinion pair representation e (p) i depends on all input pairs p 1 , p 2 , ..., p N returned by the aspect-opinion pair construction layer.</p><p>3 Training procedure ASTE-Transformer model is trained via standard backpropagation in an end-to-end fashion. The training involves minimizing a composite loss function comprising the final ASTE loss, assessing the correctness of the constructed triples, along with two intermediate losses: the span selection loss and the aspect-opinion matching loss.</p><formula xml:id="formula_7">L = L AST E + L SpanSel + L AO</formula><p>where L AST E is the final ASTE loss, L SpanSel is the span selection loss, and L AO is the aspectopinion matching loss.</p><p>Span selection loss To facilitate the matching of correct aspect and opinion phrases, we added an intermediary task of predicting whether the text span s i contains a valid aspect/opinion phrase. This is implemented as a simple binary task with valid/invalid outputs. Since the task suffers from heavy class imbalance, we applied Dice loss <ref type="bibr" target="#b8">(Li et al., 2020)</ref> instead of standard cross-entropy:</p><formula xml:id="formula_8">ẑi = σ(w T s i + b) L SpanSel = s i ∈Spans(w 1..n ) 2(1 -ẑi ) α ẑi z i + γ (1 -ẑi ) α ẑi + z i + γ</formula><p>where Spans(w 1..n ) generates all considered text spans, ẑi is the estimated probability of the span s i being valid, w, b are additional weights, α = 0.7 is a scaling hyperparameter and γ = 1 is introduced for smoothing. The span representation s i is constructed in the span constructor (see Sec. 2.2).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Aspect-opinion matching loss</head><p>To promote the construction of a search space where correct aspect phrases are close to their corresponding opinion phrases, we apply a contrastive loss.</p><formula xml:id="formula_9">L AO = a i ∈A exp(a T i o a i ) o∈N egOpinions(a i ) exp(a T i o) + o i ∈O exp(o T i a o i ) a∈N egAspects(o i ) exp(o T i a)</formula><p>where A, O are sets of all considered aspect and opinion phrases, o a i is the representation of a correct opinion phrase for a i , similarly a o i is the correct aspect phrase for o i . The negative examples for a given aspect/opinion N egOpinions(a i ) (N egAspects(o i )) are constructed using hard mining, i.e. four closest incorrect phrases are selected. Since the aspect-opinion pair construction layer (Sec. 2.3) processes also incorrect aspect/opinion phrases, we intend to push them away from all the phrases of opposite type. In this case, we also hard mine negative examples for the denominator of the loss function but in the nominator we put a constant instead of an inner-product with a corresponding correct phrase (as such does not exist).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>ASTE loss</head><p>The construction of correct ASTE triples is enforced with the classification loss on the final y i with four possible outputs: positive, negative, neutral and invalid. Due to the class imbalance of this task, the Focal loss <ref type="bibr" target="#b11">(Lin et al., 2017)</ref> is applied instead of standard cross-entropy<ref type="foot" target="#foot_2">foot_2</ref> .</p><formula xml:id="formula_10">L AST E = -(1 -y i ) γ ln(y i )</formula><p>where y i is the probability of the correct class and γ = 2 is a scaling hyperparameter. During training, all correct triples (even if not selected by previous layers) are passed to the final transformer classifier to fully utilize the learning information.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">Pretraining for ASTE</head><p>Transformer-based architectures are known to benefit from previous pretraining, especially when dealing with limited supervised data. In the proposed ASTE-Transformer, only the first part (MLM) is pre-trained using standard methods, while all subsequent layers are randomly initialized. Therefore, we propose a simple idea of generating abundant noisy ASTE data from sentiment classification (SC) datasets and employing them for pretraining purposes. Note that SC datasets are often much larger than ASTE datasets because they can be automatically collected from e-commerce platforms, where the consumer's overall product rating can be used as a proxy for opinion sentiment <ref type="bibr" target="#b14">(Ni et al., 2019)</ref>.</p><p>The first step of our method is to train ASTE-Transformer model on the original ASTE dataset and apply it to texts from the SC dataset to produce artificial annotations. As predicting incorrect sentiment polarity is a factor negatively affecting the performance of ASTE models <ref type="bibr" target="#b22">(Yu et al., 2023)</ref>, we substitute the sentiment polarity in the generated triples with the gold standard sentiment of the whole sentence as provided in SC dataset. Finally, we train a new ASTE-Transformer from scratch, starting from pre-training it on the set of pseudolabelled data, and then combining it with gold standard ASTE data. The last few training epochs are performed on gold standard ASTE data only. 16res <ref type="bibr" target="#b15">(Peng et al., 2020;</ref><ref type="bibr" target="#b19">Xu et al., 2021;</ref><ref type="bibr" target="#b0">Chen et al., 2022)</ref>. Selected statistics of these datasets can be found in the Appendix A. Amazon Fine Food Reviews (McAuley and Leskovec, 2013) dataset was used for pretraining experiments, except for experiments with 14lap, where Amazon Review Dataset (Digital Software) <ref type="bibr" target="#b14">(Ni et al., 2019)</ref> was used. For each domain, we utilize approx. 10,000 reviews.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Metrics</head><p>The performance of the models is measured with three metrics: precision, recall and F1score. The extraction of an aspect/opinion phrase is considered correct only when it exactly matches the gold standard. All reported metric values were computed on the corresponding test sets and averaged over four independent training runs.</p><p>Baselines The method's results were compared with the results of GTS <ref type="bibr" target="#b18">(Wu et al., 2020)</ref>, PBF <ref type="bibr" target="#b3">(Li et al., 2021)</ref>, FTOP <ref type="bibr" target="#b3">(Huang et al., 2021)</ref>, GAS <ref type="bibr" target="#b24">(Zhang et al., 2021)</ref>, JET <ref type="bibr" target="#b20">(Xu et al., 2020)</ref>, Span-ASTE <ref type="bibr" target="#b19">(Xu et al., 2021)</ref>, SBC <ref type="bibr" target="#b0">(Chen et al., 2022)</ref>, EPISA <ref type="bibr" target="#b13">(Naglik and Lango, 2023)</ref>, Sim-STAR <ref type="bibr">(Li et al., 2023a)</ref>, STAGE-3D <ref type="bibr" target="#b10">(Liang et al., 2023)</ref>, Pairing <ref type="bibr" target="#b21">(Yang et al., 2023)</ref>. All these methods are briefly described in Sec. 6. For reference, we also included the results obtained by Zhang and Deng (2023) with few-shot prompting of large language models (LLM): Chat-GPT and Flan-UL2.</p><p>Implementation PyTorch implementation of our method and the code to reproduce experiments is 14lap 14res 15res 16res Ours w/o pre. SBC, Sim-STAR, STAGE-3D None None SBC, Sim-STAR, STAGE-3D Ours w/ pre. EPISA None None None</p><p>Table 2: Methods that yield a worse result on F1 score than the proposed method, but the difference is not statistically significant according to the T-test with significance level α = 5%.</p><p>publicly available<ref type="foot" target="#foot_3">foot_3</ref> . Following related works, De-BERTa model <ref type="bibr" target="#b2">(He et al., 2021)</ref> was used as a MLM.</p><p>Similarly to other span-based approaches <ref type="bibr" target="#b19">(Xu et al., 2021)</ref>, a pruning operation was applied to reduce the computational complexity (see App. C).</p><p>The model was optimized using Adam algorithm with default parameters. The validation sets were used for early stopping and to select the threshold τ for the aspect-opinion pair construction layer. All experiments were computed on one A100 GPU card. Other implementation details are in App. B.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.2">Evaluation of model performance</head><p>The main experimental results are presented in Table 1 and a brief summary of performed statistical tests is presented in Table <ref type="table">2</ref>.</p><p>Comparing the methods using the same training data (i.e.</p><p>without pre-training), ASTE-Transformer achieves the highest F1 score on three</p><p>14lap 14res 15res 16res Pre. Trans. Prec. Rec. F1 Prec. Rec. F1 Prec. Rec. F1 Prec. Rec. F1 No No 64.93 59.12 61.85 73.67 75.61 74.62 65.41 69.69 67.45 72.43 73.20 72.78 No Yes 65.56 60.36 62.83 74.51 76.05 75.27 67.94 67.91 67.89 74.96 74.27 74.61 Yes No 66.42 63.12 64.73 74.22 76.29 75.23 68.50 69.18 68.83 74.51 74.90 74.70 Yes Yes 67.58 62.48 64.90 76.43 75.71 76.06 72.91 71.34 72.10 76.27 76.12 76.19 Table 4: The experimental results of EPISA and ASTE-Transformer with and without pretraining.</p><p>out of four benchmark datasets. On the remaining dataset (14 laps), it is the second-best method, surpassed only by EPISA. The high performance of the method seems to be the result of improving recall without significantly degrading precision. The use of our simple pre-training method further improved the performance of ASTE-Transformer, resulting in the highest F1 score for all datasets. The difference between ASTE-Transformer and all other methods is statistically significant for three datasets. For the remaining 14-lap dataset, the difference is not statistically significant only when compared to EPISA.</p><p>We also investigated the usefulness of the proposed pretraining for one additional method, EPISA. The results are presented in Tab. 4. For three out of four datasets, the use of our simple pretraining procedure was also beneficial for EPISA, with the highest improvement on the 15res dataset of almost 2 ppt. In general, however, the improvements are much smaller than for ASTE-Transformer. This may indicate that the EPISA model has a smaller capacity compared to the ASTE-Transformer and therefore cannot fully benefit from additional pre-training.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.3">Ablation study</head><p>To verify the effectiveness of using a triplet representation that takes into account the dependencies between all candidate triples, we performed an ablation study where our triplet construction layer was replaced with a standard fully-connected layer. Both the results with and without pretraining are</p><p>Dataset Method Prec Rec F1 products GTS 45.15 40.17 41.74 EPISA 50.01 43.36 46.07 Ours w/o trans. 43.07 43.76 43.20 Ours 46.87 47.57 46.89 hotels GTS 42.07 37.82 39.08 EPISA 49.07 41.66 44.72 Ours w/o trans. 45.81 35.70 39.91 Ours 47.79 42.35 44.75</p><p>Table 5: The experimental results of ASTE task on two Polish benchmark datasets. Additionally, we report ablation of our method without final transformer layer.</p><p>reported in Table <ref type="table" target="#tab_4">3</ref>.</p><p>In both scenarios, i.e. with and without pretraining, the version of the ASTE-Transformer with the triplet construction layer achieved better results than the fully connected layer, offering improvements of up to 3 ppt on F1 score. The ablation study also confirms the effectiveness of our pretraining technique, since for both variants of the ASTE-Transformer architecture, pretraining improves the results on all datasets (up to 4 ppt on F1).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.4">Evaluation on other languages</head><p>In contrast to most related work, which only runs experiments on English, we also ran evaluations on two recent ASTE datasets for Polish <ref type="bibr" target="#b5">(Lango et al., 2024)</ref>. In all methods, MLM was replaced by Polish TrelBERT <ref type="bibr" target="#b17">(Szmyd et al., 2023)</ref>.</p><p>The results presented in Table <ref type="table">5</ref> show that the ASTE Transformer obtained the highest F1 score on both datasets. As the texts in the Polish datasets contain on average more triples and a higher number of more difficult one-to-many relations (see App. A), we also report the results of our method without the final transformer layer modelling dependencies. As expected, we observe even more significant improvements compared to the ablation experiment on English.</p><p>Figure <ref type="figure">3</ref>: Visualization of the search space in the aspectopinion pair construction layer for the sentence: "I love the operating system and the preloaded software". The gold standard triples are (operating system, love, Positive), (preloaded software, love, Positive).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.5">Visualization of the search space</head><p>To better understand how the search mechanism works in the proposed aspect-opinion pair construction layer, we visualized the induced embedding space using PCA for randomly selected test instances. An example of such a visualization is shown in Fig. <ref type="figure">3</ref> and further examples can be found in App. D. In most of the visualizations, we observe that the representations of correct aspect and opinion phrases are close to each other. Moreover, the groups of invalid aspect and opinion phrases are clearly separated, placed at a considerable distance.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.6">Error analysis</head><p>We investigate how specific components of our model affect the outcome by measuring several intermediate metrics: 1) the performance of an additional binary classifier trained to determine the validity of a span based on its representation s i (Span binary), 2) the effectiveness of extracting correct aspect-opinion pairs in the aspect-opinion pair construction layer (A-O pair layer), 3) the classification performance of the final sentiment classifier for assigning sentiment to triples or filtering them (Final 4-class), and 4) the classification performance of the same classifier when tasked with recognizing valid/invalid triples in a binary manner (Final binary). The results are showcased in Tab. 6 and in App. F. We observe that the span representation s i computed in the span constructor layer already encodes the information whether the span is a valid aspect or opinion phrase, as the simple binary classifier was able to distinguish them with 84% F1 score. The pairs constructed by the aspect-opinion pair construction layer have high recall and only slightly lower precision. The final classifier has a high performance in discriminating between valid and invalid triples, but assigning sentiment polarity to the triples seems to be more challenging.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6">Related works</head><p>Since the introduction of Aspect Sentiment Triplet Extraction (ASTE) by <ref type="bibr" target="#b15">Peng et al. (2020)</ref>, various approaches were proposed for this task.</p><p>JET <ref type="bibr" target="#b20">(Xu et al., 2020)</ref> converts the problem into a sequence labelling task using enhanced BIOES tagging schema. Similarly, PBF <ref type="bibr" target="#b3">(Li et al., 2021)</ref> uses three sequential tagging predictors to construct triplets. A different approach is to encode ASTE triples in a word-by-word matrix with Grid Tagging Scheme (GTS, <ref type="bibr" target="#b18">Wu et al., 2020)</ref>. Each element of this matrix is predicted by an independent classifier.</p><p>In contrast to GTS which relies on word-to-word interactions, Span-ASTE <ref type="bibr" target="#b19">(Xu et al., 2021)</ref> considers all possible text spans from the input sentence, performing multiple independent classifications to construct the output. SBC <ref type="bibr" target="#b0">(Chen et al., 2022)</ref> uses span representations constructed with a special separation loss and has bidirectional structure to generate aspect-opinion pairs. FTOP <ref type="bibr" target="#b3">(Huang et al., 2021)</ref> divides the input sentence into opinion/aspect phrases using sequence prediction and considers all aspect-opinion pairings by a classifier. Recently, EPISA <ref type="bibr" target="#b13">(Naglik and Lango, 2023)</ref> explored the possibility of making the predictions dependent while constructing ASTE triples. In contrast to our method, EPISA uses a 2-dimensional CRF over a decision matrix, which is intractable without making additional assumptions about pair-wise decision independence and approximating potential functions with Gaussian kernels.</p><p>Another group of approaches combines spanbased and matrix prediction approaches by predicting a matrix with span-based tags. Such approaches include STAGE <ref type="bibr" target="#b10">(Liang et al., 2023)</ref> and SimSTAR <ref type="bibr">(Li et al., 2023a)</ref>. Both these approaches predict matrices by applying softmax classifiers independently. Finally, <ref type="bibr" target="#b24">Zhang et al. (2021)</ref> presented a generative approach called GAS, which uses prompting of the T5 language model. Some of the generative methods also use contrastive learning to learn better representations <ref type="bibr" target="#b21">(Yang et al., 2023)</ref>, but they do not use search to pair aspects with opinions.</p><p>A data augmentation technique for ASTE was proposed in <ref type="bibr">(Zhang et al., 2023)</ref>, but in comparison to our simple pretraining idea, it is rather complex as it employs reinforcement learning and trains additional generator and discriminator models.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="7">Summary</head><p>In this paper, we have demonstrated the potential of exploiting dependencies between constructed triples in span-based ASTE approaches. The proposed ASTE-Transformer method showed superior predictive performance on both English and Polish benchmarks. Additionally, a simple pre-training scheme proved to further improve the performance. brary was used. The training was scheduled to last for a minimum of 30 epochs and a maximum of 130 epochs, incorporating gradient clipping set at 0.8 to mitigate the risk of exploding gradients.</p><p>During the test phase, the threshold τ for span filtering was set slightly higher than during training (see App. E). This adjustment allowed more phrase pairs to pass through the pair construction layer during the training phase, to enhance the model's capability to reject irrelevant spans at later stages. However, in testing, the trained model exhibits improved embedding quality, justifying a higher threshold for span filtering to reduce the risk of false positives. It is noteworthy that the decision about τ being used was made based on precision and recall curves calculated on the validation set, as in Fig. <ref type="figure" target="#fig_3">6</ref> (see App. E for details).</p><p>A simple filtering heuristic was employed to refine the model's output further. This involved removing overlapping spans from the output and retaining those with higher probabilities in cases of conflict. Such a strategy enhanced the precision of the model by prioritizing the selection of the most probable span predictions, thus contributing to the overall efficacy and reliability of the ASTE-Transformer.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>C Reducing the computational complexity of ASTE-Transformer</head><p>Since span-based approaches analyse all text spans up to a certain length, different techniques are used to reduce their computational complexity. Some span-based approaches <ref type="bibr" target="#b19">(Xu et al., 2021)</ref> use a pruning operation that takes into account the results of the valid/invalid span classification. Since we aim to improve model performance by exploiting the dependencies between model predictions, a filtering approach based on multiple independent classifications was not a viable option.</p><p>Inspired by EPISA <ref type="bibr" target="#b13">(Naglik and Lango, 2023)</ref>, we train a CRF tagger on MLM representations to split the input sentence into spans by BIO-tagging both opinion and aspect phrases. The output of a tagger is augmented by producing all spans that are up to 1 word longer in each direction (i.e. starting at an earlier position or ending at a later position than indicated by the phrase boundaries predicted by the tagger). We found that this technique is very effective in extracting aspect phrases, but fails to extract opinion phrases with sufficient quality. Therefore, in the aspect-opinion matching layer (see Section 2.3), an opinion representation o i is computed for each possible text span, but the aspect representation a i is computed only for the spans contained in the tagger result (with the aforementioned augmentation). This was sufficient to reduce both the memory and computational requirements of our approach. On one A100 GPU card, training on the datasets considered in the paper typically takes about 80 minutes. To make the experimentation easier, we train the CRF tagger jointly with ASTE-Transformer. The computational complexity of the aspectopinion matching layer could be reduced in many other ways, for example by replacing the naive implementation of searching for matching phrases with more sophisticated Maximum Inner Product Search (MIPS) techniques. These include fast approximate search techniques, which have already been shown to make transformer architectures faster without compromising output quality <ref type="bibr" target="#b4">(Kitaev et al., 2020)</ref>,</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>D Additional visualizations of the aspect-opinion search space</head><p>The visualization of the search space produced by aspect-opinion matching layer for two additional example sentences is provided in Fig. <ref type="figure" target="#fig_1">4</ref> and Fig. <ref type="figure" target="#fig_2">5</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>E The impact of τ threshold</head><p>The value of τ threshold used in the aspect-opinion pair matching layer influences the final result by controlling how many aspect-opinion pairs will be forwarded to further layers. Since the classifier at the end of ASTE-Transformer has the possibility of filtering incorrect pairs by assigning them an "invalid" class, producing superfluous pairs at this stage of processing is not very detrimental. However, the lack of construction of a correct aspectopinion pair has a direct negative influence on the result, as such a pair cannot be constructed by other layers. On the other hand, producing too many pairs negatively influences the processing time of further layers and can compromise the predictive performance by adding too many noisy pairs for further processing. Figure <ref type="figure" target="#fig_3">6</ref> presents the relation between the value of τ and precision/recall on the 15res dataset. Such a plot can be constructed on a validation (or even training) set and used to guide the manual selection of τ hyperparameter. One heuristic for choosing τ is to start at the intersection of the precision and recall curves and then lower τ until the precision does not drop off abruptly (a knee point). Of course, one could use standard hyperparameter selection methods, but we found this heuristic to be faster and more effective.   </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>F Error analysis</head><p>To better understand how particular parts of our model influence the result, we measured precision/recall/F1 for several intermediate tasks: 1) the performance of an additional binary linear classifier trained to predict whether a span is valid based on the span representation s i (Span binary) , 2) the performance of extracting correct aspect-opinion pairs in the aspect-opinion pair construction layer (A-O pair layer), 3) the classification performance of the final classifier that assigns sentiment to the triples or filters them (Final 4-class), 4) the classification performance of the same classifier measured for the binary classification valid/invalid triple (Final binary). The results are presented in Tab. 8.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>G Characteristics of ASTE problems requiring dependency modeling</head><p>The following is an extended, but still nonexhaustive, list of properties unexplored by previous span-level ASTE approaches. All these properties have a common feature: they cannot be exploited due to the strong independence assumption made by span-level ASTE approaches when constructing the results. The proposed method, ASTE-Transformer, addresses this by relaxing this assumption and modelling the dependencies between the output triples.</p><p>• A phrase should be of the same type in all triples. For instance, if a given phrase is an aspect phrase then in other triples it can not be an opinion phrase.</p><p>• An opinion phrase assigned to multiple aspects, typically assign them the same sentiment polarity (see the 2 nd example in Fig <ref type="figure">1</ref>).</p><p>• Two opinion phrases linked with a contrastive conjunction (like "but") and attached to one aspect phrase should have different sentiment polarities. A similar rule applies to opinions linked with correlative conjunctions ("and").</p><p>• Construction of a triple with a given aspect/opinion phrase should invalidate triples with overlapping phrases. For example, if the model constructed the correct triple with "extremely pricy" when processing the second sentence in Fig. <ref type="figure">1</ref>, then all candidate triples with "pricy" should be discarded 5 . The same is true for multi-word aspect phrases.</p><p>5 Some authors mention using additional post-processing</p><p>• Although one-to-many relations between aspect and opinion phrases are possible, the general probabilistic property is that constructing an increasing number of triples with a given phrase should be less and less likely.</p><p>• A potential aspect phrase should only be extracted if there is an opinion phrase associated with it. For example, consider the aspect word "room" in "The room was fine..." and "I was given a single room". In the first sentence this word should be extracted because it is part of a triple (see Fig <ref type="figure">1</ref>), but in the second sentence there is no opinion phrase attached to it.</p><p>to remove triples with overlapping phrases using heuristics.</p><p>Still, this is external to the model and the model is not able to learn to exploit this dependency from the data.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 2 :</head><label>2</label><figDesc>Figure 2: The overview of the proposed ASTE-Transformer architecture</figDesc><graphic coords="4,70.86,70.85,453.57,255.13" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 4 :</head><label>4</label><figDesc>Figure 4: Visualization of search space in aspect-opinion pair construction layer for the sentence: "Everything is so easy to use, Mac software is just so much simpler than Microsoft software.".</figDesc><graphic coords="13,138.89,239.45,317.51,330.91" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 5 :</head><label>5</label><figDesc>Figure 5: Visualization of search space in aspect-opinion pair construction layer for the sentence: " Great laptop that offers many great features!".</figDesc><graphic coords="14,138.89,99.77,317.49,325.50" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 6 :</head><label>6</label><figDesc>Figure 6: Precision and Recall as a function of τ .</figDesc><graphic coords="14,70.86,524.96,453.56,197.04" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head>Table 1 :</head><label>1</label><figDesc>The experimental results of ASTE task on four English benchmark datasets. The best results according to F1-score are bolded, and the second-best results are underlined. C-GPT stands for Chat-GPT and Flan for Flan-UL2.</figDesc><table><row><cell>5 Experimental evaluation</cell></row><row><cell>5.1 Experimental setup</cell></row><row><cell>Datasets To evaluate the predictive performance of ASTE-Transformer, we conducted computa-</cell></row><row><cell>tional experiments on four ASTE datasets com-</cell></row><row><cell>monly used in related work: 14res, 14lap, 15res,</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_4"><head>Table 3 :</head><label>3</label><figDesc>The results of an ablation study of the proposed method with/without pretraining (Pre.) and with/without transformer layer for triplet construction (Trans.) that models dependencies between candidate triples.</figDesc><table><row><cell>Method</cell><cell>14lap 14res 15res</cell><cell>16res</cell></row><row><cell>EPISA w/o pre. EPISA w/ pre.</cell><cell>63.56 73.89 65.54 62.77 74.07 67.87</cell><cell>71.77 72.22</cell></row><row><cell>Ours w/o pre. Ours w/ pre.</cell><cell>62.83 75.27 67.89 64.90 76.06 72.10</cell><cell>74.61 76.19</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_8"><head>Table 6 :</head><label>6</label><figDesc>The performance of several parts of ASTE-Transformer measured on 14lap dataset.</figDesc><table><row><cell>Prec.</cell><cell>Rec.</cell><cell>F1</cell></row><row><cell cols="3">Span Binary A-O pair layer 68.68 72.78 66.34 84.10 85.62 84.84 Final 4-class 69.53 69.53 69.53 Final binary 97.21 76.00 85.28 Overall 67.58 62.48 64.90</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_9"><head>Table 7 :</head><label>7</label><figDesc>Selected quantitative characteristics of benchmark datasets</figDesc><table><row><cell>English 14lap 14res 15res 16res hotels products Polish</cell></row></table></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="2" xml:id="foot_0"><p>ASTE-TransformerThe proposed method involves several processing steps, realised by three types of transformerinspired layers: 1) standard transformer layers, 2) an aspect-opinion construction layer, and</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" xml:id="foot_1"><p>3) a triple construction layer.</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="1" xml:id="foot_2"><p>Dice loss is a proper loss function only for binary classification task, so it cannot be used in this case.</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="2" xml:id="foot_3"><p>https://github.com/NaIwo/ASTE-Transformer</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="3" xml:id="foot_4"><p>https://pytorch.org/docs/stable/generated/ torch.nn.TransformerEncoder.html</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="4" xml:id="foot_5"><p>https://lightning.ai/docs/pytorch/stable/ common/trainer.html</p></note>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div><head>Acknowledgements</head><p>This research has received funding from the <rs type="funder">National Center for Research and Development</rs> under the <rs type="programName">Infostrateg program</rs> (project: <rs type="grantNumber">INFOSTRATEG-III/0003/2021-00</rs> "Development of an IT system using AI to identify consumer opinions on product safety and quality" realized in a consortium of <rs type="institution">Poznan Institute of Technology and Poznan University of Technology)</rs>.</p></div>
+			</div>
+			<listOrg type="funding">
+				<org type="funding" xml:id="_8vj9xzM">
+					<idno type="grant-number">INFOSTRATEG-III/0003/2021-00</idno>
+					<orgName type="program" subtype="full">Infostrateg program</orgName>
+				</org>
+			</listOrg>
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Limitations</head><p>This work addresses the issue of performing multiple independent classifications by span-based ASTE approaches to produce the final result. This is achieved by introducing an aspect-opinion matching layer and constructing interdependent triplet representations. Although this promotes the exchange of information about the considered triples, the classifier predictions on top of this mutually dependent representation are still independent in a probabilistic sense. To make the decisions dependent, some methods such as CRF have been proposed for sequences and graphs, but we are not aware of similar methods for sets, which is the case considered in this paper. Note that it has been shown that the use of interdependent representations is an effective way to explore information about dependencies for sequence prediction, as it significantly reduces the possible performance gains from making the classifier's predictions strictly dependent <ref type="bibr" target="#b16">(Reimers and Gurevych, 2017)</ref>.</p><p>Additionally, this work uses pre-trained language models, which are known to expose certain social biases reflected in their training data.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A Dataset details</head><p>The basic characteristics of benchmark datasets are given in Table <ref type="table">7</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B Implementation details</head><p>The structure of all linear layers adheres to a consistent architectural block pattern: LayerNorm, followed by a Linear layer, a ReLU activation function, and a Dropout layer with a rate of 0.1.</p><p>For the purpose of span selection loss (see Sec. 3), the classifier consisted of four linear blocks. The first layer had an input dimension of 768, which corresponds to the dimensionality of MLM embedding. Subsequent layers followed a halving dimension strategy: 768/2, 768/4, and 768/8, culminating in a layer that flattens the output to a single logit for binary classification.</p><p>The implementation of the pair constructor layer (Sec. 2.3) also integrates linear blocks. The dimensionality progression for these layers is as follows: starting from an initial dimension of 768, it moves through subsequent dimensions of 768/2, 768/4, 768/2 and the result from these layers is used as a representation of an aspect or opinion. These representations are then used to match corresponding opinions to their aspects by performing a search i.e. computing similarities between aspect and opinion vectors.</p><p>The final transformer-based classifier (Sec. 2.4) utilized the TransformerEncoder 3 class from the PyTorch library. The input is constructed by the concatenation of the embeddings for aspect/opinion spans, CLS token and an embedding representing the distance between aspect/opinion spans. Next, this concatenation result is passed through the linear layer to get, a 4 times smaller, 584-sized dimension and this value is an input to a transformer layer. The transformer's attention mechanism has 4 attention heads, ensuring a multi-head perspective in processing the input data. The following linear layer reduces dimensionality to 4 logits which are used to make the final prediction regarding a given pair of spans. During training, all correct phrases, even those below τ , are passed to the final transformer classifier to fully utilize the learning information.</p><p>For training the model, PyTorch Lightning 4 li-  </p></div>			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Span-level bidirectional cross-attention framework for aspect sentiment triplet extraction</title>
+		<author>
+			<persName><forename type="first">Yuqi</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Keming</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xian</forename><surname>Sun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zequn</forename><surname>Zhang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2022 Conference on Empirical Methods in Natural Language Processing (EMNLP). Association for Computational Linguistics</title>
+		<meeting>the 2022 Conference on Empirical Methods in Natural Language Processing (EMNLP). Association for Computational Linguistics</meeting>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">BERT: Pre-training of deep bidirectional transformers for language understanding</title>
+		<author>
+			<persName><forename type="first">Jacob</forename><surname>Devlin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ming-Wei</forename><surname>Chang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kenton</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kristina</forename><surname>Toutanova</surname></persName>
+		</author>
+		<idno type="DOI">10.18653/v1/N19-1423</idno>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2019 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies</title>
+		<meeting>the 2019 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies<address><addrLine>Minneapolis, Minnesota</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computational Linguistics</publisher>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="page" from="4171" to="4186" />
+		</imprint>
+	</monogr>
+	<note>Long and Short Papers</note>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Deberta: Decoding-enhanced bert with disentangled attention</title>
+		<author>
+			<persName><forename type="first">Pengcheng</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiaodong</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jianfeng</forename><surname>Gao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Weizhu</forename><surname>Chen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Learning Representations</title>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+		<title level="m" type="main">First target and opinion then polarity: Enhancing target-opinion correlation for aspect sentiment triplet extraction</title>
+		<author>
+			<persName><forename type="first">Lianzhe</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Peiyi</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sujian</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tianyu</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiaodong</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhicong</forename><surname>Cheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dawei</forename><surname>Yin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Houfeng</forename><surname>Wang</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+		<author>
+			<persName><forename type="first">Nikita</forename><surname>Kitaev</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Łukasz</forename><surname>Kaiser</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Anselm</forename><surname>Levskaya</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2001.04451</idno>
+		<title level="m">Reformer: The efficient transformer</title>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Polish-ASTE: Aspect-sentiment triplet extraction datasets for Polish</title>
+		<author>
+			<persName><forename type="first">Marta</forename><surname>Lango</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Borys</forename><surname>Naglik</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mateusz</forename><surname>Lango</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Iwo</forename><surname>Naglik</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2024 Joint International Conference on Computational Linguistics, Language Resources and Evaluation (LREC-COLING 2024)</title>
+		<meeting>the 2024 Joint International Conference on Computational Linguistics, Language Resources and Evaluation (LREC-COLING 2024)<address><addrLine>Torino, Italia</addrLine></address></meeting>
+		<imprint>
+			<publisher>ELRA and ICCL</publisher>
+			<date type="published" when="2024">2024</date>
+			<biblScope unit="page" from="12821" to="12828" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Simple approach for aspect sentiment triplet extraction using spanbased segment tagging and dual extractors</title>
+		<author>
+			<persName><forename type="first">Dongxu</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhihao</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yuquan</forename><surname>Lan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yunqi</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hui</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Gang</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">;</forename></persName>
+		</author>
+		<idno type="DOI">10.1145/3539618.3592060</idno>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 46th International ACM SIGIR Conference on Research and Development in Information Retrieval, SIGIR &apos;23</title>
+		<meeting>the 46th International ACM SIGIR Conference on Research and Development in Information Retrieval, SIGIR &apos;23<address><addrLine>New York, NY, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computing Machinery</publisher>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page" from="2374" to="2378" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Dual-channel span for aspect sentiment triplet extraction</title>
+		<author>
+			<persName><forename type="first">Pan</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ping</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kai</forename><surname>Zhang</surname></persName>
+		</author>
+		<idno type="DOI">10.18653/v1/2023.emnlp-main.17</idno>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2023 Conference on Empirical Methods in Natural Language Processing</title>
+		<meeting>the 2023 Conference on Empirical Methods in Natural Language Processing<address><addrLine>Singapore</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computational Linguistics</publisher>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page" from="248" to="261" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Dice loss for dataimbalanced NLP tasks</title>
+		<author>
+			<persName><forename type="first">Xiaoya</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiaofei</forename><surname>Sun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yuxian</forename><surname>Meng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Junjun</forename><surname>Liang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Fei</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jiwei</forename><surname>Li</surname></persName>
+		</author>
+		<idno type="DOI">10.18653/v1/2020.acl-main.45</idno>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 58th Annual Meeting of the Association for Computational Linguistics</title>
+		<meeting>the 58th Annual Meeting of the Association for Computational Linguistics</meeting>
+		<imprint>
+			<publisher>Association for Computational Linguistics</publisher>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="page" from="465" to="476" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<monogr>
+		<title level="m" type="main">A more fine-grained aspect-sentiment-opinion triplet extraction task</title>
+		<author>
+			<persName><forename type="first">Yuncong</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Fang</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wenjun</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Cunxiang</forename><surname>Sheng Hua Zhong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yancheng</forename><surname>Yin</surname></persName>
+		</author>
+		<author>
+			<persName><surname>He</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Stage: span tagging and greedy inference scheme for aspect sentiment triplet extraction</title>
+		<author>
+			<persName><forename type="first">Shuo</forename><surname>Liang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wei</forename><surname>Wei</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xian-Ling</forename><surname>Mao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yuanyuan</forename><surname>Fu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Rui</forename><surname>Fang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dangyang</forename><surname>Chen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the AAAI Conference on Artificial Intelligence</title>
+		<meeting>the AAAI Conference on Artificial Intelligence</meeting>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="volume">37</biblScope>
+			<biblScope unit="page" from="13174" to="13182" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Focal loss for dense object detection</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Lin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Goyal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Girshick</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Dollar</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">2017 IEEE International Conference on Computer Vision (ICCV)</title>
+		<meeting><address><addrLine>Los Alamitos, CA, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>IEEE Computer Society</publisher>
+			<date type="published" when="2017">2017</date>
+			<biblScope unit="page" from="2999" to="3007" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">From amateurs to connoisseurs: modeling the evolution of user expertise through online reviews</title>
+		<author>
+			<persName><forename type="first">Julian</forename><surname>John</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mcauley</forename></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jure</forename><surname>Leskovec</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 22nd international conference on World Wide Web</title>
+		<meeting>the 22nd international conference on World Wide Web</meeting>
+		<imprint>
+			<date type="published" when="2013">2013</date>
+			<biblScope unit="page" from="897" to="908" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">Exploiting phrase interrelations in span-level neural approaches for aspect sentiment triplet extraction</title>
+		<author>
+			<persName><forename type="first">Iwo</forename><surname>Naglik</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mateusz</forename><surname>Lango</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Advances in Knowledge Discovery and Data Mining</title>
+		<imprint>
+			<publisher>Cham. Springer Nature Switzerland</publisher>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page" from="222" to="233" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">Justifying recommendations using distantly-labeled reviews and fine-grained aspects</title>
+		<author>
+			<persName><forename type="first">Jianmo</forename><surname>Ni</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jiacheng</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Julian</forename><surname>Mcauley</surname></persName>
+		</author>
+		<idno type="DOI">10.18653/v1/D19-1018</idno>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2019 Conference on Empirical Methods in Natural Language Processing and the 9th International Joint Conference on Natural Language Processing (EMNLP-IJCNLP)</title>
+		<meeting>the 2019 Conference on Empirical Methods in Natural Language Processing and the 9th International Joint Conference on Natural Language Processing (EMNLP-IJCNLP)<address><addrLine>Hong Kong, China</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computational Linguistics</publisher>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="page" from="188" to="197" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">Knowing what, how and why: A near complete solution for aspect-based sentiment analysis</title>
+		<author>
+			<persName><forename type="first">Haiyun</forename><surname>Peng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lu</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lidong</forename><surname>Bing</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Fei</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wei</forename><surname>Lu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Luo</forename><surname>Si</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the AAAI Conference on Artificial Intelligence</title>
+		<meeting>the AAAI Conference on Artificial Intelligence</meeting>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="volume">34</biblScope>
+			<biblScope unit="page" from="8600" to="8607" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">Reporting score distributions makes a difference: Performance study of LSTM-networks for sequence tagging</title>
+		<author>
+			<persName><forename type="first">Nils</forename><surname>Reimers</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Iryna</forename><surname>Gurevych</surname></persName>
+		</author>
+		<idno type="DOI">10.18653/v1/D17-1035</idno>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2017 Conference on Empirical Methods in Natural Language Processing</title>
+		<meeting>the 2017 Conference on Empirical Methods in Natural Language Processing<address><addrLine>Copenhagen, Denmark</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computational Linguistics</publisher>
+			<date type="published" when="2017">2017</date>
+			<biblScope unit="page" from="338" to="348" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">TrelBERT: A pre-trained encoder for Polish Twitter</title>
+		<author>
+			<persName><forename type="first">Wojciech</forename><surname>Szmyd</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alicja</forename><surname>Kotyla</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Michał</forename><surname>Zobniów</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Piotr</forename><surname>Falkiewicz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jakub</forename><surname>Bartczuk</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Artur</forename><surname>Zygadło</surname></persName>
+		</author>
+		<idno type="DOI">10.18653/v1/2023.bsnlp-1.3</idno>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 9th Workshop on Slavic Natural Language Processing 2023</title>
+		<meeting>the 9th Workshop on Slavic Natural Language Processing 2023<address><addrLine>SlavicNLP; Dubrovnik, Croatia</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computational Linguistics</publisher>
+			<date type="published" when="2023">2023. 2023</date>
+			<biblScope unit="page" from="17" to="24" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">Grid tagging scheme for aspect-oriented fine-grained opinion extraction</title>
+		<author>
+			<persName><forename type="first">Zhen</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chengcan</forename><surname>Ying</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Fei</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhifang</forename><surname>Fan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xinyu</forename><surname>Dai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Rui</forename><surname>Xia</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Findings of the Association for Computational Linguistics: EMNLP 2020</title>
+		<imprint>
+			<publisher>Association for Computational Linguistics</publisher>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="page" from="2576" to="2585" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">Learning span-level interactions for aspect sentiment triplet extraction</title>
+		<author>
+			<persName><forename type="first">Lu</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yew</forename></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ken</forename><surname>Chia</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lidong</forename><surname>Bing</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 59th Annual Meeting of the ACL and the 11th IJCNLP</title>
+		<meeting>the 59th Annual Meeting of the ACL and the 11th IJCNLP</meeting>
+		<imprint>
+			<publisher>Association for Computational Linguistics</publisher>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="page" from="4755" to="4766" />
+		</imprint>
+	</monogr>
+	<note>Long Papers</note>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">Position-aware tagging for aspect sentiment triplet extraction</title>
+		<author>
+			<persName><forename type="first">Lu</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hao</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wei</forename><surname>Lu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lidong</forename><surname>Bing</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2020 Conference on Empirical Methods in Natural Language Processing (EMNLP)</title>
+		<meeting>the 2020 Conference on Empirical Methods in Natural Language Processing (EMNLP)</meeting>
+		<imprint>
+			<publisher>Association for Computational Linguistics</publisher>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="page" from="2339" to="2349" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<monogr>
+		<title level="m" type="main">A pairing enhancement approach for aspect sentiment triplet extraction</title>
+		<author>
+			<persName><forename type="first">Fan</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mian</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Gongzhen</forename><surname>Hu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiabing</forename><surname>Zhou</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">Making better use of training corpus: Retrieval-based aspect sentiment triplet extraction via label interpolation</title>
+		<author>
+			<persName><forename type="first">Guoxin</forename><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lemao</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Haiyun</forename><surname>Jiang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shuming</forename><surname>Shi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiang</forename><surname>Ao</surname></persName>
+		</author>
+		<idno type="DOI">10.18653/v1/2023.findings-acl.303</idno>
+	</analytic>
+	<monogr>
+		<title level="m">Findings of the Association for Computational Linguistics: ACL 2023</title>
+		<meeting><address><addrLine>Toronto, Canada</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computational Linguistics</publisher>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page" from="4914" to="4927" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<monogr>
+		<title level="m" type="main">Sentiment analysis in the era of large language models: A reality check</title>
+		<author>
+			<persName><forename type="first">Wenxuan</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yue</forename><surname>Deng</surname></persName>
+		</author>
+		<ptr target="https://synthical.com/article/85237ecb-ae59-47ec-9c7c-c26866cf9cfa" />
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<analytic>
+		<title level="a" type="main">Towards generative aspect-based sentiment analysis</title>
+		<author>
+			<persName><forename type="first">Wenxuan</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xin</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yang</forename><surname>Deng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lidong</forename><surname>Bing</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wai</forename><surname>Lam</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 59th Annual Meeting of the ACL and the 11th IJCNLP (Volume 2: Short Papers)</title>
+		<meeting>the 59th Annual Meeting of the ACL and the 11th IJCNLP (Volume 2: Short Papers)</meeting>
+		<imprint>
+			<publisher>Association for Computational Linguistics</publisher>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="page" from="504" to="510" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<title level="a" type="main">Target-to-source augmentation for aspect sentiment triplet extraction</title>
+		<author>
+			<persName><forename type="first">Yice</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yifan</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Meng</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bin</forename><surname>Liang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shiwei</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ruifeng</forename><surname>Xu</surname></persName>
+		</author>
+		<idno type="DOI">10.18653/v1/2023.emnlp-main.747</idno>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2023 Conference on Empirical Methods in Natural Language Processing</title>
+		<meeting>the 2023 Conference on Empirical Methods in Natural Language Processing<address><addrLine>Singapore</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computational Linguistics</publisher>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page" from="12165" to="12177" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

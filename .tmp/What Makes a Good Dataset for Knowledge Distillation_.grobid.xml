@@ -1,0 +1,1623 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">What Makes a Good Dataset for Knowledge Distillation?</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability  status="unknown">
+					<licence/>
+				</availability>
+				<date type="published" when="2024-11-19">19 Nov 2024</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Logan</forename><surname>Frank</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Computer Science and Engineering</orgName>
+								<orgName type="institution">Ohio State University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Jim</forename><surname>Davis</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Computer Science and Engineering</orgName>
+								<orgName type="institution">Ohio State University</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">What Makes a Good Dataset for Knowledge Distillation?</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date type="published" when="2024-11-19">19 Nov 2024</date>
+						</imprint>
+					</monogr>
+					<idno type="MD5">81E70AD73C5B17D1B0CA3759D7AAC5C6</idno>
+					<idno type="arXiv">arXiv:2411.12817v1[cs.CV]</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.2-SNAPSHOT" ident="GROBID" when="2025-01-12T08:11+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Knowledge distillation (KD) has been a popular and effective method for model compression. One important assumption of KD is that the teacher's original dataset will also be available when training the student. However, in situations such as continual learning and distilling large models trained on company-withheld datasets, having access to the original data may not always be possible. This leads practitioners towards utilizing other sources of supplemental data, which could yield mixed results. One must then ask: "what makes a good dataset for transferring knowledge from teacher to student?" Many would assume that only real in-domain imagery is viable, but is that the only option? In this work, we explore multiple possible surrogate distillation datasets and demonstrate that many different datasets, even unnatural synthetic imagery, can serve as a suitable alternative in KD. From examining these alternative datasets, we identify and present various criteria describing what makes a good dataset for distillation. Source code will be available in the future.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.">Introduction</head><p>Knowledge distillation (KD) <ref type="bibr" target="#b24">[25]</ref> has achieved widespread popularity as a tool for compressing the information stored inside a large pretrained "teacher" network into a much more compact and efficient "student" network. The goal of KD is to train the student to mimic the soft-target outputs (or internal features) of the teacher when presented with similar inputs, which has been shown to often produce a better performing student than training on the task directly. One particular advantage of KD over other model compression techniques is its flexibility that allows for the teacher and student to be completely different network architectures (e.g., a vision transformer <ref type="bibr" target="#b13">[14]</ref> distilled into a convolutional neural network <ref type="bibr" target="#b21">[22]</ref>).</p><p>In practice, one would ordinarily employ the same dataset used to train the teacher model when performing distillation. However, this assumption that the original data will be available may not always hold true. For example, KD is frequently performed for continual learning <ref type="bibr" target="#b19">[20]</ref> in the form of self-distillation <ref type="bibr" target="#b17">[18]</ref> (i.e., the teacher and student are the exact same network architecture). Here, data may be "streamed" where model updating occurs incrementally as new batches of data are obtained, without catastrophically forgetting past data. Another example that is becoming increasingly more common is large networks (and their weights) being released, but the data used to train the network are kept as proprietary in-house information by the company that released the model (e.g., CLIP <ref type="bibr" target="#b36">[37]</ref>, DI-NOv2 <ref type="bibr" target="#b33">[34]</ref>, and the GPT family <ref type="bibr" target="#b0">[1]</ref>).</p><p>Having the inability to access the original dataset has lead users to consider other alternatives for supplemental data, which can come from many different sources and has been explored to varying degrees <ref type="bibr" target="#b4">[5,</ref><ref type="bibr" target="#b8">9,</ref><ref type="bibr" target="#b14">15]</ref>. These sources include: 1) real in-domain (ID) examples, 2) real out-ofdomain (OOD) examples, and 3) synthetic examples optimized to be ID. However, there is one, perhaps unlikely, alternative not explored in literature: unoptimized unnatural synthetic OOD imagery (e.g., OpenGL shaders <ref type="bibr" target="#b42">[43]</ref>).</p><p>While we suspect most would elect to use real ID examples as surrogate data, we choose to explore the extreme and ask: "is it possible to distill knowledge with even the most unconventional dataset?" When answering this question, we ultimately uncover the mystery of what is required from a particular dataset for it to be successful in KD and show that if certain criteria are met, many different datasets can act as reasonable replacements when the original data are missing. Our contributions are summarized as follows:</p><p>1. We identify key characteristics of datasets that enable successful knowledge distillation to a student. 2. We show that with minimal setup, a teacher model can be distilled successfully using unnatural synthetic OOD imagery. 3. We present a new adversarial attack strategy that can improve knowledge transfer from teacher to student. 4. Our work is built on standard KD, making it easily applicable to many practitioners.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.">Methodology</head><p>In this section, we describe the experimental setup of our study. More specifically: 1) the collection of natural and synthetic datasets from different sources, 2) the role of data augmentation on these datasets, and 3) the method for transferring knowledge from teacher to student.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1.">Natural Dataset Collection</head><p>There is an exorbitant amount of natural (real) imagery available in the world. Thus, when the original training data is not accessible during distillation, employing other real datasets as substitutes would be a logical and reasonable choice. However, there is still one important question: "which one would work best?" The obvious answer is to select the dataset that shares the most overlap with the original dataset (i.e., ID), but does the data need to be ID with respect to the original dataset or can it be OOD?</p><p>To explore this, we employ a wide selection of common image classification datasets spanning general purpose to fine-grained/domain-specific usages. These datasets include CIFAR10 <ref type="bibr" target="#b26">[27]</ref>, CIFAR100 <ref type="bibr" target="#b26">[27]</ref>, Tiny ImageNet <ref type="bibr" target="#b12">[13]</ref>, and ImageNet <ref type="bibr" target="#b12">[13]</ref> for general purpose and FGVC-Aircraft <ref type="bibr" target="#b30">[31]</ref>, Pets <ref type="bibr" target="#b34">[35]</ref>, Food <ref type="bibr" target="#b6">[7]</ref>, and EuroSAT <ref type="bibr" target="#b22">[23]</ref> for fine-grained/domain-specific. As ImageNet can have a large overlap with many of the classes present in the other datasets, we choose to split it into ID and OOD subsets to fully evaluate how the domain of the data influences KD. When a teacher/dataset has complete overlap of its classes with ImageNet (e.g., Pets), we extract the shared classes and consider them as ID, with any classes remaining in ImageNet being considered OOD. There are some datasets (e.g., CIFAR100) that only have a portion of their classes represented in ImageNet, thus it is an incomplete overlap. In those situations we will not create an ID subset, but all non-overlapping classes can still be treated as OOD. Similarly, we do not include an ID subset for Tiny ImageNet as it is already a direct subset of ImageNet.</p><p>When distilling with a dataset different from the original, we limit the number of samples used in KD to 50K (e.g., distilling a CIFAR teacher using 50K ImageNet examples).</p><p>We select examples for the subsets based on the teacher's predictions, which will be described in the next section as it is similar for synthetic imagery.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2.">Synthetic Dataset Collection</head><p>In the previous section we asked whether having ID or OOD real images mattered. Here, we expand upon that question by asking: "does the data even need to be real?" Several DFKD works have already considered synthetic imagery that has been optimized to be more ID with respect to a particular teacher, which can sometimes result in unnatural images <ref type="bibr" target="#b5">[6,</ref><ref type="bibr" target="#b54">55,</ref><ref type="bibr" target="#b56">57]</ref>, but we wonder if the optimization is even necessary. Therefore, we seek to investigate if it is possible to transfer knowledge from a pretrained teacher to a freshly initialized student using solely unoptimized, unnatural OOD synthetic imagery. Such imagery could come in forms such as OpenGL shaders <ref type="bibr" target="#b42">[43]</ref>, Leaves <ref type="bibr" target="#b3">[4]</ref>, or noise, each with a different process for obtaining samples.</p><p>For constructing a dataset of OpenGL shaders, we leverage procedural image programs from <ref type="bibr" target="#b2">[3]</ref> to render several images for each of the available 1089 TwiGL shaders <ref type="bibr" target="#b51">[52]</ref>. As some of these shaders produced images that were either constant (i.e., containing all one color such as all black or all white) or simple (i.e., containing only two colors or containing few colored pixels), we removed such examples in order to create an initial set of synthetic images with the most diversity possible. After rendering and filtering all images, we obtain the initial synthetic dataset D S .</p><p>As for Leaves, we synthesize several images containing randomly arranged shapes using the code provided by <ref type="bibr" target="#b3">[4]</ref>, with no filtering needed for obtaining D S . However, note that the images generated in this format are much more simple and less diverse than the OpenGL shaders, containing only basic shapes such as circles, squares, and triangles that are colored randomly and have no texture (i.e., a constant color for all pixels of the shape).</p><p>Lastly, we construct D S consisting of noise images by sampling RGB values for every pixel following a normal distribution defined by the original dataset's statistics. For example, we calculated CIFAR10's mean and standard deviation of the red channel to be 0.5071 and 0.2673, respectively. Thus, we draw a red value from N (µ = 0.5071, σ = 0.2673) for each pixel in the image to be synthesized (and this is repeated for the green and blue channels).</p><p>As an additional step, we process these initial examples through the teacher network to select a subset to be used for distillation. Given a teacher network F T pretrained on some dataset with C = {c 1 , ..., c R } classes and an initial synthetic dataset D S , we pass each example in D S through F T to obtain a teacher prediction and aggregate all predictions. To form the final synthetic dataset D K that will be used for KD, we select examples from D S based on their teacher predictions. For images predicted as class c i by the teacher, we randomly sample N i examples. If a particular class is predicted 0 times, we skip it and sample more examples from the other classes. If a particular class is predicted less than N i (but more than 0) times, we replicate the examples until we have N i . Collecting N i synthetic images per class for the specific pretrained teacher creates the base synthetic distillation dataset D K = {(x 1 , y 1 ), ..., (x N , y N )} where</p><formula xml:id="formula_0">F T (x j ) = y j ∀ (x j , y j ) ∈ D K (1)</formula><p>Examples of these images from possible D S sets are shown in Fig. <ref type="figure" target="#fig_0">1</ref>. There is a wide range of complexity/textures and primitive features across the three forms of synthetic imagery and as will be shown in our experiments, this difference in appearance between the OpenGL shaders, Leaves, and noise images will have a pronounced effect on the performance of the distillation.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.3.">Data Augmentation</head><p>One particular benefit of the synthetic datasets is the ability to render an unbounded number of images, enabling near-infinite dataset sizes if desired. However, it becomes obvious that obtaining potentially millions of images quickly poses a storage issue. Furthermore, synthesizing new images does not guarantee significantly different examples (from the existing ones), unlike obtaining a new real image of some class. A clear solution for increasing dataset diversity without having an over-inflated dataset is data augmentation. This allows us to artificially create more examples during distillation and furthermore, augmentations could enable us to explore regions of the teacher's feature space that the original data could not discover on its own.</p><p>In ordinary fully-supervised training, data augmentations should be "label-preserving" <ref type="bibr" target="#b18">[19]</ref>. However, if we view KD as function matching <ref type="bibr" target="#b4">[5]</ref>, then the label-preserving constraint is not an issue. This is especially true in the case of our unnatural synthetic imagery as there is no notion of a "label" (or any other semantic meaning). Thus, we can employ large amounts of data augmentation that would normally not be considered in standard supervised learning. However, we empirically find (and will show in experiments) that too much data augmentation can harm the final outcome of distillation for real imagery, but not as much for synthetic data. Later, we will describe our complete data augmentation regime for KD and additionally show how data augmentation can provide strong benefits to certain distillation datasets.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.4.">Knowledge Distillation</head><p>We follow the standard approach for KD <ref type="bibr" target="#b24">[25]</ref> in our analysis. Given a pretrained teacher network F T and a randomly initialized student network F S , an example is passed forward through both networks to produce teacher and student softmax distributions p T and p S , respectively. The KD loss is computed on these softmax scores as</p><formula xml:id="formula_1">L(p T || p S ) = i ∈ C p T (i) log p T (i) -p T (i) log p S(i) (2)</formula><p>which is simply the KL-divergence. Like <ref type="bibr" target="#b24">[25]</ref>, we also include a temperature parameter τ to adjust the entropy of the output softmax distributions from the teacher and student networks before they are used to compute the loss.</p><p>While more advanced methods of KD do exist, we elect to use the original approach as it is still widely used (and potentially most commonly used) in practice for its simplicity and generality with respect to the network architectures.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.">Experiments</head><p>We first conducted experiments performing KD with several different surrogate general purpose, finegrained/domain-specific, and unnatural synthetic datasets. Next, we investigated what makes certain datasets better for KD than others. We also present a new adversarial attack strategy to explore the importance of having examples close to the decision boundary in KD. Lastly, we compared to existing methods that employ other surrogate data sources. Datasets &amp; Networks. We employed three general purpose and three fine-grained/domain-specific datasets to train our teachers. The general purpose datasets were CI-FAR10 (C10), CIFAR100 (C100), and Tiny ImageNet (Tiny) and the fine-grained/domain-specific datasets were FGVC-Aircraft (FGVCA), Pets, and EuroSAT. For our distillation datasets, we employed the same six teacher training datasets as well as ImageNet (IN) split into ID and OOD subsets (IN-ID and IN-OOD, respectively), Food, OpenGL shaders, Leaves, and noise.</p><p>In our main distillation experiments, we utilized ResNet50 <ref type="bibr" target="#b21">[22]</ref> as the teacher and two different students depending on the teacher's dataset. For CIFAR10/100 trained teachers, we employed ResNet18 and Wide ResNet 40x2 <ref type="bibr">[39]</ref> and for all other datasets we employed ResNet18 and MobileNet v2 <ref type="bibr" target="#b39">[40]</ref>. In additional experiments, we used stronger teacher models in the form of ConvNeXt-T <ref type="bibr" target="#b29">[30]</ref> and ViT-S <ref type="bibr" target="#b49">[50]</ref>, which were distilled to ResNet18 students. Teacher Training Details. To train our ResNet50 teacher models, we used SGD with momentum (0.9) and weight decay (1e-4) and a one-hot cross-entropy loss. All networks were trained for 400 epochs with a batch size of 256 and a half-period cosine learning rate scheduler, beginning with an initial learning rate of 0.1. Data augmentation consisted of RandAugment <ref type="bibr">[12]</ref> (n = 2, m = 14), random horizontal flipping, and random cropping with padding. All ConvNeXt and ViT teachers were finetuned on their respective datasets for 10 epochs using ImageNet1K-pretrained weights, following the settings specified in the ConvNeXt GitHub <ref type="bibr" target="#b29">[30]</ref>. Distillation Training Details. We employed SGD with momentum (0.9) and weight decay (1e-4) for our students, and utilized the standard KD loss as defined previously <ref type="bibr" target="#b24">[25]</ref>. Distillation was performed for 400 epochs for all experiments using a half-period cosine learning rate scheduler with an initial learning rate of 0.1, and batch sizes of 256 for all datasets. We empirically found that a temperature value of τ = 2 worked best when distilling with general purpose datasets and τ = 20 for the fine-grained/domain-specific and unnatural synthetic datasets. For real imagery, we utilized the same data augmentation regime as used for training our teacher models. When synthetic imagery was used, we employed stronger data augmentation by increasing the RandAugment amount from n = 2 to n = 4 and also added random elastic and random inversion transforms. As previously stated, we utilized stronger data augmentation for the synthetic imagery since there is no notion of a label or any other semantic meaning (compared to real data). However, we did experiment with altering the strength of the data augmentation for both real and synthetic imagery, as will be shown. Furthermore, for both real and synthetic distillation datasets we also included mixup <ref type="bibr" target="#b57">[58]</ref> with α ∈ U(0, 1), similar to <ref type="bibr" target="#b4">[5]</ref>.</p><p>As previously mentioned, we capped the number of examples used in distillation at 50K (some datasets may have less because they do not have 50K examples). Thus, we used 50K OpenGL shader, Leaves, and noise images and similarly a 50K subset of the Tiny, IN-ID, IN-OOD, and Food datasets. All other datasets were unchanged (as they have 50K or less examples).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1.">Results</head><p>We present experimental results of our KD experiments, followed by analyses on the observations from these experiments. We then incorporate our adversarial attack method to enforce certain properties identified in our analyses and conclude with comparisons to other forms of surrogate data. Standard Knowledge Distillation. One of the main goals of this study is to uncover what datasets could serve as a surrogate during distillation if the original (teacher) dataset is unavailable. To investigate this, we first naïvely distilled a ResNet50 teacher (trained on each of the aforementioned teacher datasets) to two different student networks using each of the previously described distillation datasets. These distillation datasets included a mix of general purpose, fine-grained/domain-specific, and synthetic imagery to fully evaluate the wide range of possible alternatives that could be used in KD. Results for each of the teacher training and distillation dataset combinations are shown in Table <ref type="table" target="#tab_0">1</ref>.</p><p>We see that many different datasets can serve as reasonable substitutes when attempting to transfer knowledge from teacher to student. We dissect our results by answering the questions posed in Sect. <ref type="bibr" target="#b2">3</ref>.</p><p>Does the distillation data need to be in-domain? As seen by the purple cells in for Pets and FGVCA could converge and ultimately reach a similar performance level as the teacher (as also suggested in <ref type="bibr" target="#b4">[5]</ref>), which could likely be true for CIFAR10/100 and Tiny ImageNet as well. Assuming a student can be trained for long enough, our results suggest that it is possible to transfer knowledge from teacher to student using an alternative OOD dataset. However, we see that having ID data leads to better sample efficiency (i.e., less examples are needed to properly distill the information in the teacher). Does the distillation data need to be real? When we additionally examine the unnatural synthetic distillation datasets, we interestingly observe that a large amount of knowledge can still be transferred to the student for many of the teacher datasets. Distilling using OpenGL shader images obtains within 2%, 5%, and 0.2% of the CIFAR10, CIFAR100, and EuroSAT distilled students, respectively. As for the other synthetic datasets, Leaves is able to come within 4%, 13%, and 0.6% of the CIFAR10, CIFAR100, and EuroSAT distilled students, respectively, but noise does not perform well for any of the teachers (as expected). When the number of classes increases substantially (Tiny ImageNet) or the classes become more finegrained (FGVCA and Pets), the synthetic images begin to not perform as well, with Leaves and noise struggling significantly more than OpenGL shaders. This could be attributed to needing more training time (similar to the real OOD imagery) or needing more data diversity.</p><p>As shown in Table <ref type="table" target="#tab_0">1</ref>, utilizing Leaves over noise achieves large performance gains likely attributed to the inclusion of "primitive" features (lines and corners, see Fig. <ref type="figure" target="#fig_0">1</ref>) present in the Leaves images. However, OpenGL shaders add even more diversity to the images over Leaves and also includes texture, resulting in substantial performance increases. Since these OpenGL images are rendered from 1089 shader codes using (cyclic) time steps, one could begin to include more shader codes in the synthesis of these images to increase the diversity of the OpenGL shaders dataset, which would likely lead to gains in all scenarios. This is further emphasized with general purpose datasets tending to perform better than the fine-grained ones. Thus, while we show that many teachers can already be distilled using OpenGL shader images, with sufficient training and increased diversity, one could reasonably be able to transfer knowledge to a student using unnatural synthetic imagery (i.e., the data does not need to be real).</p><p>How does the teacher architecture influence what distillation datasets are viable? We extended our previous experiment for some datasets by examining more powerful teachers (in the form of ConvNeXt-T and ViT-S) to investigate how the choice of teacher model impacts the usability of alternative datasets in KD. These teachers were distilled to ResNet18 models to compare with the previous results. In Table <ref type="table">2</ref>, we see that the teacher has a significant impact on the speed of KD. Not shown in the table, we ran an additional experiment distilling the CIFAR10 ViT-S teacher to a ResNet18 student using OpenGL shader images for 1200 epochs (as opposed to 400), and saw the performance of the student model increase by over 7%, indicating that "patient" distillation <ref type="bibr" target="#b4">[5]</ref> is necessary when the teacher model is more complex and higher performing. Thus, while the choice of teacher certainly impacts the time needed to adequately transfer knowledge to a student, it does not appear to impact the viability of certain datasets for distillation.</p><p>What Influences Successful Distillation? We have seen that many different datasets can transfer a large amount of knowledge from teacher to student, but we have also observed that many datasets are not as successful. Thus, what makes a particular dataset more likely to be successful for KD than another? To gain more insight for answering this question, we conducted a series of experiments examining the teacher's predictions, distilling with different levels of teacher output information, and alterations to the distillation dataset and data augmentations. All experiments were performed with a CIFAR10 trained ResNet50 teacher distilled to a ResNet18 student.</p><p>In Table <ref type="table" target="#tab_2">3</ref>, we computed the relative entropy of the histogram of class counts from the teacher's argmax predictions for a particular distillation dataset, which we refer to as the class prediction histogram. Relative entropy is computed as H(p)/H(U C ) where H(•) is the entropy function, p is the aforementioned histogram (normalized to sum to 1), and U C is the discrete uniform distribution for C classes (i.e., the distribution that produces the largest entropy). We see that the datasets that perform best in distillation tend to have a relative entropy closer to 1 (the maximum), implying the teacher predicts all outputs equally in number.</p><p>To understand the importance of having a high entropy class prediction histogram (i.e., relative entropy closer to 1), we first changed the teacher's supervisory signal to the student by making the output either one-hot or one-hot with label smoothing <ref type="bibr" target="#b31">[32]</ref>. We see in dents do not differ significantly from the student trained on temperature-scaled softmax outputs (although this is likely to change for more difficult datasets). However, the students distilled with OpenGL shader images benefited more from the temperature-scaled softmax outputs. This could suggest that when distilling using OpenGL data (or any other OOD data), having awareness and understanding of nearby decision boundaries and relationships between classes is especially important (as assisted with temperature scaling).</p><p>To complete our investigation on the importance of having a high entropy class prediction histogram, we reduced the number of examples used in distillation by creating balanced and long tail subsets of 20K examples for both CI-FAR10 and OpenGL shaders. As shown in Table <ref type="table" target="#tab_3">4</ref>, the long tail version performs about 1.3% worse than the balanced version (without mixup), indicating that predicting all outputs of the teacher uniformly is critical for success in KD. However, with mixup we see both experiments perform substantially better, with the gap lessening to about 0.7%. Thus, being able to explore as much of the teacher's feature space (through mixup) is critical in situations where the number or quality of raw samples is inadequate.</p><p>Lastly, to understand how data diversity plays a role in KD, we adjust the intensity of the data augmentations used during distillation. This includes high and standard (as defined previously), but also adds no data augmentation and "extreme" data augmentation where we expanded upon the high regime by increasing RandAugment to n = 8, m = 30 and added random erasing <ref type="bibr" target="#b58">[59]</ref>. We see in Table <ref type="table" target="#tab_4">5</ref> that data augmentation plays a significant role in the performance of the student, but to varying degrees depending on the distillation dataset. From the lowest performing student to the highest, distilling with CIFAR10 gained 8.7% whereas distilling with OpenGL shaders improved by 62.2%. Most interestingly, when utilizing extreme augmentations and mixup to distill using CIFAR10, we obtain similar performance as distilling with OpenGL shader data. In other words, when the augmentations becomes too strong, CI-FAR10 becomes OOD and we see them perform similarly.</p><p>Combining the results from Tables <ref type="table" target="#tab_2">3</ref><ref type="table" target="#tab_3">4</ref><ref type="table" target="#tab_4">5</ref>, we see that KD is task of function matching and sufficient sampling of the teacher. However, not all datasets are equally efficient with their sampling, with ID data demonstrating better sample efficiency than OOD data, and the original data being the most sample efficient of all datasets. One way to understand this is to imagine a signal that needs to be sampled properly for reconstruction (while avoiding aliasing errors). Given a sufficient number of samples, we can better capture what the underlying signal would be, similar to how the Nyquist sampling rate operates in signal processing. Thus, having a low entropy class prediction histogram implies that the teacher is being undersampled and its knowledge cannot be reconstructed properly (into the student).</p><p>To understand the importance of sufficient sampling, we examined a toy scenario by training a simple MNIST teacher (to ∼97% accuracy) that has 3 convolutional layers resulting in 2 GAP features, followed by 3 fully-connected layers (with ReLU activations). We then distilled this teacher model to a student of the exact same architecture using MNIST, OpenGL shaders, and CIFAR10 data, then visualized the GAP features of the distillation data through the teacher and the MNIST test data through the distilled student (along with each model's decision boundaries).</p><p>From Fig. <ref type="figure" target="#fig_1">2</ref>, we see that the OpenGL shader dataset had examples predicted in all class regions of the teacher (resulting in a relative entropy closer to 1), while the CI-FAR10 data only covered a fraction of the classes (i.e., entropy closer to 0). As a result, the OpenGL shader student obtained decision boundaries more in line with the MNIST student, resulting in an MNIST test accuracy score  of 92.89% compared to 38.78% accuracy for the CIFAR10 student. Thus, in the case of the OOD experiment in <ref type="bibr" target="#b4">[5]</ref>, it is likely that the base OOD predictions in the teacher were imbalanced, which did not sample the decision space in the teacher sufficiently for performing KD, leading to worse knowledge transfer. Adding Teacher Exploitation. As we just showed that having a high entropy class prediction histogram plays a significant role in the downstream KD success of a dataset and argued that KD relies on decision boundary information when distilling using surrogate data, one could force these properties with adversarial attacks. Thus, if a dataset is deemed "bad" for KD with a specific teacher, it could be possible that minor perturbations (adversarial attacks) to the images would improve their feasibility. For our adversarial attack, perturb an example x j to an arbitrary label t where F T (x j ) ̸ = t to help identify the decision boundary between t and all other classes. Differing from previous works <ref type="bibr" target="#b23">[24,</ref><ref type="bibr" target="#b48">49]</ref>, we utilize pairs of adversarial examples (x adv 1 = t, x adv 2 ̸ = t) to better outline the decision boundaries (i.e., "post"-success and "pre"success examples) and furthermore require both examples be within some specified argmax softmax threshold to ensure they are somewhat close to the border. We also propose adding a Bold Driver heuristic <ref type="bibr" target="#b40">[41]</ref> to the attack step size to make it more adaptive. Beyond just identifying the decision boundaries in the teacher model, we include an additional single-step attack that copies the pair of examples and perturbs them deeper into the decision space of their respective classes (i.e., more sampling). The full adversarial perturbation process is shown in Fig. <ref type="figure" target="#fig_2">3</ref> for an arbitrary class C. By including this adversarial attack to create a more decision boundary aware dataset, we see in Table <ref type="table" target="#tab_5">6</ref> that we can obtain even better performance overall. More interestingly, when applying the attack to the worst performing distillation datasets (from Table <ref type="table" target="#tab_0">1</ref>), we observe substantially improved knowledge transfer from teacher to student. In particular, the CIFAR10, CIFAR100, and EuroSAT teachers distilled with FGVCA gained 76.8%, 35.9%, and 38% in accuracy, respectively. However, the FGVCA teacher distilled using EuroSAT imagery does not achieve as significant of gains, likely due to the fine-grained nature of FGVCA. In all scenarios, distilling with the worst dataset using our adversarial perturbation method does not achieve scores as good as Food and OpenGL shaders naïvely, which is likely due to the limited diversity of imagery present in FGVCA/EuroSAT. The results shown in Table <ref type="table" target="#tab_5">6</ref> further emphasize points that sufficient sampling of the teacher outputs and diverse imagery are two critical components to the success of a distillation dataset.</p><p>Comparisons to Other Data Sources. As mentioned in Sect. 2, other methods for creating surrogate KD data exist. Thus, we compared to multiple data-free KD methods <ref type="bibr" target="#b5">[6,</ref><ref type="bibr" target="#b15">16,</ref><ref type="bibr" target="#b16">17,</ref><ref type="bibr" target="#b56">57]</ref> and a single image KD approach [2] using a ResNet34 teacher and ResNet18 student (as commonly done in data-free KD literature). As shown in Table 7, many of the supplemental datasets perform comparably. Interestingly, most data-free KD methods include loss functions on their generator networks to output all classes equally and to output new examples (i.e., diverse images). However, we find that this can be done directly (as shown with OpenGL shader images) without the need for an additional generator network, which can introduce problems such as mode collapse and non-convergence and furthermore can add substantial computational overhead (Spaceship <ref type="bibr" target="#b56">[57]</ref> took roughly 48 hours for this experiment compared to 2 hours for vanilla KD).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.">Discussion</head><p>This study examined the usage of surrogate datasets in KD when the original data is unavailable, ultimately seeking to answer the question: "what makes a dataset good for KD?" Through answering this question, we discovered that the data used for transferring knowledge from teacher to student does not need to be ID or real, although ID data (particularly the original data) has the best sample efficiency of all possible distillation datasets. Our results showed that it is entirely possible to perform KD with even the most unconventional datasets, particularly in the form of OpenGL shader images (that did not need to be optimized to a specific teacher). When examining what makes a particular distillation dataset successful as a replacement for the original data in KD, we uncovered that distillation is ultimately a task of sufficient sampling in addition to function matching <ref type="bibr" target="#b4">[5]</ref>, with the following being crucial to the success of a distillation dataset:</p><p>• All classes should be represented equally by the data, as measured by the entropy of teacher's predictions. • The data predicted as each individual class should span as much of the decision region as possible. • Having greater image diversity/complexity increases the wide-spread applicability and sample-efficiency. • Increased decision boundary information (softer teacher outputs, physical examples near the border, etc.) is vital in many cases when using surrogate data. Additionally, we found that increased distillation epochs is especially important when distilling using more complex teachers and when using alternative distillation data. To the best of our knowledge, these collective ideas have not been articulated in literature, with previous works showing that distilling with OOD data does not work <ref type="bibr" target="#b4">[5]</ref> and others assuming supplemental data is not useful in any capacity <ref type="bibr" target="#b14">[15]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.">Conclusion</head><p>We investigated the scenario in knowledge distillation where the original data (used to train the teacher) is unavailable for training the student and examined the use of supplemental data. Through our study, we conducted experiments and analyses that give insight into what characteristics indicate that a particular surrogate distillation dataset will better enable knowledge transfer from teacher to student. More specifically, we showed that KD is a sufficient sampling problem that requires the teacher's outputs and decision spaces be equally and thoroughly explored. Our work culminated in experiments showing that it is actually possible to distill many different teacher models using unnatural synthetic imagery in the form of OpenGL shader images. Lastly, we proposed an adversarial perturbation strategy that can improve the knowledge transfer of both well-performing and ineffective distillation datasets.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 .</head><label>1</label><figDesc>Figure 1. Example OpenGL shader (first column), Leaves (middle column), and noise (last column) images.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 2 .</head><label>2</label><figDesc>Figure 2. Visualization of 2D GAP features comparing an MNIST teacher with students trained on various distillation datasets.</figDesc><graphic coords="7,54.25,137.68,74.24,74.24" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 3 .</head><label>3</label><figDesc>Figure 3. Decision boundary exploitation adversarial attack in the teacher feature space for an arbitrary class C (left to right). The symbols ×, ■, ▲, and represent the original synthetic examples, "post"-success examples, "pre"-success examples, and "deeper" examples, respectively. Best viewed in color.</figDesc><graphic coords="7,206.23,137.68,74.24,74.24" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head>Table 1 ,</head><label>1</label><figDesc>it is clear that distilling with</figDesc><table><row><cell>Real</cell><cell>Synthetic</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1"><head>Table 1 .</head><label>1</label><figDesc>TDATA test accuracy of student networks when distilled using various datasets. The models distilled with the original training data (TDATA) are highlighted in purple. The best surrogate real and synthetic distillation datasets are emphasized in bold. Entries with "-" are those cases where no complete ID subset could be found (as discussed in Sect. 3.1).the original dataset often remains superior, however many real ID and OOD surrogate datasets achieve comparable results. For CIFAR10, distilling using ImageNet ID and OOD images both come within 1.5% accuracy of the CI-FAR10 distilled student, with ID performing slightly better. The Pets trained teacher is the only scenario where a surrogate actually outperformed the original dataset. However, the number of examples differ drastically, with Pets having roughly 3600 images and ImageNet ID having 50K samples. This is a similar case for FGVCA where the Im-ageNet OOD dataset outperformed the ID subset, but the OOD version has 50K examples compared to the 3900 images in the ID. With more training time, it is possible that the better performing supplemental datasets (ID or OOD)</figDesc><table /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2"><head>Table 3 .</head><label>3</label><figDesc>Relative entropy of ResNet50 teacher class prediction histograms using various distillation datasets.</figDesc><table><row><cell>TDATA</cell><cell cols="2">Teacher</cell><cell cols="2">Original</cell><cell>Food</cell><cell>OpenGL</cell></row><row><cell>C10</cell><cell cols="2">ConvNeXt-T ViT-S</cell><cell>98.14 98.54</cell><cell>97.70 97.51</cell><cell>56.43 72.60</cell><cell>87.03 83.30</cell></row><row><cell>Tiny</cell><cell cols="2">ConvNeXt-T ViT-S</cell><cell>89.19 85.22</cell><cell>77.11 73.79</cell><cell>23.45 26.00</cell><cell>37.50 33.69</cell></row><row><cell>Pets</cell><cell cols="2">ConvNeXt-T ViT-S</cell><cell>94.03 93.59</cell><cell>86.15 84.90</cell><cell>38.13 14.72</cell><cell>32.76 26.02</cell></row><row><cell>EuroSAT</cell><cell cols="2">ConvNeXt-T ViT-S</cell><cell>98.85 98.15</cell><cell>98.90 98.85</cell><cell>95.85 83.95</cell><cell>97.95 97.90</cell></row><row><cell cols="7">Table 2. TDATA test accuracy of a ResNet18 student when distilled</cell></row><row><cell cols="4">from more complex teacher networks.</cell><cell></cell><cell></cell><cell></cell></row><row><cell>TDATA</cell><cell>Original</cell><cell>Best</cell><cell>Worst</cell><cell>Food</cell><cell cols="2">OpenGL Leaves</cell></row><row><cell>C10</cell><cell>0.999</cell><cell>0.994</cell><cell>0.116</cell><cell>0.711</cell><cell>0.939</cell><cell>0.801</cell></row><row><cell>C100</cell><cell>0.999</cell><cell>0.983</cell><cell>0.631</cell><cell>0.834</cell><cell>0.918</cell><cell>0.808</cell></row><row><cell>Tiny</cell><cell>0.997</cell><cell>0.905</cell><cell>0.539</cell><cell>0.658</cell><cell>0.909</cell><cell>0.526</cell></row><row><cell>FGVCA</cell><cell>0.957</cell><cell>0.805</cell><cell>0.322</cell><cell>0.544</cell><cell>0.854</cell><cell>0.572</cell></row><row><cell>Pets</cell><cell>0.999</cell><cell>0.991</cell><cell>0.514</cell><cell>0.542</cell><cell>0.928</cell><cell>0.668</cell></row><row><cell>EuroSAT</cell><cell>0.994</cell><cell>0.896</cell><cell>0.664</cell><cell>0.776</cell><cell>0.954</cell><cell>0.653</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_3"><head>Table 4 .</head><label>4</label><figDesc>Table 4  that the final scores of the one-hot and label smoothing CIFAR10 stu-Adjusting the teacher outputs for supervision and altering the distillation dataset based on the teacher's predictions. Experiments with * denote the inclusion of mixup.</figDesc><table><row><cell>Experiment</cell><cell>C10</cell><cell>OpenGL</cell></row><row><cell>Original</cell><cell>95.98</cell><cell>94.02</cell></row><row><cell>One-Hot</cell><cell>96.09</cell><cell>91.68</cell></row><row><cell>Label Smoothing</cell><cell>95.81</cell><cell>92.07</cell></row><row><cell>20K Long Tail Examples</cell><cell>91.85</cell><cell>88.93</cell></row><row><cell>20K Long Tail Examples*</cell><cell>94.36</cell><cell>91.39</cell></row><row><cell>20K Balanced Examples</cell><cell>93.12</cell><cell>90.34</cell></row><row><cell>20K Balanced Examples*</cell><cell>95.07</cell><cell>92.32</cell></row><row><cell>Experiment</cell><cell>C10</cell><cell>OpenGL</cell></row><row><cell>Extreme w/ Mixup</cell><cell>94.04</cell><cell>93.95</cell></row><row><cell>High w/ Mixup</cell><cell>95.69</cell><cell>94.02</cell></row><row><cell>Standard w/ Mixup</cell><cell>95.98</cell><cell>93.39</cell></row><row><cell>None w/ Mixup</cell><cell>95.00</cell><cell>92.20</cell></row><row><cell>Extreme w/o Mixup</cell><cell>93.43</cell><cell>92.80</cell></row><row><cell>High w/o Mixup</cell><cell>95.86</cell><cell>93.37</cell></row><row><cell>Standard w/o Mixup</cell><cell>95.46</cell><cell>91.14</cell></row><row><cell>None w/o Mixup</cell><cell>87.33</cell><cell>31.84</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_4"><head>Table 5 .</head><label>5</label><figDesc>CIFAR10 test accuracy of student models when distilled under different data augmentations levels.</figDesc><table /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_5"><head>Table 6 .</head><label>6</label><figDesc>TDATA test accuracy of distilled students comparing the inclusion of our adversarial perturbation strategy.</figDesc><table><row><cell>TDATA</cell><cell>Attack</cell><cell>Original</cell><cell>Worst</cell><cell>Food</cell><cell>OpenGL</cell></row><row><cell>C10</cell><cell>✗</cell><cell>95.98</cell><cell>11.39</cell><cell>93.24</cell><cell>94.02</cell></row><row><cell>T: 95.48</cell><cell>✓</cell><cell>95.94</cell><cell>88.14</cell><cell>93.55</cell><cell>94.54</cell></row><row><cell>C100</cell><cell>✗</cell><cell>78.35</cell><cell>23.01</cell><cell>71.45</cell><cell>73.27</cell></row><row><cell>T: 77.45</cell><cell>✓</cell><cell>78.52</cell><cell>58.90</cell><cell>72.64</cell><cell>75.02</cell></row><row><cell>FGVCA</cell><cell>✗</cell><cell>89.62</cell><cell>7.17</cell><cell>70.54</cell><cell>69.21</cell></row><row><cell>T: 91.27</cell><cell>✓</cell><cell>90.67</cell><cell>10.74</cell><cell>73.60</cell><cell>72.62</cell></row><row><cell>EuroSAT</cell><cell>✗</cell><cell>98.60</cell><cell>59.00</cell><cell>97.55</cell><cell>98.45</cell></row><row><cell>T: 97.80</cell><cell>✓</cell><cell>98.65</cell><cell>96.95</cell><cell>98.45</cell><cell>98.60</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_6"><head>Table 7 .</head><label>7</label><figDesc>Comparison of other supplemental data KD approaches on CIFAR10/100 using a ResNet34 teacher and ResNet18 student. Methods with * denote that we reran their code.</figDesc><table><row><cell></cell><cell></cell><cell>TDATA</cell><cell></cell></row><row><cell>Method</cell><cell>SDATA</cell><cell>C10</cell><cell>C100</cell></row><row><cell>Teacher</cell><cell>-</cell><cell>95.70</cell><cell>78.05</cell></row><row><cell>w/o Attack</cell><cell>Original</cell><cell>95.53</cell><cell>79.03</cell></row><row><cell>w/o Attack</cell><cell>Tiny</cell><cell>94.81</cell><cell>76.24</cell></row><row><cell>w/o Attack</cell><cell>Food</cell><cell>93.20</cell><cell>71.74</cell></row><row><cell>w/o Attack</cell><cell>OpenGL</cell><cell>93.79</cell><cell>73.86</cell></row><row><cell>CMI [17]</cell><cell></cell><cell>82.40</cell><cell>55.20</cell></row><row><cell>PRE-DFKD [6] Spaceship [57]*</cell><cell>Data-Free</cell><cell>87.40 95.19</cell><cell>70.20 73.40</cell></row><row><cell>FAST [16]</cell><cell></cell><cell>94.05</cell><cell>74.34</cell></row><row><cell>Single Image [2]*</cell><cell>"City"</cell><cell>93.47</cell><cell>69.34</cell></row><row><cell>Single Image [2]*</cell><cell>"Animals"</cell><cell>93.69</cell><cell>71.01</cell></row></table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title/>
+		<author>
+			<persName><forename type="first">J</forename><surname>Achiam</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Adler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Agarwal</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2303.08774</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">GPT-4 Technical Report</note>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">The Augmented Image Prior: Distilling 1000 Classes by Extrapolating from a Single Image</title>
+		<author>
+			<persName><forename type="first">Y</forename><forename type="middle">M</forename><surname>Asano</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Saeed</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Learning Representations</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="page">8</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Procedural Image Programs for Representation Learning</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Baradad</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Wulff</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Feris</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Torralba</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Isola</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Advances in Neural Information Processing Systems</title>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page">3</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Learning to See by Looking at Noise</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Baradad</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Wulff</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Isola</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Torralba</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Advances in Neural Information Processing Systems</title>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Knowledge Distillation: A Good Teacher is Patient and Consistent</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Beyer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Zhai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Royer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Markeeva</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Anil</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Kolesnikov</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">IEEE/CVF Conference on Computer Vision and Pattern Recognition</title>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="page">8</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Robust and Resource-Efficient Data-Free Knowledge Distillation by Generative Pseudo Replay</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>Binici</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Aggarwal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">T</forename><surname>Pham</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Leman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Mitra</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">AAAI Conference on Artificial Intelligence</title>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="page">8</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Food-101 -Mining Discriminative Components with Random Forests</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Bossard</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Guillaumin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Van Gool</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">European Conference on Computer Vision</title>
+		<imprint>
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Model Compression</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Bucilua</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Caruana</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Niculescu-Mizil</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ACM SIGKDD International Conference on Knowledge Discovery Data Mining</title>
+		<imprint>
+			<date type="published" when="2006">2006</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Data-Free Learning of Student Networks</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Shi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Q</forename><surname>Tian</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">IEEE/CVF International Conference on Computer Vision</title>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="page">2</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">On the Efficacy of Knowledge Distillation</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">H</forename><surname>Cho</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Hariharan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">IEEE/CVF International Conference on Computer Vision</title>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="page">2</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Data-Free Network Quantization with Adversarial Knowledge Distillation</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Choi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Choi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>El-Khamy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Lee</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">IEEE/CVF Conference on Computer Vision and Pattern Recognition Workshops</title>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="page">2</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">RandAugment: Practical Automated Data Augmentation with a Reduced Search Space</title>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">D</forename><surname>Cubuk</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Zoph</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Shlens</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Q</forename><forename type="middle">V</forename><surname>Le</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">IEEE/CVF Conference on Computer Vision and Pattern Recognition Workshops</title>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="page">4</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">ImageNet: A Large-Scale Hierarchical Image Database</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Deng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Dong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Socher</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L.-J</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Fei-Fei</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">IEEE Conference on Computer Vision and Pattern Recognition</title>
+		<imprint>
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Dosovitskiy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Beyer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Kolesnikov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Weissenborn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Zhai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Unterthiner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Dehghani</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Minderer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Heigold</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Gelly</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Uszkoreit</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Houlsby</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Learning Representations</title>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">Mosaicking to Distill: Knowledge Distillation from Out-of-Domain Data</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Fang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Bao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Xie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Shen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Song</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Advances in Neural Information Processing Systems</title>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="page">8</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">Up to 100x Faster Data-Free Knowledge Distillation</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Fang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Mo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Bei</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Song</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">AAAI Conference on Artificial Intelligence</title>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page">8</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">Contrastive Model Inversion for Data-Free Knolwedge Distillation</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Fang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Shen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Song</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Joint Conference on Artificial Intelligence</title>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="page">8</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">Born Again Neural Networks</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Furlanello</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Lipton</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Tschannen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Itti</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Anandkumar</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Machine Learning</title>
+		<imprint>
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">How Much Data Are Augmentations Worth? An Investigation into Scaling Laws, Invariance, and Implicit Regularization</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Geiping</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Goldblum</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Somepalli</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Shwartz-Ziv</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Goldstein</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Gordon-Wilson</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Learning Representations</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">Resurrecting Old Classes with New Data for Exemplar-Free Continual Learning</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Goswami</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Soutif-Cormerais</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Kamath</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Twardowski</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Van De Weijer</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">IEEE/CVF Conference on Computer Vision and Pattern Recognition</title>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">On Calibration of Modern Neural Networks</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Guo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Pleiss</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Sun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">Q</forename><surname>Weinberger</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Machine Learning</title>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">Deep Residual Learning for Image Recognition</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Ren</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Sun</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">IEEE/CVF Conference on Computer Vision and Pattern Recognition</title>
+		<imprint>
+			<date type="published" when="2016">2016</date>
+			<biblScope unit="page">4</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">EuroSAT: A Novel Dataset and Deep Learning Benchmark for Land Use and Land Cover Classification</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Helber</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Bischke</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Dengel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Borth</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Journal of Selected Topics in Applied Earth Observations and Remote Sensing</title>
+		<imprint>
+			<biblScope unit="page">2</biblScope>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">Knowledge Distillation with Adversarial Samples Supporting Decision Boundary</title>
+		<author>
+			<persName><forename type="first">B</forename><surname>Heo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Yun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">Y</forename><surname>Choi</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">AAAI Conference on Artificial Intelligence</title>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="page">7</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<monogr>
+		<title level="m" type="main">Distilling the Knowledge in a Neural Network</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Hinton</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">O</forename><surname>Vinyals</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Dean</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1503.02531</idno>
+		<imprint>
+			<date type="published" when="2015">2015</date>
+			<biblScope unit="page">4</biblScope>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv Preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<title level="a" type="main">Dense Depth Distillation with Out-of-Distribution Simulated Images</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Hu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Fan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Ozay</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Jiang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">L</forename><surname>Lam</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Knowledge-Based Systems</title>
+		<imprint>
+			<biblScope unit="volume">2</biblScope>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<monogr>
+		<title level="m" type="main">Learning Multiple Layers of Features from Tiny Images</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Krizhevsky</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2009">2009</date>
+			<biblScope unit="volume">2</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<monogr>
+		<title level="m" type="main">Is Synthetic Data from Diffusion Models Ready for Knowledge Distillation?</title>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Yang</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2305.12954</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<analytic>
+		<title level="a" type="main">Small Scale Data-Free Knowledge Distillation</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Sun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Yao</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">IEEE/CVF Conference on Computer Vision and Pattern Recognition</title>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<analytic>
+		<title level="a" type="main">A ConvNet for the 2020s</title>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Mao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C.-Y</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Feichtenhofer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Darrell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Xie</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">IEEE/CVF Conference on Computer Vision and Pattern Recognition</title>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page">4</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<monogr>
+		<title level="m" type="main">Fine-Grained Visual Classification of Aircraft</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Maji</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Chicago</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Rahtu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Kannala</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Blaschkó</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Vedaldi</surname></persName>
+		</author>
+		<idno>2013. 2</idno>
+		<imprint/>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<monogr>
+		<title level="m" type="main">When Does Label Smoothing Help? Advances in Neural Information Processing Systems</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Müller</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Kornblith</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">E</forename><surname>Hinton</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="volume">6</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<analytic>
+		<title level="a" type="main">Zero-Shot Knowledge Distillation in Deep Networks</title>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">K</forename><surname>Nayak</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">R</forename><surname>Mopuri</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Shaj</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><forename type="middle">B</forename><surname>Radhakrishnan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Chakraborty</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Machine Learning</title>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<monogr>
+		<title level="m" type="main">DinoV2: Learning Robust Visual Features Without Supervision</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Oquab</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Darcet</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Moutakanni</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2304.07193</idno>
+		<idno>. 1</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<analytic>
+		<title level="a" type="main">Cats and Dogs</title>
+		<author>
+			<persName><forename type="first">O</forename><forename type="middle">M</forename><surname>Parkhi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Vedaldi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Zisserman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">V</forename><surname>Jawahar</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">IEEE Conference on Computer Vision and Pattern Recognition</title>
+		<imprint>
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<analytic>
+		<title level="a" type="main">Learning to Retain While Acquiring: Combating Distribution-Shift in Adversarial Data-Free Knowledge Distillation</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Patel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">R</forename><surname>Mopuri</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Q</forename><surname>Qiu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">IEEE/CVF Conference on Computer Vision and Pattern Recognition</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b36">
+	<analytic>
+		<title level="a" type="main">Learning Transferable Visual Models from Natural Language Supervision</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Radford</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">W</forename><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Hallacy</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Machine Learning</title>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b37">
+	<analytic>
+		<title level="a" type="main">FitNets: Hints for Thin Deep Nets</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Romero</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Ballas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">E</forename><surname>Kahou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Chassang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Gatta</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Bengio</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ternational Conference on Learning Representations</title>
+		<imprint>
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b38">
+	<analytic>
+		<title level="a" type="main">Wide Residual Networks</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Zagoruyko</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Komodakis</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">British Machine Vision Conference</title>
+		<imprint>
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b39">
+	<analytic>
+		<title level="a" type="main">MobileNetV2: Inverted Residuals and Linear Bottlenecks</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Sandler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Howard</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Zhu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Zhmoginov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L.-C</forename><surname>Chen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">IEEE/CVF Conference on Computer Vision and Pattern Recognition</title>
+		<imprint>
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b40">
+	<analytic>
+		<title level="a" type="main">Methods to Speed Up Error Back-Propagation Learning Algorithm</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Sarkar</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">ACM Computing Surveys</title>
+		<imprint>
+			<biblScope unit="page">7</biblScope>
+			<date type="published" when="1995">1995</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b41">
+	<analytic>
+		<title level="a" type="main">MEAL v2: Boosting Vanilla ResNet-50 to 80%+ Top-1 Accuracy on ImageNet Without Tricks</title>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Shen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Savvides</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Advances in Neural Information Processing Systems Workshops</title>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="page">2</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b42">
+	<monogr>
+		<title level="m" type="main">OpenGL Programming Guide: The Official Guide to Learning OpenGL, Versions 3.0 and 3</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Shreiner</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2009">2009</date>
+			<publisher>Pearson Education</publisher>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="page">3</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b43">
+	<monogr>
+		<title level="m" type="main">Direct Distillation between Different Domains</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Tang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Niu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Zhu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">T</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Gong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Sugiyama</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2401.06826</idno>
+		<idno>. 2</idno>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b44">
+	<analytic>
+		<title level="a" type="main">Target Category Agnostic Knowledge Distillation With Frequency-Domain Supervision</title>
+		<author>
+			<persName><forename type="first">W</forename><surname>Tang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">S</forename><surname>Shakeel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Wan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Kang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Transactions on Industrial Informatics</title>
+		<imprint>
+			<biblScope unit="page">2</biblScope>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b45">
+	<analytic>
+		<title level="a" type="main">AuG-KD: Anchor-Based Mixup Generation for Outof-Domain Knowledge Distillation</title>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Tang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Lv</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Duan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Kuang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Wu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Learning Representations</title>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b46">
+	<analytic>
+		<title level="a" type="main">Mean Teachers are Better Role Models: Weight-Averaged Consistency Targets Improve Semi-Supervised Deep Learning Results</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Tarvainen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Valpola</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Advances in Neural Information Processing Systems</title>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b47">
+	<analytic>
+		<title level="a" type="main">Contrastive Representation Distillation</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Tian</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Krishnan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Isola</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Learning Representations</title>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b48">
+	<analytic>
+		<title level="a" type="main">Knowledge Representation of Training Data with Adversarial Examples Supporting Decision Boundary</title>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Tian</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">M</forename><surname>Abdelmoniem</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Wang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Transactions on Information Forensics and Security</title>
+		<imprint>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="page">7</biblScope>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b49">
+	<analytic>
+		<title level="a" type="main">DeiT III: Revenge of the ViT</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Touvron</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Cord</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Jégou</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">European Conference on Computer Vision</title>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b50">
+	<analytic>
+		<title level="a" type="main">NAYER: Noisy Layer Data Generation for Efficient and Effective Data-Free Knowledge Distillation</title>
+		<author>
+			<persName><forename type="first">M.-T</forename><surname>Tran</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Le</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X.-M</forename><surname>Le</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Harandi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Q</forename><forename type="middle">H</forename><surname>Tran</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Phung</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">IEEE/CVF Conference on Computer Vision and Pattern Recognition</title>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b51">
+	<monogr>
+		<title/>
+		<author>
+			<persName><surname>Twigl</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Twigl</surname></persName>
+		</author>
+		<ptr target="https://github.com/doxas/twigl" />
+		<imprint>
+			<date type="published" when="2023-06-29">June 29, 2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b52">
+	<analytic>
+		<title level="a" type="main">Do Deep Convolutional Nets Really Need to be Deep and Convolutional</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Urban</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">J</forename><surname>Geras</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">E</forename><surname>Kahou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">O</forename><surname>Aslan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Mohamed</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Philipose</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Richardson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Caruana</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Learning Representations</title>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b53">
+	<analytic>
+		<title level="a" type="main">Data-Free Knowledge Distillation with Soft Targeted Transfer Set Synthesis</title>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Wang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">AAAI Conference on Artificial Intelligence</title>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b54">
+	<analytic>
+		<title level="a" type="main">Dreaming to Distill: Data-Free Knowledge Transfer via DeepInversion</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Yin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Molchanov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">M</forename><surname>Alvarez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Mallya</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Hoiem</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">K</forename><surname>Jha</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Kautz</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">IEEE/CVF Conference on Computer Vision and Pattern Recognition</title>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b55">
+	<analytic>
+		<title level="a" type="main">Knowledge Extraction with No Observable Data</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Yoo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Cho</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">U</forename><surname>Kang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Advances in Neural Information Processing Systems</title>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b56">
+	<analytic>
+		<title level="a" type="main">Data-Free Knowledge Distillation via Feature Exchange and Activation Region Constraint</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Han</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Jiang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">IEEE/CVF Conference on Computer Vision and Pattern Recognition</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page">8</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b57">
+	<analytic>
+		<title level="a" type="main">mixup: Beyond Empirical Risk Minimization</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Cisse</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><forename type="middle">N</forename><surname>Dauphin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Lopez-Paz</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Learning Representations</title>
+		<imprint>
+			<date type="published" when="2018">2018</date>
+			<biblScope unit="page">4</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b58">
+	<analytic>
+		<title level="a" type="main">Random Erasing Data Augmentation</title>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Zhong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L/</forename><surname>Zheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Kang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Yang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">AAAI Conference on Artificial Intelligence</title>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>
