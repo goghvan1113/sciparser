@@ -1,0 +1,625 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Interpreting maps of science using citation context sentiments: a preliminary investigation</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author role="corresp">
+							<persName><forename type="first">Henry</forename><surname>Small</surname></persName>
+							<email>hsmall@mapofscience.com</email>
+							<affiliation key="aff0">
+								<orgName type="institution" key="instit1">Ó Akade ´miai</orgName>
+								<orgName type="institution" key="instit2">H. Small Thomson Reuters</orgName>
+								<address>
+									<addrLine>3501 Market Street</addrLine>
+									<settlement>Philadelphia</settlement>
+									<country key="US">USA</country>
+								</address>
+							</affiliation>
+							<affiliation key="aff1">
+								<orgName type="institution">H. Small (&amp;) SciTech Strategies, Inc</orgName>
+								<address>
+									<settlement>Berwyn</settlement>
+									<country key="US">USA</country>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Interpreting maps of science using citation context sentiments: a preliminary investigation</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<idno type="MD5">DC9F63AFAE8F114E6632788985EF42E5</idno>
+					<idno type="DOI">10.1007/s11192-011-0349-2</idno>
+					<note type="submission">Received: 5 October 2010</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.2-SNAPSHOT" ident="GROBID" when="2025-01-17T17:24+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<textClass>
+				<keywords>
+					<term>Citation contexts</term>
+					<term>Maps of science</term>
+					<term>Sentiment analysis</term>
+					<term>Corpus linguistics</term>
+				</keywords>
+			</textClass>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>It is proposed that citation contexts, the text surrounding references in scientific papers, be analyzed in terms of an expanded notion of sentiment, defined to include attitudes and dispositions toward the cited work. Maps of science at both the specialty and global levels are used as the basis of this analysis. Citation context samples are taken at these levels and contrasted for the appearance of cue word sets, analyzed with the aid of methods from corpus linguistics. Sentiments are shown to vary within a specialty and can be understood in terms of cognitive and social factors. Within-specialty and betweenspecialty co-citations are contrasted and in some cases suggest a correlation of sentiment with structural location. For example, the sentiment of ''uncertainty'' is important in interdisciplinary co-citation links, while ''utility'' is more prevalent within the specialty. Suggestions are made for linking sentiments to technical terms, and for developing sentiment ''baselines'' for all of science.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Introduction</head><p>The analysis of sentiments in linguistics usually refers to the detection of some form of affect or emotion in language, for example, expressions of approval or disapproval <ref type="bibr" target="#b11">(Khan et al. 2009)</ref>. In scientific writing and particularly journal articles, however, sentiments are often difficult to detect <ref type="bibr" target="#b27">(Verlic et al. 2008)</ref>, and can be suppressed or equivocal in nature <ref type="bibr" target="#b9">(Harwood 2009)</ref>. For example, criticism of others is often hedged <ref type="bibr" target="#b10">(Hyland 1998)</ref>. One way of dealing with this limitation is to expand the notion of sentiment to include a much broader range of academic expression and more subtle ways of using and describing knowledge, including many of the rhetorical devices that have been identified in scientific text <ref type="bibr" target="#b25">(Swales 1990)</ref>. Whether this broader approach can still be called sentiment analysis, or what it should be called, is open for discussion.</p><p>This paper focuses specifically on sentiments in the broad sense of attitudes and dispositions toward cited work as expressed in citation contexts, that is, the text surrounding references in scientific papers. <ref type="bibr" target="#b26">Teufel (2010)</ref> has done important recent work on the machine recognition and automatic classification of references in scientific papers. Her work is in the framework of text understanding and the rhetorical structure of scientific papers in general, and involves what she calls ''knowledge claim attribution'' coupled with ''citation function classification'' in which automatic methods are used to classify the reasons for citing, drawing on earlier citation classification ideas.</p><p>Expanding on this work, if citation contexts are seen as commentaries on earlier scientific literature (Fig. <ref type="figure" target="#fig_1">1</ref>), then the totality of such commentaries constitutes a collective view of prior cited literature. Aggregating contexts from current citing papers then provides a synopsis of that knowledge and attitudes toward it. Thus, citation contexts offer a means of summarizing knowledge in different parts of the scientific landscape <ref type="bibr" target="#b22">(Small 1986)</ref>.</p><p>Support for the lexical analysis of citation contexts can be found in the later writings of <ref type="bibr">Kuhn (2000, pp 103-104)</ref>. In a lecture given in 1990 he introduces the idea of a lexical structure to represent a scientific specialty or paradigm. Kuhn said: ''Cognitive evolution depends … upon the exchange, through discourse, of statements within a community.'' He defines the lexicon as ''… the unit which embodies the shared conceptual or taxonomic structure that holds the community together…''. Of course, citation is an example par excellence of the exchange of statements within a community.</p><p>We can also exploit the co-usage of references shown in Fig. <ref type="figure" target="#fig_1">1</ref>, to group documents into clusters or, ''communities'', and create a geometry of these objects in an abstract space. Co-usage patterns may also be mined for sentiments as well as content. Our discussion is restricted to maps created by co-citation, but sentiment analysis might also be applicable to other linkage forms such as co-word analysis or other citation based linkage methods such as direct citation, as <ref type="bibr" target="#b8">Hargens (2000)</ref> has done with introductory paragraphs. The criterion  of whether this ''linguistics of usage and co-usage'' is applicable is whether the objects of discussion are embedded in a running text. Science maps have now been created by many researchers, and the methodology continues to be improved upon <ref type="bibr" target="#b1">(Bo ¨rner et al. 2003;</ref><ref type="bibr" target="#b3">Chen et al. 2010;</ref><ref type="bibr" target="#b12">Klavans and Boyack 2009)</ref>. However, maps have lacked a qualitative dimension. Technical content and subject matter have been depicted by labeling maps, but we do not know how this content has been used by the citing authors or how they regard it. Of course we want to study this qualitative dimension in a quantitative way if possible.</p><p>By combining science mapping with the linguistic analysis of citation contexts, we deepen our understanding of the structure in maps and also shed light on the cognitive and social processes that underlie scientific work. For example, we can ask how sentiments vary over the structure of a specialty from document to document, or differ from one specialty to another? What sentiments are distinctive to specialties compared to interdisciplinary science, or among different interdisciplinary links? Our hypothesis is that different sentiments are correlated with different structural locations. This is a comparative exercise because we need to demonstrate that sentiments differ in a significant way across different portions of a map. We can think of these comparisons as either generic or subject specific. An example of a generic comparison is whether withinspecialty citations differ in sentiment from between-specialty citations? Another generic comparison, not discussed in this paper, is early versus late citation <ref type="bibr" target="#b6">(Cozzens 1985)</ref>. Most comparisons are, however, subject specific, and contrast different scientific content, for example, sentiments for a specific document in the context of a specialty, or comparisons between specialties in different fields.</p><p>Identifying citation sentiments is reminiscent of earlier efforts to classify the reasons for citation <ref type="bibr" target="#b17">(Moravcsik and Murugesan 1975;</ref><ref type="bibr" target="#b4">Chubin and Moitra 1975)</ref>. In this early work the motive was to critique citation evaluation, but in mapping, the aim is to characterize the linked knowledge claims either from a cognitive or social perspective. Linguists and computer scientists such as Teufel have begun to explore these issues, and their work can be highly sophisticated making use of machine learning to assign text to a given set of categories based on training sets <ref type="bibr" target="#b0">(Argamon et al. 2008)</ref>. The work reported here is more exploratory and inductive, because we first need to determine what sentiments are relevant to citation contexts in different structural locations. Rather than working with a fixed set of categories, we allow the data to suggest new types of sentiments that flow from the language itself.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Method</head><p>The approach is to use citation and co-citation data to define a map, and then analyze samples of citing and co-citing contexts to find sentiments from different portions of the map and look for significant differences. Thus, the focus is on the collective behavior of authors citing and co-citing earlier literature. Access to multiple usages of the same documents, allows us to look for common patterns. For example, having multiple citation contexts for a document, make it possible to determine the degree to which citing authors share a common view of the document <ref type="bibr" target="#b21">(Small 1978)</ref>.</p><p>The first problem is how to delineate the contexts in the citing text. In this analysis contexts have been manually identified but generally they do not exceed one to three sentences around the footnote number or author-year indicator, depending on the reference style of the journal. Care was taken not to attribute text that does not apply to a given reference. References to other papers can be used to some extent to demarcate context boundaries, as well as other rhetorical cues that indicate continuation, such as ''also'' or ''in addition''. In our work contexts consisted on average of 1.6 sentences around the point of reference.</p><p>Citation contexts provide two kinds of vocabulary: technical words and words that signal sentiments or characterizations of prior knowledge. To analyze this vocabulary we need to differentiate between words that appear frequently in one set of contexts from those that appear frequently in a contrasting corpus. Such a capability is provided by the techniques of corpus linguistics, and available in software such as Wordsmith Tools <ref type="bibr" target="#b20">(Scott 2010)</ref>. This software allows us to identify so-called ''keywords'' that occur more often in one corpus than another using a log likelihood ratio statistic.</p><p>We can contrast the word oriented analysis used here, where all words in a set of contexts are rolled together into a single text or corpus, with an individual context oriented approach where counts are made of the number of contexts containing one or more relevant words. The word approach is easier to use for exploration of potential candidate sentiments because keyword lists can be easily generated and scanned for sentiment bearing terms. However, the limitation of the word counting approach is that a few contexts may contribute disproportionately to the sentiment. The problem of the uneven distribution of target words in the corpus has been discussed in the corpus linguistics literature <ref type="bibr" target="#b18">(Paquot and Bestgen 2009)</ref>. Ideally counts should be made both at the word and the context level. Also, it seems clear that sentiments are not mutually exclusive, and a given context can express multiple sentiments.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Citation contexts and sentiments internal to a specialty</head><p>First we examine sentiments internal to a scientific specialty, that is, paradigmatic science, as represented by a document co-citation map on organic thin-film transistors (Fig. <ref type="figure" target="#fig_2">2</ref>) consisting of 26 highly cited papers from 1999 to 2004 <ref type="bibr" target="#b24">(Small and Upham 2009)</ref>. There were 228 citing papers during this period for the 26 core documents, and 87 of these cocited two or more core items in the cluster. Full texts for 81 of the co-citing papers were obtained, and these gave 304 citation contexts, two contexts for each co-citation. Only the strongest links per node are shown on the map although the nodes are 85% connected.</p><p>Of the 304 contexts, only 234 were unique which means that sometimes two or more core papers are cited within and share the same context, and thus citing authors treat them as equivalent. This is the well-known redundancy effect that Moravcsik observed in 1975. The overall redundancy rate is 23% which may be an important characteristic of withinspecialty co-citations. A related issue is how close together co-citations occur in texts. 35 papers co-citing only two core documents were examined to determine whether the items were cited in the same sentence (which includes redundant cases), in the same paragraph, same section, or different sections of the paper. For this sample, 89% were same-section co-citations or closer. It might be argued that the further citations are from one another, the weaker the co-citation, but no attempt was made to quantify this effect.</p><p>Across the 234 citation contexts, there are a total of about 7,800 running words and 1,400 unique words. The top of the list is of course dominated by what are called function or stop words. The word ''organic'' is the top technical term occurring 98 times (Table <ref type="table" target="#tab_0">1</ref>). The top 10 technical words, without applying any stemming or lemmatization, are listed on the left. Descending the list we see the gradual emergence of a technical vocabulary for the specialty. At the right are listed a selection of other terms, including some stop words that H. Small might, however, be relevant to sentiment. Linguists sometimes call these English for general academic purpose (EGAP) words <ref type="bibr" target="#b18">(Paquot and Bestgen 2009)</ref>.</p><p>With sets of citation contexts for each highly cited paper, it is possible to identify the most significant word for each core document for the citing population. The composite of all citation contexts for the specialty is used as the reference corpus since we are looking for distinctive usage with respect to the specialty as a whole.</p><p>For example, the word with the highest log likelihood for the document labeled Burgi-2003 is ''contact'' and the second highest is ''resistance''. The log likelihood uses the expected rates of these words for the Burgi-2003 contexts compared to the composite contexts for the specialty. Seven out of the ten contexts for this document contain the word  ''contact'', and six of ten contain the word ''resistance''. The phrase ''contact resistance'' appears in one-half of the contexts. The documents on map (Fig. <ref type="figure" target="#fig_2">2</ref>) have been labeled by technical vocabulary. The terms are drawn from the citation contexts for each document and have the highest log likelihood with respect to the specialty as a whole. Of course, the emergence of distinctive technical terms is consistent with the notion of highly cited papers as concept symbols <ref type="bibr" target="#b21">(Small 1978)</ref>, which has also been confirmed in the work of <ref type="bibr" target="#b19">Schneider (2006)</ref>. The most striking feature is the progression of names of materials across the map showing the range of substances that were used to create organic thin-film transistors and their clustering in different subregions. Progressing from the lower left and moving clockwise, the organic materials include: pentacene, oligofluorenes, oligothiophenes, sexithiophene, tetrathiofulvalene, and rubrene. On the right side, some of the core papers depart from the materials theme, and deal with devices such as flexible displays, dielectrics, and inkjet printing. For about half the core documents, the term with the highest log likelihood was the same as the technical word appearing in the highest fraction of contexts for each document, a measure termed ''percent uniformity'' in a prior study <ref type="bibr" target="#b21">(Small 1978)</ref>.</p><p>The same method can be used to label regions of the map by grouping core documents and their contexts. For example, grouping the contexts for the core documents on the lower left gives the key term ''p-type'', which signifies a hole-conducting semiconductor. The key term for document contexts at the upper left is ''n-type'' in which electrons are conducting rather than holes.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Sentiment analysis of document co-citation links</head><p>Since we have no way of knowing what sentiments might be relevant to this specialty, we are faced with a chicken and egg situation. We need to look at the keyword data in order to hypothesize that a sentiment may be important, but this knowledge should not bias our analysis. To avoid this bias we can use a thesaurus to expand the sentiment definition by use of synonyms, and also use both the target and comparison corpora to build the word set for the sentiment. It is necessary to use sets of synonyms and related terms, rather than single words, since there are many ways a given sentiment can be expressed.</p><p>The sentiments that emerged from the initial examination of the keyword data are given in Table <ref type="table" target="#tab_1">2</ref>. Each sentiment is associated with a set of cue words <ref type="bibr" target="#b7">(Finney 1979</ref>) that are searched for in the contexts and generate a count for the sentiment. Of course, relying on words to have the same meanings across varying usage contexts is risky, so this uniterm matching should be regarded as an approximation to a more sophisticated matching method which would use word pattern searching. Since we are concerned here with the numerical preponderance of cases, rather than individual instances, the errors introduced by word sense variations are less a cause for concern.</p><p>Rather than investigate sentiments for core documents, which is of course possible, the analysis focused on the co-citation links. Hence, we are looking at contexts that provide internal cohesion for the specialty, in contrast to interdisciplinary links. First, a minimal spanning tree is defined through the network of 26 nodes, including the links with the strongest cosine coefficient for each node. Sets of co-citing contexts are identified for each of the 25 links along the path. For each set of contexts, a keyword analysis is carried out, focusing not on technical words, but on the sentiment profiles defined above.</p><p>Figure <ref type="figure" target="#fig_3">3</ref> shows the maps with some of the links labeled by sentiment. For example, the links at the lower left are strong for the sentiments of ''difficulty'' and ''modification''. The technical reason for this is that certain molecular structures with high conductivity seem also to have resulted in solubility problems that needed to be overcome by chemical modification.</p><p>For example, the link between Sheraw-2003 and Afzali-2003 at the lower left labeled ''difficulty'' has eight co-citing contexts, four of which contain ''difficulty'' words. The cue words for the ''difficulty'' sentiment occur 5.6 times more frequently in these contexts than  Interpreting maps of science using citation context sentiments in all the thin-film contexts. The ''modification'' sentiment cue words appear 4.3 times more frequently than in all thin-film contexts. Table <ref type="table" target="#tab_3">3</ref> shows word frequency as a percentage of the respective corpora, the log likelihood statistic and concordance examples for each sentiment. In addition, to show what the difficulty is about, the ''difficulty'' sentiment words can be linked to technical terms for ''solubility'' with a co-occurrence of 5 and a mean separation of 2.6 words. Thus, once a sentiment is detected it may be possible to link it to the technical terms it pertains to. The linkages just above the ''difficulty'' region around Meng-2003 on Fig. <ref type="figure" target="#fig_3">3</ref> consist mostly of ''agreement'' and ''consensus'' terms. This appears to be due to a number of researchers having achieved comparable results in creating p-type, or electron hole conducting devices. The ''importance'' sentiment, prominent in the region at the upper left, is due to new opportunities offered by the discovery of organic materials capable of n-type, or electron, conductivity. Some of the links towards the middle of the map reflect temporal relations, ''early'' and ''future''. On the right, most links do not have statistically significant sentiments, except for two links on the lower right where ''future'' terms are indicated. The ''future'' sentiment appears to be associated with projected technological applications for thin-film transistors.</p><p>Redundancy, the extent to which co-cited documents share identical contexts, can be computed for each co-citation link, and it is interesting to note that the lowest redundancies fall on the right side of the map, which deals with applications and has lower sentiment values. One explanation for this is that discussion of future technological applications involve fewer competing knowledge claims and can be dealt with in a more matter-of-fact manner and with less sentiment. The left side of the map has much higher co-citation redundancy and also higher sentiment values.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Within-versus between-specialty contexts</head><p>Next we expand this view beyond a single specialty and look at the linkages that connect specialties or disciplines together and how the sentiments differ at this level. To do this we create two random samples of links: one representing links within specialties and the other, links that connect different specialties or disciplines together on a map of science. We start with a 2009 science map (Small 2010) representing four clustering iterations nested hierarchically (Fig. <ref type="figure" target="#fig_4">4</ref>). About 300,000 co-citing papers had within-specialty cocitations in 2,100 first level clusters contained in the higher level clusters shown on the map. The within-specialty sample consisted of 36 randomly selected co-citing papers, each representing a co-cited document pair within a first level cluster, generating a set of 67 random citing passages. While this sample is small, our aim is to generate hypotheses for testing on larger samples.</p><p>This within-specialty sample was found to cover 23 disciplines ranging from astronomy and astrophysics to psychiatry with no marked concentration in any one category. This was determined by finding the most prominent Web of Science journal categories for each first level cluster sampled.</p><p>To generate a random sample of between-specialty co-citations, we started with all the links connecting the 83 third level clusters. The map has about 1,600 distinct inter-cluster links making it 49% connected. Only the strongest links are shown (Fig. <ref type="figure" target="#fig_4">4</ref>). About 70,000 co-citing papers are involved in the inter-cluster links. Each link on the map has on average 56 co-citing papers, and each co-citing paper participates on average in 1.3 inter-cluster links. The co-citing papers were sampled randomly and 38 were selected, generating 60 distinct contexts. The sample spanned about 46% of the 83 clusters on the map.</p><p>For the between-specialty sample, only the context for the more weakly weighted third level cluster of each pair was used. The weight for a co-citing paper is defined as the number of references cited in each cluster. The ''home cluster'' is defined as the one receiving the largest number of a citing paper's references. It is assumed that the ''nonhome'' references are those that best represent the between-specialty or interdisciplinary sentiments, and thus the analysis focuses on these contexts. To show the disciplinary spread of the between-specialty contexts, Web of Science categories were compiled for the linked third level clusters, as was done for the withinspecialty sample. We first determined the dominant Web of Science category for each linked cluster (at the level of core documents), reducing them to inter-category links. Of the distinct inter-category links, 80% represent pairs of different categories and 20% link the same category. A total of 18 different categories were represented on either side of the between-specialty links.</p><p>For contrasting within-and between-specialty sentiments, an initial examination of the word frequency data indicated that a smaller set of sentiments (Table <ref type="table" target="#tab_4">4</ref>) would suffice compared to the set used for the thin-film contexts. For the within-specialty sample, there are 67 unique contexts containing 996 words. The first technical word, ''patients'', appears at rank 25 with nine occurrences. The 60 between-specialty contexts contain 1,005 words. The first technical term to appear is ''gene'' at rank 29 with eight occurrences.</p><p>In examining the between-versus within-specialty corpora, without invoking sentiment profiles, it was found that the terms ''may'' and ''could'', so-called modal auxiliaries, had the highest log likelihood. This suggested that the notion of ''uncertainty'' or ''contingency''-some linguists call this ''hedging'' <ref type="bibr" target="#b10">(Hyland 1998)</ref>-is prominent in these contexts, and a set of synonyms and related terms was constructed. The set consisted of words such as ''may' <ref type="bibr">', ''could'', ''possible'', ''promising'', ''potential'', etc. Charles (2006)</ref> has drawn attention to the role of ''uncertainty'' in the reporting clauses of scholarly texts. Here we identify a possible structural correlate.</p><p>Rerunning the analysis with this cue word set, the ''uncertainty'' sentiment now occurs 10 times more frequently in the between-specialty corpus than in the within-specialty (Table <ref type="table" target="#tab_5">5</ref>), and has the highest log likelihood (P \ 0.00002).</p><p>Other sentiments that stand out statistically are ''differentiation'' and ''negation'', although the log likelihood scores for these were not as high (P \ 0.03 and 0.06 respectively). ''Negation'' and ''differentiation'', like ''uncertainty'', can be thought of as distancing strategies.</p><p>Concordance examples for the ''uncertainty'' words (see Table <ref type="table" target="#tab_5">5</ref>) seem to support the notion that interdisciplinary citations represent knowledge that is less certain than withinspecialty knowledge, thus relating a sentiment to a structural characteristic. However, the automatic profile matching could err by either assigning too many or too few contexts to the given sentiment, perhaps due to errors in word sense, or to an incomplete set of synonyms. Thus, to test the accuracy of using cue words to automatically assign sentiment, we can compare it to a manual classification. To do this the analysis must shift from individual words to full contexts since looking at each word in context is too laborious. The procedure is to have an indexer examine each context and decide whether or not it fits the ''uncertainty'' definition based on a general description of the category, but without knowing what cue words were used to make the automatic assignment. For the automatic assignment, we count the number of distinct contexts containing one or more of the sentiment words. Then a comparison is made between the human and automatic assignments.</p><p>An experiment with one indexer gave an agreement of 0.65 using Cohen's Kappa (1968) for the automatic and manual assignments of the between-and within-specialty samples. Using only the manual classification for the two samples, assuming it to be more definitive, also gives statistically significant log likelihood and chi square tests (P \ 0.0001). Thus, a greater concentration of ''uncertainty'' sentiment words is found at the interdisciplinary level for both automatic and manual classifications.</p><p>Comparing the corpora the other way around (Table <ref type="table">6</ref>), that is, for sentiments prominent in the within-specialty set compared to between-specialty, the most striking is an expression of ''use'' or ''utility''. In other words, within a specialty the researchers are more likely to be using concepts, data, tools, and methods in an instrumental manner. Thus, within-specialty citations have a strong procedural character. This is reminiscent of Bridgman's theory of operationalism, that science consists of a series of concrete operations <ref type="bibr" target="#b16">(Losee 1972)</ref>, and also seems consistent with Kuhn's notion of normal science as puzzle solving (1970), as well as Latour's inscription devices in the laboratory (1979, Chap. 2). Other within-specialty sentiments that stand out at lower levels of significance are ''importance'' and ''reporting'' (Table <ref type="table">6</ref>). Researchers are slightly more likely to label cited work as important within the specialty, perhaps showing a tendency towards evaluative statements. The higher incidence of ''reporting'' terms <ref type="bibr">(Swales 1990, p 150)</ref> may also be due to a greater concern with recognition within the specialty.</p><p>The between-and within-specialty samples can also be compared with the thin-film specialty contexts. In this subject specific comparison, we expect to see ways in which thin-film work is distinctive relative to these broader samples. Indeed, when we compare the thin-film contexts against the between-specialty contexts, a new sentiment appears which could be called ''production'' reflecting the activity of making or fabricating devices (terms such as ''made'' and ''obtained'').</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Hub versus spoke analyses</head><p>Another kind of comparison involves sampling interdisciplinary contexts that emanate from a single cluster like the spokes of a wheel. We call this hub versus spoke analysis. The area selected as the hub is the third level cluster on nanoscience, which contains the thinfilm transistor specialty as one of its major sub-clusters.</p><p>The nanoscience interdisciplinary sample consists of four sub-samples representing significant links to nanoscience: cancer research, immunology, climatology, and a composite of physical science areas. Hence the spread of this sample is quite broad as shown by the dotted lines on Fig. <ref type="figure" target="#fig_6">5</ref>. The sample consists of 65 contexts having 1,081 distinct words. The most frequent technical word in this sample is ''organic'' with 10 occurrences at rank 26.</p><p>The link from nanoscience to cancer research deals with technologies such as microfluidics, fluorescence probes, and hydrogels which assist in diagnosis or treatment. For immunology there is interest in biological sensors and polymer-based nanofibers and scaffolds for growing stem cells. In climate research, nanoscience applications involve atmospheric aerosol reactions, and sensor technology for climate monitoring. On the other hand, the nanoscience links to other physical science areas are concerned with topics of mutual interest to the linked areas, such as organic chemistry and electronics.</p><p>In comparing the interdisciplinary nanoscience sample against the generic betweenspecialty context sample, only the ''importance'' sentiment had positive log likelihood at P \ 0.09, suggesting that ''importance'' is attributed to the interdisciplinary nanoscience citations slightly more often than to interdisciplinary contexts in general. However, sentiment differences emerged most clearly by disaggregating the interdisciplinary nanoscience links. For example, for the subset of citations from nanoscience to other physical science areas, the ''consensus'' sentiment emerged as significant with respect to both the within-specialty thin-film sample and the between-specialty sample (Table <ref type="table" target="#tab_6">7</ref>). <ref type="bibr">Swales (1990, p 144</ref>) calls these type of statements ''centrality claims''. Our finding suggests that nanoscience is engaging other physical science areas in a consensual manner (Fig. <ref type="figure" target="#fig_6">5</ref>), focusing on what they have in common, rather than how they are different, that is, how nanoscience is consistent with other physical science areas.</p><p>Another subject specific finding comes from the sub-sample of links from nanoscience to immunology. In this between-specialty sample, as before, contexts expressing  Interpreting maps of science using citation context sentiments ''uncertainty'' were more prevalent than in the within-specialty sample (P \ 0.001). In addition, there is a weakly significant tendency (P \ 0.09) for ''analogy'' terms (''similar'', ''mimic'', ''analogous'') to appear more frequently in nanoscience to immunology contexts relative to the within-specialty contexts (Table <ref type="table" target="#tab_7">8</ref> shows concordance examples, and links are labeled on Fig. <ref type="figure" target="#fig_6">5</ref>). Technically this is due to efforts to design nano-structures to mimic biological structures, and is consistent with the results of an earlier study on the role of ''analogy'' in interdisciplinary links <ref type="bibr" target="#b23">(Small 2010)</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Conclusions and future directions</head><p>The goal of this work was to see whether citation context sentiments, defined broadly as attitudes or dispositions towards cited work, can be used to characterize various regions on maps of science, both to assist in their interpretation and to discover how sentiment is related to structure. To summarize the approach, specialty or global maps are used to define sets of citation contexts to compare in terms of sentiment and technical content. These comparisons can be subject specific as in the case of the thin-film specialty, or generic as in the case of between-and within-specialty contexts. The corpora are analyzed in terms of key words using the methods of corpus linguistics. Sentiments suggested by a preliminary examination of the data are fleshed out using word synonyms and related terms to define a cue word set, taking into account the words in both the target and comparison corpora. The sentiment words are analyzed as a group, and statistical significance is determined. Findings can also be tested by a manual classification of the contexts and compared against the automatic classification, moving from a word level analysis to individual contexts for verification.</p><p>In this exploratory study, a number of sentiments were found to be associated with structural features of maps at the specialty and interdisciplinary level, providing hypotheses for further testing. The main limitation of the present study is the small sample sizes used and the lack of a comprehensive system of sentiment categories to guide the analysis. Future work with access to full text in electronic form is clearly the next step.</p><p>In our specialty case study we found that citation context sentiments vary over the specialty map, and are prominent in regions where there is competition among researchers. In most cases, it was possible to interpret the sentiments in terms of technical or social factors. Within a specialty we were able to show sentiments for the resolution of difficulties, modification of methods, identification of important discoveries, areas of agreement, and prospects for future developments. Thus, sentiments provide insights into the current issues and concerns of a research community.</p><p>Comparisons of within-and between-specialty citations revealed a number of sentiment differences. For between-specialty contexts, sentiments of ''uncertainty'', ''difference'' and ''negation'' appear to be important, while for within-specialty contexts, sentiments ''utility'', ''importance'' and ''reporting'' are prominent. In interdisciplinary science, ''uncertainty'' can be interpreted as scientists reaching outside their own fields for ideas and solutions. Within a specialty, ''utility'' may express a focus on procedure and process, and ''importance'' may be an expression of the socially motivated need for evaluation.</p><p>Finally, sentiments for interdisciplinary contexts emanating from a hub were seen to depend on proximity to the hub and the nature of the linked topic, for example, the ''consensus'' sentiment for nearby topics, and ''uncertainty'' or ''analogy'' for topics further removed. The ''consensus'' sentiment was interpreted as reflecting solidarity with neighboring areas, while analogy is seen as strategy for finding novel solutions by drawing on similar problems in other fields. Thus, citation structure and sentiment appear to be related in a number of ways, opening up new ways to explain structure.</p><p>In future research it should be possible to connect sentiments to the technical terms they apply to by a word pairing and proximity procedure, linking sentiment terms to technical terms. This would tell us, for example, what the ''difficulty'' or ''uncertainty'' is about. In addition, we need to study how sentiments evolve over time, how they differ from one specialty to another, and from one interdisciplinary link to another. Of course, to do this, larger sets of contexts are needed to increase sample size, and to develop baseline corpora for all of science as well as individual disciplines and specialties.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head></head><label></label><figDesc>is a commentary on a prior cited item.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Fig. 1</head><label>1</label><figDesc>Fig. 1 Citation as commentary on existing knowledge</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Fig. 2</head><label>2</label><figDesc>Fig. 2 Organic thin-film transistor cluster labeled by key technical terms</figDesc><graphic coords="6,51.78,65.37,286.60,245.80" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Fig. 3</head><label>3</label><figDesc>Fig. 3 Organic thin-film transistor cluster: links labeled by sentiment</figDesc><graphic coords="8,52.56,246.30,337.48,262.00" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Fig. 4</head><label>4</label><figDesc>Fig. 4 Map of science from August 2009 Web of science data</figDesc><graphic coords="10,49.59,365.85,340.36,232.00" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head></head><label></label><figDesc>studies with at least nine other agents have…'' ''HPV testing by use of clinically validated…'' ''… employing a standard glucose tolerance…'' Importance ''… with the remarkable discovery of…'' ''… based on a novel algebraic structure…'' Reporting ''It was reported that…'' ''… Sequences were described previously…'' H. Small</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>Fig. 5</head><label>5</label><figDesc>Fig. 5 Interdisciplinary links from nanoscience</figDesc><graphic coords="14,49.59,58.65,340.36,231.88" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head>Table 1</head><label>1</label><figDesc>High frequency words for organic thin-film transistor citation contexts</figDesc><table><row><cell>Technical word</cell><cell>Frequency</cell><cell>EGAP words</cell><cell>Frequency</cell></row><row><cell>Organic</cell><cell>98</cell><cell>As</cell><cell>78</cell></row><row><cell>Mobility</cell><cell>67</cell><cell>With</cell><cell>77</cell></row><row><cell>Materials</cell><cell>63</cell><cell>Recently</cell><cell>38</cell></row><row><cell>Pentacene</cell><cell>58</cell><cell>Reported</cell><cell>38</cell></row><row><cell>Single</cell><cell>53</cell><cell>Based</cell><cell>28</cell></row><row><cell>High</cell><cell>52</cell><cell>Using</cell><cell>23</cell></row><row><cell>Field</cell><cell>46</cell><cell>Recent</cell><cell>19</cell></row><row><cell>Type</cell><cell>46</cell><cell>All</cell><cell>18</cell></row><row><cell>Mobilities</cell><cell>45</cell><cell>Most</cell><cell>18</cell></row><row><cell>Transistors</cell><cell>44</cell><cell>Used</cell><cell>18</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1"><head>Table 2</head><label>2</label><figDesc>Sentiments for within-specialty citation contexts</figDesc><table><row><cell>Sentiment</cell><cell>Sample cue words</cell></row><row><cell>Importance</cell><cell>Best, crucial, fundamental, good, ideal, novel, remarkable …</cell></row><row><cell>Discovered</cell><cell>Corroborated, demonstrated, established, elucidated, showed …</cell></row><row><cell>Achieved</cell><cell>Accomplished, able, capable, ability …</cell></row><row><cell>Improved</cell><cell>Enhance, improvement, better …</cell></row><row><cell>Applied</cell><cell>Employ, apply, use …</cell></row></table><note><p><p>Modified</p>Alternative, approaches, attempt, tried, transformed … Agreement All, common, majority, most, typical, widely … Compared Comparable, contrast, similar, compare … Difficulty Although, avoid, but, challenging, circumvent, concern, drawback … Interest Attractive, intriguing, interesting, attention … Future Hope, opportunity, promise, future …</p></note></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2"><head>modification important important achieved agreed achieved modification difficulty early future interest future future no sentiments found</head><label></label><figDesc></figDesc><table /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_3"><head>Table 3</head><label>3</label><figDesc>Sentiments for link betweenSheraw-2003 and Afzali-2003    </figDesc><table><row><cell></cell><cell></cell><cell></cell><cell></cell><cell>H. Small</cell></row><row><cell>Sentiment</cell><cell>Link</cell><cell>Overall</cell><cell>Log likelihood</cell><cell>Significance</cell></row><row><cell>''difficulty''</cell><cell>4.5% (12)</cell><cell>0.83% (64)</cell><cell>20.0</cell><cell>0.000008</cell></row><row><cell>''modification''</cell><cell>3.0% (8)</cell><cell>0.74% (57)</cell><cell>9.9</cell><cell>0.002</cell></row><row><cell>Concordance examples</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>Difficulty</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell cols="3">''… and thus it is difficult to form a smooth and uniform film …''</cell><cell></cell><cell></cell></row><row><cell cols="4">''… to overcome these problems several groups have taken the approach …''</cell><cell></cell></row><row><cell cols="3">''A common strategy to avoid this problem …''</cell><cell></cell><cell></cell></row><row><cell>Modification</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell cols="4">''… studies have reported modification of pentacene to improve …''</cell><cell></cell></row><row><cell cols="3">''Alternate strategies that circumvent this concern …''</cell><cell></cell><cell></cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_4"><head>Table 4</head><label>4</label><figDesc>Sentiments for between-specialty citation contexts</figDesc><table><row><cell></cell><cell>H. Small</cell></row><row><cell>Sentiment</cell><cell>Sample cue words</cell></row><row><cell>Importance</cell><cell>Significant, best, crucial, fundamental, ideal, notable, remarkable …</cell></row><row><cell>Utility</cell><cell>Employed, with, applied, used, using, utilizing, application …</cell></row><row><cell>Report</cell><cell>Described, discussed, account, stated, published, reviewed, observed …</cell></row><row><cell>Consensus</cell><cell>All, common, majority, most, typical, widely, well-known …</cell></row><row><cell>Uncertainty</cell><cell>May, might, could, should, possible, potentially, projected …</cell></row><row><cell>Differentiation</cell><cell>Contrast, differs, difference, compared …</cell></row><row><cell>Negation</cell><cell>Not, although, however, but, failed, controversial …</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_5"><head>Table 5</head><label>5</label><figDesc>Between-specialty versus within-specialty citations</figDesc><table><row><cell>Sentiment</cell><cell>Between</cell><cell>Within</cell><cell>Log likelihood</cell><cell>Significance</cell></row><row><cell>''uncertainty''</cell><cell>1.02% (24)</cell><cell>0.13% (3)</cell><cell>18.3</cell><cell>0.00002</cell></row><row><cell>''difference''</cell><cell>0.38% (9)</cell><cell>0.09% (2)</cell><cell>4.7</cell><cell>0.03</cell></row><row><cell>''negation''</cell><cell>1.45% (34)</cell><cell>0.87% (20)</cell><cell>3.5</cell><cell>0.06</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_6"><head>Table 7</head><label>7</label><figDesc>Nanoscience to physical science interdisciplinary citations versus thin-film within-specialty and between-specialty citations</figDesc><table><row><cell>Sentiment</cell><cell>Nano to physical sci.</cell><cell>Within thin-film</cell><cell>Log likelihood</cell><cell>Significance</cell></row><row><cell>''consensus''</cell><cell>2.35% (16)</cell><cell>1.28% (98)</cell><cell>4.4</cell><cell>0.03</cell></row><row><cell>Sentiment</cell><cell>Nano to physical sci.</cell><cell>Between-specialty</cell><cell>Log likelihood</cell><cell>Significance</cell></row><row><cell>''consensus''</cell><cell>2.35% (16)</cell><cell>1.15% (27)</cell><cell>4.8</cell><cell>0.03</cell></row><row><cell cols="2">Concordance examples</cell><cell></cell><cell></cell><cell></cell></row><row><cell cols="2">''…overview about nearly all types of FCs…''</cell><cell></cell><cell></cell><cell></cell></row><row><cell cols="2">''… Energy transfer is widely employed…''</cell><cell></cell><cell></cell><cell></cell></row><row><cell cols="2">''One of the well-known events…''</cell><cell></cell><cell></cell><cell></cell></row><row><cell cols="2">''… for a variety of applications such as…''</cell><cell></cell><cell></cell><cell></cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_7"><head>Table 8</head><label>8</label><figDesc>Concordance examples for the analogy sentiment in nanoscience to immunology interdisciplinary citations ''… structures that can mimic the fibrous texture of collagen …'' ''… very few examples of analogous small molecule …'' ''Analogous protein arrays produced via antibody adsorption …''</figDesc><table><row><cell>H. Small</cell></row></table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Language use reflects scientific methodology: A corpus-based study of peer-reviewed journal articles</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Argamon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Dodick</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Chase</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Scientometrics</title>
+		<imprint>
+			<biblScope unit="volume">75</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="203" to="238" />
+			<date type="published" when="2008">2008</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Visualizing knowledge domains</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>Bo ¨rner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">M</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">W</forename><surname>Boyack</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Annual Review of Information Science and Technology</title>
+		<imprint>
+			<biblScope unit="volume">37</biblScope>
+			<biblScope unit="page" from="179" to="255" />
+			<date type="published" when="2003">2003</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Phraseological patterns in reporting clauses used in citation: A corpus based study of theses in two disciplines</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Charles</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">English for Specific Purposes</title>
+		<imprint>
+			<biblScope unit="volume">25</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="310" to="331" />
+			<date type="published" when="2006">2006</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">The structure and dynamics of cocitation clusters: A multiple-perspective cocitation analysis</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Ibekwe-Sanjuan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Hou</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the American Society for Information Science</title>
+		<imprint>
+			<biblScope unit="volume">61</biblScope>
+			<biblScope unit="issue">7</biblScope>
+			<biblScope unit="page" from="1386" to="1409" />
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Content analysis of references: Adjunct or alternative to citation counting?</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">E</forename><surname>Chubin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">D</forename><surname>Moitra</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Social Studies of Science</title>
+		<imprint>
+			<biblScope unit="volume">5</biblScope>
+			<biblScope unit="page" from="423" to="441" />
+			<date type="published" when="1975">1975</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Weighted kappa: Nominal scale agreement with provision for scale disagreement or partial credit</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Cohen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Psychological Bulletin</title>
+		<imprint>
+			<biblScope unit="volume">70</biblScope>
+			<biblScope unit="page" from="213" to="220" />
+			<date type="published" when="1968">1968</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Comparing the sciences: Citation context analysis of papers from neurophramacology and the sociology of science</title>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">E</forename><surname>Cozzens</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Social Studies of Science</title>
+		<imprint>
+			<biblScope unit="volume">15</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="127" to="153" />
+			<date type="published" when="1985">1985</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<monogr>
+		<title level="m" type="main">The reference characteristics of scientific texts</title>
+		<author>
+			<persName><forename type="first">B</forename><surname>Finney</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1979">1979</date>
+		</imprint>
+		<respStmt>
+			<orgName>The City University of London</orgName>
+		</respStmt>
+	</monogr>
+	<note type="report_type">Unpublished Master&apos;s Thesis</note>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Using the literature: Reference networks, reference contexts, and the social structure of scholarship</title>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">L</forename><surname>Hargens</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">American Sociological Review</title>
+		<imprint>
+			<biblScope unit="volume">65</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="846" to="865" />
+			<date type="published" when="2000">2000</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">An interview based study of the functions of citations in academic writing across two disciplines</title>
+		<author>
+			<persName><forename type="first">N</forename><surname>Harwood</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Pragmatics</title>
+		<imprint>
+			<biblScope unit="volume">41</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="497" to="518" />
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<monogr>
+		<title level="m" type="main">Hedging in scientific research articles</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>Hyland</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1998">1998</date>
+			<publisher>John Benjamins Publishing Company</publisher>
+			<pubPlace>Amsterdam</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Mining opinion from text documents: a survey</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>Khan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">B</forename><surname>Baharudin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Khan</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Faxal-E-Malik</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">2009 3rd IEEE International Conference on Digital Ecosystems and Technologies</title>
+		<meeting><address><addrLine>New York</addrLine></address></meeting>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2009">2009</date>
+			<biblScope unit="page" from="194" to="199" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Toward a consensus map of science</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Klavans</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">W</forename><surname>Boyack</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the American Society for Information Science</title>
+		<imprint>
+			<biblScope unit="volume">60</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="455" to="476" />
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<monogr>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">S</forename><surname>Kuhn</surname></persName>
+		</author>
+		<title level="m">The structure of scientific revolutions</title>
+		<meeting><address><addrLine>Chicago</addrLine></address></meeting>
+		<imprint>
+			<publisher>University of Chicago Press</publisher>
+			<date type="published" when="1970">1970</date>
+		</imprint>
+	</monogr>
+	<note>2nd ed.</note>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<monogr>
+		<title level="m" type="main">The road since structure</title>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">S</forename><surname>Kuhn</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2000">2000</date>
+			<publisher>University of Chicago Press</publisher>
+			<biblScope unit="volume">4</biblScope>
+			<pubPlace>Chicago</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<monogr>
+		<title level="m" type="main">Laboratory life: The social construction of scientific facts</title>
+		<author>
+			<persName><forename type="first">B</forename><surname>Latour</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Woolgar</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1979">1979</date>
+			<publisher>Sage</publisher>
+			<pubPlace>Beverly Hills, California</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<monogr>
+		<author>
+			<persName><forename type="first">J</forename><surname>Losee</surname></persName>
+		</author>
+		<title level="m">A historical introduction to the philosophy of science</title>
+		<meeting><address><addrLine>London</addrLine></address></meeting>
+		<imprint>
+			<publisher>Oxford University Press</publisher>
+			<date type="published" when="1972">1972</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">Some results on the function and quality of citations</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Moravcsik</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Murugesan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Social Studies of Science</title>
+		<imprint>
+			<biblScope unit="volume">5</biblScope>
+			<biblScope unit="page" from="86" to="92" />
+			<date type="published" when="1975">1975</date>
+		</imprint>
+	</monogr>
+	<note>Interpreting maps of science using citation context</note>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">Distinctive words in academic writing: A comparison of three statistical tests for keyword extraction</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Sentiments Paquot</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Bestgen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Corpora: Pragmatics and Discourse</title>
+		<imprint>
+			<biblScope unit="volume">68</biblScope>
+			<biblScope unit="page" from="247" to="269" />
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">Concept symbols revisited: Naming clusters by parsing and filtering of noun phrases from citation contexts of concept symbols</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">W</forename><surname>Schneider</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Scientometrics</title>
+		<imprint>
+			<biblScope unit="volume">68</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="573" to="593" />
+			<date type="published" when="2006">2006</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<monogr>
+		<author>
+			<persName><forename type="first">M</forename><surname>Scott</surname></persName>
+		</author>
+		<ptr target="http://www.lexically.org/wordsmith/step_by_step_guide_English.pdf" />
+		<title level="m">WordSmith Tools Step by Step</title>
+		<imprint>
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">Cited documents as concept symbols</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Small</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Social Studies of Science</title>
+		<imprint>
+			<biblScope unit="volume">8</biblScope>
+			<biblScope unit="page" from="237" to="340" />
+			<date type="published" when="1978">1978</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">Synthesis of specialty narratives from co-citation clusters</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Small</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the American Society for Information Science</title>
+		<imprint>
+			<biblScope unit="volume">37</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="97" to="110" />
+			<date type="published" when="1986">1986</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">Maps of science as interdisciplinary discourse: Co-citation contexts and the role of analogy</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Small</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Scientometrics</title>
+		<imprint>
+			<biblScope unit="volume">83</biblScope>
+			<biblScope unit="page" from="835" to="849" />
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<analytic>
+		<title level="a" type="main">Citation structure of an emerging research area on the verge of application</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Small</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Upham</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Scientometrics</title>
+		<imprint>
+			<biblScope unit="volume">79</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="365" to="375" />
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<monogr>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">M</forename><surname>Swales</surname></persName>
+		</author>
+		<title level="m">Genera analysis: English in academic and research settings</title>
+		<meeting><address><addrLine>Cambridge</addrLine></address></meeting>
+		<imprint>
+			<publisher>Cambridge University Press</publisher>
+			<date type="published" when="1990">1990</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<monogr>
+		<title level="m" type="main">The structure of scientific articles: Applications to citation indexing and summarization</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Teufel</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2010">2010</date>
+			<publisher>CSLI Publications</publisher>
+			<pubPlace>Stanford, California</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<title level="a" type="main">Sentiment in science: a case study of CBMS contributions in years 2003 to 2007</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Verlic</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Stiglic</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Kocbek</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Kokol</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">21st IEEE International Symposium on Computer Based Medical Systems</title>
+		<meeting><address><addrLine>New York</addrLine></address></meeting>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2008">2008</date>
+			<biblScope unit="page" from="138" to="143" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

@@ -3,6 +3,12 @@ Reference parser for extracting citations and their contexts from TEI XML
 @Author: Assistant
 """
 
+import os
+import sys
+
+root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(root_dir)
+
 import json
 import spacy
 from lxml import etree
@@ -181,7 +187,7 @@ class ReferenceParser:
 
 def main():
     """Main function to demonstrate usage"""
-    xml_file = ".tmp/What Makes a Good Dataset for Knowledge Distillation_.grobid.xml"  # Input XML file path
+    xml_file = "tmp/What Makes a Good Dataset for Knowledge Distillation_.grobid.xml"  # Input XML file path
     output_json = "references.json"    # Output JSON file path
     
     parser = ReferenceParser(xml_file, output_json)

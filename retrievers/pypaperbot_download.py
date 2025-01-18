@@ -14,7 +14,8 @@ class PaperDownloader:
                  scholar_pages: int = 1,
                  scholar_results: int = 1,
                  scihub_mirror: Optional[str] = None,
-                 use_doi_as_filename: bool = True):
+                 use_doi_as_filename: bool = True,
+                 python_path: Optional[str] = None):
         """
         初始化下载器
         
@@ -25,6 +26,7 @@ class PaperDownloader:
             scholar_results: 每页结果数
             scihub_mirror: Sci-Hub镜像地址
             use_doi_as_filename: 是否使用DOI作为文件名
+            python_path: Python解释器路径，如果为None则使用系统默认的python
         """
         self.download_dir = os.path.expanduser(download_dir)
         self.min_year = min_year
@@ -32,6 +34,7 @@ class PaperDownloader:
         self.scholar_results = scholar_results
         self.scihub_mirror = scihub_mirror
         self.use_doi_as_filename = use_doi_as_filename
+        self.python_path = python_path or 'python'  # 如果未指定则使用系统默认的python
         
         # 设置日志
         self._setup_logging()
@@ -60,7 +63,8 @@ class PaperDownloader:
         Returns:
             构建好的命令字符串
         """
-        cmd = ['python -m PyPaperBot']
+        # 使用指定的Python解释器路径
+        cmd = [f'"{self.python_path}" -m PyPaperBot']
         
         # 添加主要参数
         if download_type == 'query':
@@ -167,10 +171,11 @@ class PaperDownloader:
 if __name__ == "__main__":
     # 使用示例
     downloader = PaperDownloader(
-        download_dir="../.tmp/papers",
+        download_dir="tmp/papers",
         scholar_pages=1,
         scholar_results=1,
-        use_doi_as_filename=True
+        use_doi_as_filename=True,
+        python_path="/path/to/your/python"  # 指定Python解释器路径
     )
     
     # 1. 通过查询下载

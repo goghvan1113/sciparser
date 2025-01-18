@@ -1,0 +1,1125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Exploring Graph Pre-training for Aspect-based Sentiment Analysis</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Xiaoyi</forename><surname>Bao</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="laboratory">Natural Language Processing Lab</orgName>
+								<orgName type="institution">Soochow University</orgName>
+								<address>
+									<settlement>Suzhou</settlement>
+									<country key="CN">China</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Zhongqing</forename><surname>Wang</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="laboratory">Natural Language Processing Lab</orgName>
+								<orgName type="institution">Soochow University</orgName>
+								<address>
+									<settlement>Suzhou</settlement>
+									<country key="CN">China</country>
+								</address>
+							</affiliation>
+						</author>
+						<author role="corresp">
+							<persName><forename type="first">Guodong</forename><surname>Zhou</surname></persName>
+							<email>gdzhou@suda.edu.cn</email>
+							<affiliation key="aff0">
+								<orgName type="laboratory">Natural Language Processing Lab</orgName>
+								<orgName type="institution">Soochow University</orgName>
+								<address>
+									<settlement>Suzhou</settlement>
+									<country key="CN">China</country>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Exploring Graph Pre-training for Aspect-based Sentiment Analysis</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<idno type="MD5">B5F265B6AD40054701E9DD9AB628CE20</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.2-SNAPSHOT" ident="GROBID" when="2025-01-17T16:51+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Existing studies tend to extract the sentiment elements in a generative manner in order to avoid complex modeling. Despite their effectiveness, they ignore importance of the relationships between sentiment elements that could be crucial, making the large pre-trained generative models sub-optimal for modeling sentiment knowledge. Therefore, we introduce two pre-training paradigms to improve the generation model by exploring graph pre-training that targeting to strengthen the model in capturing the elements' relationships. Specifically, We first employ an Element-level Graph Pretraining paradigm, which is designed to improve the structure awareness of the generative model. Then, we design a Task-level Graph Pre-training paradigm to make the generative model generalizable and robust against various irregular sentiment quadruples. Extensive experiments show the superiority of our proposed method, and validate the correctness of our motivation.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">Introduction</head><p>Aspect-based sentiment analysis (ABSA) has drawn increasing attention in the community, which includes four fine-grained elements: aspect term, opinion term, aspect category, and opinion polarity. The first two terms exist as a raw text span in the review sentence while the remaining two are the classification result of aspect and opinion respectively. Each four mapped sentiment elements form an aspect-level sentiment quadruple. For instance, for the given review "The apps are hard to use.", the corresponding quadruple is (apps, hard, Software, Negative).</p><p>The joint extraction of quadruples is the most complex and challenging subtask among all the ABSA tasks, previous work usually formulate it as either sequence-level <ref type="bibr" target="#b17">(Qiu et al., 2011;</ref><ref type="bibr" target="#b16">Peng et al., 2020;</ref><ref type="bibr" target="#b5">Cai et al., 2021)</ref> or token-level classification problems <ref type="bibr" target="#b20">(Tang et al., 2016)</ref> in joint learning or pipeline manner. However, these methods not only require sophisticated and complex modeling of sentiment elements but also suffer severely from error propagation since the overall prediction performance hinges on the accuracy of every step <ref type="bibr" target="#b16">(Peng et al., 2020)</ref>.</p><p>More recently, studies tend to tackle the ABSA problem with a unified generative approach <ref type="bibr">(Zhang et al., 2021b,a;</ref><ref type="bibr" target="#b25">Yan et al., 2021;</ref><ref type="bibr" target="#b2">Bao et al., 2022)</ref>. They organize the target sequence in different approaches, namely listing <ref type="bibr">(Zhang et al., 2021b)</ref>: "(apps, hard, Software, Negative)", indexing <ref type="bibr" target="#b25">(Yan et al., 2021)</ref>: "(1,1,3,3)", paraphrasing <ref type="bibr">(Zhang et al., 2021a)</ref>: "(Software is good because apps are hard)" or opinion tree <ref type="bibr" target="#b2">(Bao et al., 2022)</ref>: " <ref type="bibr">((Root,(Quad,( Aspect ( Software, apps )</ref>,( Opinion ( Negative, hard )))))". However, they ignore the importance of the relationships among elements (e.g. sentiment polarity should be identified based on opinion words, like great identifies a positive polarity and disappointing identifies a negative polarity).</p><p>In this situation, a natural question is how to </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Generate Generative Model</head><p>The apps are hard to use.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Review</head><p>[Tree]</p><formula xml:id="formula_0">Prompt Mask Tree + + Tree Input Output Subtask 𝐸𝑃𝐺 1</formula><p>The apps are hard to use. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Input</head><p>The apps are hard to use. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Input</head><p>The apps are hard to use.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Review Aspect 𝑃𝑜𝑙𝑎𝑟𝑖𝑡𝑦</head><p>[Opinion] Prompt</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>+</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Output</head><p>Subtask 𝐹𝑖𝑛𝑒𝑡𝑢𝑛𝑒</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Input</head><p>The apps are hard to use.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Review</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Aspect 𝐶𝑎𝑡𝑒𝑔𝑜𝑟𝑦 𝑃𝑜𝑙𝑎𝑟𝑖𝑡𝑦 [Opinion] Prompt</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>+</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Output</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Subtask 𝐹𝑖𝑛𝑒𝑡𝑢𝑛𝑒</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Pre-train</head><p>Aspect Opinion</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Category Polarity</head><p>Figure <ref type="figure">2</ref>: Overview of joint pre-training, the subtasks will be introduced in the following section. We simplify the process of Task-level Graph Pre-training for brief reading, the detailed process will be introduced in the following section.</p><p>strengthen the generative model in modeling aspectlevel sentiment structure. We believe the challenges locate in two aspects. First is structural modeling: the huge gap between the pre-training and finetuning phases makes it difficult to model its succinct yet distinctive structure : certain components ( e.g. aspect term ) in sentiment structure obviously more important than others. Another challenge is the generalization and robustness of the generative model: the generative model should be generalizable and robust against irregular sentiment quadruples. It is crucial since the structure is built depending on the quadruples and the challenging scenarios in real practice are usually brought by the irregular sentiment quadruples.</p><p>In this study, we proposed two novel graph pretraining paradigms to address above challenges. As shown in Figure <ref type="figure" target="#fig_0">1</ref>, we first introduce an optimal self-encoding method called Element-level Graph Pre-training. We abandon the traditional indiscriminate masking strategy (equally random masking every node or edge ) and depending on the characteristics of the opinion tree, adopt sentiment element level masking. Given the opinion tree of the review "The apps are hard to use.", only sentiment nodes (namely apps, hard, Software, Negative ) or the sub-trees they composed in the graph will be masked. In this case, this method can serve as an effective addition to structural modeling in opinion tree generation.</p><p>We then propose a Task-level Graph Pre-training paradigm, which mimics the human learning pro-cedure to learn to handle the task in stages. Specifically, we first decompose the quadruple extraction task into multiple subtasks. Each subtask corresponds to mapping the steps for manually building an opinion tree from scratch. Afterwards, we feature a prompt-based learning strategy to separately acquire the knowledge of subtasks and finally employ the learned knowledge to tackle the main task, i.e., generating the entire opinion tree. The decomposed subtasks build fundamental knowledge of irregular sentiment quadruples for generation.</p><p>As shown in Figure <ref type="figure">2</ref>, we then jointly pre-train the model with the two paradigms above and finetune the model with the F inetune task. The advantages of our pre-training method over previous learning methods are threefold: 1) both the Element-level Graph Pre-training and Task-level Graph Pre-training are designed depending on the intrinsic characteristics of the opinion tree instead of treating it as a plain graph.2) the Element-level Graph Pre-training abandons the strategy of capturing the complex structure but focuses directly on the core elements. 3) the Task-level Graph Pretraining explicitly forces the model to learn the irregular quadruples with an easy-to-hard routine, making it easier for the model to learn the fundamental knowledge required. The detailed evaluation shows that our model significantly advances the state-of-the-art performance on several benchmark datasets. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Reform</head><p>Opinion Tree</p><p>Figure <ref type="figure">3</ref>: Opinion tree generation model.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">Related Work</head><p>There are four aspect-level sentiment elements in ABSA, the various combination of these elements form the numerous sub-tasks of ABSA. The researches on ABSA generally follow a route from handling single sub-task to complex compositions of them. The starting point usually locates in the prediction of a single sentiment element, which is the target of fundamental sub-tasks, such as extracting the aspect term <ref type="bibr" target="#b17">(Qiu et al., 2011;</ref><ref type="bibr" target="#b20">Tang et al., 2016;</ref><ref type="bibr" target="#b23">Wang et al., 2021)</ref>, classifing the aspect category mentioned in the sentence <ref type="bibr" target="#b3">(Bu et al., 2021;</ref><ref type="bibr" target="#b9">Hu et al., 2019)</ref>, and detecting the sentiment polarity for a given aspect <ref type="bibr" target="#b20">(Tang et al., 2016;</ref><ref type="bibr">Chen et al., 2022a;</ref><ref type="bibr" target="#b12">Liu et al., 2021;</ref><ref type="bibr" target="#b19">Seoh et al., 2021;</ref><ref type="bibr" target="#b29">Zhang et al., 2022)</ref>.</p><p>Since the sentiment elements are naturally correlated, many studies further focus on exploring the co-extraction of sentiment elements, including aspect and opinion term extraction <ref type="bibr" target="#b24">(Xu et al., 2020;</ref><ref type="bibr" target="#b11">Li et al., 2022)</ref>; aspect term extraction and its polarity detection <ref type="bibr" target="#b26">(Zhang and Qian, 2020)</ref>; aspect category and polarity detection <ref type="bibr" target="#b4">(Cai et al., 2020)</ref>. Furthermore, recent studies also employed end-toend models to extract all the sentiment elements in triplet or quadruple format <ref type="bibr" target="#b16">(Peng et al., 2020;</ref><ref type="bibr" target="#b22">Wan et al., 2020;</ref><ref type="bibr" target="#b5">Cai et al., 2021;</ref><ref type="bibr">Zhang et al., 2021a;</ref><ref type="bibr">Chen et al., 2022b;</ref><ref type="bibr" target="#b14">Mukherjee et al., 2021)</ref>.</p><p>More recently, studies tend to design a unified framework to extract quadruples at one stop with pre-trained encoder-decoder language models, achieving great improvements in ABSA <ref type="bibr">(Zhang et al., 2021a)</ref>. The target sequence of them is formed by either class index <ref type="bibr" target="#b25">(Yan et al., 2021)</ref> or the desired sentiment element <ref type="bibr">(Zhang et al., 2021b)</ref>. OTG <ref type="bibr" target="#b2">(Bao et al., 2022)</ref> addressed the importance of semantic correlations among sentiment elements, proposed a sentiment tree structure called opinion tree, and employed generative model to extract the linearized tree. However, the generative model is pre-trained to solve textual sequence tasks(e.g. masked language model) but finetuned for structure generation, between which exists a huge gap, making generative models sub-optimal for modeling structural knowledge.</p><p>Different from previous studies, we introduce two pre-training paradigms for opinion tree generation without treating it as a plain graph. To our knowledge, we are the first to consider designing methods depending on the intrinsic characteristics of the opinion tree.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">Opinion Tree Generation Model</head><p>In this section, we introduce the basic opinion tree generation model we employed to generate in the pre-train and finetune phases, along with the objective functions and training.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1">Opinion Tree Construction</head><p>For further strengthen the relationship between elements, we build a structure called opinion tree, which aims to jointly model all sentiment elements in a tree for a given review sentence. The opinion tree can be considered as a semantic representation in order to better represent the structure of sentiment elements. Inside the opinion tree, each sentiment element would be connected with another node as either the child or parent relation to represent the crucial relationship.</p><p>As shown in Figure <ref type="figure">3</ref>, we construct the opinion tree using a rooted directed acyclic graph, including nodes of aspect, opinion, category, and polarity, along with the semantic relations between them. After that, we linearize the opinion tree to the target sequence via depth-first traversal.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2">Generation Model</head><p>We employ the pre-trained language model T5 <ref type="bibr" target="#b18">(Raffel et al., 2020)</ref> to generate the linearized opinion tree. As shown in Figure <ref type="figure">3</ref>, it is an encoderdecoder architecture model, the input would be the raw review and the output is linearized opinion tree. Given the token sequence x = x 1 , ..., x |x| as input, the sequence-to-sequence model outputs the linearized representation y = y 1 , ..., y |y| . To this end, the sequence-to-sequence model first computes the hidden vector representation: After the input token sequence is encoded, the decoder predicts the output sequence token-bytoken with the sequential input tokens' hidden vectors. At the i-th step of generation, the selfattention decoder predicts the i-th token y i in the linearized form, and decoder state h d i as:</p><formula xml:id="formula_1">H = (x 1 , ..., x |x| ) (1)</formula><formula xml:id="formula_2">y i , h d i = ([H; h d 1 , ..., h d i-1 ], y i-1 )<label>(2)</label></formula><p>The conditional probability of the whole output sequence p(y|x) is progressively combined by the probability of each step p(y i |y &lt;i , x):</p><formula xml:id="formula_3">p(y|x) = |y| i=1 p(y i |y &lt;i , x)<label>(3)</label></formula><p>where y &lt;i = y 1 ...y i-1 , and p(y i |y &lt;i , x) are the probabilities over target vocabulary V . The objective functions is to maximize the output linearized opinion tree X T probability given the review sentence X O . Therefore, we optimize the negative log-likelihood loss function:</p><formula xml:id="formula_4">L = - 1 |τ | (X O ,X T )∈τ log p(X T |X O ; θ) (4)</formula><p>where θ is the model parameters, and (X O , X T ) is a (sentence, tree) pair in training set τ , then</p><formula xml:id="formula_5">log p(X T |X O ; θ) = = n i=1 log p(x i T |x 1 T , x 2 T , ...x i-1 T , X O ; θ)<label>(5)</label></formula><p>where p(x i T |x 1 T , x 2 T , ...x i-1 T , X O ; θ) is calculated by the decoder.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">Pre-training Paradigms</head><p>In this study, we introduce two pre-training paradigms for opinion tree generation. As shown in Figure <ref type="figure">2</ref>, the two paradigms and finetune task share the same input format with a joint input of prompt, encoded text and tree, each method consists of a set of subtasks focus on respective training targets. The combination of subtasks forms the joint pre-training in our work, we will introduce the paradigms first in this section.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1">Element-level Graph Pre-training</head><p>The opinion tree is directly composed of subtrees that represent respective quadruples, this naturally decides the noteworthy information must locate within the aspect-level sentiment element instead of the other parts of the opinion tree, which could be other structure nodes. For instance, for a linearized opinion tree "(Root,(Quad,(Aspect (Software, apps),(Opinion (Negative, hard)", the indiscriminate masking may mask a sub-sequence "(Opinion (" that: 1) logically can not be reform into a valid structure due to the non-closing brackets. 2) contains nodes (e.g."Opinion" ) not included in the crucial sentiment elements.</p><p>On the other hand, our Element-level Graph Pre-training paradigm masks aspect-level element nodes (including aspect term, opinion term, aspect category, and opinion polarity) in the opinion tree, as shown in Figure <ref type="figure">4</ref>, the masked sequence "(Software, apps )" represent legitimate struct and covers core sentiment element only. If continuous nodes are masked, the corresponding sub-graph will be masked as a whole. The method can not only make sure the masked node are crucial sentiment elements but also guarantee the corresponding subsequence is logically legitimate.</p><p>With the element-level graph mask strategy introduced above, we propose a set of pre-training </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Input</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Prompt Sentence</head><p>The apps are hard to use.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>[Aspect]</head><p>The apps are hard to use.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>[Opinion]</head><p>[Category] [Aspect]</p><p>[Polarity] [Opinion]</p><p>[Aspect] [Opinion]</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>[Aspect] [Opinion] [Polarity]</head><p>The apps are hard to use.</p><p>The apps are hard to use.</p><p>The apps are hard to use.</p><p>The apps are hard to use.</p><p>(Root, (Aspect, apps))</p><p>(Root,(Opinion, hard))</p><p>(Root, Aspect (Software, apps))</p><p>(Root, Opinion (Negative, hard))</p><formula xml:id="formula_6">(Root, Quad (Aspect … hard)) (Root, Quad(Aspect … 𝑁𝑒𝑔𝑎𝑡𝑖𝑣𝑒))</formula><p>Finetune</p><p>The apps are hard to use.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>[Aspect] [Opinion] [Polarity][Category]</head><p>(Root,(Quad, ...(Negative, hard)</p><p>Pre-train Loop subtasks. The inputs would be a concat of a prompt, a sentence, and an opinion tree. The sentence and tree will be masked with different masking rates while the prompt illustrates the output target, either the sentence or tree. For a given review s = (x 1 , x 2 , ...x n-1 , x n ) and linearized tree t = (t 1 , t 2 , ...t n-1 , t n ), We design the 5 subtasks in the Element-level Graph Pre-training paradigm, which can be found in Table <ref type="table" target="#tab_1">1</ref>. Among which, EP G1 and EP G4 are designed to help the model generate the complete tree t by adding text information while EP G2, EP G3 and EP G5 help the model to generate the full review s by adding the structural information.</p><p>To further emphasize the interaction between the pre-training and finetune phases, we designed a dynamic masking rate for Element-level Graph Pre-training paradigms: a small masking rate is used in the initial phase, and then the masking rate increases with training rounds, so that at the end of pre-training, all partially masked pre-training tasks be very close to the finetune tasks (which can be considered as 100% masking rate), the specific masking rate is shown in Table <ref type="table" target="#tab_2">2</ref>. Note our masking rate obviously lower than previous work <ref type="bibr" target="#b0">(Bai et al., 2022)</ref>, that is because recovering a nearly all-masked text from an opinion tree is unreasonable since opinion tree contains limited information as we discussed before.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2">Task-level Graph Pre-training</head><p>Inspired by the human-learning process we propose a Task-level Graph Pre-training paradigm, whose subtasks follow the routine of human learning procedure to learn to build the opinion tree from scratch. Specifically, we first decompose the quadruple extraction task into multiple subtasks. Each subtask corresponds to mapping the steps for manually building an opinion tree from scratch. The paradigm consists of six subtasks, four (Aspect, Opinion, Category, P olarity) of which extract sentiment structure as the fundamental knowledge for building an opinion tree, the rest (P air, T riple) target the intermediate state of the procedure with co-extraction. The subtasks and the corresponding steps of building can be found in Appendix A. In this case, we force the model to focus directly on irregular cases with a gradual process to build fundamental knowledge for OTG. The inputs of Task-level Graph Pre-training are similar to the previous paradigm, which would be a concat of a prompt and a sentence. Then the subtasks in Task-level Graph Pre-training paradigm can be given as shown in Figure <ref type="figure">5</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.3">Joint Pre-training</head><p>We use a joint pre-training method to combine the advantages of the Element-level Graph Pre-training paradigm and Task-level Graph Pretraining paradigms. In addition, we include the finetune task F inetune in the pre-train phase for narrowing the gap between two phases and avoiding overfitting. During pre-training, the model will be cyclically trained in the order of a loop started with the subtasks of the Element-level Graph Pretraining, followed by Task-level Graph Pre-training, the gradient will be updated after accumulating the loss in each epoch. After that, we save the model weights and finetune the model with finetune task F inetune.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">Experiments</head><p>In this section, we introduce the datasets used for evaluation and the baseline methods employed for comparison. We then report the experimental results conducted from different perspectives, and analyze the effectiveness of the proposed model with different factors.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.1">Setting</head><p>In this study, we use ACOS dataset <ref type="bibr" target="#b5">(Cai et al., 2021)</ref> for our experiments. Following the setting from <ref type="bibr" target="#b5">(Cai et al., 2021)</ref>, we divide the original dataset into a training set, a validation set, and a testing set. In addition, we choose 20,000 sentences from Yelp<ref type="foot" target="#foot_0">foot_0</ref> , and 20,000 sentences from the laptop domain in Amazon<ref type="foot" target="#foot_1">foot_1</ref> to pre-train the opinion tree generation model, the sentences are annotated by the OTG model without pre-training. Following the setting of <ref type="bibr" target="#b1">Bao et al. (2023)</ref>, we divide the quadruples into 4 types, apart from the basic situation, there are 3 irregular situations: Oneto-Many, Mono-Implicit and Bi-Implicit. The statistic can be found in Figure <ref type="figure" target="#fig_5">6</ref>.</p><p>We employ T5<ref type="foot" target="#foot_2">foot_2</ref> and fine-tune its parameters for our opinion tree generation model. We tune the parameters of our models by grid searching on the validation dataset. We select the best models by early stopping using the Accuracy results on the validation dataset. The model parameters are optimized by <ref type="bibr">Adam (Kingma and Ba, 2015)</ref>, the learning rate of pre-training and finetuning is 3e-5 and 1e-4 respectively. The batch size is 16. Our experiments are carried out with an Nvidia RTX 3090 GPU. The experimental results are obtained by averaging ten runs with random initialization.</p><p>In evaluation, a quadruple is viewed as correct if and only if the four elements, as well as their combination, are exactly the same as those in the gold quadruple. On this basis, we calculate the Precision and Recall, and use F1 score as the final evaluation metric for aspect sentiment quadruple extraction <ref type="bibr" target="#b5">(Cai et al., 2021;</ref><ref type="bibr">Zhang et al., 2021a)</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.2">Main Results</head><p>We compare the proposed method with several classification-based aspect-based sentiment analysis models, including, DP <ref type="bibr" target="#b17">(Qiu et al., 2011)</ref>, JET <ref type="bibr" target="#b24">(Xu et al., 2020)</ref>, TAS-BERT <ref type="bibr" target="#b22">(Wan et al., 2020)</ref> and Extract-Classify <ref type="bibr" target="#b5">(Cai et al., 2021)</ref>. In addition, generative models are also compared, such as BARTABSA <ref type="bibr" target="#b25">(Yan et al., 2021)</ref>, GAS <ref type="bibr">(Zhang et al., 2021b)</ref>, Paraphrase <ref type="bibr">(Zhang et al., 2021a)</ref>,TODA <ref type="bibr" target="#b8">(Hu et al., 2022)</ref>, Seq2Path <ref type="bibr" target="#b13">(Mao et al., 2022)</ref> and OTG <ref type="bibr" target="#b2">(Bao et al., 2022)</ref>. <ref type="foot" target="#foot_3">4</ref> .</p><p>Particularly, we build two Large Language Model (LLM) baselines: ChatGPT<ref type="foot" target="#foot_4">foot_4</ref> is a sibling model to InstructGPT <ref type="bibr" target="#b15">(Ouyang et al., 2022)</ref>, which is trained to follow instruction in a prompt and provide a detailed response. We ask it to generate all the sentiment elements from the input review sentences. LLaMA<ref type="foot" target="#foot_5">foot_5</ref>  <ref type="bibr" target="#b21">(Touvron et al., 2023</ref>) is a collection of foundation language models, these models are trained on trillions of tokens, and have shown that it is possible to train state-of-the-art models using publicly available datasets exclusively. We use LLaMA-7B, and fine-tune it on the ABSA dataset.</p><p>As shown in  passes non-structural methods, this indicates that semantic structure does contribute to quadruple extraction. Meanwhile, our proposed model outperforms all the previous studies significantly (p &lt; 0.05), which has an advantage of 2.36% and 0.92% in Restaurant and Laptop domain respectively. The result shows that the proposed joint pre-training is effective in modeling tree structural constraints for generative model, while the large gap between pre-training and finetuning significantly encumbers previous systems. Furthermore, the results also indicate the effectiveness of our Element-level Graph Pre-training and Task Decomposition paradigms, which are used to unify the pre-train and finetune task with special task designs depending on the intrinsic characteristics of the opinion tree instead of treating it as a plain graph.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6">Analysis and Discussion</head><p>In this section, we first give some analysis and discussion to show the influence of Element-level Graph Pre-training (EGP) and Task-level Graph Pre-training (TGP) paradigms. After that, we will investigate our search over masking rate, the influence of pre-training subtasks.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.1">Influence of Different Factors</head><p>We first investigate the difference between the two paradigms, from Table <ref type="table" target="#tab_5">4</ref> we can find, all the paradigms are beneficial to extract the opinion tree. Among which TGP paradigm's contribution outperforms EGP paradigm, the removal of TGP cause an  this situation, there will be one intuitive question:</p><p>Whether the element-level masking design does achieve a performance better than the indiscriminate paradigm as we expect?</p><p>We investigate this question by employing ablation experiments. We first design an indiscriminate paradigm under similar settings, then we give the performance of using different paradigms in Table 5. As we can see, our element-level paradigm outperforms the indiscriminate paradigm, this result shows the superiority of our element-level masking design, and also validated our motivation: for target graphs that contain limited knowledge like opinion tree, indiscriminate masking strategies would be sub-optimal and fine-grained masking should be adopted.</p><p>We then investigate the impact of subtasks in EGP paradigm. We add the subtasks in paradigm gradually. As we can see in Table <ref type="table">5</ref>, the subtask pair of EP G5 and EP G4 (+All EGP s) contributes the most to the performance (0.58% and 0.42% in each domain respectively), which aims to integrate the complementary information from both formations to generate text and tree respectively, indicating the significance of the complementary association.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.3">Effect of Task-level Graph Pre-training</head><p>As shown in Table <ref type="table" target="#tab_6">6</ref>, the OTG model obviously be short in its generalization and robustness against irregular sentiment quadruples when compared with the basic situation. Thus we mimic the human learning procedure for building an opinion tree from scratch with Task-level Graph Pre-training to strengthen its fundamental knowledge.</p><p>We investigate the paradigm's effect by comparing the model's performance on each irregular quadruple situation. As shown in Table <ref type="table" target="#tab_6">6</ref> , our model's improvement in all of the irregular classes surpasses the basic situation when compared with OTG. This result indicates that our pretrain method significantly improves the model's performance with a burst in generalization and robustness against irregular sentiment quadruples, which accomplish the foundation for building an opinion tree and should be taken into consideration apart from improving the structural awareness.</p><p>We then investigate the impact of subtasks in TGP paradigm. We remove the subtasks in the paradigms gradually. Table <ref type="table" target="#tab_7">7</ref> shows the result for Task Decomposition paradigm: the contributions of subtasks stay in a similar scope, among which the Aspect surpasses others with a tiny gap, this may due to the lower implicit rate of aspect terms<ref type="foot" target="#foot_6">foot_6</ref> .</p><p>In addition, all the subtasks are beneficial to extract the opinion tree. It is worth noting that, the participation of finetune task F inetune demonstrates an obviously positive effect in both paradigms, which improves two domains with an average of 0.31%, this phenomenon gives us a conclusion that adding the finetune task in the pre-train phase is an effective solution for narrowing the gap between them.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="7">Conclusion</head><p>In this study, we propose two novel pre-train paradigms for opinion tree generation, which are designed depending on the intrinsic characteristics of the opinion tree. Specifically, the Element-level Graph Pre-training paradigm abandons the strategy of capturing the complex structure but focuses directly on the core elements. While the Task-level Graph Pre-training explicitly focuses on improving the generalization and robustness against irregular quadruples with an easy-to-hard routine. Furthermore, we explore a dynamic masking rate and a cyclical train method for jointly combining the pre-training paradigms in order to bridge the gap between the pre-training and finetuning phases in modeling structural knowledge.</p><p>Experimental results show that our proposed model can achieve state-of-the-art performance in ABSA. In addition, the results also validate that, for target graphs that contain certain knowledge like opinion tree, the improving strategy should be made based on the intrinsic characteristics of the structure instead of treating it as a plain graph.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Limitations</head><p>The limitations of our work can be stated from three perspectives. First, our pre-training method contains many subtasks that will consume vast computational cost during pre-train (the inference cost will not change). If possible, further work should try to explore a time-saving pre-training method. Secondly, more tasks could be further explored, including cross-domain and cross-lingo sentiment analysis tasks. Finally, we focus on opinion tree generation in one major language. The performance of other languages remains unknown.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A Building Procedure</head><p>In Task-level Graph Pre-training paradigm, the subtasks are set to follow the routine of building the opinion tree from scratch. For building an opinion tree manually, humans often learn to find fundamental elements, such as aspects or opinions, followed by finding the corresponding classification result such as category and polarity to build a single quadruple unit, then composing multiple units to fulfill a more challenging goal, i.e., writing the entire opinion tree.</p><p>Based on the process introduced, we design the subtasks in Task-level Graph Pre-training paradigm. Each subtask corresponds to mapping the steps for manually building an opinion tree from scratch. The paradigm consists of six subtasks: Aspect, Opinion, Category, P olarity,P air and T riple. Their prompts and target graph can be found in Figure 7. Among which, Aspect and Opinion focus on searching the basic elements of each quadruple:</p><p>• Aspect: Extract all the aspect terms in the review in the form of a tree, Figure <ref type="figure" target="#fig_7">7</ref> (a).</p><p>• Opinion: Extract all the Opinion terms in the review in the form of a tree, Figure <ref type="figure" target="#fig_7">7</ref> (b).</p><p>Category and P olarity further explore the classification results with the corresponding basic elements:</p><p>• Category: On the base of Aspect, extract the category classification result of the aspect terms in the review in the form of a tree, Figure 7 (c).</p><p>• P olarity: On the base of Opinion, extract the polarity classification result of the opinion terms in the review in the form of a tree, Figure <ref type="figure" target="#fig_7">7</ref> (d).</p><p>P air and T riple fulfill the mapping between quadruples.</p><p>• P air: On the base of Aspect and Opinion, map the corresponding aspect term and opinion term within a quadruple, Figure <ref type="figure" target="#fig_7">7</ref> (e).</p><p>• T riple: On the base of Aspect and P olarity, map the corresponding aspect term and opinion term and polarity within a quadruple,  </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 :</head><label>1</label><figDesc>Figure 1: Two proposed pre-train paradigms.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Figure 6 :</head><label>6</label><figDesc>Figure 6: Statistic of regular and irregular situations of opinion trees.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_7"><head>Figure 7 :</head><label>7</label><figDesc>Figure 7: Building procedure of subtasks in Task-level Graph Pre-training.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1"><head>Table 1 :</head><label>1</label><figDesc>Subtasks of Element-level Graph Pre-training.</figDesc><table><row><cell>Subtask</cell><cell cols="2">Prompt</cell><cell></cell><cell>Review</cell><cell>Input</cell><cell>Tree</cell><cell>Subtask</cell></row><row><cell>EGP1</cell><cell cols="2">[Tree]</cell><cell cols="3">The apps are hard to use.</cell><cell>(Root,(Quad, ...&lt;Mask&gt;,. . . )</cell><cell>(Root,(Quad, ...(Negative,hard)</cell></row><row><cell>EGP2</cell><cell cols="2">[Sentence]</cell><cell></cell><cell cols="2">The apps &lt;Mask&gt; use.</cell><cell>&lt;Mask&gt;</cell><cell>The apps are hard to use.</cell></row><row><cell>EGP3</cell><cell cols="2">[Sentence]</cell><cell></cell><cell cols="2">The apps &lt;Mask&gt; use.</cell><cell>(Root,(Quad, ...(Negative, hard)</cell><cell>The apps are hard to use.</cell></row><row><cell>EGP4</cell><cell cols="2">[Tree]</cell><cell></cell><cell cols="2">The apps &lt;Mask&gt; use.</cell><cell>(Root,(Quad, ...&lt;Mask&gt;,. . . )</cell><cell>(Root,(Quad, ...(Negative,hard)</cell></row><row><cell>EGP5</cell><cell cols="2">[Sentence]</cell><cell></cell><cell cols="2">The apps &lt;Mask&gt; use.</cell><cell>(Root,(Quad, ...&lt;Mask&gt;,. . . )</cell><cell>The apps are hard to use.</cell></row><row><cell cols="2">ROOT</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell cols="2">Quad</cell><cell></cell><cell cols="2">(Root,</cell><cell></cell></row><row><cell>Aspect</cell><cell>Opinion</cell><cell cols="2">Linearize</cell><cell cols="2">(Quad, ( Aspect (Software, apps ),</cell></row><row><cell>Software</cell><cell>Negative</cell><cell></cell><cell></cell><cell cols="3">( Opinion (Negative, hard ))))</cell></row><row><cell>apps</cell><cell>hard</cell><cell></cell><cell></cell><cell></cell><cell>Mask</cell></row><row><cell></cell><cell></cell><cell></cell><cell cols="2">(Root,</cell><cell></cell></row><row><cell cols="2">(Software, apps )</cell><cell></cell><cell></cell><cell>(Quad,</cell><cell></cell></row><row><cell cols="2">✓ legitimate structure</cell><cell></cell><cell></cell><cell cols="2">( Aspect (Software, apps ),</cell></row><row><cell cols="2">✓ sentiment elements</cell><cell></cell><cell></cell><cell cols="3">( Opinion (Negative, hard ))))</cell></row></table><note><p><p>Mask</p>Figure 4: Example of element-level graph masking.</p></note></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2"><head>Table 2 :</head><label>2</label><figDesc>OutputFigure 5: Subtasks of Task-level Graph Pre-training paradigm. Note the finetune task has been added into the pre-training phase. Dynamic masking rate.</figDesc><table><row><cell cols="3">Epoch range Tree mask rate Text mask rate</cell></row><row><cell>0% ∼ 25%</cell><cell>0.25</cell><cell>0.15</cell></row><row><cell>25% ∼ 50%</cell><cell>0.3</cell><cell>0.15</cell></row><row><cell>50% ∼ 75%</cell><cell>0.35</cell><cell>0.15</cell></row><row><cell>75% ∼ 100%</cell><cell>0.4</cell><cell>0.15</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_3"><head>Table 3</head><label>3</label><figDesc></figDesc><table><row><cell>, we find that generative</cell></row><row><cell>models outperform previous classification-based</cell></row><row><cell>methods and the structural generative method sur-</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_4"><head>Table 3 :</head><label>3</label><figDesc>Comparison with baselines.</figDesc><table /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_5"><head>Table 4 :</head><label>4</label><figDesc>Impact of pre-training paradigm.</figDesc><table><row><cell>Method</cell><cell cols="3">Restaurant Laptop</cell></row><row><cell>Ours</cell><cell></cell><cell>0.6390</cell><cell>0.4512</cell></row><row><cell>-EGP</cell><cell></cell><cell>0.6339</cell><cell>0.4490</cell></row><row><cell>-TGP</cell><cell></cell><cell>0.6334</cell><cell>0.4463</cell></row><row><cell>-EGP&amp; TGP</cell><cell></cell><cell>0.6164</cell><cell>0.4393</cell></row><row><cell>Method</cell><cell></cell><cell cols="2">Restaurant Laptop</cell></row><row><cell>OTG</cell><cell></cell><cell>0.6164</cell><cell>0.4394</cell></row><row><cell>+ Indiscriminate</cell><cell></cell><cell>0.6287</cell><cell>0.4423</cell></row><row><cell>+ F inetune</cell><cell></cell><cell>0.6211</cell><cell>0.4411</cell></row><row><cell cols="2">+ EGP 1, F inetune</cell><cell>0.6243</cell><cell>0.4413</cell></row><row><cell cols="2">+ EGP 1, F inetune EGP 2, EGP 3</cell><cell>0.6276</cell><cell>0.4421</cell></row><row><cell>+ All EGP s</cell><cell></cell><cell>0.6334</cell><cell>0.4463</cell></row><row><cell>Ours</cell><cell></cell><cell>0.6390</cell><cell>0.4512</cell></row><row><cell cols="4">Table 5: Impact of subtasks in Element-level Graph</cell></row><row><cell>Pre-training paradigm.</cell><cell></cell><cell></cell></row><row><cell cols="4">avgerage drop of 0.52% while EGP's cause 0.21%,</cell></row><row><cell cols="4">this may due to the generalization and robustness</cell></row><row><cell cols="4">being more effective than the structural association.</cell></row><row><cell cols="3">6.2 Effect of Element-level Graph</cell></row><row><cell>Pre-training</cell><cell></cell><cell></cell></row><row><cell cols="4">Under the setting of our element-level masking de-</cell></row><row><cell cols="4">sign for graph pre-train, previous graph-masking</cell></row><row><cell cols="4">strategies can be classified into the indiscriminate</cell></row><row><cell cols="4">paradigm, which means indiscriminately mask-</cell></row><row><cell cols="4">ing random nodes and words in tree or text. In</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_6"><head>Table 6 :</head><label>6</label><figDesc>The average performance of different situations in Restaurant and Laptop domain.</figDesc><table><row><cell>Method</cell><cell cols="2">Restaurant Laptop</cell></row><row><cell>OTG</cell><cell>0.6164</cell><cell>0.4394</cell></row><row><cell>+ Aspect</cell><cell>0.6251</cell><cell>0.4439</cell></row><row><cell>+ Aspect, Opinion</cell><cell>0.6275</cell><cell>0.4447</cell></row><row><cell>+ Aspect, Opinion, P air, T riple</cell><cell>0.6294</cell><cell>0.4473</cell></row><row><cell>+ Aspect, Opinion, category polarity, P air, T riple</cell><cell>0.6294</cell><cell>0.4473</cell></row><row><cell>+ Aspect, Opinion, category</cell><cell></cell><cell></cell></row><row><cell>polarity, P air, T riple</cell><cell>0.6339</cell><cell>0.4490</cell></row><row><cell>f inetune</cell><cell></cell><cell></cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_7"><head>Table 7 :</head><label>7</label><figDesc>Impact of subtasks in Task-level Graph Pretraining paradigm.</figDesc><table /></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="1" xml:id="foot_0"><p>https://www.yelp.com/dataset</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="2" xml:id="foot_1"><p>http://jmcauley.ucsd.edu/data/amazon/</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="3" xml:id="foot_2"><p>T5 base , https://huggingface.co/transformers/ model_doc/t5.html</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="4" xml:id="foot_3"><p>We directly adopt the result from<ref type="bibr" target="#b2">Bao et al. (2022)</ref> </p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="5" xml:id="foot_4"><p>https://openai.com/blog/chatgpt.</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="6" xml:id="foot_5"><p>https://huggingface.co/docs/transformers/ main/model_doc/llama.</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="7" xml:id="foot_6"><p>The average implicit rate of aspect term and opinion term is 22.63% and 24.19% respectively</p></note>
+		</body>
+		<back>
+
+			<div type="availability">
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Our code can be found in <ref type="url" target="https://github.com/HoraceXIaoyiBao">https://github.com/HoraceXIaoyiBao</ref></p></div>
+			</div>
+
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Graph pre-training for AMR parsing and generation</title>
+		<author>
+			<persName><forename type="first">Xuefeng</forename><surname>Bai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yulong</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yue</forename><surname>Zhang</surname></persName>
+		</author>
+		<idno type="DOI">10.18653/v1/2022.acl-long.415</idno>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 60th Annual Meeting of the Association for Computational Linguistics</title>
+		<meeting>the 60th Annual Meeting of the Association for Computational Linguistics<address><addrLine>Dublin, Ireland</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computational Linguistics</publisher>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="page" from="6001" to="6015" />
+		</imprint>
+	</monogr>
+	<note>: Long Papers)</note>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<title level="m" type="main">Opinion tree parsing for aspect-based sentiment analysis</title>
+		<author>
+			<persName><forename type="first">Xiaoyi</forename><surname>Bao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiaotong</forename><surname>Jiang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhongqing</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yue</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Guodong</forename><surname>Zhou</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Aspect-based sentiment analysis with opinion tree generation</title>
+		<author>
+			<persName><forename type="first">Xiaoyi</forename><surname>Bao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhongqing</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiaotong</forename><surname>Jiang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Rong</forename><surname>Xiao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shoushan</forename><surname>Li</surname></persName>
+		</author>
+		<idno type="DOI">10.24963/ijcai.2022/561</idno>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the Thirty-First International Joint Conference on Artificial Intelligence, IJCAI 2022</title>
+		<meeting>the Thirty-First International Joint Conference on Artificial Intelligence, IJCAI 2022<address><addrLine>Vienna, Austria</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2022-07-29">2022. 23-29 July 2022</date>
+			<biblScope unit="page" from="4044" to="4050" />
+		</imprint>
+	</monogr>
+	<note>ijcai.org</note>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">ASAP: A Chinese review dataset towards aspect category sentiment analysis and rating prediction</title>
+		<author>
+			<persName><forename type="first">Jiahao</forename><surname>Bu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lei</forename><surname>Ren</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shuang</forename><surname>Zheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yang</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jingang</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Fuzheng</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wei</forename><surname>Wu</surname></persName>
+		</author>
+		<idno type="DOI">10.18653/v1/2021.naacl-main.167</idno>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2021 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies</title>
+		<meeting>the 2021 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies</meeting>
+		<imprint>
+			<publisher>Association for Computational Linguistics</publisher>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="page" from="2069" to="2079" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Aspect-category based sentiment analysis with hierarchical graph convolutional network</title>
+		<author>
+			<persName><forename type="first">Hongjie</forename><surname>Cai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yaofeng</forename><surname>Tu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiangsheng</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jianfei</forename><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Rui</forename><surname>Xia</surname></persName>
+		</author>
+		<idno type="DOI">10.18653/v1/2020.coling-main.72</idno>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 28th International Conference on Computational Linguistics</title>
+		<meeting>the 28th International Conference on Computational Linguistics<address><addrLine>Barcelona, Spain (Online)</addrLine></address></meeting>
+		<imprint>
+			<publisher>International Committee on Computational Linguistics</publisher>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="page" from="833" to="843" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Aspectcategory-opinion-sentiment quadruple extraction with implicit aspects and opinions</title>
+		<author>
+			<persName><forename type="first">Hongjie</forename><surname>Cai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Rui</forename><surname>Xia</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jianfei</forename><surname>Yu</surname></persName>
+		</author>
+		<idno type="DOI">10.18653/v1/2021.acl-long.29</idno>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 59th Annual Meeting of the Association for Computational Linguistics and the 11th International Joint Conference on Natural Language Processing</title>
+		<meeting>the 59th Annual Meeting of the Association for Computational Linguistics and the 11th International Joint Conference on Natural Language Processing</meeting>
+		<imprint>
+			<publisher>Association for Computational Linguistics</publisher>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="page" from="340" to="350" />
+		</imprint>
+	</monogr>
+	<note>Long Papers</note>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Discrete opinion tree induction for aspect-based sentiment analysis</title>
+		<author>
+			<persName><forename type="first">Chenhua</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhiyang</forename><surname>Teng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhongqing</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yue</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">;</forename></persName>
+		</author>
+		<idno type="DOI">10.18653/v1/2022.acl-long.145</idno>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 60th Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers)</title>
+		<meeting>the 60th Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers)<address><addrLine>Dublin, Ireland</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computational Linguistics</publisher>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page" from="2051" to="2064" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Enhanced multi-channel graph convolutional network for aspect sentiment triplet extraction</title>
+		<author>
+			<persName><forename type="first">Zepeng</forename><surname>Hao Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Fangxiang</forename><surname>Zhai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ruifan</forename><surname>Feng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiaojie</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Wang</surname></persName>
+		</author>
+		<idno type="DOI">10.18653/v1/2022.acl-long.212</idno>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 60th Annual Meeting of the Association for Computational Linguistics</title>
+		<meeting>the 60th Annual Meeting of the Association for Computational Linguistics<address><addrLine>Dublin, Ireland</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computational Linguistics</publisher>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="page" from="2974" to="2985" />
+		</imprint>
+	</monogr>
+	<note>: Long Papers)</note>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Improving aspect sentiment quad prediction via template-order data augmentation</title>
+		<author>
+			<persName><forename type="first">Mengting</forename><surname>Hu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yike</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hang</forename><surname>Gao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yinhao</forename><surname>Bai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shiwan</forename><surname>Zhao</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2022 Conference on Empirical Methods in Natural Language Processing</title>
+		<meeting>the 2022 Conference on Empirical Methods in Natural Language Processing<address><addrLine>Abu Dhabi, United Arab Emirates</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computational Linguistics</publisher>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page" from="7889" to="7900" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">CAN: Constrained attention networks for multi-aspect sentiment analysis</title>
+		<author>
+			<persName><forename type="first">Mengting</forename><surname>Hu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shiwan</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Li</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Keke</forename><surname>Cai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhong</forename><surname>Su</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Renhong</forename><surname>Cheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiaowei</forename><surname>Shen</surname></persName>
+		</author>
+		<idno type="DOI">10.18653/v1/D19-1467</idno>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2019 Conference on Empirical Methods in Natural Language Processing and the 9th International Joint Conference on Natural Language Processing (EMNLP-IJCNLP)</title>
+		<meeting>the 2019 Conference on Empirical Methods in Natural Language Processing and the 9th International Joint Conference on Natural Language Processing (EMNLP-IJCNLP)<address><addrLine>Hong Kong, China</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computational Linguistics</publisher>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="page" from="4601" to="4610" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Adam: A method for stochastic optimization</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Diederik</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jimmy</forename><surname>Kingma</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Ba</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">3rd International Conference on Learning Representations, ICLR 2015</title>
+		<title level="s">Conference Track Proceedings</title>
+		<meeting><address><addrLine>San Diego, CA, USA</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2015-05-07">2015. May 7-9, 2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Generative cross-domain data augmentation for aspect and opinion co-extraction</title>
+		<author>
+			<persName><forename type="first">Junjie</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jianfei</forename><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Rui</forename><surname>Xia</surname></persName>
+		</author>
+		<idno type="DOI">10.18653/v1/2022.naacl-main.312</idno>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2022 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies</title>
+		<meeting>the 2022 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies<address><addrLine>Seattle, United States</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computational Linguistics</publisher>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page" from="4219" to="4229" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Solving aspect category sentiment analysis as a text generation task</title>
+		<author>
+			<persName><forename type="first">Jian</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhiyang</forename><surname>Teng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Leyang</forename><surname>Cui</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hanmeng</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yue</forename><surname>Zhang</surname></persName>
+		</author>
+		<idno type="DOI">10.18653/v1/2021.emnlp-main.361</idno>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2021 Conference on Empirical Methods in Natural Language Processing</title>
+		<meeting>the 2021 Conference on Empirical Methods in Natural Language Processing<address><addrLine>Punta Cana, Dominican Republic</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computational Linguistics</publisher>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="page" from="4406" to="4416" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">Seq2Path: Generating sentiment tuples as paths of a tree</title>
+		<author>
+			<persName><forename type="first">Yue</forename><surname>Mao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yi</forename><surname>Shen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jingchao</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiaoying</forename><surname>Zhu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Longjun</forename><surname>Cai</surname></persName>
+		</author>
+		<idno type="DOI">10.18653/v1/2022.findings-acl.174</idno>
+	</analytic>
+	<monogr>
+		<title level="m">Findings of the Association for Computational Linguistics: ACL 2022</title>
+		<meeting><address><addrLine>Dublin, Ireland</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computational Linguistics</publisher>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page" from="2215" to="2225" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">PASTE: A tagging-free decoding framework using pointer networks for aspect sentiment triplet extraction</title>
+		<author>
+			<persName><forename type="first">Rajdeep</forename><surname>Mukherjee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tapas</forename><surname>Nayak</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yash</forename><surname>Butala</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sourangshu</forename><surname>Bhattacharya</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pawan</forename><surname>Goyal</surname></persName>
+		</author>
+		<idno type="DOI">10.18653/v1/2021.emnlp-main.731</idno>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2021 Conference on Empirical Methods in Natural Language Processing</title>
+		<meeting>the 2021 Conference on Empirical Methods in Natural Language Processing<address><addrLine>Punta Cana, Dominican Republic</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computational Linguistics</publisher>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="page" from="9279" to="9291" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<monogr>
+		<title level="m" type="main">Training language models to follow instructions with human feedback</title>
+		<author>
+			<persName><forename type="first">Long</forename><surname>Ouyang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jeff</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xu</forename><surname>Jiang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Diogo</forename><surname>Almeida</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Carroll</forename><forename type="middle">L</forename><surname>Wainwright</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pamela</forename><surname>Mishkin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chong</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sandhini</forename><surname>Agarwal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Katarina</forename><surname>Slama</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alex</forename><surname>Ray</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">John</forename><surname>Schulman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jacob</forename><surname>Hilton</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Fraser</forename><surname>Kelton</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Luke</forename><surname>Miller</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Maddie</forename><surname>Simens</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Amanda</forename><surname>Askell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Peter</forename><surname>Welinder</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Paul</forename><forename type="middle">F</forename><surname>Christiano</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jan</forename><surname>Leike</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ryan</forename><surname>Lowe</surname></persName>
+		</author>
+		<idno type="DOI">10.48550/arXiv.2203.02155</idno>
+		<idno>CoRR, abs/2203.02155</idno>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">Knowing what, how and why: A near complete solution for aspect-based sentiment analysis</title>
+		<author>
+			<persName><forename type="first">Haiyun</forename><surname>Peng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lu</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lidong</forename><surname>Bing</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Fei</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wei</forename><surname>Lu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Luo</forename><surname>Si</surname></persName>
+		</author>
+		<idno type="DOI">10.1609/aaai.v34i05.6383</idno>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the AAAI Conference on Artificial Intelligence</title>
+		<meeting>the AAAI Conference on Artificial Intelligence</meeting>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="volume">34</biblScope>
+			<biblScope unit="page" from="8600" to="8607" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">Opinion Word Expansion and Target Extraction through Double Propagation</title>
+		<author>
+			<persName><forename type="first">Guang</forename><surname>Qiu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bing</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jiajun</forename><surname>Bu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chun</forename><surname>Chen</surname></persName>
+		</author>
+		<idno type="DOI">10.1162/coli_a_00034</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Computational Linguistics</title>
+		<imprint>
+			<biblScope unit="volume">37</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="9" to="27" />
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">Exploring the limits of transfer learning with a unified text-to-text transformer</title>
+		<author>
+			<persName><forename type="first">Colin</forename><surname>Raffel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Noam</forename><surname>Shazeer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Adam</forename><surname>Roberts</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Katherine</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sharan</forename><surname>Narang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Michael</forename><surname>Matena</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yanqi</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wei</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Peter</forename><forename type="middle">J</forename><surname>Liu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Machine Learning Research</title>
+		<imprint>
+			<biblScope unit="volume">21</biblScope>
+			<biblScope unit="issue">140</biblScope>
+			<biblScope unit="page" from="1" to="67" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">Open aspect target sentiment classification with natural language prompts</title>
+		<author>
+			<persName><forename type="first">Ronald</forename><surname>Seoh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ian</forename><surname>Birle</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mrinal</forename><surname>Tak</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Haw-Shiuan</forename><surname>Chang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Brian</forename><surname>Pinette</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alfred</forename><surname>Hough</surname></persName>
+		</author>
+		<idno type="DOI">10.18653/v1/2021.emnlp-main.509</idno>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2021 Conference on Empirical Methods in Natural Language Processing</title>
+		<meeting>the 2021 Conference on Empirical Methods in Natural Language Processing</meeting>
+		<imprint>
+			<publisher>Association for Computational Linguistics</publisher>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="page" from="6311" to="6322" />
+		</imprint>
+	</monogr>
+	<note>Online and Punta Cana, Dominican Republic</note>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">Effective lstms for target-dependent sentiment classification</title>
+		<author>
+			<persName><forename type="first">Duyu</forename><surname>Tang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bing</forename><surname>Qin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiaocheng</forename><surname>Feng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ting</forename><surname>Liu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">COLING 2016</title>
+		<imprint>
+			<date type="published" when="2016">2016</date>
+			<biblScope unit="page" from="3298" to="3307" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<monogr>
+		<title level="m" type="main">Llama: Open and efficient foundation language models</title>
+		<author>
+			<persName><forename type="first">Hugo</forename><surname>Touvron</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Thibaut</forename><surname>Lavril</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Gautier</forename><surname>Izacard</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xavier</forename><surname>Martinet</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Marie-Anne</forename><surname>Lachaux</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Timothée</forename><surname>Lacroix</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Baptiste</forename><surname>Rozière</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Naman</forename><surname>Goyal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Eric</forename><surname>Hambro</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Faisal</forename><surname>Azhar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Aurelien</forename><surname>Rodriguez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Armand</forename><surname>Joulin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Edouard</forename><surname>Grave</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Guillaume</forename><surname>Lample</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">Target-aspect-sentiment joint detection for aspect-based sentiment analysis</title>
+		<author>
+			<persName><forename type="first">Hai</forename><surname>Wan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yufei</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jianfeng</forename><surname>Du</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yanan</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kunxun</forename><surname>Qi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jeff</forename><forename type="middle">Z</forename><surname>Pan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">AAAI 2020</title>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="page" from="9122" to="9129" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">Progressive self-training with discriminator for aspect term extraction</title>
+		<author>
+			<persName><forename type="first">Qianlong</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhiyuan</forename><surname>Wen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qin</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Min</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ruifeng</forename><surname>Xu</surname></persName>
+		</author>
+		<idno type="DOI">10.18653/v1/2021.emnlp-main.23</idno>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2021 Conference on Empirical Methods in Natural Language Processing</title>
+		<meeting>the 2021 Conference on Empirical Methods in Natural Language Processing<address><addrLine>Punta Cana, Dominican Republic</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computational Linguistics</publisher>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="page" from="257" to="268" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<analytic>
+		<title level="a" type="main">Position-aware tagging for aspect sentiment triplet extraction</title>
+		<author>
+			<persName><forename type="first">Lu</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hao</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wei</forename><surname>Lu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lidong</forename><surname>Bing</surname></persName>
+		</author>
+		<idno type="DOI">10.18653/v1/2020.emnlp-main.183</idno>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2020 Conference on Empirical Methods in Natural Language Processing (EMNLP)</title>
+		<meeting>the 2020 Conference on Empirical Methods in Natural Language Processing (EMNLP)</meeting>
+		<imprint>
+			<publisher>Association for Computational Linguistics</publisher>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="page" from="2339" to="2349" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<title level="a" type="main">A unified generative framework for aspect-based sentiment analysis</title>
+		<author>
+			<persName><forename type="first">Hang</forename><surname>Yan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Junqi</forename><surname>Dai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tuo</forename><surname>Ji</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xipeng</forename><surname>Qiu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zheng</forename><surname>Zhang</surname></persName>
+		</author>
+		<idno type="DOI">10.18653/v1/2021.acl-long.188</idno>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 59th Annual Meeting of the Association for Computational Linguistics and the 11th International Joint Conference on Natural Language Processing</title>
+		<meeting>the 59th Annual Meeting of the Association for Computational Linguistics and the 11th International Joint Conference on Natural Language Processing</meeting>
+		<imprint>
+			<publisher>Association for Computational Linguistics</publisher>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="page" from="2416" to="2429" />
+		</imprint>
+	</monogr>
+	<note>: Long Papers)</note>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<analytic>
+		<title level="a" type="main">Convolution over hierarchical syntactic and lexical graphs for aspect level sentiment analysis</title>
+		<author>
+			<persName><forename type="first">Mi</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tieyun</forename><surname>Qian</surname></persName>
+		</author>
+		<idno type="DOI">10.18653/v1/2020.emnlp-main.286</idno>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2020 Conference on Empirical Methods in Natural Language Processing (EMNLP)</title>
+		<meeting>the 2020 Conference on Empirical Methods in Natural Language Processing (EMNLP)</meeting>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="page" from="3540" to="3549" />
+		</imprint>
+	</monogr>
+	<note>Association for Computational Linguistics</note>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<title level="a" type="main">Aspect sentiment quad prediction as paraphrase generation</title>
+		<author>
+			<persName><forename type="first">Wenxuan</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yang</forename><surname>Deng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xin</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yifei</forename><surname>Yuan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lidong</forename><surname>Bing</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wai</forename><surname>Lam</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">;</forename></persName>
+		</author>
+		<idno type="DOI">10.18653/v1/2021.emnlp-main.726</idno>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2021 Conference on Empirical Methods in Natural Language Processing</title>
+		<meeting>the 2021 Conference on Empirical Methods in Natural Language Processing<address><addrLine>Punta Cana, Dominican Republic</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computational Linguistics</publisher>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="page" from="9209" to="9219" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<analytic>
+		<title level="a" type="main">Towards generative aspect-based sentiment analysis</title>
+		<author>
+			<persName><forename type="first">Wenxuan</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xin</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yang</forename><surname>Deng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lidong</forename><surname>Bing</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wai</forename><surname>Lam</surname></persName>
+		</author>
+		<idno type="DOI">10.18653/v1/2021.acl-short.64</idno>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 59th Annual Meeting of the Association for Computational Linguistics and the 11th International Joint Conference on Natural Language Processing</title>
+		<meeting>the 59th Annual Meeting of the Association for Computational Linguistics and the 11th International Joint Conference on Natural Language Processing</meeting>
+		<imprint>
+			<publisher>Association for Computational Linguistics</publisher>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="page" from="504" to="510" />
+		</imprint>
+	</monogr>
+	<note>Short Papers</note>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<analytic>
+		<title level="a" type="main">SSEGCN: Syntactic and semantic enhanced graph convolutional network for aspect-based sentiment analysis</title>
+		<author>
+			<persName><forename type="first">Zheng</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zili</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yanna</forename><surname>Wang</surname></persName>
+		</author>
+		<idno type="DOI">10.18653/v1/2022.naacl-main.362</idno>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2022 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies</title>
+		<meeting>the 2022 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies<address><addrLine>Seattle, United States</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computational Linguistics</publisher>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page" from="4916" to="4925" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>
