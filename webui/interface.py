@@ -125,7 +125,15 @@ class RefParserUI:
         return info_html
 
     def _generate_citations_html(self, results, citing_papers):
-        """生成引用列表HTML，包含引用上下文"""
+        """生成引用列表HTML，包含引用上下文
+        
+        Args:
+            results: 引用结果对象
+            citing_papers: 引用论文列表
+            
+        Returns:
+            str: 生成的HTML字符串
+        """
         citations_html = "<div class='citations-list'>"
         citations_html += f"<h2>引用论文 ({len(results._items)})</h2>"
         
@@ -135,15 +143,25 @@ class RefParserUI:
         for citation in results._items:
             paper = citation.paper
             citations_html += "<div class='citation-item' style='margin-bottom: 20px; padding: 15px; border: 1px solid #ddd;'>"
+            
+            # 显示标题
             citations_html += f"<p><b>标题:</b> {paper.title}</p>"
-            if paper.doi:
-                safe_doi = paper.doi.replace('/', '_')
-                citations_html += f"<p><b>DOI:</b> {paper.doi}</p>"
+            
+            # 显示PaperId
+            if hasattr(paper, 'paperId'):
+                citations_html += f"<p><b>PaperId:</b> {paper.paperId}</p>"
+            
+            # 显示DOI（如果存在）
+            if hasattr(paper, 'externalIds') and paper.externalIds.get('DOI'):
+                doi = paper.externalIds['DOI']
+                safe_doi = doi.replace('/', '_')
+                citations_html += f"<p><b>DOI:</b> {doi}</p>"
                 citations_html += f"<a href='tmp/papers/{safe_doi}.pdf' download>Download PDF</a> "
                 citations_html += f"<a href='tmp/xmls/{safe_doi}.grobid.xml' download>Download XML</a>"
             
             # 添加引用上下文
-            contexts = doi_to_contexts.get(paper.doi, [])
+            doi_for_context = paper.externalIds.get('DOI')
+            contexts = doi_to_contexts.get(doi_for_context, [])
             if contexts:
                 citations_html += "<div class='citation-contexts' style='margin-top: 10px;'>"
                 citations_html += "<p><b>引用上下文:</b></p>"
@@ -282,12 +300,16 @@ class RefParserUI:
                             gr.Markdown("### 输入论文标题或上传论文PDF")
                             title_input = gr.Textbox(lines=1, label="论文标题")
                             pdf_upload = gr.File(type="file", label="上传PDF")
-                            search_btn = gr.Button("开始检索", variant="primary")
+                            with gr.Row():
+                                with gr.Column():
+                                    search_btn = gr.Button("检索", variant="primary")
+                                with gr.Column():
+                                    citation_parse_btn = gr.Button("引文分析", variant="primary")
                             
                             with gr.Tabs():
                                 with gr.Tab("论文信息"):
                                     paper_info = gr.HTML()
-                                with gr.Tab("引用论文"):
+                                with gr.Tab("被引用论文"):
                                     citing_papers = gr.HTML()
                                 with gr.Tab("下载链接"):
                                     download_links = gr.HTML()
@@ -315,6 +337,8 @@ class RefParserUI:
                 inputs=[title_input, pdf_upload],
                 outputs=[paper_info, citing_papers, download_links, citation_output]
             )
+
+            # citation_parse_btn.click(
 
         return demo
 

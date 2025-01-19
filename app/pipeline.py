@@ -20,7 +20,7 @@ class ResearchDocument(Document):
         self._doi = doi
         self._title = title
         self.citation_contexts = []  # 存储引用上下文
-        self.reference_section = None  # 存储参考文献部分
+        self.reference_section = []  # 存储参考文献部分
         
     @property
     def title(self) -> str:
@@ -73,7 +73,7 @@ class ResearchPipeline:
             paper_doi: 论文DOI
             
         Returns:
-            tuple: (citing_titles, citing_dois, citing_paperIds, doi_file_path)
+            tuple: (citing_titles, citing_dois, citing_paperIds, doi_file, no_doi_indices)
         """
         # 1. 获取引用信息
         s2 = CachedSemanticScholarWrapper(timeout=3, use_cache=True)
@@ -83,25 +83,27 @@ class ResearchPipeline:
         citing_titles = s2.citing_titles
         citing_dois = s2.citing_dois
         citing_paperIds = s2.citing_paperIds
+        no_doi_indices = s2.no_doi_indices  # 获取没有DOI的文献索引
         
         # 3. 保存DOIs到文件
         safe_doi = paper_doi.replace('/', '_')
         doi_file = os.path.join(self.doi_dir, f"{safe_doi}.txt")
         s2.save_dois_to_file(doi_file)
         
-        return citing_titles, citing_dois, citing_paperIds, doi_file
+        return citing_titles, citing_dois, citing_paperIds, doi_file, no_doi_indices, citation_results
 
-    def download_papers(self, titles, doi_file, input_type) -> tuple:
+    def download_papers(self, titles, doi_file, no_doi_indices) -> str:
         """下载论文PDF
         
         Args:
-            input_data: 输入数据，可以是DOI文件路径或论文标题列表
-            input_type: 输入类型，'doi_file'或'title'
+            titles: 论文标题列表
+            doi_file: DOI文件路径
+            no_doi_indices: 没有DOI的文献索引列表
             
         Returns:
-            tuple: (下载日志, 标题到DOI的映射字典)
+            str: 下载日志
         """
-        print("开始下载论文")
+        print("开始下载论文...")
         downloader = PaperDownloader(
             download_dir=self.pdf_dir,
             scholar_pages=1,
@@ -110,44 +112,67 @@ class ResearchPipeline:
             python_path="/home/gaof23/miniconda3/envs/ca/bin/python"
         )
         
-        title_doi_map = {}
+        log = ""
         
-        if input_type == 'doi_file':
-            # 读取DOI文件获取DOI列表
-            with open(doi_file, 'r') as f:
-                dois = [line.strip() for line in f if line.strip()]
-                
-            # 下载论文
-            log = downloader.download_by_doi_file(doi_file)
-            
-            # 重命名包含%的文件
+        # 读取DOI文件获取DOI列表
+        with open(doi_file, 'r') as f:
+            dois = [line.strip() for line in f if line.strip()]
+        
+        # 1. 首先处理有DOI的文献
+        if dois:
+            print(f"\n处理{len(dois)}篇有DOI的文献...")
             for doi in dois:
-                old_name = os.path.join(self.pdf_dir, f"{doi.replace('/', '_')}.pdf")
-                new_name = os.path.join(self.pdf_dir, f"{doi.replace('/', '_').replace('%', '_')}.pdf")
-                if os.path.exists(old_name) and '%' in old_name:
-                    os.rename(old_name, new_name)
+                safe_doi = doi.replace('/', '_').replace('%2F', '_') # %2F是/的url编码
+                pdf_path = os.path.join(self.pdf_dir, f"{safe_doi}.pdf")
+                xml_path = os.path.join(self.xml_dir, f"{safe_doi}.grobid.xml")
                 
-        elif input_type == 'title':
-            log = ""
-            
-            # 为每个标题获取DOI并下载
-            for title in titles:
-                paper_doi = self.get_doi_by_title(title)
-                if paper_doi:
-                    title_doi_map[title] = paper_doi
-                    download_log = downloader.download_by_doi(paper_doi)
-                    log += f"\n{download_log}"
-                    
-                    # 使用safe_doi重命名文件
-                    safe_doi = paper_doi.replace('/', '_').replace('%', '_')
-                    old_name = os.path.join(self.pdf_dir, f"{title}.pdf")
+                # 检查是否已有缓存
+                if os.path.exists(pdf_path) or os.path.exists(xml_path): # 有xml或者pdf缓存
+                    print(f"文献已存在缓存: {safe_doi}")
+                    log += f"\n文献已存在缓存: {safe_doi}"
+                    continue
+                
+                # 如果没有缓存，下载文献
+                print(f"下载文献: {safe_doi}")
+                download_log = downloader.download_by_doi(doi)
+                log += f"\n{download_log}"
+                
+                # 重命名文件（如果下载成功）
+                old_name = os.path.join(self.pdf_dir, f"{doi.replace('/', '_')}.pdf")
+                if os.path.exists(old_name) and '%' in old_name:
                     new_name = os.path.join(self.pdf_dir, f"{safe_doi}.pdf")
-                    if os.path.exists(old_name):
-                        os.rename(old_name, new_name)
-        else:
-            raise ValueError(f"不支持的输入类型: {input_type}")
+                    os.rename(old_name, new_name)
+                    print(f"文件重命名: {safe_doi}")
         
-        return log, title_doi_map
+        # # 2. 然后处理没有DOI的文献
+        # no_doi_titles = [titles[i] for i in no_doi_indices]
+        # if no_doi_titles:
+        #     print(f"\n处理{len(no_doi_titles)}篇无DOI的文献...")
+        #     for title in no_doi_titles:
+        #         safe_title = "".join(c for c in title if c.isalnum() or c in (' ', '-', '_')).strip()
+        #         pdf_path = os.path.join(self.pdf_dir, f"{safe_title}.pdf")
+        #         xml_path = os.path.join(self.xml_dir, f"{safe_title}.grobid.xml")
+                
+        #         # 检查是否已有缓存
+        #         if os.path.exists(pdf_path) and os.path.exists(xml_path):
+        #             print(f"文献已存在缓存: {safe_title}")
+        #             log += f"\n文献已存在缓存: {safe_title}"
+        #             continue
+                
+        #         # 如果没有缓存，下载文献
+        #         print(f"下载文献: {title}")
+        #         download_log = downloader.download_by_query(title)
+        #         log += f"\n{download_log}"
+                
+        #         # 重命名文件（如果下载成功）
+        #         old_name = os.path.join(self.pdf_dir, f"{title}.pdf")
+        #         if os.path.exists(old_name):
+        #             new_name = os.path.join(self.pdf_dir, f"{safe_title}.pdf")
+        #             os.rename(old_name, new_name)
+        #             print(f"文件重命名: {safe_title}")
+        
+        print("\n下载完成!")
+        return log
 
     def parse_and_extract_citations(self, original_title: str, citing_dois: list) -> list:
         """解析PDF并提取引用上下文
@@ -184,62 +209,98 @@ class ResearchPipeline:
                     ref_title = ref_data['reference_details'].get('title', '')
                     if self._titles_match(ref_title, original_title):
                         citing_paper.citation_contexts.extend(ref_data['citations'])
-                        citing_paper.reference_section = ref_data['reference_details']
-                
+
                 if citing_paper.citation_contexts:
                     citing_papers.append(citing_paper)
                     
-        return citing_papers
+        return citing_papers, grobid_parser
 
     def process_paper(self, original_title):
-        """处理论文的主要工作流"""
+        """处理论文的主要工作流
+        
+        Args:
+            original_title: 论文标题
+            
+        Returns:
+            dict: 包含处理结果的字典
+        """
         try:
+            print("\n" + "="*50)
+            print(f"开始处理论文: {original_title}")
+            print("="*50 + "\n")
+            
             # 1. 获取DOI
+            print("1. 获取论文DOI...")
             cr_paper = CrossrefPaper(ref_obj=original_title)
             paper_doi = cr_paper.doi
+            s2 = CachedSemanticScholarWrapper(timeout=3, use_cache=True)
             
             if not paper_doi:
                 print("Crossref未找到DOI, 尝试使用Semantic Scholar查找...")
-                s2 = CachedSemanticScholarWrapper(timeout=3, use_cache=True)
-                paper_doi, _ = s2.get_doi_by_title(original_title)  # 只获取DOI，忽略paper_id
+                paper_doi, _ = s2.get_doi_by_title(original_title)
                 
             if not paper_doi:
                 raise ValueError(f"无法找到论文的DOI: {original_title}")
             
+            print(f"找到论文DOI: {paper_doi}")
             original_paper = ResearchDocument(title=original_title, doi=paper_doi)
             
             # 2. 获取引用信息
-            citing_titles, citing_dois, citing_paperIds, doi_file = self.get_citations_and_save(paper_doi)
+            print("\n2. 获取引用信息...")
+            citing_titles, citing_dois, citing_paperIds, doi_file, no_doi_indices, citation_results = self.get_citations_and_save(paper_doi)
+            print(f"找到{len(citing_titles)}篇引用论文")
             
             # 3. 下载PDF文件
-            # 可以选择通过标题或DOI文件下载
-            download_log = self.download_papers(citing_titles, doi_file, input_type='title')
+            print("\n3. 下载引用论文PDF...")
+            download_log = self.download_papers(citing_titles, doi_file, no_doi_indices)
+            print(download_log)
             
             # 4. 解析PDF并提取引用上下文
-            citing_papers = self.parse_and_extract_citations(
+            print("\n4. 解析PDF并提取引用上下文...")
+            citing_papers, grobid_parser = self.parse_and_extract_citations(
                 original_title, 
                 citing_dois
             )
+            print(f"成功提取{len(citing_papers)}篇论文的引用上下文")
+            
+            print("\n" + "="*50)
+            print("处理完成!")
+            print("="*50 + "\n")
             
             return {
                 'original_paper': original_paper,
                 'citing_papers': citing_papers,
                 'citation_results': citation_results,
+                'citation_dois': citing_dois,
                 'citing_titles': citing_titles,
+                'citing_paperIds': citing_paperIds,
                 'doi_file': doi_file,
                 'download_log': download_log,
                 'crossref_paper': cr_paper,
-                # 's2_wrapper': s2,
-                # 'grobid_parser': grobid_parser
+                's2_wrapper': s2,
+                'grobid_parser': grobid_parser
             }
             
         except Exception as e:
+            print(f"\n处理论文时出错: {str(e)}")
             raise Exception(f"处理论文时出错: {str(e)}")
 
     def process_paper_from_pdf(self, pdf_path):
-        """从PDF文件处理论文的工作流"""
+        """从PDF文件处理论文的工作流
+        
+        Args:
+            pdf_path: PDF文件路径
+            
+        Returns:
+            dict: 包含处理结果的字典
+        """
         try:
+            print("\n" + "="*50)
+            print(f"开始处理PDF文件: {pdf_path}")
+            print("="*50 + "\n")
+            
             # 1. 解析PDF得到XML和标题
+            print("1. 解析PDF获取标题...")
             grobid_parser = CachedGrobidParser(cache_dir=self.cache_dir)
             xml_text = grobid_parser.parse_document(pdf_path)
             
@@ -252,13 +313,22 @@ class ResearchPipeline:
             print(f"从PDF中提取的标题: {original_title}")
             
             # 2. 获取DOI并重命名文件
-            paper_doi = self.get_doi_by_title(original_title)
-            if not paper_doi:
-                raise ValueError(f"无法找到论文的DOI, 标题: {original_title}")
+            print("\n2. 获取论文DOI...")
+            cr_paper = CrossrefPaper(ref_obj=original_title)
+            paper_doi = cr_paper.doi
+            s2 = CachedSemanticScholarWrapper(timeout=3, use_cache=True)
             
-            print(f"检索到的文献DOI: {paper_doi}")
+            if not paper_doi:
+                print("Crossref未找到DOI, 尝试使用Semantic Scholar查找...")
+                paper_doi, _ = s2.get_doi_by_title(original_title)
+                
+            if not paper_doi:
+                raise ValueError(f"无法找到论文的DOI: {original_title}")
+            
+            print(f"找到论文DOI: {paper_doi}")
             
             # 3. 重命名PDF和XML文件
+            print("\n3. 重命名文件...")
             safe_doi = paper_doi.replace('/', '_')
             new_pdf_path = os.path.join(self.pdf_dir, f"{safe_doi}.pdf")
             new_xml_path = os.path.join(self.xml_dir, f"{safe_doi}.grobid.xml")
@@ -267,24 +337,47 @@ class ResearchPipeline:
             current_xml_path = os.path.join(self.xml_dir, 
                 f"{os.path.basename(pdf_path).replace('.pdf', '')}.grobid.xml")
             os.rename(current_xml_path, new_xml_path)
+            print("文件重命名完成")
             
-            # 4. 获取引用信息并处理
-            citation_results, citing_titles, doi_file = self.get_citations_and_save(paper_doi)
-            download_log = self.download_papers(doi_file)
-            citing_papers = self.parse_and_extract_citations(
+            original_paper = ResearchDocument(title=original_title, doi=paper_doi)
+            
+            # 4. 获取引用信息
+            print("\n4. 获取引用信息...")
+            citing_titles, citing_dois, citing_paperIds, doi_file, no_doi_indices, citation_results = self.get_citations_and_save(paper_doi)
+            print(f"找到{len(citing_dois)}篇引用论文")
+            
+            # 5. 下载PDF文件
+            print("\n5. 下载引用论文PDF...")
+            download_log = self.download_papers(citing_titles, doi_file, no_doi_indices)
+            
+            # 6. 解析PDF并提取引用上下文
+            print("\n6. 解析PDF并提取引用上下文...")
+            citing_papers, grobid_parser = self.parse_and_extract_citations(
                 original_title, 
-                citation_results._items
+                citing_dois
             )
+            print(f"成功提取{len(citing_papers)}篇论文的引用上下文")
+            
+            print("\n" + "="*50)
+            print("处理完成!")
+            print("="*50 + "\n")
             
             return {
-                'original_paper': ResearchDocument(title=original_title, doi=paper_doi),
+                'original_paper': original_paper,
                 'citing_papers': citing_papers,
                 'citation_results': citation_results,
+                'citation_dois': citing_dois,
+                'citing_titles': citing_titles,
+                'citing_paperIds': citing_paperIds,
                 'doi_file': doi_file,
-                'download_log': download_log
+                'download_log': download_log,
+                'crossref_paper': cr_paper,
+                's2_wrapper': s2,
+                'grobid_parser': grobid_parser
             }
             
         except Exception as e:
+            print(f"\n处理PDF文件时出错: {str(e)}")
             raise Exception(f"处理PDF文件时出错: {str(e)}")
 
     def _titles_match(self, title1, title2):
@@ -387,6 +480,9 @@ def main():
             
     except Exception as e:
         print(f"错误: {str(e)}")
+
+
+
 
 if __name__ == "__main__":
     main()

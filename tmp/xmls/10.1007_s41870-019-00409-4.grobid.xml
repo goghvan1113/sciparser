@@ -1,0 +1,1135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Classification of tweets data based on polarity using improved RBF kernel of SVM</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author role="corresp">
+							<persName><forename type="first">Arepalli</forename><forename type="middle">Peda</forename><surname>Gopi</surname></persName>
+							<email>gopiarepalli2@gmail.com</email>
+							<affiliation key="aff0">
+								<orgName type="department" key="dep1">Bharati Vidyapeeth&apos;s Institute of Computer Applications and Management</orgName>
+								<orgName type="department" key="dep2">Department of CSE</orgName>
+								<orgName type="institution" key="instit1">Ó</orgName>
+								<orgName type="institution" key="instit2">Vignan&apos;s Nirula Institute of Technology and Science for Women</orgName>
+								<address>
+									<settlement>Palakaluru Guntur</settlement>
+									<region>Andhra Pradesh</region>
+									<country key="IN">India</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">•</forename><forename type="middle">R</forename><surname>Naga</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department" key="dep1">Bharati Vidyapeeth&apos;s Institute of Computer Applications and Management</orgName>
+								<orgName type="department" key="dep2">Department of CSE</orgName>
+								<orgName type="institution" key="instit1">Ó</orgName>
+								<orgName type="institution" key="instit2">Vignan&apos;s Nirula Institute of Technology and Science for Women</orgName>
+								<address>
+									<settlement>Palakaluru Guntur</settlement>
+									<region>Andhra Pradesh</region>
+									<country key="IN">India</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Sravana</forename><surname>Jyothi</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department" key="dep1">Bharati Vidyapeeth&apos;s Institute of Computer Applications and Management</orgName>
+								<orgName type="department" key="dep2">Department of CSE</orgName>
+								<orgName type="institution" key="instit1">Ó</orgName>
+								<orgName type="institution" key="instit2">Vignan&apos;s Nirula Institute of Technology and Science for Women</orgName>
+								<address>
+									<settlement>Palakaluru Guntur</settlement>
+									<region>Andhra Pradesh</region>
+									<country key="IN">India</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">•</forename><forename type="middle">V</forename><surname>Lakshman Narayana</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department" key="dep1">Bharati Vidyapeeth&apos;s Institute of Computer Applications and Management</orgName>
+								<orgName type="department" key="dep2">Department of CSE</orgName>
+								<orgName type="institution" key="instit1">Ó</orgName>
+								<orgName type="institution" key="instit2">Vignan&apos;s Nirula Institute of Technology and Science for Women</orgName>
+								<address>
+									<settlement>Palakaluru Guntur</settlement>
+									<region>Andhra Pradesh</region>
+									<country key="IN">India</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">•</forename><forename type="middle">K Satya</forename><surname>Sandeep</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department" key="dep1">Bharati Vidyapeeth&apos;s Institute of Computer Applications and Management</orgName>
+								<orgName type="department" key="dep2">Department of CSE</orgName>
+								<orgName type="institution" key="instit1">Ó</orgName>
+								<orgName type="institution" key="instit2">Vignan&apos;s Nirula Institute of Technology and Science for Women</orgName>
+								<address>
+									<settlement>Palakaluru Guntur</settlement>
+									<region>Andhra Pradesh</region>
+									<country key="IN">India</country>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Classification of tweets data based on polarity using improved RBF kernel of SVM</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<idno type="MD5">C5410EB107997309A5A61BBB478AE516</idno>
+					<idno type="DOI">10.1007/s41870-019-00409-4</idno>
+					<note type="submission">Received: 24 December 2018 / Accepted: 5 December 2019</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.2-SNAPSHOT" ident="GROBID" when="2025-01-19T07:00+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<textClass>
+				<keywords>
+					<term>Text mining</term>
+					<term>Feature extraction</term>
+					<term>Opinion mining</term>
+					<term>Sentiment analysis</term>
+					<term>Score</term>
+				</keywords>
+			</textClass>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>The sentiment analysis has gained its importance in recent years. People had improved their way of expressing their opinions about products, services, celebrities, and current topics in internet portals, blogs and social networks. The social network websites like Face book, Twitter, WhatsApp, LinkedIn and Hike messenger, providing the users to express their feelings by using the different symbols like smiley's, funny faces, etc., These social media websites provide a platform to display peoples' opinions on topics like movies, products, fashion trends, politics, technologies were expressed. The E-Commerce portals like Amazon, Flip Kart, Snap deal etc., help the people to express their opinions on products. A framework is proposed in this work to find the scores of the opinions and derive conclusions. The classification of opinions is called opinion mining, whereas deriving the scores for those opinions are called sentiment analysis.</p><p>Here the Classification techniques are used for opinion mining and the scores to those opinions are given by taking a scale from -5 to ?5.In this work, a movie review data set has been collected from the twitter reviews (<ref type="url" target="http://ai.stanford.edu/">http://ai.stan ford.edu/</ref>*amaas/data/sentiment/) between the years 2003 and 2012. The Word net lexicon dictionary is used to compare the emotions for obtaining the score. In this paper, the proposed improved RBF kernel of SVM-performed with 98.8% of accuracy when compared with the existing SVM-RBF classifier and other models.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">Introduction</head><p>The engineers, these days, say that this century will be the most advanced and developed one and the advent of technology and software are very useful. But along with the increasing technology and the knowledge, the amount of data has also started increasing rapidly, which would require more time to analyze it. Online reviewed data is one among them which has been occupied a major place. For example, the Facebook was the revolutionary technology in the 20th century. It has more than 1.86 billion active users according to the research done in 2016. On the other hand, the Twitter account has more than 310 million monthly users and about 1.3 billion accounts were created. The most shocking was that about 350,000 tweets were sent per minute, about 500 million tweets per day and around 200 billion tweets per year. The main reason for these huge activities is the flexibility and convenience of these websites. Popular celebrities are also like to keep in touch with their fans by updating their status, messages, movies information and also getting back reviews on them through these social media websites. Not only the celebrities but also the common users are also utilizing the social media at maximum extent either in the form of posts or likes or comments.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.1">Why sentiment analysis</head><p>If the users give their opinion in the form of likes or dislikes, then absolutely no problem, but lies if it is in the text format i.e., comments. As data is streaming data, the review must be summarized or must be confirmed whether it's good or bad. For analyzing, knowledge extraction and decision making, machine learning algorithms must be used to build the model to understand. The online social media facility has its positives and negatives. The good thing is that wherever the user could convey his message, the other side there are some users who write spam messages and unnecessary comments on the social media which were completely irrelevant and meaningless. The second problem with the online data is that sometimes the genuine opinion may not be conveyed at all. They won't give their perfect opinion instead they could explain everything about a topic.</p><p>The one thing that must be remembered is that the sentiment or the opinion can be done not only on the whole review or the document, can also find the opinion based on a sentence and score it.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.2">Approaches for sentiment analysis</head><p>Generally the existing methods available for the sentiment analysis were of two categories, namely machine learning approach and lexicon based approach. They again were furthurly divided as shown in Fig. <ref type="figure" target="#fig_0">1</ref>. Some of the machine learning approaches were.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.2.1">Naı ¨ve Bayes classification</head><p>It is a well known strategy for text arrangement. The classifier is profoundly versatile. It is a basic method for developing the classifiers i.e., the models that allot the class marks to issue examples, spoke to as vectors. For example, if we consider a fruit Apple, its features were its red color, round shape, and in diameter about 10 cm. On the off chance that we execute the classifier, it considers every one of these highlights to contribute freely to the likelihood of organic product like apple and its relationships between's shading, roundness and distance across highlights.</p><p>It is a contingent likelihood demonstrate, an example is spoken to by a vector a = (a1,….,a) where it doles out to this case probabilities p(bk | a1,…,a) for every k conceivable results or classes bk.</p><p>The classifier can be defined as follows:</p><formula xml:id="formula_0">PðbkjaÞ ¼ pðbkÞpðajbkÞ pðaÞ<label>ð1Þ</label></formula><p>where, posterior = (prior * likelihood)/evidence.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.2.2">Bootstrap aggregation (bagging)</head><p>The bootstrap is a great factual technique for assessing an amount from an information test. It helps in comprehension if the amount is an elucidating measurement, for example, a mean or a standard deviation.</p><p>For example if we have 1000 values for a sample x, then the mean can be calculated as follows:</p><formula xml:id="formula_1">Mean x ð Þ ¼ 1=1000 Ã sum x ð Þ<label>ð2Þ</label></formula><p>Bootstrap Aggregation is a basic and intense gathering technique. A troupe strategy is a system that consolidates the expectations from numerous machine learning calculations together to make more exact forecasts than any individual model. Bootstrap Aggregation is a general method that can be utilized to diminish the difference for those calculations that have high fluctuation.</p><p>If we have different samples, it will consider only the most frequent class. If we have number of samples then it would form sub-samples and calculate the average. Packing can likewise be utilized for grouping and relapse issues.</p><p>Given a preparation set X = x1,…, xn with reactions Y = y1,…, yn, packing over and over (B times) chooses an irregular example with substitution of the preparation set and fits trees to these examples:</p><p>For b = 1,…, B:</p><p>1. Sample, with substitution, B preparing precedents from X, Y; call these Xb, Yb. 2. Train a choice or relapse tree fb on Xb, Yb.</p><p>Subsequent to preparing, forecasts for inconspicuous examples x 0 can be made by averaging the expectations from all the individual relapse trees on x 0 :</p><formula xml:id="formula_2">f ¼ 1 B X B b¼1 f b x 0 ð Þ<label>ð3Þ</label></formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.3">Linear discriminant analysis</head><p>Linear discriminant analysis (LDA) is a speculation of Fisher's straight discriminant, which is a strategy utilized in insights, design acknowledgment and machine figuring out how to locate a direct blend of highlights which portrays or isolates at least two classes of items or occasions. Assume that every one of C classes has a mean li and a similar covariance P . At that point the dissipate between class inconstancy might be characterized by the example covariance of the class implies:</p><formula xml:id="formula_3">X b ¼ 1 C X C i¼1 ðl i À lÞ l i À l ð Þ T<label>ð4Þ</label></formula><p>where, l is the mean of class means.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.4">Random forest classifier</head><p>The random forest are the augmentation or the improvement of packing. An issue with choice trees like CART is that they are insatiable. They pick which variable to part on utilizing an insatiable calculation that limits blunder. In that capacity, even with Bagging, the choice trees can have a great deal of basic likenesses and thusly have high connection in their forecasts. Random Forest changes the estimation for the way that the sub-trees are discovered with the objective that the ensuing conjectures from most of the subtrees have less association. The learning computation is compelled to a sporadic case of features of which to look for.</p><p>Utilizing the cross approval:</p><p>• For grouping a decent default is: m = sqrt(p)</p><p>• For relapse a decent default is: m = p/3</p><p>• The upsides and downsides are:</p><p>• Easy to get it.</p><p>• It is a standout amongst the most exact learning calculations accessible. For some, informational collections, it creates a very precise classifier. While the cons were:</p><p>• Random backwoods have been seen to over fit for some datasets with uproarious grouping/relapse assignments. • Unlike choice trees, the arrangements made by irregular woodlands are troublesome for people to translate. • If the information contain gatherings of connected highlights of comparative pertinence for the yield, at that point littler gatherings are supported over bigger gatherings.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.5">Decision tree</head><p>A decision tree is a tree-like diagram or model of choices. Choice trees are normally utilized in tasks investigate, particularly in choice examination, to help in achieving an objective, yet in addition a famous apparatus in machine learning.</p><p>A choice tree comprises of three kinds of hubs:</p><p>1. Decision hubs-ordinarily spoken to by squares. 2. Chance hubs-ordinarily spoken to by circles. 3. End hubs-ordinarily spoken to by triangles.</p><p>The advantages and disadvantages of the classifier are as follows:</p><p>• Easy and simple to understand. People can easily understand it when explained briefly. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.6">GLMNET</head><p>GLMNET is the truncation of Lasso and flexible net regularized summed up straight models, programming which is executed as a R source bundle. Tether (minimum total shrinkage and determination administrator) is a relapse examination strategy that performs both variable choice and regularization with the end goal to improve the expectation precision and interpretability of the factual model it produces.</p><p>Precedents of where the versatile net strategy has been connected are:</p><p>• Support vector machine.</p><p>• Metric learning.</p><p>• Portfolio advancement.</p><p>It fits straight, calculated and multinomial, poisson, and Cox relapse models. An assortment of expectations can be produced using the fitted models. It can likewise fit multireaction direct relapse.</p><p>The bundle additionally makes utilization of the solid principles for proficient limitation of the dynamic set.</p><p>The bundle additionally incorporates strategies for expectation and plotting, and a capacity that performs K-overlay cross-approval.</p><p>In the same way as other R bundles, the most straightforward approach to acquire glmnet is to introduce it specifically from CRAN. Type the accompanying order in R reassure:</p><p>install.packages(''glmnet'', repos = ''<ref type="url" target="http://cran.us.r-project.org">http://cran.us.r-pro ject.org</ref>'').</p><p>On the other hand, clients can download the bundle source at: <ref type="url" target="http://cran.r-project.org/web/bundles/glmnet/index.html">http://cran.r-project.org/web/bundles/glmnet/index.html</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.7">Maximum entropy</head><p>The max entropy classifier is a probabilistic classifier which has a place with the class of exponential models. Dissimilar to the Naive Bayes classifier that we talked about in the past article, the Max Entropy does not expect that the highlights are restrictively free of one another. The MaxEnt depends on the Principle of Maximum Entropy and from every one of the models that fit our preparation information, chooses the one which has the biggest entropy. The Max Entropy classifier can be utilized to illuminate a vast assortment of content order issues, for example, dialect location, point characterization, supposition examination and the sky is the limit from there. The Max Entropy requires more opportunity to prepare contrasting with Naive Bayes, basically because of the streamlining issue that should be fathomed with the end goal to assess the parameters of the model.</p><p>The initial step is the examples spoke to on the accompanying arrangement: (xi,yi) where the xi incorporates the logical data of the record (the meager cluster) and yi its class.</p><p>The second step is to outline the preparation test as far as its exact likelihood appropriation:</p><formula xml:id="formula_4">p x; y ð Þ ¼ 1 N Â number of times the x; y ð Þ occurs in the sample<label>ð5Þ</label></formula><p>where N is the size of the training dataset. The indicator function:</p><formula xml:id="formula_5">f j x; y ð Þ ¼ 1 if y ¼ c i and x contain w k 0 otherwise<label>ð6Þ</label></formula><p>The probability of a class can be given as:</p><formula xml:id="formula_6">pðcjd; ! k Þ ¼ exp½ P i k i f i c; d ð Þ P c 0 exp½ P i k i f i c 0 ; d ð Þ<label>ð7Þ</label></formula><p>where, c is the class, d is the data point we are looking at, and k is a weight vector. The Max entropy is very efficient when compared with the Naı ¨ve Bayes classifier. The main advantages of this classifier were:</p><p>• The classifier is efficient than the naı ¨ve Bayes in case of accuracy. • It is very consistent and the results can still be improved.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>• It can handle larger amount of data very efficiently.</head><p>• The data may be in different formats, that data also can be processed by using this classifier.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.8">Support vector machine</head><p>This is the managed learning model with related learning calculations that examine information so that can be utilized for order and relapse examination. A SVM display is a portrayal of the precedents as focuses in space, mapped so the models of the different classifications are separated by a reasonable hole that is as wide as could be allowed. A help vector machine develops a hyper plane or set of hyper planes in a high-or unending dimensional space, which can be utilized for arrangement, relapse, or different undertakings.</p><p>Notwithstanding performing direct characterization, SVMs can effectively play out a non-straight arrangement utilizing what is known as the bit trap, verifiably mapping their contributions to high-dimensional component spaces.</p><p>SVM has different types of kernels. Given a training dataset (x1,… xn), the n values were given a class label as ? 1 and -1. We have to find the maximum margin plane such that it separates the values from ? 1 to -1. A hyper plane with x -1 dimension has to be found.</p><p>The general uses of SVM were:</p><p>• SVMs are useful in content and hypertext order.</p><p>• Classification of pictures can likewise be performed utilizing SVM. • Hand-composed characters can be perceived utilizing SVM. • The SVM calculation has been broadly connected in the natural and different sciences.</p><p>The piece trap keeps away from the unequivocal mapping that is expected to get direct learning calculations to take in a nonlinear capacity or choice limit. Some of the kernels are:</p><formula xml:id="formula_7">• Linear kernel • Polynomial kernel • RBF kernel</formula><p>Advantages of SVM were:</p><p>• Avoid over fitting.</p><p>• As it uses the kernel trick, an expert knowledge about the problem via engineering the kernel can be build. • If the kernel trick was implemented perfectly there will be raise in accuracy. • Mostly used in any field of research and science.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">Literature survey</head><p>Kim and Hovy [1] explained about how a word sentiment classification and sentence sentiment classification can be obtained, but the only drawback of this approach is not considering the neutral opinion in the dataset.</p><p>Chaovalit and Zhou <ref type="bibr" target="#b0">[2]</ref> identified a problem called ironic or spam words. These spam words in Movie review data could not convey any opinion, so those words must be removed or ignored. Performance of machine learning and semantic approach is evaluated, the results revealed that the machine learning approach is best, but limited to high training time complexity.</p><p>Machine learning with textual data, web research and dimensionality reduction techniques were used in <ref type="bibr" target="#b1">[3]</ref> to get better results with lower dimensionality reduction for sentiment classification.</p><p>Gupta and Lehal <ref type="bibr" target="#b2">[4]</ref> had explained one of the main steps of sentiment analysis, such as text extraction, tracking and summarization. From the input corpus removed redundant data, then features are extracted by using term-frequency matrix. Rank was assigned in the final step. The data was later can be formed into categorization; clustering and the results can be visualized. Later the applications of text mining were explained briefly. But to do all these, the system must have the ability to understand the natural language processing. Khan et al. <ref type="bibr" target="#b3">[5]</ref> made a survey on machine learning algorithms to find which algorithms was majorly used from 2002 to 2008 and defined the authors who made spam detection.</p><p>Wang and Sun <ref type="bibr" target="#b4">[6]</ref> proposed a document classification algorithm using the kernel logistic regression so that it could have improvement in terms of accuracy.</p><p>Singh and Singh <ref type="bibr" target="#b5">[7]</ref> explained that the web data mining is also an important step in the analysis as the data collection and processing must be done from web. The web data mining architecture was clearly explained. The survey was on web usage mining to know which is the best one to refer or to collect data. We will have three types of mining here namely web content mining, web usage mining and web structure mining. It's like an ocean and the techniques were still developing to work this mining efficiently.</p><p>Bo and Lee <ref type="bibr" target="#b6">[8]</ref> the author of ''opinion mining and sentiment analysis'', explained each step about the data collection, the challenges which may arise and the applications. The summarization phase was clearly explained as well as some of the datasets which were available to the users.</p><p>A survey has been made on text mining <ref type="bibr" target="#b7">[9]</ref>, taking the data which is in the unstructured format. It will be difficult to get processed. For that the text mining and information extraction were proved best for such research. Explained about the important steps like text cleaning, tokenization, POS tagging, generating the attributes and selecting them, data mining.</p><p>The deep learning network can also implement the sentiment analysis <ref type="bibr" target="#b8">[10]</ref> using the movie review dataset. The application was done by the algorithm called word2vec and random forest. It was done in python and the deep learning was proved best when compared with the bag of words approach.</p><p>The challenges observed in the sentiment analysis <ref type="bibr" target="#b9">[11]</ref> were explained and the techniques available for the analysis were tabulated for easier observation. The latest updates of sentiment analysis was observed and the techniques which were recorded. A survey was done such that it was proved that the machine learning approaches are best when compared with the lexical approaches.</p><p>In market or business circle we will have both the public opinion and market opinion. So <ref type="bibr" target="#b10">[12]</ref> the sentiment analysis was applied on those two opinions. The self-organizing fuzzy neural network was used for comparison and evaluation of results. The other algorithms were linear and logistic regression and SVM. But the problem is that the dataset was not completely genuine.</p><p>Micro blogging has become popular these days <ref type="bibr" target="#b11">[13]</ref>. A sentiment classifier was developed to determine the positive, negative and neutral opinions. The Naı ¨ve Bayes classifier had yielded better results when compared with the SVM. The performance was measured depending in terms of precision and recall.</p><p>Bing Liu had written a handbook which could able to explain the facts about sentiment classification <ref type="bibr" target="#b12">[14]</ref> where every student can get the details about the sentiment or opinion mining, the problems lies in it and how can the spam messages can be detected,the approaches available for classification and how the text summarization can be obtained.</p><p>The recent work done on sentiment analysis was reviewed <ref type="bibr" target="#b13">[15]</ref> along with the systematic flow of the sentiment analysis. The feature extraction was adopted for polarity. The classification algorithms like Naı ¨ve bays, maximum entropy and support vector machine were explained briefly along with the applications in text mining.</p><p>The sentiment classification approaches <ref type="bibr" target="#b14">[16]</ref> were explained like sentence, phrase and by using the machine learning mechanisms. The process was done and the results were evaluated by the accuracy measure and compared among Naı ¨ve Bayes, maximum entropy and support vector machines where the maximum entropy was proved best. Along with them the features and key applications of the opinion mining were also explained.</p><p>Haddi et al. <ref type="bibr" target="#b15">[17]</ref> explained how the preprocessing mechanisms play a major role in the analysis. Without the text preprocessing, the sentiment analysis will be very difficult because the raw data may have the unnecessary and the null or irrelevant data which would give a break to the process.</p><p>Govindarajan and Romina <ref type="bibr" target="#b16">[18]</ref> explained that the understanding of language and its semantics, syntax was also play a major role in performance measure. The result depends upon number of factors, so we can say that no classifier is perfect and efficient. The result was compared with the supervised approaches and their applications were explained.</p><p>Buche et al. <ref type="bibr" target="#b17">[19]</ref> explained different sentiment classification tasks available and text classification using Naı ¨ve Bayes classifier. The NLP tool kit was explained perfect for doing the analysis using the product review data because the openNLP tool will have the tokenization, POS tagger, segmentation, parser etc. which will reduce the work in analysis.</p><p>Kaur and Gupta <ref type="bibr" target="#b18">[20]</ref> explained that before the sentiment analysis phase the machine must be able to understand the NLP techniques. Here, the approach is applied to the languages like English, Bengali, Hindi and Malayalam. The Sentiwordnet was used which helps in finding the polarity of the sentence. The major advantage is that the Sentiwordnet will easily adopt the languages and judge the polarity. For that the machine must understand the NLP which can be adopted by training.</p><p>The opinion mining is helpful in these days and had many advantages not only that <ref type="bibr" target="#b19">[21]</ref> there are pros and cons for the opinion mining. The types of opinions namely direct opinions and comparative opinion were reviewed. There are pros and cons for each type of opinion. For that an automated system was proposed which would recommend the user to buy the product if the recommendation percentage was above 50%.</p><p>There are different approaches to sentiment analysis where sentence sentiment analysis <ref type="bibr" target="#b20">[22]</ref> is one among them. For that a general approach was proposed. The challenges that may arise were explained along with the applications using the model. The dataset was not taken but a perfect analysis was given on all approaches in sentiment analysis along with the supervised and unsupervised mechanisms of machine learning algorithms.</p><p>A survey has been made by Gupte et al. <ref type="bibr" target="#b21">[23]</ref> where a comparison of some of the classification algorithms has been done and was proved that the efficiency of an algorithm depends upon the approach selected.</p><p>Hasan et al. <ref type="bibr" target="#b22">[24]</ref> had made an experiment by taking the bangla text for sentiment analysis. Although the WordNet and Sentiwordnet were available for sentiment analysis it was found difficult as the dataset was in bangla but not in English.</p><p>Asghar and khan <ref type="bibr" target="#b23">[25]</ref> had proposed a rule based domain independent sentiment analysis which could classify the subjective and objective sentences from the collection of reviews and blogs. To predict the score the Sentiwordnet mechanism was used which actually deals with the polarity of the sentence (positive, negative, neutral) where the accuracy obtained was about 83%.</p><p>Medhat et al. <ref type="bibr" target="#b24">[26]</ref> also made a survey on the sentiment analysis and its applications such that how the process can be evolved when doing the sentiment analysis on product review dataset. Not only that a summary was also written on the sentiment classification techniques available and the Int. j. inf. tecnol. algorithms used from 2010 and their evolution. The other mechanism called feature selection and its approaches were explained rapidly. This was proved that the enhanced techniques of sentiment analysis were improving day by day and need to be updated for better results.</p><p>Patil et al. <ref type="bibr" target="#b25">[27]</ref> explained the general steps involved in sentiment analysis where the preprocessing involves the general text mining techniques like tokenization, stop words removal, stemming. Feature selection was used in the place of POS tagging and the performance was measured in the form of precision and recall.</p><p>Singh et al. <ref type="bibr" target="#b26">[28]</ref> also compared all the classification algorithms on twitter dataset. The technique named bag of words was used. Sentiment classification techniques like POS information, negation, opinion words were explained. He had also explained that removing neutral terms may cause problem so a solution can be found to identify the neutral words.</p><p>Sharma et al. <ref type="bibr" target="#b27">[29]</ref> used the unsupervised technique. The data was from mobile review data from the amazon website. The sentiment orientation system was proposed depending on the unsupervised learning and the polarity of the data was found i.e., positive, negative and neutral.</p><p>Weibo is a place where user can give his opinion and sentiment <ref type="bibr" target="#b28">[30]</ref>. So an opinion mining framework was implemented where we would load a corpus data. It was proved that lexicon based was not so efficient when compared with the SVM. As the data is retweeting data adopting the semantic approach would be beneficial.</p><p>Ahmed et al. <ref type="bibr" target="#b29">[31]</ref> similarly made a survey on the tools, enhancement methods and models available for sentiment analysis. The major applications of the analysis were also explained. But the comparison between all the approaches was not done.</p><p>Minab et al. <ref type="bibr" target="#b30">[32]</ref> explained the phases of sentiment analysis namely data stream mining, text mining and sentiment analysis by collecting the dataset of twitter through online. The results were compared with the previous approaches or the papers and a survey was done about the algorithms applied and the results obtained.</p><p>Felciah et al. <ref type="bibr" target="#b31">[33]</ref> also explained the techniques and procedure available for sentiment analysis. But the main key point is that every paper explains about classification techniques in doing the sentiment analysis so in this paper she explained how the classification is best by doing the survey on previous research done. <ref type="bibr">Go et al. [34]</ref> used the distant supervised learning method on the twitter dataset with emoticons. It is possible to extract them with the help of twitter API. Feature reduction approach was adopted to remove repeated words. Here the features were POS words. Max Entropy has better performance than the SVM and the Naı ¨ve Bayes. Even though the twitter data have redundant and different words the machine learning approaches can solve this.</p><p>Chaudhari <ref type="bibr" target="#b33">[35]</ref> used the general approach for sentiment analysis and the preprocessing also involves normalization which would change the document into either lower or capital letters if needed. The feature extraction will have the feature selection and feature a type which tells the positive, negative or the neutral words available. Different types of open source tools available were listed. Finally, it was concluded that no algorithm can give better efficiency because it depends on various factors like tool used or dataset taken etc.</p><p>Bhonde et al. <ref type="bibr" target="#b34">[36]</ref> had clearly explained the steps of sentiment or opinion mining as well as the text mining and its preprocessing techniques which involves stop word removal, tokenization, data filtering and stemming etc. Performance was measured on the basis of precision and recall.</p><p>Younis et al. <ref type="bibr" target="#b35">[37]</ref> has adopted the lexicon based approach of sentiment analysis. The proposed system consists of stages like Data Access, Data Cleaning, Data Analysis and finally Visualization of results. It was implemented in R using TwitteR package and positive and negative scores were calculated.</p><p>The opinion mining and sentiment analysis is defined as (osma) in which <ref type="bibr" target="#b36">[38]</ref> after the data collection and preprocessing the feature selection methods like tf-idf matrix, stop word removal were implemented. A weighting schema was defined by using the term frequency and document frequency. There is a chance for extension of this paper by using fuzzy.</p><p>The opinion has been found for the tourism online platform <ref type="bibr" target="#b37">[39]</ref> but there are some problems with the online reviews which were explained clearly. The modules such as the acquisition module, analysis module. The system such developed was helpful in finding the opinion for tourism platforms and also has a chance of improvement in accuracy.</p><p>The data sources <ref type="bibr" target="#b38">[40]</ref> available were explained along with different approaches available for analysis. The different research challenges these days, the main applications that can be made and the tools available for doing this mining were explained briefly. Dealing with the negative statements can be a future work if anyone wants to develop the mining.</p><p>The main task in citation is that <ref type="bibr" target="#b39">[41]</ref> to find the polarity i.e., the positive and negative opinion. Citation is a summary of the whole references. There are two types of citations namely, textual and numerical. The feature extraction phase is efficient with clear explanation. A list of feature extraction and sentiment classification methods were notified neatly.</p><p>Weibo is a place where user can give his opinion and sentiment <ref type="bibr" target="#b40">[42]</ref>. So an opinion mining framework was implemented where we would load a corpus data. It was proved that lexicon based was not so efficient when compared with the SVM. As the data is retweeting data adopting the semantic approach would be beneficial.</p><p>Pradhan et al. <ref type="bibr" target="#b41">[43]</ref> explained the different levels of opinion mining and supervised learning classifiers approaches and those results were compared with the other previous researcher's results. Finally he concluded that the supervised approach is better than the other ones.</p><p>Nitin Pise <ref type="bibr" target="#b42">[44]</ref> had clearly explained the architecture of sentiment analysis i.e., how it starts and ends. All the techniques for the analysis, both the machine learning approaches and lexicon approaches were explained. Later the applications of sentiment analysis, the tools available for it and the major challenges of the analysis these days were also given.</p><p>Kharde et al. <ref type="bibr" target="#b43">[45]</ref> had made a survey on all the existing techniques for the sentiment analysis and the performance measures were compared between machine learning and lexicon based approaches where SVM, Maxentropy and Naı ¨ve Bayes were involved. The data was the twitter data streams. The applications and challenges of the sentiment analysis in recent trends were explained.</p><p>Similarly <ref type="bibr" target="#b44">[46]</ref> explained the process of text extraction and its different applications like information extraction, information retrieval, and categorization. The different preprocessing techniques available in text mining were explained along with the mechanisms that can be implemented as stemming algorithms. This is best reference paper for text mining researchers.</p><p>Janani <ref type="bibr" target="#b45">[47]</ref> involves the techniques and process of text mining. A comparison was made on the information extraction techniques, information retrieval techniques and as well as the categorization techniques. Not only that the clustering techniques were explained and compared along with the applications available on text mining. The issues which were related to text data mining were explained neatly. And finally it was concluded that mining with different languages would be difficult.</p><p>A lot of survey has been made on text mining and its approaches <ref type="bibr" target="#b46">[48]</ref> like summarizing the data, information extraction, categorizing, clustering, and tracking the topics, sentiment classification and finally the visualization of results. Their architectures were also explained in a simple manner. Not only that the tools available for the text mining and the general applications of text mining were explained briefly.</p><p>A practical research was done <ref type="bibr" target="#b47">[49]</ref> by taking the user reviews which are examined, analyzed and organized to make a decision. The different machine learning algorithms like Naı ¨ve Bayes, SVM, maximum likelihood and decision tree were used in the phase of sentiment classification.</p><p>A survey of product reviews has been made [50] using sentiment classification. The technique called semantic orientation is proposed which would help in finding the frequent terms easily. A comparison of accuracy and time complexity was measured between the proposed and existing ranking system and proved that semantic orientation is best. The best thing is that the flow chart of the procedure was understandable.</p><p>Finally, from the survey we have done, it was completely understandable that the machine learning approaches were best with good accuracy rate. The one thing that commonly observed was that the scores were predicted for positive and negative words. By using Sentiwordnet the polarity can be easily found. The scope of this project is that the customers or users are of different mentalities. If we go for ratings then Sentiwordnet works perfectly, but when it comes to movie reviews or giving the feedback the users have to convey their opinion in the form of text. That text may have spam messages or unnecessary words. Some will have both good and bad opinions on the same thing. For example, if we go for a camera, we may like the camera, but not the apps in it. It doesn't mean that it was completely good or bad opinion. It is the combination of both. So to judge those or doing the analysis on those we need a separate mechanism and it was implemented in this paper.</p><p>Further, in the next section, the architecture design was given whereas the later sections will have the further details about the description, experimental results and evaluation.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">Theoretical analysis</head><p>This chapter deals with the existing and proposed methodologies including their architecture.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1">Existing system methodology</head><p>The steps generally involved in sentiment analysis i.e., existing system of analysis is as shown in Fig. <ref type="figure" target="#fig_1">2</ref>. The steps involved in existing methodology is to collect the data from online and doing the preprocessing called text mining phase which includes removing stop words, unnecessary symbols, numbers etc. Later the feature extraction was done and sentiment identification and classification was performed using any of the classifiers. At last polarity can be found.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2">Existing SVM-RBF kernel</head><p>The RBF kernel is the most popular kernel among all the kernels in SVM. A function z that maps a single vector to a vector of higher dimensionality, approximating the kernel:</p><formula xml:id="formula_8">z x ð Þz x 0 ð Þ % u x ð Þu x 0 ð Þ ¼ k x; x 0 ð Þ<label>ð8Þ</label></formula><p>where, W is the implicit mapping embedded in the RBF kernel.</p><p>The general function of SVM classifier is:</p><formula xml:id="formula_9">f y ð Þ ¼ X n i¼1 a i k y; y i ð Þþb<label>ð9Þ</label></formula><p>where the feature vector in some input space can be defined as,</p><formula xml:id="formula_10">k y; y 0 ð Þ ¼ exp Àcj y À y 0 j jj 2 h i<label>ð10Þ</label></formula><p>where r is a free parameter and c ¼ 1 2r . Disadvantages of existing SVM-RBF:</p><p>• The scores for all the tweets will be in parametric form i.e., will be different at different run times.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.3">Proposed system</head><p>In the existing system, the opinion was classified as positive and negative opinions. The neutral sentences or the opinions were not classified accurately (Fig. <ref type="figure">3</ref>).</p><p>The sentiment score can be found using sentiwordnet and wordnet tools which would have the scoring function. The scoring function could able to estimate the positive and negative score efficiently than the neutral score. So in this system a work has been proposed such the neutral opinions were found and a scoring function was developed to give the perfect scoring for neutral tweets too.</p><p>The proposed architecture was developed in 3 phases namely, mining of data, opinion mining and sentiment scoring.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.4">Methodology</head><p>Collecting data The information utilized for this exploration is a motion picture survey dataset gathered from twitter. There were around 25,000 tweets from the years 2003-2012.</p><p>Pre-processing The preprocessing helps in finding the significant information i.e., content mining which incorporates the expulsion of superfluous images, numbers and other if necessary was done alongside tokenization and stemming (evacuate the words with postfixes for instance from the needed ''ed'' is expelled and it gives just ''need''. Similarly, coming, going, perusing and so forth.).</p><p>The TF-IDF lattice was found. The yield from this stage is the information which doesn't contain any pointless tweets and spam tweets (which means less tweets).</p><p>For conclusion mining two capacities are composed called group feeling() and Classify extremity(). The capacity group feeling() manages the certifiable tweets got after the preprocessing stage and arrange the feeling the tweet comprises of Whether the individual's feeling is outrage, disguist, similar to, hate and so on. Though the other capacity called characterize extremity() tells the importance of that feeling. For instance (Table <ref type="table" target="#tab_3">1</ref>). Fig. <ref type="figure">3</ref> Proposed system for sentiment analysis Now the tweets with the feeling and extremity were taken in a different content document. A model was constructed utilizing SVM-IRBF and furthurly the precision is anticipated.</p><p>The conclusion mining stage closes here. In any case, the fundamental point of this paper is to discover the score to those tweets. By and large the score can be effectively given by thinking about 1 for positive,-1 for negative and 0 for nonpartisan tweets. However, in the survey tweets the single tweet may comprises of at least two number of sentiments. So to anticipate those scores too a word net vocabulary lexicon which comprises of a lexicon of positive and negative words was stacked. Later the sentiment tweets which were put away in a different record were stacked. Now, by contrasting the tweets and the vocabulary word reference the tweets conveying positive or negative feelings were effectively perceived and scoring was done as pursues:</p><p>• A function was written such that our grading system can be attached and the score was given so that the neutral opinions can also be considered. The function is written in the console as follows (Fig. <ref type="figure" target="#fig_2">4</ref>).</p><p>A scale of -5 to ? 5 limit was taken to predict the score to sentiment sentences where the scale denotes the values as shown in Table <ref type="table" target="#tab_4">2</ref>.</p><p>• Finally all the results were plotted and visualized.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.5">Improved SVM-RBF kernel</head><p>The improvements were made in the hyper plane by considering the soft margin C, the gamma (c) value has been given accordingly and the classification was done such that the positive and negative were classified whereas the neutral can also be found.</p><p>The general classifier with including weights of the sentences repeated can be given as,</p><formula xml:id="formula_11">f s ð Þ ¼ X n i¼1 / i kðs; s 0 Þ ð<label>11Þ</label></formula><p>f s ð Þ is the hyper plane. k s; s 0 ð Þ is the kernel function. / i denotes the weights of the sentences. And the feature vector according to weights can be defined as,</p><formula xml:id="formula_12">k s; s 0 ð Þ ¼ exp Àc s À s 0 j j j j 2 2 h i i.e., k s; s 0 ð Þ ¼ exp À s À s 0 j j j j 2 2r 2 " #<label>ð12Þ</label></formula><p>where s À s 0 j j j j 2 is the Euclidean distance between them. r is the free parameter.</p><p>From which the RBF classifier can be:</p><formula xml:id="formula_13">f s ð Þ ¼ X n i¼1 / i exp À s À s 0 j j j j 2 2r 2 " #<label>ð13Þ</label></formula><p>where, b is a constant.  Advantages of proposed model:</p><p>• With the change in gamma value and soft margin, it would exactly fit the data points and classify them correctly (Reference: <ref type="url" target="https://www.analyticsvidhya.com">https://www.analyticsvidhya. com</ref>). • It works well in high dimensional spaces.</p><p>• The accuracy obtained is more when compared with the traditional RBF.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.5.1">Word net</head><p>Word net is a large lexical database of English. The different perspectives of a word in the form of Nouns, verbs, adjectives and adverbs are grouped into sets of cognitive synonyms (synsets), where everyone has their own structure.</p><p>To calculate the scores of opinion tweets the wordnet dictionary has been loaded. By comparing those tweets with the word net dictionary the scores are predicted.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.5.2">Advantages of proposed methodology</head><p>The advantages by following the proposed approach are:</p><p>1. The functions called classify polarity() and classify emotion() helps in finding the polarity and opinion of any number of sentences at a time. 2. By using the existing methodology, one can find the polarity of the dataset and can score the opinion of a sentence in traditional evaluation like using '?1' for positives and '-1' for negatives whereas '0' for neutral.</p><p>But through proposed approach we can score the sentence containing one or more number of opinions. 3. The scoring function is developed in such a way that by using it one can find the score of his own sample sentence. 4. The lexicon dictionary is modified so that it could be able to score even the non-negative phrases. 5. By using the SVM-IRBF kernel for training the accuracy obtained is more than the existing kernel. 6. The computational complexity is about 3.0 s for scoring.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">Experimental analysis and results</head><p>The dataset used is movie review data collected from the Twitter API. It contains about 25000 positive and negative reviews, including the unsupported spam tweets too. The text mining phase is done such that the stop words, symbols were removed and feature extraction is implemented by doing the stemming, finding term frequency and bag of words approach. The totals of 3452 sentences are found by removing the spam and repeated emotions. Now the opinion mining was done by adopting the Naı ¨ve Bayes classifier and the identification of polarity was done. After the opinion mining it is found that there are 256 sentences with non-repeated emotions.</p><p>Later to find the score of those opinions WordNet is adopted which is a lexicon based approach. Because the analysis selected is sentence sentiment classification. So a dictionary of positive and negative words is saved. The function for the WordNet is written in such a way that the neutral score can also be easily understood.</p><p>Finally the scores were found and visualized. Generally, the scores identification was done on positive and negative reviews, but here as the lexicon dictionary was modified in such a way that it could able to calculate the score for non-negative or neutral sentences too. For that the grades were given from -5 to ? 5 as mentioned in the architecture. The total sentiment sentences were about 256. So the scores that appeared in those sentences with the three polarities can be observed from the Fig. <ref type="figure">6</ref>.</p><p>There are 256 sentences out of which 105 were positive, 88 negative and 63 neutral tweets. The neutral tweets were found and scored easily as we have a chance of modifying the lexicon dictionary (Figs. <ref type="bibr" target="#b3">5,</ref><ref type="bibr" target="#b4">6,</ref><ref type="bibr" target="#b5">7,</ref><ref type="bibr" target="#b6">8,</ref><ref type="bibr" target="#b7">9,</ref><ref type="bibr" target="#b8">10,</ref><ref type="bibr" target="#b9">11)</ref>. So the output obtained for the non-negative phrases after modifying dictionary can be shown in Fig. <ref type="figure" target="#fig_5">7</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1">Accuracy of algorithms</head><p>The machine learning algorithms were implemented on those sentences to know how accurate the classification was done. Those algorithms are SVM, Maximum entropy, GLMnet, Decision tree, Random forest, Linear Discriminant Analysis, Bagging and Naı ¨ve Bayes.</p><p>The results were plotted and the output of improved SVM-RBF kernel had an increase in accuracy when compared with the other algorithms (Figs. 12, 13).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2">Other metrics</head><p>The other metrics namely precision, recall and F1 score are found.</p><p>• Precision: It is also called as positive predictive value.</p><p>It deals with how the results are consistent, even when the measurements were repeated.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>P ¼ number of correctly classified positive results number of positive results ð14Þ</head><p>Recall: It is known as sensitivity, which defines the fraction of relevant instances when retrieved. </p><p>F1 score: It is a measure of test accuracy which acts as a weighted average of precision and recall measures.</p><formula xml:id="formula_15">F1 ¼ 2 Â 1 1 recall þ 1 precision<label>ð16Þ</label></formula><p>The precision, recall and F1-measures for different algorithms used were as follows (Table <ref type="table" target="#tab_5">3</ref>, Figs. 14, 15):</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.3">Comparison of various datasets</head><p>To prove that the improved RBF is best again a comparison with other two polarity datasets from Twitter which were available in online were found.</p><p>One is the polarity dataset where it sticks to the unigram word features. Whereas the other data is from Victor Neo where we would have total of 160 polarity tweets.</p><p>Both the data sets were collected from the twitter API. The improved RBF shows better results than the other algorithms in case of the three datasets considered (Fig. <ref type="figure" target="#fig_0">16</ref>). </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">Polarity of selected dataset</head><p>There are 256 sentences out of which 105 were positive, 88 negative and 63 neutral tweets. The neutral tweets were found and scored easily as we have a chance of modifying the lexicon dictionary (Fig. <ref type="figure" target="#fig_5">17</ref>).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">Conclusion and future work</head><p>In this paper we are proposed an effective improved RBF kernel of SVM for the openion mining. The opinion mining was done based on features or aspect level identification, whereas the sentiment analysis and scoring was done using the sentence sentiment classification. So the whole sentence carrying emotion is considered and classification algorithms were applied to it. The score is predicted by adopting the Word Net and a function is written so as all the negative and positive emotions even though they are in the same sentence were considered and scoring is given by checking the emotions with the lexicon dictionary. Finally, it was found that the lexicon dictionary considered can be modified. The non-negative phrases can be added to the dictionary so that the sentences with non-negative can also be found easily. This can lead to very efficient results even when the neutral or non-negative sentences were given. The time taken for predicting score is very low. mainly the proposed model is effective when compared with the stateof art and traditional mechanism called RBF karnal and proposed improved RBF-Kernal works well in high    modified so that it could be able to score even the nonnegative phrases. By using the SVM-IRBF kernel for training the accuracy obtained is more than the existing kernel. As a future work go with the streem data and observe the performance of the improved RBF kernel of SVM.   </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Fig. 1</head><label>1</label><figDesc>Fig. 1 Approaches for sentiment analysis</figDesc><graphic coords="2,180.94,486.11,363.40,225.04" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Fig. 2</head><label>2</label><figDesc>Fig. 2 Existing Methodology for Sentiment Analysis</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Fig. 4</head><label>4</label><figDesc>Fig. 4 Function for scoring</figDesc><graphic coords="10,183.69,529.97,360.69,181.13" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head></head><label></label><figDesc>positive results positive results that have to be returned</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Fig. 5</head><label>5</label><figDesc>Fig. 5 Loading data</figDesc><graphic coords="12,183.69,59.24,360.69,226.66" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Fig. 7</head><label>7</label><figDesc>Fig. 7 Classifying emotion</figDesc><graphic coords="13,183.69,59.24,360.69,220.08" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>Fig. 9</head><label>9</label><figDesc>Fig. 9 Some text format</figDesc><graphic coords="14,84.70,59.25,425.95,269.46" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_7"><head>Fig. 10</head><label>10</label><figDesc>Fig. 10 Scores for some text format</figDesc><graphic coords="14,183.69,364.14,360.69,158.06" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_8"><head>Fig. 11</head><label>11</label><figDesc>Fig. 11 Scores for nonnegative sentences</figDesc><graphic coords="14,183.69,542.49,360.69,121.89" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_9"><head>References 1 .Fig. 12 Fig. 13</head><label>11213</label><figDesc>Fig. 12 Accuracy of improved RBF kernel of SVM with respct to different state of art algorithms</figDesc><graphic coords="15,104.65,236.57,150.76,103.60" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_10"><head>Fig. 14 Fig. 15 Fig. 16 NeutralFig. 17</head><label>14151617</label><figDesc>Fig. 14 Plot of the Algorithms with metrics precision, recall and F1 score</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head>•</head><label></label><figDesc>It runs effectively on expansive databases. • It gives evaluations of what factors are vital in the grouping. • It can deal with a large number of info factors without variable cancellation.</figDesc><table /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_3"><head>Table 1</head><label>1</label><figDesc>Classifying emotion and polarity</figDesc><table><row><cell>Classify emotion()</cell><cell>Classify polarity()</cell></row><row><cell>Like</cell><cell>Positive</cell></row><row><cell>Disgusting</cell><cell>Negative</cell></row><row><cell>Love</cell><cell>Positive</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_4"><head>Table 2</head><label>2</label><figDesc>Scale for scores</figDesc><table><row><cell>Score</cell><cell>Prediction</cell><cell>Score</cell><cell>Prediction</cell></row><row><cell>-5</cell><cell>Failed</cell><cell>1</cell><cell>Good</cell></row><row><cell>-4</cell><cell>Disgusting</cell><cell>2</cell><cell>Better</cell></row><row><cell>-3</cell><cell>Worst</cell><cell>3</cell><cell>Best</cell></row><row><cell>-2</cell><cell>Bad</cell><cell>4</cell><cell>Excellent</cell></row><row><cell>-1</cell><cell>Not bad</cell><cell>5</cell><cell>Extraordinary</cell></row><row><cell>0</cell><cell>Neutral</cell><cell></cell><cell></cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_5"><head>Table 3</head><label>3</label><figDesc>Metrics of improved RBF kernel of SVM with respect to different existing algorithms</figDesc><table><row><cell>S. no</cell><cell>Algorithm</cell><cell>Precision</cell><cell>Recall</cell><cell>F1 measure</cell></row><row><cell>1</cell><cell>Naı ¨ve Bayes</cell><cell>0.730</cell><cell>0.735</cell><cell>0.750</cell></row><row><cell>2</cell><cell>Bagging</cell><cell>0.940</cell><cell>0.945</cell><cell>0.925</cell></row><row><cell>3</cell><cell>LDA</cell><cell>0.950</cell><cell>0.925</cell><cell>0.950</cell></row><row><cell>4</cell><cell>Random Forest</cell><cell>0.905</cell><cell>0.895</cell><cell>0.915</cell></row><row><cell>5</cell><cell>Decision tree</cell><cell>0.915</cell><cell>0.899</cell><cell>0.920</cell></row><row><cell>6</cell><cell>GLMNet</cell><cell>0.901</cell><cell>0.915</cell><cell>0.925</cell></row><row><cell>7</cell><cell>Max.Entropy</cell><cell>0.955</cell><cell>0.955</cell><cell>0.950</cell></row><row><cell>8</cell><cell>SVM linear kernel</cell><cell>0.910</cell><cell>0.925</cell><cell>0.950</cell></row><row><cell>9</cell><cell>SVM-RBF kernel</cell><cell>0.980</cell><cell>0.965</cell><cell>0.968</cell></row><row><cell>10</cell><cell>Improved SVM-RBF</cell><cell>0.985</cell><cell>0.985</cell><cell>0.992</cell></row></table></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" xml:id="foot_0"><p>Int. j. inf. tecnol.</p></note>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Movie review mining: a comparison between supervised and unsupervised classification approaches</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Chaovalit</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Zhou</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">HICSS&apos;05. Proceedings of the 38th Annual Hawaii International Conference on</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2005">2005. 2005. 2005</date>
+		</imprint>
+	</monogr>
+	<note>System Sciences</note>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Text mining: approaches and applications</title>
+		<author>
+			<persName><forename type="first">´m</forename><surname>Radovanovic</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">´m</forename><surname>Ivanovic</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Novi Sad J Math</title>
+		<imprint>
+			<biblScope unit="volume">38</biblScope>
+			<biblScope unit="page">3</biblScope>
+			<date type="published" when="2008">2008</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">A survey of text mining techniques and applications</title>
+		<author>
+			<persName><forename type="first">V</forename><surname>Gupta</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">S</forename><surname>Lehal</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">J Emerg Technol Web Intell</title>
+		<imprint>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="page">1</biblScope>
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Mining opinion from text documents: a survey</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>Khan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">B</forename><surname>Baharudin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Khan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">3rd IEEE international conference on digital ecosystems and technologies</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2009">2009. 2009. 2009</date>
+		</imprint>
+	</monogr>
+	<note>DEST&apos;09</note>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Document classification algorithm based on kernel logistic regression</title>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Sun</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">2010 2nd international conference on industrial and information systems (IIS)</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2010">2010</date>
+			<biblScope unit="volume">1</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Web data mining research: a survey</title>
+		<author>
+			<persName><forename type="first">B</forename><surname>Singh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">K</forename><surname>Singh</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">2010 IEEE international conference on computational intelligence and computing research (ICCIC)</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Opinion mining and sentiment analysis</title>
+		<author>
+			<persName><forename type="first">B</forename><surname>Pang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Lee</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Foundations and Trends Ò in Information Retrieval</title>
+		<imprint>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="page" from="1" to="2" />
+			<date type="published" when="2008">2008</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Text mining: concepts, process and applications</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Kumar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">K</forename><surname>Bhatia</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">J Global Res Comput Sci</title>
+		<imprint>
+			<biblScope unit="volume">4</biblScope>
+			<biblScope unit="page">3</biblScope>
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Sentiment analysis of a document using deep learning approach and decision trees</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">S</forename><surname>Zharmagambetov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">A</forename><surname>Pak</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">2015 twelve international conference on electronics computer and computation (ICECCO)</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2015">2015. 2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Sentiment analysis for social media: a survey</title>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">P</forename><surname>Patil</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Atique</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">2015 2nd international conference on information science and security (ICISS)</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2015">2015. 2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<monogr>
+		<title level="m" type="main">Stock prediction using twitter sentiment analysis</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Mittal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Goel</surname></persName>
+		</author>
+		<idno>CS229. 2011</idno>
+		<ptr target="http://cs229.stanford.edu/proj2011/GoelMittal-StockMarketPredictionUsingTwitterSentimentAnalysis.pdf" />
+		<imprint>
+			<date type="published" when="2012">2012</date>
+			<biblScope unit="volume">15</biblScope>
+		</imprint>
+		<respStmt>
+			<orgName>Standford University</orgName>
+		</respStmt>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Twitter as a corpus for sentiment analysis and opinion mining</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Pak</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Paroubek</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">LREc</title>
+		<imprint>
+			<biblScope unit="volume">10</biblScope>
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Sentiment analysis and opinion mining</title>
+		<author>
+			<persName><forename type="first">B</forename><surname>Liu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Synth Lect Hum Lang Technol</title>
+		<imprint>
+			<biblScope unit="volume">5</biblScope>
+			<biblScope unit="page">1</biblScope>
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">Opinion mining and sentiment classification: a survey</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Chandrakala</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Sindhu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">ICTACT J Soft Comput</title>
+		<imprint>
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="page">1</biblScope>
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">Survey of techniques for opinion mining</title>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">M</forename><surname>Shelke</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Deshpande</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Thakre</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Int J Comput Appl</title>
+		<imprint>
+			<biblScope unit="volume">57</biblScope>
+			<biblScope unit="page">13</biblScope>
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">The role of text pre-processing in sentiment analysis</title>
+		<author>
+			<persName><forename type="first">E</forename><surname>Haddi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Shi</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Proc Comput Sci</title>
+		<imprint>
+			<biblScope unit="volume">17</biblScope>
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">A survey of classification methods and applications for sentiment analysis</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Govindarajan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Romina</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Int J Eng Sci</title>
+		<imprint>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="page">12</biblScope>
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<monogr>
+		<author>
+			<persName><forename type="first">A</forename><surname>Buche</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Chandak</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Zadgaonkar</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1307.3336</idno>
+		<title level="m">Opinion mining and analysis: a survey</title>
+		<imprint>
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">A survey on sentiment analysis and opinion mining techniques</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Kaur</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Gupta</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">J Emerg Technol Web Intell</title>
+		<imprint>
+			<biblScope unit="volume">5</biblScope>
+			<biblScope unit="page">4</biblScope>
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">Research directions, challenges and issues in opinion mining</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Sudhakaran</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Int J Adv Sci Technol</title>
+		<imprint>
+			<biblScope unit="volume">60</biblScope>
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">Analysis of different approaches to sentence-level sentiment classification</title>
+		<author>
+			<persName><forename type="first">V</forename><forename type="middle">S</forename><surname>Jagtap</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Pawar</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Int J Sci Eng Technol</title>
+		<imprint>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="page">3</biblScope>
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">Comparative study of classification algorithms used in sentiment analysis</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Gupte</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Int J Comput Sci Inf Technol</title>
+		<imprint>
+			<biblScope unit="volume">5</biblScope>
+			<biblScope unit="page">5</biblScope>
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">Sentiment detection from Bangla text using contextual valency analysis</title>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">M</forename><surname>Hasan</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Azharul</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Rahman</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">17th international conference on computer and information technology (ICCIT)</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">Sentiment classification through semantic orientation using SentiWordNet</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">Z</forename><surname>Asghar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Khan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Life Sci J</title>
+		<imprint>
+			<biblScope unit="volume">11</biblScope>
+			<biblScope unit="page">10</biblScope>
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<monogr>
+		<title level="m" type="main">Sentiment analysis algorithms and applications: a survey</title>
+		<author>
+			<persName><forename type="first">W</forename><surname>Medhat</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Hassan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Korashy</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2014">2014</date>
+			<publisher>Elsevier</publisher>
+			<pubPlace>New York</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<title level="a" type="main">Sentiment analysis using support vector machine</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Patil</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Int J Innov Res Comput Commun Eng</title>
+		<imprint>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="page">1</biblScope>
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<analytic>
+		<title level="a" type="main">Sentiment analysis of twitter data set: survey</title>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">K</forename><surname>Singh</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Int J Appl Eng Res</title>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<biblScope unit="page">22</biblScope>
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<title level="a" type="main">Polarity detection at sentence level</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Sharma</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Nigam</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Jain</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Int J Comput Appl</title>
+		<imprint>
+			<biblScope unit="volume">86</biblScope>
+			<biblScope unit="page">11</biblScope>
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<analytic>
+		<title level="a" type="main">Opinion mining and sentiment analysis in social networks: a retweeting structure-aware approach</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Lin</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/ACM 7th international conference on utility and cloud computing</title>
+		<meeting>the IEEE/ACM 7th international conference on utility and cloud computing</meeting>
+		<imprint>
+			<publisher>IEEE Computer Society</publisher>
+			<date type="published" when="2014">2014. 2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<analytic>
+		<title level="a" type="main">Sentiment analysis over social networks: an overview</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>Ahmed</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">El</forename><surname>Tazi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Hossny</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">H</forename></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">2015 IEEE international conference on systems, man, and cybernetics (SMC)</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2015">2015. 2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<analytic>
+		<title level="a" type="main">Online analysis of sentiment on Twitter</title>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">S</forename><surname>Minab</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Jalali</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">H</forename><surname>Moattar</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">2015 international congress on technology, communication and knowledge (ICTCK)</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2015">2015. 2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<analytic>
+		<title level="a" type="main">A study on sentiment analysis of social media reviews</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Felciah</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Ponn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Anbuselvi</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International conference on innovations in information, embedded and communication systems (ICIIECS)</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2015">2015. 2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<monogr>
+		<title level="m" type="main">Twitter sentiment classification using distant supervision</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Go</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Bhayani</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Huang</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2009">2009</date>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="page">12</biblScope>
+			<pubPlace>Stanford</pubPlace>
+		</imprint>
+	</monogr>
+	<note type="report_type">CS224N Project Report</note>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<analytic>
+		<title level="a" type="main">A survey of machine learning techniques for sentiment classification</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Chaudhari</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Govilkar</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Int J Comput Sci Appl</title>
+		<imprint>
+			<biblScope unit="volume">5</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<analytic>
+		<title level="a" type="main">Sentiment analysis based on dictionary approach</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Bhonde</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Int J Emerg Eng Res Technol</title>
+		<imprint>
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="page">1</biblScope>
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<analytic>
+		<title level="a" type="main">Sentiment analysis and text mining for social media microblogs using open source tools: an empirical study</title>
+		<author>
+			<persName><forename type="first">Emg</forename><surname>Younis</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Int J Comput Appl</title>
+		<imprint>
+			<biblScope unit="volume">112</biblScope>
+			<biblScope unit="page">5</biblScope>
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b36">
+	<analytic>
+		<title level="a" type="main">An experimental study of feature extraction techniques in opinion mining</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Kumar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Ashok</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Abirami</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Int J Soft Comput Artif Intell Appl (IJSCAI)</title>
+		<imprint>
+			<biblScope unit="volume">4</biblScope>
+			<biblScope unit="page">1</biblScope>
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b37">
+	<analytic>
+		<title level="a" type="main">Using opinion mining techniques in tourism</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Bucur</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Proc Econ Fin</title>
+		<imprint>
+			<biblScope unit="volume">23</biblScope>
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b38">
+	<analytic>
+		<title level="a" type="main">Opinion mining: a survey</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Maheshwari</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Dadhich</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Mathur</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Int J Adv Res Comput Commun Eng</title>
+		<imprint>
+			<biblScope unit="volume">4</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b39">
+	<analytic>
+		<title level="a" type="main">A survey of sentiment analysis for journal citation</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Parthasarathy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">C</forename><surname>Tomar</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Indian J Sci Technol</title>
+		<imprint>
+			<biblScope unit="volume">8</biblScope>
+			<biblScope unit="page">35</biblScope>
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b40">
+	<analytic>
+		<title level="a" type="main">Opinion mining and sentiment analysis in social networks: a retweeting structure-aware approach</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Lin</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2014 IEEE/ACM 7th international conference on utility and cloud computing</title>
+		<meeting>the 2014 IEEE/ACM 7th international conference on utility and cloud computing</meeting>
+		<imprint>
+			<publisher>IEEE Computer Society</publisher>
+			<date type="published" when="2014">2014. 2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b41">
+	<analytic>
+		<title level="a" type="main">A survey on sentiment analysis algorithms for opinion mining</title>
+		<author>
+			<persName><forename type="first">V</forename><forename type="middle">M</forename><surname>Pradhan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Vala</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Balani</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Int J Comput Appl</title>
+		<imprint>
+			<biblScope unit="volume">133</biblScope>
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b42">
+	<analytic>
+		<title level="a" type="main">A case study on sentiment analysis from social big data</title>
+		<author>
+			<persName><forename type="first">N</forename><surname>Pise</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Int J Innov Res Comput Commun Eng</title>
+		<imprint>
+			<biblScope unit="volume">4</biblScope>
+			<biblScope unit="issue">7</biblScope>
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b43">
+	<monogr>
+		<title level="m" type="main">Sentiment analysis of twitter data: a survey of techniques</title>
+		<author>
+			<persName><forename type="first">V</forename><surname>Kharde</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Sonawane</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1601.06971</idno>
+		<imprint>
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b44">
+	<analytic>
+		<title level="a" type="main">Preprocessing techniques for text mining-an overview</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Vijayarani</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Ilamathi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Nithya</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Int J Comput Sci Commun Netw</title>
+		<imprint>
+			<biblScope unit="volume">5</biblScope>
+			<biblScope unit="page">1</biblScope>
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b45">
+	<analytic>
+		<title level="a" type="main">Text mining research: a survey</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Janani</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Int J Innov Res Comput Commun Eng</title>
+		<imprint>
+			<biblScope unit="volume">4</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b46">
+	<analytic>
+		<title level="a" type="main">A comprehensive study of text mining approach</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Kaushik</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Naithani</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Int J Comput Sci Netw Secur (IJCSNS)</title>
+		<imprint>
+			<biblScope unit="volume">16</biblScope>
+			<biblScope unit="page">2</biblScope>
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b47">
+	<analytic>
+		<title level="a" type="main">Survey of product reviews using sentiment analysis</title>
+		<author>
+			<persName><forename type="first">T ;</forename><surname>Shaikh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">J</forename><surname>Sri</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Ajitha</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Indian J Sci Technol</title>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<biblScope unit="issue">21</biblScope>
+			<date type="published" when="2016">2016. 2016</date>
+		</imprint>
+	</monogr>
+	<note>IJCA J. Int. j. inf. tecnol</note>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

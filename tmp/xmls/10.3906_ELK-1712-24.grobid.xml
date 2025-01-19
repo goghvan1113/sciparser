@@ -1,0 +1,835 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Automated citation sentiment analysis using high order n-grams: a preliminary investigation</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author role="corresp">
+							<persName><forename type="first">Muhammad</forename><surname>Touseef</surname></persName>
+							<email>touseefgrw@hotmail.com</email>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Computer Science</orgName>
+								<orgName type="institution">Capital University of Science and Technology</orgName>
+								<address>
+									<settlement>Islamabad</settlement>
+									<country key="PK">Pakistan</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Muhammad</forename><forename type="middle">Tanvir</forename><surname>Afzal</surname></persName>
+							<idno type="ORCID">0000-0001-8965-5406</idno>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Computer Science</orgName>
+								<orgName type="institution">Capital University of Science and Technology</orgName>
+								<address>
+									<settlement>Islamabad</settlement>
+									<country key="PK">Pakistan</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Naveed</forename><forename type="middle">Anwer</forename><surname>Butt</surname></persName>
+							<affiliation key="aff1">
+								<orgName type="department">Department of Computer Science</orgName>
+								<orgName type="institution">University of Gujrat</orgName>
+								<address>
+									<settlement>Gujrat</settlement>
+									<country key="PK">Pakistan</country>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Automated citation sentiment analysis using high order n-grams: a preliminary investigation</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<idno type="MD5">123EE6B2AAC4A07620A707A92B9776F4</idno>
+					<idno type="DOI">10.3906/elk-1712-24</idno>
+					<note type="submission">Received: 03.12.2017 • Accepted/</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.2-SNAPSHOT" ident="GROBID" when="2025-01-19T06:59+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<textClass>
+				<keywords>
+					<term>Citation sentiment analysis</term>
+					<term>n-gram analysis</term>
+					<term>citation classification</term>
+					<term>SEMANTRIA</term>
+					<term>THEYSAY</term>
+				</keywords>
+			</textClass>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Scientific papers hold an association with previous research contributions (i.e. books, journals or conference papers, and web resources) in the form of citations. Citations are deemed as a link or relatedness of the previous work to the cited work. The nature of the cited material could be supportive (positive), contrastive (negative), or objective (neutral). Extraction of the author's sentiment towards the cited scientific articles is an emerging research discipline due to various linguistic differences between the citation sentences and other domains of sentiment analysis. In this paper, we propose a technique for the identification of the sentiment of the citing author towards the cited paper by extracting unigram, bigram, trigram, and pentagram adjective and adverb patterns from the citation text. After POS tagging of the citation text, we use the sentence parser for the extraction of linguistic features comprising adjectives, adverbs, and n-grams from the citation text. A sentiment score is then assigned to distinguish them as positive, negative, and neutral.</p><p>In addition, the proposed technique is compared with manually classified citation text and 2 commercial tools, namely SEMANTRIA and THEYSAY, to determine their applicability to the citation corpus. These tools are based on different techniques for determining the sentiment orientation of the sentence. Analysis of the results shows that our proposed approach has achieved results comparable to the commercial counterparts with average precision, recall, and accuracy of 90%, 81.82%, and 85.91% respectively.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.">Introduction</head><p>Due to the exponential growth of research publications on the Internet, the frequency of citations to scientific texts has become very high <ref type="bibr" target="#b0">[1,</ref><ref type="bibr" target="#b1">2]</ref>. Citation text is valuable and of utmost importance for the qualitative assessment of a paper, but the sheer size of it makes access prohibitive <ref type="bibr" target="#b2">[3]</ref><ref type="bibr" target="#b3">[4]</ref><ref type="bibr" target="#b4">[5]</ref><ref type="bibr" target="#b5">[6]</ref>. To be able to leverage the available information, there is a need for some automatic mechanism for summarizing and processing scholarly big data <ref type="bibr" target="#b6">[7,</ref><ref type="bibr" target="#b7">8]</ref>. In the current research repositories, there is no existing technique that summarizes research citations on the basis of sentiments expressed in them <ref type="bibr" target="#b8">[9]</ref>. However, applying sentiment analysis to citation contexts is a challenging process as the criticism is often hidden, negative citations are hardly explicit, and most research papers are considered positive in general <ref type="bibr" target="#b9">[10,</ref><ref type="bibr" target="#b10">11]</ref>. Similarly, additional academic pressure for more research publications coupled with increased difficulty of publishing also led to citation cartels in the form of unclean citations <ref type="bibr" target="#b11">[12]</ref>. In addition, bibliometric studies have found a high increase in the citation of controversial papers. Moreover, the linguistic differences in scientific texts, such as use of technical terms, variation in lexical terms, hidden sentiment, and contrastive expressions, urge the scientific community to undertake new methods for citation sentiment classification <ref type="bibr" target="#b12">[13,</ref><ref type="bibr" target="#b13">14]</ref>.</p><p>In the domain of natural language processing and probability, n-grams are widely being utilized as features for opinion mining <ref type="bibr" target="#b14">[15,</ref><ref type="bibr" target="#b15">16]</ref>. N-grams are the contiguous and continuous sequences of n-items, terms, or objects from a given document, sequence of text, or speech, which are used as a feature to get sentiment cues from the text <ref type="bibr" target="#b16">[17,</ref><ref type="bibr" target="#b17">18]</ref>. Most contemporary studies have harnessed bigrams and trigrams <ref type="bibr" target="#b18">[19]</ref><ref type="bibr" target="#b19">[20]</ref><ref type="bibr" target="#b20">[21]</ref><ref type="bibr" target="#b21">[22]</ref>. However, the presence of technical and lexical terms in the citation context creates an extreme challenge for citation sentiment identification, which can be addressed with higher order n-grams that assist in capturing short-term contextual and positional information <ref type="bibr" target="#b22">[23]</ref><ref type="bibr" target="#b23">[24]</ref><ref type="bibr" target="#b24">[25]</ref>. Therefore, in the proposed technique, we assume that higher order n-gram phrases, part of speech (POS) tagging, dependency relations, bag-of-words (BOW) models, and sentiment lexicons can play significant roles in improving classification accuracy.</p><p>Based on the above arguments, the following are the main contributions of this paper:</p><p>• The focal point is the identification of the sentiment used in context with reference to a particular citation by using different n-gram techniques: unigrams, bigrams, trigrams, and pentagrams comprising (adjective, adverbs, and adjective + adverb) patterns. For this, we have combined text mining and lexical analysis techniques to derive the opinion of the citing author towards the cited research paper from the citation text. First the sentiment-bearing words are extracted from the citation sentences using the linguistic phrase patterns, synonyms, and heuristic rule-based approach. Afterwards, we determine sentiment orientation of extracted sentences using SentiWordNet by contemplating the words around the linguistic expression. These sentiment orientations are further classified as positive, negative, and neutral based on the sentiment score.</p><p>• Secondly, we intend to scrutinize the applicability of the existing commercial sentiment analysis tools (SEMANTRIA and THEYSAY) in addressing the complexity associated with the citation genre. The attained results of the proposed approach are compared with 2 commercial tools to determine the effectiveness of our technique. The experimental evaluation has confirmed the effectiveness of using higher order n-grams (i.e. n ≥ 3) in predicting the sentiment of scientific literature and demonstrated that the results are comparable to the commercially available tools. Overall, the results are evaluated by utilizing standard evaluation measures such as precision, recall, accuracy, and f-measure.</p><p>The rest of the paper is organized as follows: in Section 2, we present the state-of-the-art work done to evaluate the author's attitude towards scientific publications. Section 3 summarizes the proposed methodology for sentiment analysis of citation text. Results of experiments are presented in Section 4. In Section 5 of the paper, we conclude the research work based on the analysis of our experimental results.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.">Related work</head><p>In the literature, there exist various approaches that address different issues of citation sentiment analysis. In this section, we present the relevant literature for the sentiment classification of citations for scientific papers.</p><p>In <ref type="bibr" target="#b25">[26]</ref>, the authors focused on the automatic sentiment polarity identification in the citation text using different features like n-grams (n = 3), dependency relations, negation features, scientific lexicon, and sentence splitting in the SVM framework. They categorized the citations into 3 different classes, i.e. positive, negative, and neutral.</p><p>The results of their study revealed that trigrams and dependency relations provide robust results in this regard and outperform the scientific lexicon and sentence splitting features. In <ref type="bibr" target="#b26">[27]</ref>, Kim and Thoma developed an automated sentiment detection method using machine learning techniques and linguistic clues. As a preliminary work, the authors presented a technique for citation text classification based on support vector machines using ngram (unigrams and bigrams) word statistics as a feature vector. The proposed citation sentiment classification technique categorizes the text into 2 categories, i.e. positive and others. As a future work, they planned to improve their methodology by using a denser ground-truth dataset and enriching the feature set by considering more input features. A technique was proposed by Tandon and Jain in <ref type="bibr" target="#b27">[28]</ref> for the generation of a structured summary of a research paper based on the citation text in citing papers. They classified the citation text using multilabel classification into one or more of 5 different classes: summary, strengths, limitations, related work, and applications. As a baseline, they used the naive Bayes algorithm while considering the combinations of adjectives, verbs, and n-grams in each class. As per the experimental results, the combination of adjectives, verbs, and bigrams achieved an average precision of 68.54%. Yu presented a technique in <ref type="bibr" target="#b28">[29]</ref> for citation bias detection using manual citation sentiment analysis of biomedical research publications. He highlighted a number of differences between the approaches used by biomedical researchers and the automated citation sentiment analysis methods. According to the findings, researchers pay a lot of attention to citation sentiment aspects like strength and validity and have not vastly emphasized simple polarity-based sentiment. Similarly, in <ref type="bibr" target="#b29">[30]</ref>, a technique for context-based citation summary was presented based on the semantic similarity between the citing and cited articles. They utilized the surrounding text around the citation and the PageRank algorithm for calculating the qualitative citation index of the research papers. Butt et al. <ref type="bibr" target="#b30">[31]</ref> found that many of the existing studies have been carried for citation sentiment classification in domain-specific areas like medicine, biomedicine, computer science, French humanities articles, etc. In their work, they classified the citations based on the naive Bayes classifier by selecting a window of 5 sentences around the cited text with an accuracy of 80%. For experimental purposes, they used generalized lexica that incorporate the citations from the multiple domains, which ascertained the demonstrability of their approach in multiple disciplines. Parthasarathy and Tomar <ref type="bibr" target="#b22">[23,</ref><ref type="bibr" target="#b23">24]</ref> reported a literature survey related to journal citation sentiment analysis. They presented a framework for citation sentiment analysis, which consists of citation extraction from the paper, preprocessing of the extracted citations, feature extraction, and sentiment classification by application of different machine learning techniques like support vector machines, naive Bayes, and decision trees. According to the survey study, different sentiment classification techniques are being employed for term frequency, n-grams, negations, and lexica. In <ref type="bibr" target="#b31">[32]</ref> an exploration of sentiment, polarity, and function analysis of the citations was performed.</p><p>As per the findings, there is still plenty of room for further research and development in the domain of citation sentiment analysis. In <ref type="bibr" target="#b32">[33]</ref> the authors proposed a method for the elucidation of an author's attitude towards the cited work by combining text mining and lexical analysis techniques. They encapsulated the extracted opinions in an objective measure for qualifying the impact of scientific publications. One of the key findings of their research work is that the majority of the citations were neutral in nature with considerable agreement in the utilization of the terminology for verbalizing the sentiments towards the cited work both in terms of positive and negative opinions. As a future study, they wanted to extend the model by considering different lexical elements and their different combinations such as conjunctions, adjectives, verbs, adverbs, and verb-adverb combinations.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.">Proposed system</head><p>In this section we describe the proposed research methodology, which is based on the following tasks: 1) extraction of the n-grams from the citation text; 2) determination of the sentiment score; 3) classification of the citation text as positive, negative, or neutral; and 4) evaluation and comparison of the higher order n-grams' citation classification with the commercial counterparts.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1.">Extraction of n-grams</head><p>We split the citation text into sentences and performed part-of-speech tagging on the gold-standard dataset <ref type="bibr" target="#b25">[26]</ref>. A central and important aspect of sentiment analysis is the selection of good feature representation and determining the likelihood of tag occurrence on the basis of previous tag patterns. From the citation sentence, ngrams of different sizes (unigrams, bigrams, trigrams, and pentagrams) along with their associated tag patterns are extracted as an ordered sequence of words on the basis of criteria specified in Eq. ( <ref type="formula" target="#formula_0">1</ref>). Unigrams are the BOWs separated by the spaces, whereas bigrams, trigrams, and pentagrams are features consisting of 2, 3, and 5 consecutive words. For example, in the sentence 'The proposed method outperformed the class based model', the words 'the', 'proposed', 'method', 'outperformed', 'the', 'class', 'based', and 'model' are all distinct unigrams. Similarly, in the sentence 'the results are not competitive to the state-of-the-art systems', after removing the stop words 'the' and 'to', 'results are', 'are not', 'not competitive', 'competitive state-of-the-art', 'state-of-the-art systems' are distinct bigram features. The advantage of using these features is that they are capable of containing some contextual information. Considering contextual information in terms of higher order n-grams helps in capturing negations and subtle meanings in the form of implicit negations. Therefore, we have focused on using higher order n-gram features for citation sentiment classification. For higher order n-grams, the probability of a POS tag sequence is calculated as the product of conditional probabilities of its trigrams and pentagrams. If we denote the tag sequence as t 1 , t 2 , t 3 , …t n and the corresponding word sequence as w 1 , w 2 , w 3 , …w n , the above stated fact can be explained with Eq. ( <ref type="formula" target="#formula_1">2</ref>).</p><formula xml:id="formula_0">L min ≤ Length (pos sequence) ≤ L max<label>(1)</label></formula><formula xml:id="formula_1">P (t i |w i ) = P (w i |t i ).P (t i |t i-4 , t i-3 , t i-2 , t i-1 )<label>(2)</label></formula><p>This provides the transition between the tags and helps in capturing the context of the citation sentence in terms of higher order n-grams. The probabilities are computed with the following formula:</p><formula xml:id="formula_2">P (t i /t i-4 , t i-3 , t i-2 , t i-1 ) = f (t i-4 , t i-3 , t i-2 , t i-1 , t i )/f (t i-4 , t i-3 , t i-2 , t i-1 )<label>(3)</label></formula><p>For the sentiment analysis of the citation corpus, we have not only contemplated the adjectives and adverbs independently but have also evaluated their continuous and consecutive word sequences in the form of n-grams.</p><p>We have calculated the degree of resemblance of each word pattern in the citation data d to the citation text t :</p><formula xml:id="formula_3">resp(d, t) =                  1,</formula><p>if the citation vector contains the pattern as it is, in the same order, α.n/N, if nwords out of the N words of the pattern appear in the citation text in the correct order, 0, if no words of the pattern appear in the citation text.</p><p>(4)</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2.">Sentiment classification</head><p>In the sentiment classification module, we have used the unsupervised sentiment analysis technique for determining the sentiment polarity of the citation text based on the SentiWordNet 3.0 dictionary <ref type="bibr" target="#b25">[26]</ref>. After targeting the whole term profile of the citation sentence, only those terms are extracted that were labeled as adjectives, adverbs, and their n-grams. Computational linguists have suggested that adjectives and adverbs mostly represent sentiments in a sentence. The sentiment score of each tokenized string labeled as adjectives, adverbs, and their n-grams is calculated from the SentiWordNet lexical analyzer using the following formulas:</p><formula xml:id="formula_4">0 ≤ SwnPosScore, SwnNegScore, SwnNeuScore ≤ 1 (5) 0 ≤ (SwnPosScore + SwnNegScore) ≤ 1 (6) SwnNeuScore = 1 -(SwnPosScore + SwnNegScore)<label>(7)</label></formula><p>The frequency of occurrence of each n-gram is also aggregated for each of the citation texts. All the corresponding scores of adjectives, adverbs, and their combinations are aggregated to obtain the overall sentiment score of each citation text with the help of the following formulas: The proposed algorithm based on SentiWordNet incorporating different steps for document-level citation sentiment classification is shown in Figure <ref type="figure">1</ref>.</p><formula xml:id="formula_5">SynsetScore (w) = ∑ (SwnPosScore (w, s) -SwnNegScore (w, s)) s (8) wi = ⟨POS, SWN ID, SwnPosScore, SwnNegScore, SYNSETTERMS, GLOSS⟩<label>(9)</label></formula><p>However, there are some citation sentences that do not determine any sentiment polarity. The reason for this is that they do not have enough clearly opinionated words. An example of determining the sentiment score and classifying the citation text is presented in Table <ref type="table" target="#tab_0">1</ref>. SentiWordNet scores are calculated for positive and negative phrases found in the citation text and used these for determining the sentiment orientation by classifying the citation text into the class with the highest score. The analysis of the results depicted a clear tendency of improved and strengthened sentiment scores against the higher order n-grams as compared to lower order n-grams. A pattern of change in the sentiment polarity assignment from the objective class to the positive or negative class can also be seen in Table <ref type="table" target="#tab_1">2</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.3.">Sentiment classification using commercial tools</head><p>We have not only classified the citation text based on the adjective and adverb n-grams, but have also found the polarity of the citation sentences using commercial tools. For this purpose, 2 commercial tools are employed:  The primary objective of using these commercial tools is to validate the results obtained by the proposed model and to determine the reliability of sentiment analysis tools. There are many commercially available sentiment analysis tools, but we have utilized SEMANTRIA and THEYSAY because they provide feasibility in terms of usage and configuration. Moreover, they are applicable to all kinds of documents, databases, sentences, and phrases. SEMANTRIA performs the multilevel analysis of sentences incorporating parts of speech, assignment of a sentiment score from dictionaries, application of intensifiers, and determination of the final sentiment score based on machine learning techniques. Each citation text is assigned a numerical sentiment score ranging from -2.0 to +2.0 along with a polarity of positive, negative, or neutral. THEYSAY assigns a sentiment score to the positive, negative, and neutral classes in percentages. It offers an in-depth analysis of the text considering different features like POS recognition, humor detection, gender detection, comparison detection, language detection, risk detection, and text summarization.</p><formula xml:id="formula_6">(n = 1) (n = 1) (n = 2) (n = 2) (n = 3) (n = 3) (n = 5) (n =</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.">Dataset</head><p>For our experiments, we have utilized the gold-standard citation summary data consisting of 8736 citations manually annotated as positive, negative, and objective from 310 research papers <ref type="bibr" target="#b25">[26]</ref>. Among the collected set of citation sentences, 829 are manually annotated and labeled for the positive sentiment class, 280 for the negative sentiment class, and the rest as neutral or others. This dataset is further expanded into 2 sets, one for training and the other for testing. The manually classified citation data are used as a baseline to compare the results with the proposed approach and SEMANTRIA and THEYSAY. We evaluated the selected citations based on 2 conditions: 1) the number of words in the citation must be above 20; 2) the selected citation text must contain at least one adjective or adverb. The average number of words in a citation sentence is 35 and most of the sentences are long, i.e. 81.22% of citations consisted of more than 20 words.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.">Results and discussion</head><p>We have used a prelabeled and manually classified corpus for the experiments to serve as a baseline for comparing and evaluating the results of the technique. Moreover, we have also labeled and classified the dataset consisting of the citation text using 2 commercial sentiment analysis tools, SEMANTRIA and THEYSAY. We compared the results of classification by our technique with the manually classified text and with the commercial tools. The results of the classification performed by commercial tools are different, which establishes that these tools are implemented based on different internal algorithms. Different percentages of positivity, negativity, and neutrality exhibit that both tools handle the negativity and neutrality in divergent ways. According to SEMANTRIA, among these 8730 citation texts, 2264 are in the positive sentiment class, 1266 have negative sentiment orientation, and the remaining ones are labeled as neutral. According to THEYSAY this distribution is 4802 positive, 2130 negative, and 1799 neutral. In the manually labeled dataset, the majority of the citations are labeled as neutral or objective, i.e. 87%, whereas the percentage of neutrality or objectivity is quite lower with the commercial tools, at 59.5% by SEMANTRIA and 20.5% by THEYSAY, respectively. The classification performed by manual annotation is highly skewed towards objectivity and the same pattern is depicted by SEMANTRIA. This shows that SEMANTRIA has a clear tendency of assigning objective labels to the citation dataset as compared to THEYSAY, which demonstrates a biased behavior towards the positive class. This supports the findings of <ref type="bibr" target="#b20">[21]</ref>, which evaluated the utilization of SEMANTRIA and THEYSAY for the sentiment analysis of healthcare survey data. When comparing the tendency of class labels produced by commercial tools with the baseline manually annotated dataset, it is found that results produced by SEMANTRIA are closer to the benchmark as far as all class labels are concerned.</p><p>The presence of adjectives and adverbs in a citation text is utilized to classify it as positive, negative, or neutral. In experimentation, we extracted the BOW consisting of adjectives and adverbs based on n-grams. For this purpose, we have not only considered unigrams (n = 1) and bigrams (n = 2), but have also exploited the use of trigrams (n = 3) and pentagrams (n = 5). The most specific reason for using the higher order n-grams is because most state-of-the-art approaches claim that they can play more significant roles than lower order n-grams in sentiment detection. Therefore, in this study, we have investigated how differently high order pairs of words behave in determining the sentiment orientation for the citation dataset. We have not only considered the adjectives and adverbs individually in determining the sentiment polarity of the citation text, but have also evaluated them in their different combinations. The extracted BOWs are sorted as per the frequency of their occurrence in the dataset to select the most important ones. The reason for this was to identify the frequent terms in the scientific literature for sentiment detection.</p><p>In this section, we present the results of citation sentiment classification by exploiting adjectives, adverbs, and their combinations by means of high order n-grams at the document level. We have not only compared the results obtained by our approach with the manually annotated corpora, but have also juxtaposed the results with classified citations using 2 commercial tools. In Table <ref type="table" target="#tab_3">3</ref>, the values of evaluation metrics (precision, recall, and recognition rate) are presented and a comparison is made with manual annotation and classification results against annotations performed by the commercial tools. Let us now discuss the accuracy of the findings of classification results. When we select n-grams as features then semantic information is partially lost or neglected, more specifically in the case of BOWs, i.e. unigrams.</p><p>The outcomes of the proposed study show an accuracy of above 80% against the manually annotated corpus using higher order n-gram adjective and adverb combinations, as explained in Figure <ref type="figure" target="#fig_1">2</ref>. It can be observed from the results that with an increase in the value of n, the classification accuracy increases more specifically when adjectives and adverbs are used in a combinatory fashion. This further affirms that higher order n-gram adjective and adverb combinations are more precise and deterministic expressions than the lower order n-grams.</p><p>With an accuracy of above 90% for adjective and adverb combinations, SEMANTRIA has produced the most precise predictions, following the same trend line as depicted against the manual baseline. This shows that these features (high order n-gram adjective and adverb combinations) produce better results as compared to unigrams and bigrams. The analysis of the results has revealed that the accuracy of the lower order n-grams (n = 1) remained the same for individual features (adjectives and adverbs) and both in a combinatorial fashion.</p><p>The results also assert better accuracy for average positive citation texts as compared to negative and neutral ones. Furthermore, objective citations were misclassified as either positive or negative. The possible reason for this is that it is difficult to predict neutrality and negation. The analysis of the results has also shown that the use of higher order n-grams might solve the problem of compositionality (understanding a complex expression through the meanings of its constituent expressions).</p><p>It is again worth mentioning that the accuracy depicted against THEYSAY is persistently lower as compared to the SEMANTRIA and manual annotation of all the features. This is mainly because of the biased predictive behavior of THEYSAY towards the positive class. However, it is also evident for the accuracy trend line of THEYSAY that adjective and adverb combinations obtained a high accuracy rate as compared to isolated features. This also confirms and strengthens the accuracy of classification results. Though SEMANTRIA may not be considered as the best tool for sentiment analysis, it has shown a persistent behavior for different datasets, i.e. healthcare survey data <ref type="bibr" target="#b20">[21]</ref> and a multilingual dataset <ref type="bibr" target="#b27">[28]</ref>. THEYSAY has made incorrect classifications for large explanatory sentences. As the average sentence size of the experimental dataset was 35 words, it caused THEYSAY to make a majority of false predictions.</p><p>In Figure <ref type="figure" target="#fig_2">3</ref>, for adjective and adverb combinations and high order n-grams, the proposed technique has achieved an average precision of about 90% against manual classification and 96.15% against SEMANTRIA, respectively. Thus, the effectiveness of the proposed technique is in an acceptable range when compared against manual classification and annotation results against SEMANTRIA. It is also worth mentioning that our proposed technique has acquired substantial improvement in precision as compared to recall. The precision and recall against THEYSAY are consistently low for all features. The high precision and recall values can be observed from Figures <ref type="figure" target="#fig_2">3</ref> and<ref type="figure">4</ref> for both individual and adjective and adverb combinations against SEMANTRIA, which  further ensures the reliability of the said tool. The combinations of adjectives and adverbs based on high order n-grams are a better choice in predicting the document-level sentiment for larger sentences. Further, to examine the computational load, we have examined the impact of the size of citation corpora on the performance of the proposed system. The results are presented in Figure <ref type="figure">5</ref>. As seen from the graph, as the instances in the sample size are increased, there is improvement in the performance of the system. However, at a certain point in time, improvement may not be achieved by merely increasing the size of the training dataset when the size of the corpus is large.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.">Conclusion</head><p>The contribution of this study is twofold. Initially, it has explored the effectiveness of using adjectives, adverbs, and their combinations for document-level sentiment classification of citation text using a gold-standard citation sentiment corpus. Afterwards, it investigated the efficacy of applying commercial tools to the citation corpus for sentiment detection. Analysis of the results revealed that higher order n-grams (n = 5) for adjective and adverb combinations play a major role in improving the accuracy of the sentiment classification. The experimental results have also revealed that current sentiment analysis tools, and more specifically THEYSAY, are not efficient enough to detect sentiments accurately as the majority of the citations comprised multiple sentences. A possible direction for future work could be the contemplation of more features and dependency relationships for citation sentiment classification using different machine learning algorithms.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head></head><label></label><figDesc>Document-level sentiment classification is performed to classify the entire citation text into 'positive', 'negative', or 'neutral' classes. In return, a sentiment polarity and overall sentiment score is assigned to each citation based on the average SentiScore of each opinionated phrase in the citation text, which is computed by using the following formulas: class label =    P OS if max(SwnPosScore, SwnNegScore, SwnNeuScore) = P OS N EG if max(SwnPosScore, SwnNegScore, SwnNeuScore) = N EG else<ref type="bibr" target="#b9">(10)</ref> SentiScore (w) =∑for each term w SynetScore (w) N<ref type="bibr" target="#b10">(11)</ref> </figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 2 .</head><label>2</label><figDesc>Figure 2. Comparison of accuracy against baseline.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 3 .</head><label>3</label><figDesc>Figure 3. Comparison of precision against baseline.Figure 4. Comparison of recall against baseline.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 4 .Figure 5 .</head><label>45</label><figDesc>Figure 3. Comparison of precision against baseline.Figure 4. Comparison of recall against baseline.0.66 0.64 0.62 0.6 0.58 0.56 0.54 0.52 Samples 2000 3000 4000 5000 9000 6000 7000 8000</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head>Table 1 .</head><label>1</label><figDesc>Sentiment score of bigram features.</figDesc><table><row><cell cols="2">Model: Citation Sentiment Classification</cell><cell></cell><cell></cell></row><row><cell cols="2">Input: Citation Corpus</cell><cell></cell><cell></cell></row><row><cell>Method:</cell><cell></cell><cell></cell><cell></cell></row><row><cell cols="2">For each Citation Sentence</cell><cell></cell><cell></cell></row><row><cell cols="2">Perform POS Tagging</cell><cell></cell><cell></cell></row><row><cell cols="3">Extract POS Tag Pattern (i.e., Adjective and Adverb)</cell><cell></cell></row><row><cell>End For</cell><cell></cell><cell></cell><cell></cell></row><row><cell cols="2">For each Adjective and Adverb</cell><cell></cell><cell></cell></row><row><cell cols="2">Perform Stemming</cell><cell></cell><cell></cell></row><row><cell cols="3">Formulate the n-grams of different sizes</cell><cell></cell></row><row><cell cols="4">Calculate the Sentiment Score of each tokenized string</cell></row><row><cell cols="4">Aggregate for overall Sentiment Score of each citation text based on n-grams</cell></row><row><cell>End For</cell><cell></cell><cell></cell><cell></cell></row><row><cell cols="3">Make initial seeds for Sentiment Analysis</cell><cell></cell></row><row><cell cols="4">Assign Sentiment Polarity to each Citation text based on n-grams</cell></row><row><cell cols="3">Compare the results of different n-grams</cell><cell></cell></row><row><cell cols="4">Compare the results with Manually Classified Citations</cell></row><row><cell cols="4">Compare the results with Citations Classified by Commercial tools</cell></row><row><cell cols="2">Output: Best Classified Citations</cell><cell></cell><cell></cell></row><row><cell cols="4">Figure 1. Proposed model for citation sentiment classification.</cell></row><row><cell cols="2">ID Bigram</cell><cell cols="2">SENT VAL SENT TYPE</cell></row><row><cell>4</cell><cell>the same</cell><cell>0</cell><cell>Neutral</cell></row><row><cell>4</cell><cell>same cut</cell><cell>0</cell><cell>Neutral</cell></row><row><cell>4</cell><cell>a reasonable</cell><cell>0.45</cell><cell>Positive</cell></row><row><cell>4</cell><cell>reasonable starting</cell><cell>0.45</cell><cell>Positive</cell></row><row><cell>4</cell><cell cols="2">subsequent research 0.30</cell><cell>Positive</cell></row><row><cell cols="2">10 neglected notable</cell><cell>-0.49</cell><cell>Negative</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1"><head>Table 2 .</head><label>2</label><figDesc>A comparison of sentiment classification of n-grams.</figDesc><table><row><cell>ID Score</cell><cell>Type</cell><cell>Score</cell><cell>Type</cell><cell>Score</cell><cell>Type</cell><cell>Score</cell><cell>Type</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_3"><head>Table 3 .</head><label>3</label><figDesc>Precision, recall, and accuracy of classified citations.</figDesc><table><row><cell></cell><cell>Manual</cell><cell></cell><cell></cell><cell cols="2">SEMANTRIA</cell><cell></cell><cell cols="2">THEYSAY</cell></row><row><cell>Feature</cell><cell>P</cell><cell>R</cell><cell cols="2">F-score P</cell><cell>R</cell><cell cols="2">F-score P</cell><cell>R</cell><cell>F-score</cell></row><row><cell>Adj. (1-g)</cell><cell cols="2">70.54 40</cell><cell>55.27</cell><cell>75.5</cell><cell cols="2">29.17 52.34</cell><cell cols="2">44.45 80</cell><cell>62.23</cell></row><row><cell cols="4">Adj. + Adv. (1-g) 75.54 55.56 65.55</cell><cell cols="3">94.11 55.56 74.84</cell><cell cols="2">53.35 78.17 65.76</cell></row><row><cell>Adj. (2-g)</cell><cell>75</cell><cell>50</cell><cell>62.5</cell><cell>70</cell><cell cols="2">54.17 62.09</cell><cell cols="2">55.56 76.92 66.24</cell></row><row><cell cols="3">Adj. + Adv. (2-g) 88.89 80</cell><cell>84.45</cell><cell>85.5</cell><cell cols="2">92.30 88.9</cell><cell cols="2">58.06 85.71 71.89</cell></row><row><cell>Adj. (3-g)</cell><cell cols="2">65.55 50</cell><cell>57.78</cell><cell>96</cell><cell cols="2">58.33 77.17</cell><cell cols="2">70.54 80</cell><cell>75.27</cell></row><row><cell cols="4">Adj. + Adv. (3-g) 88.89 72.72 80.81</cell><cell>96</cell><cell cols="2">68.57 82.29</cell><cell cols="2">59.38 82.60 70.99</cell></row><row><cell>Adj. (5-g)</cell><cell cols="2">75.54 60</cell><cell>67.77</cell><cell cols="3">94.11 66.67 80.39</cell><cell cols="2">54.17 81.26 67.72</cell></row><row><cell cols="2">Adj. + Adv. (5-g) 90</cell><cell cols="2">81.82 85.91</cell><cell cols="3">96.15 96.15 96.15</cell><cell cols="2">55.88 82.60 69.24</cell></row></table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<author>
+			<persName><forename type="first">H</forename><surname>Liu</surname></persName>
+		</author>
+		<idno>arXiv preprint 1704.00177</idno>
+		<title level="m">Sentiment Analysis of Citations Using Word2vec</title>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Improve sentiment analysis of citations with author modelling</title>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Ma</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Nam</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Weihe</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of WASSA 2016</title>
+		<meeting>WASSA 2016<address><addrLine>San Diego, CA, USA</addrLine></address></meeting>
+		<imprint>
+			<biblScope unit="page" from="122" to="127" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Which type of citation analysis generates the most accurate taxonomy of scientific and technical knowledge?</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Klavans</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">W</forename><surname>Boyack</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">J Assoc Inf Sci Technol</title>
+		<imprint>
+			<biblScope unit="volume">68</biblScope>
+			<biblScope unit="page" from="984" to="998" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Citation analysis for biomedical and health sciences journals published in Korea</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Oh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Chang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">A</forename><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Choi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Park</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Cho</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">G</forename><surname>Lee</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Healthc Inform Res</title>
+		<imprint>
+			<biblScope unit="volume">23</biblScope>
+			<biblScope unit="page" from="218" to="225" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Mapping the luxury research landscape: a bibliometric citation analysis</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Gurzki</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">M</forename><surname>Woisetschläger</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">J Bus Res</title>
+		<imprint>
+			<biblScope unit="volume">77</biblScope>
+			<biblScope unit="page" from="147" to="166" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Are cited references meaningful? Measuring semantic relatedness in citation analysis</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Alam</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Kumar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Werner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Vyas</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ACM Proceedings of BIRNDL</title>
+		<meeting><address><addrLine>Tokyo, Japan</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Automatic classification of citation function by new linguistic features</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Meng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lu</forename><forename type="middle">W</forename><surname>Chi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Han</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">iConf Proceedings</title>
+		<meeting><address><addrLine>Wuhan, China</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Scientific literature analysis on big data and internet of things applications on circular economy: a bibliometric study</title>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">C</forename><surname>Nobre</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Tavares</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Scientometrics</title>
+		<imprint>
+			<biblScope unit="volume">111</biblScope>
+			<biblScope unit="page" from="463" to="492" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Automated text data mining analysis of five decades of educational leadership research literature: probabilistic topic modeling of EAQ articles from 1965 to 2014</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">J</forename><surname>Bowers</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">J</forename><surname>Fikis</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Edu Adm Qua</title>
+		<imprint>
+			<biblScope unit="volume">53</biblScope>
+			<biblScope unit="page" from="289" to="323" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Survey about citation context analysis: tasks, techniques, and resources</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Hernández-Alvarez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">M</forename><surname>Gómez</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nat Lang Eng</title>
+		<imprint>
+			<biblScope unit="volume">22</biblScope>
+			<biblScope unit="page" from="327" to="349" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Data science altmetrics</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Thelwall</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">J Data Inf Sci</title>
+		<imprint>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="page" from="7" to="12" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Toward the discovery of citation cartels in citation networks</title>
+		<author>
+			<persName><forename type="first">Jri</forename><surname>Fister</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Fister</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Perc</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Front Phys</title>
+		<imprint>
+			<biblScope unit="volume">4</biblScope>
+			<biblScope unit="page">49</biblScope>
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Scholarly data mining: making sense of scientific literature</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Saggion</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Ronzano</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ACM/IEEE Proceedings of JCDL</title>
+		<meeting><address><addrLine>Toronto, Canada</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2017-06">2017. June 2017</date>
+			<biblScope unit="page" from="1" to="2" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">NLP-driven citation analysis for scientometrics</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Jha</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">A</forename><surname>Jbara</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Qazvinian</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">R</forename><surname>Radev</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nat Lang Eng</title>
+		<imprint>
+			<biblScope unit="volume">23</biblScope>
+			<biblScope unit="page" from="93" to="130" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">Inheritance patterns in citation networks reveal scientific memes</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Kuhn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Perc</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Helbing</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Phys Rev X</title>
+		<imprint>
+			<biblScope unit="volume">4</biblScope>
+			<biblScope unit="page">41036</biblScope>
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">Self-organization of progress across the century of physics</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Perc</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Sci Rep</title>
+		<imprint>
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="page">1720</biblScope>
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">Quantitative analysis of culture using millions of digitized books</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">B</forename><surname>Michel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><forename type="middle">K</forename><surname>Shen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">P</forename><surname>Aiden</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Veres</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">K</forename><surname>Gray</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">P</forename><surname>Pickett</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Pinker</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Science</title>
+		<imprint>
+			<biblScope unit="volume">331</biblScope>
+			<biblScope unit="page" from="176" to="182" />
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">Culturomics meets random fractal theory: insights into long-range correlations of social and natural phenomena over the past two centuries</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Gao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Hu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Mao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Perc</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">J R Soc Interface</title>
+		<imprint>
+			<biblScope unit="volume">2012</biblScope>
+			<biblScope unit="page">20110846</biblScope>
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<monogr>
+		<title level="m" type="main">Learning document embeddings by predicting n-grams for sentiment classification of long movie reviews</title>
+		<author>
+			<persName><forename type="first">B</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Du</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Zhao</surname></persName>
+		</author>
+		<idno>arXiv preprint 1512.08183</idno>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">Topic detection using BNgram method and sentiment analysis on twitter dataset</title>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">D</forename><surname>Tembhurnikar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">N</forename><surname>Patil</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Proceedings of ICRITO</title>
+		<imprint>
+			<biblScope unit="page" from="1" to="6" />
+			<date type="published" when="2015-09">September 2015</date>
+			<pubPlace>Noida, India</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">Extracting sentiment from healthcare survey data: An evaluation of sentiment analysis tools</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Georgiou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Macfarlane</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Russell-Rose</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">IEEE Proceedings of SAI</title>
+		<meeting><address><addrLine>London, UK</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2015-07">July 2015</date>
+			<biblScope unit="page" from="352" to="361" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">Evolution of the most common English words and phrases over the centuries</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Perc</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">J R Soc Interface</title>
+		<imprint>
+			<biblScope unit="volume">2012</biblScope>
+			<biblScope unit="page">20120491</biblScope>
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">Sentiment analyzer: analysis of journal citations from citation databases</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Parthasarathy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">C</forename><surname>Tomar</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">IEEE Proceedings of Confluence</title>
+		<meeting><address><addrLine>Noida, India</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2014-09">September 2014</date>
+			<biblScope unit="page" from="923" to="928" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">A survey of sentiment analysis for journal citation</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Parthasarathy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">C</forename><surname>Tomar</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Indian Journal of Science and Technology</title>
+		<imprint>
+			<biblScope unit="volume">8</biblScope>
+			<biblScope unit="page">35</biblScope>
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<analytic>
+		<title level="a" type="main">Open source software adoption evaluation through feature level sentiment analysis using Twitter data</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">T</forename><surname>Ikram</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">A</forename><surname>Butt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">T</forename><surname>Afzal</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Turk J Elec Eng &amp; Comp Sci</title>
+		<imprint>
+			<biblScope unit="volume">24</biblScope>
+			<biblScope unit="page" from="4481" to="4496" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<title level="a" type="main">Sentiment analysis of citations using sentence structure-based features</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Athar</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ACM Proceedings of ACL</title>
+		<imprint>
+			<date type="published" when="2011-06">June 2011</date>
+			<biblScope unit="page" from="81" to="87" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<analytic>
+		<title level="a" type="main">Automated classification of author&apos;s sentiments in citation using machine learning techniques: a preliminary study</title>
+		<author>
+			<persName><forename type="first">I</forename><forename type="middle">C</forename><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">R</forename><surname>Thoma</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Proceedings of CIBCB</title>
+		<imprint>
+			<biblScope unit="page" from="1" to="7" />
+			<date type="published" when="2015-08-12">12 August 2015</date>
+			<pubPlace>Manchester, UK</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<title level="a" type="main">Citation context sentiment analysis for structured summarization of research papers</title>
+		<author>
+			<persName><forename type="first">N</forename><surname>Tandon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Jain</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Springer Proceedings of KI</title>
+		<meeting><address><addrLine>Saarbrücken, Germany</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2012-09-24">24 September 2012</date>
+			<biblScope unit="page" from="98" to="102" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<analytic>
+		<title level="a" type="main">Automated citation sentiment analysis: What can we learn from biomedical researchers?</title>
+		<author>
+			<persName><forename type="first">B</forename><surname>Yu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of ASIST</title>
+		<meeting>ASIST</meeting>
+		<imprint>
+			<date type="published" when="2013-01">January 2013</date>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="page" from="1" to="9" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<analytic>
+		<title level="a" type="main">Context-enhanced citation sentiment detection</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Athar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Teufel</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ACL Proceedings of HLT</title>
+		<meeting><address><addrLine>Montreal, Canada</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2012-06">June 2012</date>
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="page" from="597" to="601" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<monogr>
+		<title level="m" type="main">Classification of research citations</title>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">H</forename><surname>Butt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Rafi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Jamal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Rsu</forename><surname>Rehman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Smz</forename><surname>Alam</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">B</forename><surname>Alam</surname></persName>
+		</author>
+		<idno>arXiv preprint 1506.08966</idno>
+		<imprint>
+			<publisher>CRC</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<analytic>
+		<title level="a" type="main">Sentiment, polarity and function analysis in bibliometrics: a review</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Hernández</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">M</forename><surname>Gómez</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Natural Language Processing and Cognitive Science</title>
+		<imprint>
+			<biblScope unit="page">149</biblScope>
+			<date type="published" when="2015-03-10">10 March 2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<analytic>
+		<title level="a" type="main">Deriving the impact of scientific publications by mining citation opinion terms</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Stamou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Mpouloumpasis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Kozanidis</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Digital Information Management</title>
+		<imprint>
+			<biblScope unit="volume">7</biblScope>
+			<biblScope unit="page" from="283" to="289" />
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

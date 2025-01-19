@@ -15,6 +15,7 @@ class CachedSemanticScholarWrapper:
         self.use_cache = use_cache
         self.last_request_cached = False  # 添加标记
         self._last_results = None  # 添加一个实例变量来存储最后的结果
+        self._no_doi_indices = []  # 添加存储没有DOI的文献索引
         
         # 设置缓存数据库
         base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -213,7 +214,9 @@ class CachedSemanticScholarWrapper:
             return []
         
         dois = []
-        for citation in self._last_results.items:
+        self._no_doi_indices = []  # 重置索引列表
+        
+        for i, citation in enumerate(self._last_results.items):
             external_ids = citation['citingPaper'].get('externalIds', {})
             
             # 首先尝试获取DOI
@@ -227,6 +230,9 @@ class CachedSemanticScholarWrapper:
             if arxiv_id and arxiv_id.strip():
                 arxiv_doi = f"10.48550/arXiv.{arxiv_id}"
                 dois.append(arxiv_doi)
+            else:
+                # 记录没有获取到DOI的文献索引
+                self._no_doi_indices.append(i)
             
         return dois
 
@@ -341,6 +347,11 @@ class CachedSemanticScholarWrapper:
                 paper_ids.append(paper_id)
             
         return paper_ids
+
+    @property
+    def no_doi_indices(self):
+        """获取没有DOI的文献索引列表"""
+        return self._no_doi_indices
 
 
 # 使用示例

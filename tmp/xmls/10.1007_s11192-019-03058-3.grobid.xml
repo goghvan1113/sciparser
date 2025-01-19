@@ -1,0 +1,1776 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">In quest of new document relations: evaluating co-opinion relations between co-citations and its impact on Information retrieval effectiveness</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Maryam</forename><surname>Yaghtin</surname></persName>
+							<email>yaghtin.maryam@gmail.com</email>
+							<affiliation key="aff0">
+								<orgName type="department" key="dep1">Department of Knowledge and Information Sciences</orgName>
+								<orgName type="department" key="dep2">Faculty of Education and Psychology</orgName>
+								<orgName type="institution" key="instit1">Eram Campus</orgName>
+								<orgName type="institution" key="instit2">Shiraz University</orgName>
+								<address>
+									<settlement>Shiraz</settlement>
+									<country key="IR">Iran</country>
+								</address>
+							</affiliation>
+							<affiliation key="aff0">
+								<orgName type="department" key="dep1">Department of Knowledge and Information Sciences</orgName>
+								<orgName type="department" key="dep2">Faculty of Education and Psychology</orgName>
+								<orgName type="institution" key="instit1">Eram Campus</orgName>
+								<orgName type="institution" key="instit2">Shiraz University</orgName>
+								<address>
+									<settlement>Shiraz</settlement>
+									<country key="IR">Iran</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Hajar</forename><surname>Sotudeh</surname></persName>
+							<email>sotudeh@shirazu.ac.ir</email>
+							<affiliation key="aff0">
+								<orgName type="department" key="dep1">Department of Knowledge and Information Sciences</orgName>
+								<orgName type="department" key="dep2">Faculty of Education and Psychology</orgName>
+								<orgName type="institution" key="instit1">Eram Campus</orgName>
+								<orgName type="institution" key="instit2">Shiraz University</orgName>
+								<address>
+									<settlement>Shiraz</settlement>
+									<country key="IR">Iran</country>
+								</address>
+							</affiliation>
+							<affiliation key="aff0">
+								<orgName type="department" key="dep1">Department of Knowledge and Information Sciences</orgName>
+								<orgName type="department" key="dep2">Faculty of Education and Psychology</orgName>
+								<orgName type="institution" key="instit1">Eram Campus</orgName>
+								<orgName type="institution" key="instit2">Shiraz University</orgName>
+								<address>
+									<settlement>Shiraz</settlement>
+									<country key="IR">Iran</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Mahdieh</forename><surname>Mirzabeigi</surname></persName>
+							<email>mmirzabeigi@gmail.com</email>
+							<affiliation key="aff0">
+								<orgName type="department" key="dep1">Department of Knowledge and Information Sciences</orgName>
+								<orgName type="department" key="dep2">Faculty of Education and Psychology</orgName>
+								<orgName type="institution" key="instit1">Eram Campus</orgName>
+								<orgName type="institution" key="instit2">Shiraz University</orgName>
+								<address>
+									<settlement>Shiraz</settlement>
+									<country key="IR">Iran</country>
+								</address>
+							</affiliation>
+							<affiliation key="aff0">
+								<orgName type="department" key="dep1">Department of Knowledge and Information Sciences</orgName>
+								<orgName type="department" key="dep2">Faculty of Education and Psychology</orgName>
+								<orgName type="institution" key="instit1">Eram Campus</orgName>
+								<orgName type="institution" key="instit2">Shiraz University</orgName>
+								<address>
+									<settlement>Shiraz</settlement>
+									<country key="IR">Iran</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Seyed</forename><forename type="middle">Mostafa</forename><surname>Fakhrahmad</surname></persName>
+							<email>mfakhrahmad@yahoo.com</email>
+							<affiliation key="aff1">
+								<orgName type="department" key="dep1">Department of Computer Science and Engineering</orgName>
+								<orgName type="department" key="dep2">School of Electrical and Computer Engineering</orgName>
+								<orgName type="institution">Shiraz University</orgName>
+								<address>
+									<settlement>Shiraz</settlement>
+									<country key="IR">Iran</country>
+								</address>
+							</affiliation>
+							<affiliation key="aff1">
+								<orgName type="department" key="dep1">Department of Computer Science and Engineering</orgName>
+								<orgName type="department" key="dep2">School of Electrical and Computer Engineering</orgName>
+								<orgName type="institution">Shiraz University</orgName>
+								<address>
+									<settlement>Shiraz</settlement>
+									<country key="IR">Iran</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Mehdi</forename><surname>Mohammadi</surname></persName>
+							<affiliation key="aff2">
+								<orgName type="department" key="dep1">Department of Educational Management and Planning</orgName>
+								<orgName type="department" key="dep2">Faculty of Education and Psychology</orgName>
+								<orgName type="institution" key="instit1">Eram Campus</orgName>
+								<orgName type="institution" key="instit2">Shiraz University</orgName>
+								<address>
+									<settlement>Shiraz</settlement>
+									<country key="IR">Iran</country>
+								</address>
+							</affiliation>
+							<affiliation key="aff2">
+								<orgName type="department" key="dep1">Department of Educational Management and Planning</orgName>
+								<orgName type="department" key="dep2">Faculty of Education and Psychology</orgName>
+								<orgName type="institution" key="instit1">Eram Campus</orgName>
+								<orgName type="institution" key="instit2">Shiraz University</orgName>
+								<address>
+									<settlement>Shiraz</settlement>
+									<country key="IR">Iran</country>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">In quest of new document relations: evaluating co-opinion relations between co-citations and its impact on Information retrieval effectiveness</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<idno type="MD5">366A904414D33B1E079F747B07D561E4</idno>
+					<idno type="DOI">10.1007/s11192-019-03058-3</idno>
+					<note type="submission">Received: 10 September 2018</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.2-SNAPSHOT" ident="GROBID" when="2025-01-19T06:57+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<textClass>
+				<keywords>
+					<term>Opinion mining</term>
+					<term>Co-citations</term>
+					<term>Co-opinion</term>
+					<term>Information retrieval</term>
+				</keywords>
+			</textClass>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Document relational network has been effective in retrieving and evaluating papers. Despite their effectiveness, relational measures, including co-citation, are far from ideal and need improvements. The assumption underlying the co-citation relation is the content relevance and opinion relatedness of cited and citing papers. This may imply existence of some kind of co-opinionatedness between co-cited papers which may be effective in improving the measure. Therefore, the present study tries to test the existence of this phenomenon and its role in improving information retrieval. To do so, based on CITREC, a medical test collection was developed consisting of 30 queries (seed documents) and 4823 of their co-cited papers. Using NLP techniques, the co-citances of the queries and their co-cited papers were analyzed and their similarities were computed by 4 g similarity measure. Opinion scores were extracted from co-citances using SentiWordnet. Also, nDCG values were calculated and then compared in terms of the citation proximity index (CPI) and co-citedness measures before and after being normalized by the co-opinionatedness measure. The reliability of the test collection was measured by generalizability theory. The findings suggested that a majority of the co-citations exhibited a high level of co-opinionatedness in that they were mostly similar either in their opinion strengths or in their polarities. Although anti-polar co-citations were not trivial in their number, a significantly higher number of the co-citations were co-polar, with a majority being positive. The evaluation of the normalization of the CPI and co-citedness by the co-opinionatedness indicated a generally significant improvement in retrieval effectiveness. While anti-polar similarity reduced the effectiveness of the measure, the co-polar similarity proved to be effective in improving the co-citedness. Consequently, the co-opinionatedness can be presented as a new document relation and used as a normalization factor to improve retrieval performance and research evaluation.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Introduction</head><p>Relational networks of documents have been effectively applied in their evaluation and retrieval. Co-citations, co-words, bibliographical couples and co-classes are among the well-known content and citation relations. The assumption underlying the co-citation-based information retrieval (IR) is that co-cited papers are similar and related in their subjects <ref type="bibr" target="#b26">(Eto 2015;</ref><ref type="bibr" target="#b70">White 2016)</ref>. The assumption has its roots in the selectivity of authors when citing articles <ref type="bibr" target="#b29">(Hamedani et al. 2016</ref>) and reflecting their viewpoints about the relevance of the cited contents <ref type="bibr" target="#b71">(Yoon et al. 2016)</ref>. The co-citation has been shown effective in retrieving relevant documents missed by conventional indexing methods <ref type="bibr" target="#b24">(Eto 2013</ref>). Co-citedness, i.e. the frequency of being co-cited, is the first and simplest measure related to the co-citation concept <ref type="bibr" target="#b25">(Eto 2014</ref>). However, it has been criticized for ignoring co-cited contents <ref type="bibr" target="#b48">(Martyn 1964</ref>) and equating all citations (Dabrowska and Larsen 2015; <ref type="bibr" target="#b11">Boyack et al. 2013</ref>).</p><p>New horizons have been opened to understand the nature of citation networks, thanks to fulltext availability along with advancement in content and linguistic analysis techniques. Two approaches are dominant in content-based citation analyses. "Syntactic analysis" or "citation proximity analysis (CPA)" <ref type="bibr" target="#b28">(Gipp and Beel 2009)</ref>, which takes into consideration the proximity of co-cited papers within the citing articles and "semantic analysis" of co-citances, i.e., the co-citation contexts (see Fig. <ref type="figure" target="#fig_0">1</ref>). This itself can be divided into two groups, based on the type of information the citances carry: the citing authors' objective narration or viewpoints about the cited article and its features <ref type="bibr" target="#b59">(Sendhilkumar et al. 2013)</ref>. While the objective narration is studied using citance semantic similarity at conceptual as well as textual, i.e. distributional levels <ref type="bibr" target="#b35">(Jeong et al. 2014;</ref><ref type="bibr" target="#b17">Ding et al. 2014)</ref>, the authors' viewpoints are investigated using opinion mining techniques. In this way, authors' opinions, which used to be limitedly studied through interviews or surveys on citation motivations <ref type="bibr" target="#b41">(Lipetz 1965;</ref><ref type="bibr" target="#b50">Moravcsik and Murugesan 1975)</ref>, gained new breakthrough <ref type="bibr" target="#b17">(Ding et al. 2014)</ref>. This has given rise to the new research area called "citation sentiment analysis" or "citation opinion mining" devoted to discovering how citing authors feel or think about their cited papers based on the <ref type="figure" target="#fig_0">---------------------------------[1,2</ref>]. <ref type="figure">------------------------------.  ------------------------------------------.  ----------------------------------------------------[3]------</ref> polarities and strengths of their opinions extracted from citances <ref type="bibr" target="#b66">(Teufel et al. 2006;</ref><ref type="bibr" target="#b57">Schafer and Spurk 2010;</ref><ref type="bibr" target="#b63">Small 2011;</ref><ref type="bibr" target="#b6">Athar and Teufel 2012</ref>).</p><p>According to citation motivation studies, citing authors usually exhibit a collective dominant trend in their citation behavior, e.g. they use confirmative or persuasive citations that reinforce their findings. They usually avoid criticizing previous papers, or mention negative credits alongside positive ones when they have to do so. Mostly have also been shown to have a perfunctory citation behavior which is reporting the features of the cited papers with no commenting or digging deep into their results <ref type="bibr" target="#b10">(Bornmann and Daniel 2008;</ref><ref type="bibr" target="#b46">MacRoberts and MacRoberts 1989;</ref><ref type="bibr" target="#b12">Brooks 1985;</ref><ref type="bibr" target="#b30">Hanney et al. 2005)</ref>.</p><p>On the other hand, co-cited articles are largely similar in their contents and subjects <ref type="bibr" target="#b26">(Eto 2015;</ref><ref type="bibr" target="#b70">White 2016;</ref><ref type="bibr" target="#b61">Small 1973;</ref><ref type="bibr" target="#b64">Smith 1981)</ref>. On this basis, co-citing authors are expected to be, to a large extent, similar in their opinions about the same co-cited pair. Consequently, "co-opinionatedness" could be presented as a new indicator in semantic analysis of cocitances to measure the opinion similarity between co-citing papers about their co-cited articles.</p><p>The newly-proposed concept of co-opinionatedness of the co-cited papers can be defined by their opinion similarity measured by two dimensions including the strengths and polarities of the opinions they receive. Therefore, the opinion similarity scores range on a continuum from slightly to absolutely co-opinionated. Obviously, at the two extremes of the continuum that represent complete accordance and discordance, there exist co-citing papers that have respectively the minimum and maximum distances in their opinion strengths towards their co-cited pairs.</p><p>Based on the aforementioned points regarding the relatively conservative citation behavior of scholars, we expect to see the co-opinionated co-citances to be dominated by co-polarity with a majority being positive. They are also expected to be more similar in their opinion scores compared to the anti-polar ones. Furthermore, based on the co-citation assumptions regarding the content similarity of co-citations, we expect that the co-opinionatedness is effective in retrieving textually similar citances. Therefore, by concentrating on a sample of co-cited medical papers, the present communication, first, endeavors to test the extent of co-opinionatedness between co-citing papers about their co-cited articles, and thereby to introduce a new relation in the scholarly document network. Eventually, it tries to analyze the new relation's role in improving co-citation-based retrieval of relevant documents.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Literature review</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Co-citation</head><p>Since its invention, co-citation has increasingly been the focus of many studies due to its theoretical strength and operational success. The effectiveness of the co-citation relation in improving information retrieval has been verified frequently <ref type="bibr" target="#b20">(Egghe and Rousseau 1990;</ref><ref type="bibr" target="#b8">Bichteler and Eaton 1980;</ref><ref type="bibr">Zhao 2014;</ref><ref type="bibr" target="#b7">Badran 1984)</ref>. Co-citation-based IR commonly use co-citedness as a criterion to judge the relatedness of co-cited documents. However, the quantitative measure did not prove to return remarkable results, since it fails to take into consideration the content of the co-cited articles. This may be reflected in the insignificant association observed between the measure and content similarity of co-cited papers <ref type="bibr" target="#b21">(Elkiss et al. 2008)</ref>.</p><p>Content-based citation analysis tries to bridge the gap by analyzing the similarities of co-cited papers in terms of their contents or their citances within the co-citing papers. This is based on the assumption that co-cited papers are similar in their subject coverage <ref type="bibr" target="#b61">(Small 1973;</ref><ref type="bibr" target="#b8">Bichteler and Eaton 1980;</ref><ref type="bibr" target="#b29">Hamedani et al. 2016;</ref><ref type="bibr" target="#b71">Yoon et al. 2016</ref>), which has also been experimentally confirmed by the similarity between citances and abstracts of co-cited papers <ref type="bibr" target="#b21">(Elkiss et al. 2008)</ref>.</p><p>Citation proximity analysis (CPA), or citation syntactical similarity, is one of the approaches in content-based citation analysis, which differentiates between citations based on their distance within the text, e.g. within one sentence, within one paragraph but in different sentences, between different paragraphs or sections, etc.) <ref type="bibr" target="#b28">Gipp and Beel 2009)</ref>. Distinguishing the co-citations based on their proximity within the citing document has been found to be effective in improving IR performance and decreasing the number of irrelevant results <ref type="bibr" target="#b28">(Gipp and Beel 2009;</ref><ref type="bibr" target="#b13">Callahan et al. 2010;</ref><ref type="bibr" target="#b23">Eto 2012</ref><ref type="bibr" target="#b24">Eto , 2013</ref><ref type="bibr" target="#b25">Eto , 2014</ref><ref type="bibr" target="#b26">Eto , 2015;;</ref><ref type="bibr" target="#b11">Boyack et al. 2013;</ref><ref type="bibr" target="#b44">Liu et al. 2014)</ref>. The closer the co-citations within the citances, the more similar are the co-cited papers in their contents <ref type="bibr" target="#b21">(Elkiss et al. 2008)</ref>.</p><p>The syntactical similarity of co-citances has proved to be capable of successfully normalizing the co-citedness <ref type="bibr" target="#b24">(Eto 2013)</ref>. Further, the semantic similarity of co-citances has proved to be more effective in comparison with co-citedness in reflecting intellectual structure of a discipline and its subdomains <ref type="bibr" target="#b35">(Jeong et al. 2014)</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Citance opinion mining</head><p>Citance opinion mining has been attracting a great deal of attention in Natural Processing Language (NLP) as a new emerging research area. Using machine learning and dictionarybased approaches, opinion mining studies have pursued three essential targets including developing or testing tools and techniques, discovering essential features and patterns, and finally evaluating documents.</p><p>For instance, support vector machine classifiers proved to be more effective in classifying opinions extracted from citances, compared to naïve Bayesian classifiers <ref type="bibr" target="#b5">(Athar 2014)</ref>. There are ongoing discussions on the reliability of opinion mining of content-based citation analysis of scientific papers, because the previous results have not been comparable due to employing different corpuses (Hernández-Alvarez and Gomez 2016). However, several opinion analyses have been conducted to discover patterns and trends governing scientific articles, whose results have been promising so far. For example, they have uncovered the effective role of certain text features in determining the opinion polarity of citations. These include certain linguistic features (e.g. modal auxiliaries, main verbs, verb tenses and voices, first-and third-person pronouns, comparative and superlative conjunctions), the overall position of a sentence, and parts-of-speech tagging <ref type="bibr" target="#b66">(Teufel et al. 2006;</ref><ref type="bibr" target="#b4">Athar 2011</ref><ref type="bibr" target="#b5">Athar , 2014;;</ref><ref type="bibr" target="#b37">Jochim and Schütze 2012;</ref><ref type="bibr" target="#b0">Abu-Jbara et al. 2013;</ref><ref type="bibr" target="#b6">Athar and Teufel 2012)</ref>.</p><p>In addition, previous studies have confirmed the correlation between citation functions and opinion polarity of citances at sentence, paragraph, and section levels <ref type="bibr" target="#b66">(Teufel et al. 2006</ref><ref type="bibr" target="#b67">(Teufel et al. , 2009;;</ref><ref type="bibr" target="#b18">Dong and Schäfer 2011;</ref><ref type="bibr" target="#b37">Jochim and Schütze 2012)</ref>. Opinion citation analyses were found to differently rank cited papers compared to quantitative citation analyses <ref type="bibr" target="#b14">(Cavalcanti et al. 2011;</ref><ref type="bibr" target="#b59">Sendhilkumar et al. 2013;</ref><ref type="bibr" target="#b2">Amadi 2014)</ref>, where highly cited papers descend to lower ranks (Amadi 2014) since they do not necessarily gain positive citations <ref type="bibr" target="#b14">(Cavalcanti et al. 2011)</ref>. Furthermore, polarity of opinions has been found to be associated with citation quantity and locations. The locations, where the citations occur, are found to have a considerable impact on the citation polarities, such that introductory sections reflect more positive, while discussion section reveals more negative opinions <ref type="bibr" target="#b2">(Amadi 2014)</ref>. In addition, the total number of citations has proven to be more strongly correlated to positive citations than negative ones <ref type="bibr" target="#b0">(Abu-Jbara et al. 2013)</ref>.</p><p>Consequently, it is believed that by analyzing citation opinions, we can devise new bibliometric measures to evaluate cited papers by distinguishing between and differently weighing negative and positive citations <ref type="bibr" target="#b0">(Abu-Jbara et al. 2013;</ref><ref type="bibr" target="#b32">Hernández-Alvarez and Gomez 2016)</ref>, thereby helping scientometricians and research managers to gain insight into the contribution and actual impact of cited works <ref type="bibr" target="#b72">(Yu 2013)</ref>. Meanwhile, the credibility of cited papers can also be judged by classifying the citing authors who have commented on their cited papers <ref type="bibr" target="#b52">(Parthasarathy and Tomar 2014)</ref>. Citation opinion analysis is also believed to have many applications in automatically evaluating individuals and journals' impacts and in interpreting knowledge maps <ref type="bibr" target="#b6">(Athar and Teufel 2012;</ref><ref type="bibr" target="#b63">Small 2011)</ref>. In this way, qualitative features can be added to citation analysis which may identify citation polarities and purposes <ref type="bibr" target="#b0">(Abu-Jbara et al. 2013)</ref>. Although citances often consist of positive <ref type="bibr" target="#b47">(Mahalakshmi et al. 2015)</ref>, rather than negative citation sentences <ref type="bibr" target="#b5">(Athar 2014)</ref>, ignoring the latter may result in losing sentiments and criticisms about the cited papers <ref type="bibr" target="#b6">(Athar and Teufel 2012)</ref>.</p><p>As can be inferred from the literature, citances have been found to be influential in improving co-citation-based retrieval and reducing the number of irrelevant results returned. They are also believed to be useful in research evaluation. Citance proximity, opinions, and textual similarities are among the measures tested and approved. However, as far as our literature review goes, there exist no studies dealing with opinion analysis of cocitation contexts or their relatedness in terms of opinions they express about their co-cited papers. It is, therefore, necessary to test whether the co-opinion concept exists in co-cited papers and if so, whether it can improve the effectiveness of successful co-citation measures i.e. co-citedness and CPI in retrieving textual similar co-cited papers.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Research questions</head><p>1 To what extent are the co-citances similar in terms of the strengths of opinions they receive from their co-citing papers? 2 To what extent are the co-citances similar in terms of the polarities of opinions they receive from their co-citing papers? 3 Are the co-citances with different opinion polarities also different in their opinion strengths? 4 Is there any significant difference between rankings of cocited documents retrieved by co-citedness before and after normalization by co-opinionatedness? 5 Is there any significant difference between rankings of cocited documents retrieved by CPI before and after normalization by co-opinionatedness?</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Methodology</head><p>Using a content analysis method with citation analysis approach, the present study analyzes co-cited works and the opinions expressed by their co-citing papers about them. To do so, it analyzes co-citances as the representations of the contents of co-cited papers and carriers of co-citing authors' opinions <ref type="bibr" target="#b55">(Ritchie et al. 2008;</ref><ref type="bibr" target="#b1">Agarwal et al. 2010;</ref><ref type="bibr" target="#b19">Doslu and Bingol 2016;</ref><ref type="bibr" target="#b59">Sendhilkumar et al. 2013</ref>).</p><p>To calculate co-citance textual similarity, all words, except for stop words, were analyzed. However, opinion analyses were performed on nouns, adjectives, adverbs, and verbs that are believed to carry opinion loads in a sentence <ref type="bibr" target="#b22">(Esuli and Sebastiani 2007;</ref><ref type="bibr" target="#b47">Mahalakshmi et al. 2015)</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Experimental framework</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Test collection building</head><p>CITREC 1 covers 255,339 papers. A test collection was built up consisting of 30 seed documents and their co-cited papers. The 30 seed documents were selected randomly from those CITREC documents that had at least 100 co-citations. The reason for applying the criterion was to ensure the inclusion of a high number of co-cited papers in the test collection. The 30 seed documents served as queries. Their co-cited papers were identified to be 5394, such that each of the seed documents had at least 109 and at most 284 co-cited documents.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Variables definition and measurement</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Cocitedness</head><p>According to <ref type="bibr" target="#b61">Small (1973)</ref>, co-citation patterns represent the linkage between the cocited documents in terms of key concepts, methods or experiments. He defines the strength of co-citation as the frequency with which two co-cited papers are cited together. In the present study, cocitedness values were extracted from Citrec's Sim_cocit measure.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Co-citances</head><p>A citation context, or citance as coined by <ref type="bibr" target="#b51">Nakov et al. (2004)</ref>, is a set of sentences surrounding a reference marker within a citing document stating the important facts, features or contribution of the cited paper. In the present paper, citances are derived from CoLil (Comments on Literature in Literature) 2 database. In the database, a citance is defined as the sentence containing the reference marker, or the sentence containing the reference marker plus its succeeding one if the marker is located at the end of the former. Each citance is consisted of 240 characters before and up to 240 characters after the reference marker <ref type="bibr" target="#b27">(Fujiwara and Yamamoto 2015)</ref>. Co-citances are, thus, defined as the citances about papers cocited within a cociting article (see Fig. <ref type="figure">2</ref>). The verification of the test collection showed that within the co-citing papers, there were 38,178 citances about the 5394 co-cited papers.</p><p>Using KNIME (the Konstanz Information Miner) platform, the contents of the cocitances were processed via a workflow consisting of appropriate modules of linguistic 1 <ref type="url" target="https://www.isg.uni-konst">https ://www.isg.uni-konst</ref> anz.de/proje cts/citre c/. 2 <ref type="url" target="http://colil.dbcls.jp/browse/papers/">http://colil .dbcls .jp/brows e/paper s/</ref>.</p><p>preprocessing; erasing trivial words and characters (i.e. stop words, numbers, punctuations), PoS tagging, and lemmatization. Eventually, 4 g similarity between the co-citances of seed documents and their co-cited papers was calculated using KNIME's string similarity function. To do so, 4 g to 9 g similarity measures as well as TF-IDF was calculated and their correlation were tested using Pearson correlation analysis. The 4 g index was selected and tested, given its colinearity with other similarity measures i.e. 5 g (r = 0.99, Sig. = 0.000), 6 g (r = 0.98, Sig. = 0.000), 7 g (r = 0.97, Sig. = 0.000), 8 g (r = 0.96, Sig. = 0.000), 9 g (r = 0.97, Sig. = 0.000) and TF-IDF (r = 0.86, Sig. = 0.000).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Citation proximity index (CPI)</head><p>The index is proposed by <ref type="bibr" target="#b28">Gipp and Beel (2009)</ref> to measure the relatedness between two cited documents based on their closeness within a citing document. To measure the closeness, their situation within the citing document is considered depending on whether they appear as enumeration, within a sentence, within a paragraph, or across two paragraphs <ref type="bibr" target="#b24">(Eto 2013</ref>). In the present study, the CPI was extracted from CITREC using Sim_cpa_simple index that is calculated based on <ref type="bibr" target="#b28">Gipp and Beel (2009)</ref>. They considered the probability of similarity between two citations to be 100% if they are located in the same sentence (CPI = 1), 50% if they are situated in two sentences within the same paragraph (CPI = 1/2), 25% if within the same chapter and so on (see Fig. <ref type="figure" target="#fig_0">1</ref>).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Opinion</head><p>Opinion is defined as views, judgments, attitudes, emotions or appraisals formed in one's mind about a particular matter (i.e. entities, individuals, issues, events, topics and their attributes). In the field of opinion mining, people's opinions are computationally extracted from their written texts, especially from the subjective sentences expressing subjective views and opinions <ref type="bibr" target="#b60">(Shuy 2003;</ref><ref type="bibr" target="#b43">Liu and Zhang 2012;</ref><ref type="bibr" target="#b42">Liu 2012</ref>). In the present study, <ref type="figure" target="#fig_0">--------------------------------------[1,2]</ref>. <ref type="figure">---------------------------------------------------------------------------------------[</ref></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Co-citing document</head><formula xml:id="formula_0">-------------------- ------------------ [1,2]. -------------------- --------------------. -------------------- ---------------. -------------------- ---------------------- -----------------[3]-- ---.</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Co-citances</head><formula xml:id="formula_1">3]--</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Citance of Doc3</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Citance of Doc1 and Doc2</head><p>Fig. <ref type="figure">2</ref> Co-citances about cocited documents within a cociting article opinion is measured using the scores given to subjective words in SentiWordNet. <ref type="foot" target="#foot_0">3</ref> Since every word may have different meanings, in SentiWordNet there are Synsets collecting different senses of a given word. Every Synset may have positive, negative and neutral scores which totally amount to one. Given the existence of several Synsets for a given word, it was necessary to assign a single score to each word. To do so, using the methods applied by <ref type="bibr" target="#b14">Cavalcanti et al. (2011)</ref>, for any given word within a specific PoS, all opinion scores of its Synsets were averaged after subtracting negative scores from the positive ones.</p><p>The opinion score of each citance was, then, calculated based on the summation of opinion scores of its words. Of the 38,178 citances extracted, a scarce number (accounting for 1.3%) did not gain opinion scores.</p><p>The list of negation words including "no, not, n't, never, neither, nor, none, nobody, nowhere, nothing, cannot, cannot, without, no one, no way" were identified from <ref type="bibr">Wilson et al. (2005)</ref> and completed by their contractions as well as other negation words including "aren't, can't, can't didn't, couldn't daren't, doesn't, don't, hadn't, hasn't, haven't, isn't, mayn't, mightn't, mustn't, needn't, oughtn't, wouldn't shan't, shouldn't wasn't, weren't, won't". The examination of the negation words in the citances revealed that they rarely emerged (less than 1% of the total number of the total words of citances analyzed). Consequently, we did not deal with the negation words, because of their scarce number in our sample and their insignificant improvement in identifying citance opinions as confirmed by <ref type="bibr" target="#b5">Athar (2014)</ref>.</p><p>After processing the citances and assigning their opinion scores, the number of opinionated co-cited papers reached 4823 pairs. Also, the number of co-citing papers reduced to 8296, due to unavailability of some of the co-citances.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Co-opinionatedness</head><p>Co-opinionatedness is a new indicator proposed and tested for the first time in the present research. It is defined as the similarity between two opinion scores (see Fig. <ref type="figure">3</ref>). Similarity between two numbers is expressed according to their distance <ref type="bibr" target="#b3">(Andrejko and Bieliková 2012;</ref><ref type="bibr" target="#b58">Segaran 2007)</ref>. Minkowski metric is among the popular ones <ref type="bibr">(Saraçoglu et al. 2007</ref>):</p><p>where p ≥ 1. A special case of Minkowski metric, is Euclidean distance, with p = 2, that is one of the most common ones <ref type="bibr" target="#b65">(Su and Chou 2001)</ref>. In the present study, the inverse of the Euclidean distance is used to measure "opinion similarity" between two co-cited papers. As the distance is calculated between two cocited papers within each pair, then k = m=1. As a result, the similarity of two opinion scores equals:</p><formula xml:id="formula_2">Minkowski p x i , x j = m ∑ k=1 | | | x ik -x jk | | | p 1 ∕ p Sim Opinion 1 , Opinion 2 = 1 1 + | | Opinion 1 -Opinion 2 | |</formula><p>To avoid zero in the denominator, 1 is added to the formula. In this way, each cocited pair may have opinion similarity based on their absolute opinion degrees. As an instance, a co-citation pair, one with + 1 and the other with + 2 opinion scores, has 0.5 degree of opinion similarity. The more the value tends to 1, the more dissimilar are the two opinion scores.</p><p>As mentioned previously, the co-opinionatedness concept can be measured by two dimensions including the papers' opinion strengths and polarities. As a result, the concept can be measured at two levels. At a general level, the "overall opinion similarity" of two co-cited papers can be measured by calculating opinion similarity of all their co-citing papers. At a specific level, for each co-cited pair, its co-citances can be divided into two categories based on their polarity (dis)similarity. Co-polar co-citances share the same polarity either positive, negative or neutral, while anti-polar co-citances are different in their polarities. Inside the categories, the co-opinionatedness can be graded by the opinion similarity. Obviously, anti-polar co-citances have no co-opinionatedness regarding their polarities. However, they, too, may expand on a continuum from slightly to completely accordant depending on their opinion score similarities. Accordingly, anti-polar co-citances with shorter distances in their strengths may show some extent of opinion similarity, compared to those with farther opinion strengths. The logic underlying the calculation is that in a purposeful IR environment, users may be interested in finding co-cited papers in line with their results or similar in the opinions they receive from their co-citing papers.  <ref type="figure">-----------------------</ref>--[1]---.</p><p>--------- <ref type="figure">-----------------------------[2]</ref>.</p><p>- <ref type="figure">-------------------------</ref>-[3]---.</p><p>----------- <ref type="figure" target="#fig_2">-----------------------------------[4]</ref>. <ref type="figure" target="#fig_0">-----------------------------------[1]-----------.</ref> ---------------------- <ref type="figure">--------------[2]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Citance of doc3</head><p>---------------------- <ref type="figure">------------------[3]</ref>.</p><p>---------------------- <ref type="figure" target="#fig_2">--------------------------------------------------------------[4]</ref>.</p><p>- <ref type="figure" target="#fig_2">---------------------------------------------[4]</ref>.</p><p>- <ref type="figure" target="#fig_0">---------------------------------[1]---</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Co-citing document</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Anti-polar co-citances</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Citance of doc 4</head><p>------------ <ref type="figure" target="#fig_0">----------------------[1]---.</ref> - <ref type="figure">-------------------------</ref>-[3]---.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Citance of doc 4 Citance of doc1</head><p>Fig. <ref type="figure">3</ref> Co-polar and anti-polar co-citations</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Baseline and benchmark measures</head><p>As previous literature confirmed the effectiveness of co-citedness in the retrieval of relevant documents <ref type="bibr" target="#b20">(Egghe and Rousseau 1990;</ref><ref type="bibr" target="#b8">Bichteler and Eaton 1980;</ref><ref type="bibr" target="#b7">Badran 1984;</ref><ref type="bibr">Zhao 2014)</ref> and CPI <ref type="bibr" target="#b28">(Gipp and Beel 2009;</ref><ref type="bibr" target="#b13">Callahan et al. 2010;</ref><ref type="bibr" target="#b23">Eto 2012</ref><ref type="bibr" target="#b24">Eto , 2013</ref><ref type="bibr" target="#b25">Eto , 2014</ref><ref type="bibr" target="#b26">Eto , 2015;;</ref><ref type="bibr" target="#b11">Boyack et al. 2013;</ref><ref type="bibr" target="#b44">Liu et al. 2014)</ref>, in the present study, the measures have been used as baselines. The distributional semantic similarity of co-citances, i.e. their textual similarity, representing the similarity of co-cited papers <ref type="bibr" target="#b35">(Jeong et al. 2014)</ref>, served as benchmark. The baselines were, then, normalized by opinion similarity scores and evaluated as described in the following section.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Evaluation metric</head><p>nDCG was selected as evaluation metric. The rationale for the selection is that the measure is useful for graded relevance <ref type="bibr" target="#b39">(Kekäläinen 2005)</ref>. Besides, it takes into consideration just top ranked papers that users care much more than others <ref type="bibr" target="#b69">(Wang et al. 2013)</ref>. It was calculated for the co-cited documents in terms of their textual similarities of co-citances at three precision points including p@10, 20, and 50. Applying normalized Discounted Cumulative Gain (nDCG) as an evaluation metric <ref type="bibr" target="#b34">(Järvelin and Kekäläinen 2002)</ref>, we compared the results of cocitedness and CPI measures before and after being normalized by the opinion similarity scores. Devised as a useful measure for graded relevance <ref type="bibr" target="#b39">(Kekäläinen 2005)</ref>, nDCG can compare the two methods minutely <ref type="bibr" target="#b24">(Eto 2013)</ref>. nDCG is the ratio of DCG to the ideal DCG (IDCG) computed based on:</p><p>where p is the precision point, rel i is the relevance score of ith document ranked and REL is the relevance of documents ordered by the best possible relevance degrees up to position p. The more nDCG approximates 1, the nearer the relevance ranking yielded by the tested method to the perfect one. In the present study, the IDCG is measured by the ranking yielded by the co-citance similarities used as our benchmark.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Test collection reliability</head><p>Based on the generalizability theory (GT) proposed by <ref type="bibr" target="#b9">Bodoff and Li (2007)</ref>, we tested the reliability of the test collection using gt4ireval package. 4 GT is based on two coefficients yielded in its two phases including generalizability study (G-study) and decision study (D-study) <ref type="bibr" target="#b68">(Urbano et al. 2013</ref>). Generalizability coefficient ( E 2 ) is dedicated to measur- ing the stability of differences between systems based on the ratio of system variance to the variance in relative nDCG scores (i.e. in system rankings). The latter is the summation of system variance and relative error variance:</p><formula xml:id="formula_3">DCG p = p ∑ i=1 2 rel i -1 log 2 (i + 1)</formula><p>and</p><formula xml:id="formula_4">IDCG p = REL ∑ i=1 2 rel i -1 log 2 (i + 1) E 2 = 2 s 2 s + 2 e n � q</formula><p>4 <ref type="url" target="https://rdrr.io/cran/gt4ir">https ://rdrr.io/cran/gt4ir</ref> eval/src/R/gstud y.R. Dependability coefficient ( ) , which is the ratio of system variance to the total variance (i.e. the summation of system variance and absolute error variance), measures the stability of the absolute effectiveness scores:</p><p>Both of the measures should tend to one in order to have a reliable test collection, and thus a reliable ranking. The coefficients are believed to be advantageous due to their potentials to estimate the reliability of any query set with an arbitrary size, with no need to follow the traditional methodologies based on random what if scenarios and extrapolation <ref type="bibr" target="#b68">(Urbano et al. 2013</ref>). The variance components yielded from the set of queries at hand (30 queries in the present study) are used by the coefficients to project how reliable the scores would be if query sets of any size <ref type="bibr" target="#b38">(Kanoulas and Aslam 2009)</ref>. The generalizability theory has been used in several studies to test the reliability of the test collections (see e.g. <ref type="bibr" target="#b38">Kanoulas and Aslam 2009;</ref><ref type="bibr" target="#b31">Hasanain et al. 2018)</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Data analysis method</head><p>The data were then analyzed using SPSS 22. Chi Square test was used to compare the frequency of co-citations. Given the non-normality of the opinion similarity data distributions, Wilcoxon test was used to compare the co-polar and anti-polar opinion similarity. However, as the distribution of the nDCG values was normal, they were compared using paired samples T test (Fig. <ref type="figure" target="#fig_2">4</ref>).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Opinion similarity of co-cited papers in terms of opinion strengths</head><p>To gain an insight into the opinion similarity of the co-cited papers, they were categorized into five groups based on their opinion similarity degrees. The results presented in Table <ref type="table" target="#tab_0">1</ref> suggest that the co-cited documents are mostly "similar" or "highly similar" to their related queries in terms of the opinions they received. The results of Chi 2 reveal that the groups are significantly different in their frequency (χ = 2678.513, df = 4, Sig. = 0.000)</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Polarity of the co-citances</head><p>The verification of the opinions of co-citances indicated that 57.86% of the co-citing papers were co-polar in their opinions about their co-cited pairs, with a majority being positive (40.79%). Anti-polar contexts were relatively lower in number (42.15%). The results of Chi 2 test showed that the two groups were significantly different in their numbers (χ = 204.968, Sig. = 0.000) (Table <ref type="table">2</ref>). </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Comparison of co-polar and anti-polar co-citations in terms of their opinion strengths</head><p>According to the results of the Wilcoxon test, summarized in Table <ref type="table" target="#tab_1">3</ref>, co-polar co-citing papers were more similar in terms of their opinion strengths (Mean rank = 1.60), compared to the anti-polar ones (Mean rank = 1.40).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Effectiveness of co-opinionatedness in retrieving textually similar co-cited papers</head><p>Table <ref type="table">4</ref> summarizes nDCG mean values for CPI and co-citedness before and after being normalized by opinion measures. As seen, CPI is more powerful in retrieving textually similar co-citations (mean nDCG = 0.78) compared to the co-citedness which is about average (mean nDCG = 0.48). Both measures were found to be weakened after being normalized by co-cited opinion (mean nDCG = 0.34 for both of them), but boosted after being normalized by overall opinion similarity (mean nDCG = 0.82, 0.52). While co-citedness was observed to be improved by co-polar opinion similarity (mean nDCG = 0.51), CPI slightly worsened (mean nDCG = 0.77).</p><p>As mentioned previously, in order to test the effectiveness of the co-opinionatedness in improving the results of information retrieval, we first calculated the power of co-citedness in ranking textually similar co-cited papers by nDCG. We, then, normalized the co-citedness values based on the opinion similarity scores of co-cited papers and re-calculated the nDCG values and finally compared the raw and normalized nDCG values using paired T test.</p><p>According to the results reported in Table <ref type="table" target="#tab_2">5</ref>, although the sheer values of opinion scores of co-citations significantly reduce the textual similarity of co-citedness measure, opinion similarity has significantly improved the power of co-citedness in retrieving textually similar co-cited papers. According to the nDCG mean difference values, the "overall opinion similarity" has improved the retrieval of relevant results from 0.012 (for P@10) to 0.037 (for P@ 50). Co-polar opinion similarity was also found to be effective in improving the results with almost the same power for p@10 and P@20, but relatively higher for p@50. It signifies that the opinion similarity effectiveness has generally its roots in the co-polar opinion similarity.</p><p>On the other hand, anti-polar opinion similarity has negatively influenced the co-citedness power, though it is not significant.</p><p>We also tried to test co-opinionatedness power in augmenting CPI power in retrieving textually similar citances. The results, provided in Table <ref type="table" target="#tab_3">6</ref>, reveal that the "overall opinion similarity" can increase CPI power for P@10 = 0.039, P@20 = 0.041, and P@50 = 0.035. Although co-polar opinion similarity was not found significantly effective, anti-polar opinion similarity significantly reduced the effectiveness of the CPI in retrieving similar co-citances.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Reliability of the ranking</head><p>The results of the generalizability study are illustrated in Table <ref type="table">7</ref>. As seen, all of the expected E 2 values tend to one and confirm the reliability of the ranking. According to the estimation of the required queries, the test collection is expected to have 30 queries for the co-citedness-based system, 15 queries for the CPI-based system and 12 ones for the combined system. According to the results of the D-study phase, the co-citedness-based system, is the lowest in terms of the stability of the ranking ( = 0.70). It is expected to have 241 queries in order to reach 0.95 level of stability. However, the CPI-based system ( = 0.96) and the combined system ( = 0.96) show a highly stable ranking.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Discussion and conclusion</head><p>To evaluate document relations, various measures have been devised so far, each partially reflecting the relation features depending on its weaknesses and strengths. As one of the document relevance measures, co-citation has been found to be powerful in retrieving relevant documents <ref type="bibr" target="#b33">(Janssens and Gwinn 2015;</ref><ref type="bibr" target="#b71">Yoon et al. 2016;</ref><ref type="bibr" target="#b24">Eto 2013)</ref>. It is, therefore, necessary to improve the measure in order to calibrate relation networks of scientific papers. In early studies of co-citations, only the number of references at the end of papers mattered and all of them had equal binary weights. Consequently, content-based citation analysis, especially on citation contexts, was proposed <ref type="bibr" target="#b62">(Small 1982)</ref> to obtain more desirable results that the quantitative co-citation failed to achieve, due to ignoring the differences of citations in their importance and usefulness for the citing papers. Citance analysis has been found influential in improving IR results compared to the raw citation <ref type="bibr" target="#b51">(Nakov et al. 2004;</ref><ref type="bibr" target="#b24">Eto 2013)</ref>. As papers do not always receive affirmative citations, one of the solutions is to differentiate between them in terms of their citation functions based on the citing authors' opinions <ref type="bibr" target="#b32">(Hernández-Alvarez and Gomez 2016;</ref><ref type="bibr" target="#b52">Parthasarathy and Tomar 2014)</ref>. Given the content affinity between co-cited papers, it seems that a new relation can be found between co-cited papers in the co-opinionatedness of their co-citing papers. To test the existence of the relation and then its impact on improving traditional co-citation measures in IR, the present research attempted to mine and explore co-citing authors' opinions about their co-cited papers.</p><p>The results of the first step indicated that the studied co-citances were mainly co-opinionated in that they were mostly similar either in their opinion strengths (Table <ref type="table" target="#tab_0">1</ref>) or in their opinion polarities (Table <ref type="table">2</ref>). These suggest that co-cited papers that have been previously proven to be similar in their subjects <ref type="bibr" target="#b61">(Small 1973;</ref><ref type="bibr" target="#b8">Bichteler and Eaton 1980;</ref><ref type="bibr" target="#b29">Hamedani et al. 2016;</ref><ref type="bibr" target="#b71">Yoon et al. 2016</ref>) are largely similar in the opinions they receive from their co-citing papers. Further, the co-opinionated co-citances are generally positive in their polarity. The positivity results from either expressing positive opinions or reporting positive results, which can be itself considered a kind of confirmation, though not so explicit <ref type="bibr" target="#b36">(Jia 2018</ref>). The finding is consistent with previous studies confirming the dominance of positive citations, which is attributed to authors' avoidance of directly criticizing or rejecting previous papers <ref type="bibr" target="#b45">(MacRoberts and MacRoberts 1984;</ref><ref type="bibr" target="#b6">Athar and Teufel 2012;</ref><ref type="bibr" target="#b47">Mahalakshmi et al. 2015;</ref><ref type="bibr" target="#b59">Sendhilkumar et al. 2013)</ref>. This may also be attributed to confirmation biases pushing authors to selectively cite those papers confirming their ideas, findings or hypotheses <ref type="bibr" target="#b15">(Chubin and Moitra 1975;</ref><ref type="bibr" target="#b40">Leung et al. 2017</ref>). In addition, there is a wide-spread tendency among authors and journals to report and accept positive results (MacRoberts and Mac-Roberts 1984; <ref type="bibr" target="#b6">Athar and Teufel 2012;</ref><ref type="bibr" target="#b49">Matosin et al. 2014;</ref><ref type="bibr" target="#b47">Mahalakshmi et al. 2015)</ref>.</p><p>The dominance of the opinion similarity among the co-citations implies the existence of the co-opinionatedness relation proposed by the present study as a new relation in the scholarly document network. However, the other side of the coin, i.e. the anti-polarity, should not be ignored. As the results showed, a considerable, though relatively lower, number of co-citing papers are anti-polar with farther opinion strengths compared to the co-polar ones (Table <ref type="table" target="#tab_1">3</ref>). In particular, a large number of the anti-polar co-citations are negative-positive in their polarity. This would seem unexpected since negative citations are believed to be mostly avoided. However, as mentioned before, in NLP-based opinion mining, reporting negative results that are objective in nature cannot be distinguished from negative opinions <ref type="bibr" target="#b36">(Jia 2018</ref>). As a result, negative values do not necessarily represent negative opinions, but possibly negative results cited. Therefore, it could be argued that a cociting author may not hesitate to contrast negative and positive results or contrast those papers about which s/he has positive and negative opinions, when necessary.</p><p>As the earliest and simplest ready-made, quantitative, and thus efficient measure, cocitedness and CPI are widely used in operational and research milieus. In the present study, the nDCG values obtained from the measures re-confirm their effectiveness in retrieving similar co-citations, with the latter being considerably more powerful in comparison (Table <ref type="table">4</ref>). This is in line with previous studies confirming the effectiveness of the co-citedness <ref type="bibr" target="#b20">(Egghe and Rousseau 1990;</ref><ref type="bibr" target="#b61">Small 1973;</ref><ref type="bibr" target="#b8">Bichteler and Eaton 1980;</ref><ref type="bibr" target="#b7">Badran 1984;</ref><ref type="bibr">Zhao 2014)</ref> and CPI <ref type="bibr" target="#b28">(Gipp and Beel 2009;</ref><ref type="bibr" target="#b13">Callahan et al. 2010;</ref><ref type="bibr" target="#b23">Eto 2012</ref><ref type="bibr" target="#b24">Eto , 2013</ref><ref type="bibr" target="#b25">Eto , 2014</ref><ref type="bibr" target="#b26">Eto , 2015;;</ref><ref type="bibr" target="#b11">Boyack et al. 2013;</ref><ref type="bibr" target="#b44">Liu et al. 2014)</ref> in retrieving relevant results. This is due to the fact that co-citances involve representations of the contents of co-cited papers <ref type="bibr" target="#b19">(Doslu and Bingol 2016;</ref><ref type="bibr" target="#b1">Agarwal et al. 2010;</ref><ref type="bibr" target="#b55">Ritchie et al. 2008)</ref>. However, according to previous studies, co-citedness is not highly powerful in retrieving relevant documents <ref type="bibr" target="#b23">(Eto 2012</ref><ref type="bibr" target="#b24">(Eto , 2013</ref><ref type="bibr" target="#b25">(Eto , 2014</ref><ref type="bibr" target="#b26">(Eto , 2015;;</ref><ref type="bibr" target="#b28">Gipp and Beel 2009;</ref><ref type="bibr" target="#b13">Callahan et al. 2010;</ref><ref type="bibr" target="#b11">Boyack et al. 2013;</ref><ref type="bibr" target="#b44">Liu et al. 2014</ref>) and requires to be improved by content-based tools.</p><p>In our endeavors to improve the measure, we tested the co-opinionatedness of co-citances. The "overall opinion similarity" computed based on the opinion similarity of all co-citing papers was observed to successfully improve the co-citedness power in retrieving textually similar co-citances (Table <ref type="table" target="#tab_2">5</ref>). Furthermore, CPI, which has previously been proven to effectively improve IR results was also found to get further improved after being normalized by the overall opinion similarity (Table <ref type="table" target="#tab_3">6</ref>).</p><p>When the opinion similarity score was separately calculated based on the co-polarity or anti-polarity of the opinions of co-citances, it was observed that co-polar opinion similarity significantly improves the effectiveness of co-citedness. However, it was not found effective in boosting CPI's. Instead, anti-polar co-citations were revealed to strongly, though inversely, impact its effectiveness. It means that co-opinionatedness is present and effective in improving retrieval of similar texts. However, it is not consistently scattered all over a citing paper, where the more similar co-citances in closer locations display more divergent opinions. It seems that when co-citing authors decide to directly-i.e. in closer locationscontrast two co-cited papers, they considerably differ in their results or in their opinion strengths. Accordingly, IR systems based on CPI and co-citedness, can boost their effectiveness by applying the overall opinion similarity. However, in co-citedness-based systems, employing co-polar opinion similarity may find both more textually similar and more accordant co-cited papers, thereby supporting a purposeful IR environment, where users need to find co-cited papers that are similar to their findings, or attract the same feelings and attitudes from other researchers. Further, anti-polar opinion similarity may be useful in CPI-based IR systems, when diversifying the retrieval results is desired, so that, users could find similar co-cited papers with divergent opinions or findings on the top of the results.</p><p>Previous literature has emphasized the importance of distinguishing between negative and positive opinions since it can help in improving IR measures <ref type="bibr" target="#b54">(Piao et al. 2007)</ref>, reviewing literature <ref type="bibr" target="#b72">(Yu 2013)</ref>, summarizing scientific papers and discovering the gaps in current studies <ref type="bibr" target="#b6">(Athar and Teufel 2012)</ref>, and evaluating scholarly papers <ref type="bibr" target="#b72">(Yu 2013;</ref><ref type="bibr" target="#b0">Abu-Jbara et al. 2013;</ref><ref type="bibr" target="#b32">Hernández-Alvarez and Gomez 2016;</ref><ref type="bibr" target="#b6">Athar and Teufel 2012;</ref><ref type="bibr">Parthasarathy and</ref><ref type="bibr">Tomar 2014, 2015)</ref>. Although confirmatory citation has been revealed to be more effective in retrieving relevant documents <ref type="bibr" target="#b14">(Cavalcanti et al. 2011)</ref>, the role of negative credits should also be taken into account, since many users are willing to ensure the validity of a research method, tool, or finding, and to do so they need to compare and judge the pros and cons clustered by the opinion algorithms <ref type="bibr" target="#b23">(Eto 2012)</ref>.</p><p>The findings of the present study suggested that the strength of the opinions of documents has the same function as the anti-polarity, in that it is inversely effective in retrieving similar documents. However, it cannot be helpful in discovering the opinion affinity between the retrieved documents and the seed document. Instead, opinion similarity may be helpful in retrieving opinion relations of co-citations, which may be desired in an interactive IR environment and research evaluation.</p><p>Overall, the co-opinionatedness concept proved to be effective in improving IR measures. This may be attributed to the fact that CPI and co-citedness measure the text similarity rather indirectly. Although CPI is believed to reflect the content of the citance <ref type="bibr" target="#b28">(Gipp and Beel 2009)</ref>, it involves no content elements in its calculation. As a result, adding coopinionatedness that has a double function, i.e. both content and opinion similarity element, boosts their powers in retrieving similar documents. A more accurate ranking regarding relevance equipped with the added value of the opinion similarity may result in a more effective retrieval of scholarly documents which in turn facilitates accurate and quick access to knowledge (Zhao 2014). The concept can be a new contribution both in theoretically as well as practically enhancing the performance of IR systems and in research evaluation by scrutinizing distinctions between citations, and thereby, boosting the bibliometric indicators.</p><p>In spite of the positive impact of co-opinionatedness, it is necessary to conduct further studies to delve into the implicit layers of text semantics beyond lexical surface. The reasons is that due to the social nature of citation behavior, negative citations are not completely explicit and openly disclosed and hence are not easy to be lexically discovered <ref type="bibr" target="#b5">(Athar 2014)</ref>. Consequently, there could exist indirect, negative opinions that the dictionary-based NLP fails to grasp. Advanced techniques such as machine learning should be tried to see if it gains a clearer image of the co-opinion concept at implicit and explicit levels, and probably achieving a higher degree of improvement. The techniques can also be helpful in distinguishing between negative results and negative opinions. Given the importance of discovering new relations to improve IR effectiveness, in our ongoing study we are trying to test the role of co-opinionatedness in improving co-citation-based IR by boosting semantic similarity measures.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Fig. 1</head><label>1</label><figDesc>Fig.1Co-citations and citation proximity index (CPI)</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Fig. 4</head><label>4</label><figDesc>Fig. 4 Research process flow</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head>Table 1</head><label>1</label><figDesc></figDesc><table><row><cell>The frequency of co-cited papers in opinion</cell><cell cols="4">Opinion similarity level Similarity degree Frequency Percent</cell></row><row><cell>similarity categories</cell><cell>The least similar</cell><cell>0-0.20</cell><cell>3</cell><cell>0.06</cell></row><row><cell></cell><cell>Less similar</cell><cell>0.21-0.40</cell><cell>291</cell><cell>6.03</cell></row><row><cell></cell><cell>Moderately similar</cell><cell>0.41-0.60</cell><cell>1224</cell><cell>25.38</cell></row><row><cell></cell><cell>Similar</cell><cell>0.61-0.80</cell><cell>1962</cell><cell>40.68</cell></row><row><cell></cell><cell>Highly similar</cell><cell>0.81-1</cell><cell>1343</cell><cell>27.85</cell></row><row><cell></cell><cell>Total</cell><cell></cell><cell>4823</cell><cell>100.00</cell></row><row><cell>Table 2 The frequency of co-polar and anti-polar co-citing</cell><cell>Polarity</cell><cell>Frequency</cell><cell></cell><cell>Percent</cell></row><row><cell>papers</cell><cell>Co-polar</cell><cell></cell><cell></cell><cell></cell></row><row><cell></cell><cell>Positive</cell><cell>3384</cell><cell></cell><cell>40.79</cell></row><row><cell></cell><cell>Negative</cell><cell>1413</cell><cell></cell><cell>17.03</cell></row><row><cell></cell><cell>Neutral</cell><cell>3</cell><cell></cell><cell>0.04</cell></row><row><cell></cell><cell>Sum</cell><cell>4800</cell><cell></cell><cell>57.86</cell></row><row><cell></cell><cell>Anti-polar</cell><cell></cell><cell></cell><cell></cell></row><row><cell></cell><cell>Positive-negative</cell><cell>3431</cell><cell></cell><cell>41.36</cell></row><row><cell></cell><cell>Positive-neutral</cell><cell>28</cell><cell></cell><cell>0.34</cell></row><row><cell></cell><cell>Negative-neutral</cell><cell>37</cell><cell></cell><cell>0.45</cell></row><row><cell></cell><cell>Sum</cell><cell>3496</cell><cell></cell><cell>42.15</cell></row><row><cell></cell><cell>Total</cell><cell>8296</cell><cell></cell><cell>100</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1"><head>Table 3</head><label>3</label><figDesc>Comparison of opinion strengths of co-polar and antipolar co-citing papers Polarity type Opinion similarity Comparison Min Max Mean Mean rank Chi square Sig.</figDesc><table><row><cell></cell><cell>Co-polar</cell><cell>0</cell><cell>1</cell><cell>0.47</cell><cell>1.60</cell><cell>181.262</cell><cell>0.000</cell></row><row><cell></cell><cell>Anti-polar</cell><cell>0</cell><cell>1</cell><cell>0.32</cell><cell>1.40</cell><cell></cell></row><row><cell>Table 4 nDCG means for baselines before and after being</cell><cell>Baselines</cell><cell></cell><cell></cell><cell></cell><cell>nDCG</cell><cell></cell></row><row><cell>normalized by opinion measures</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>Mean</cell><cell></cell><cell>SD</cell></row><row><cell></cell><cell>Co-citedness</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell></cell><cell cols="2">Before normalization</cell><cell></cell><cell></cell><cell>0.48</cell><cell></cell><cell>0.20</cell></row><row><cell></cell><cell cols="3">After normalization by</cell><cell></cell><cell></cell><cell></cell></row><row><cell></cell><cell cols="2">Co-cited opinion</cell><cell></cell><cell></cell><cell>0.34</cell><cell></cell><cell>0.20</cell></row><row><cell></cell><cell cols="3">Overall opinion similarity</cell><cell></cell><cell>0.52</cell><cell></cell><cell>0.19</cell></row><row><cell></cell><cell cols="3">Co-polar opinion similarity</cell><cell></cell><cell>0.51</cell><cell></cell><cell>0.20</cell></row><row><cell></cell><cell cols="4">Anti-polar opinion similarity</cell><cell>0.44</cell><cell></cell><cell>0.21</cell></row><row><cell></cell><cell>CPI</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell></cell><cell cols="2">Before normalization</cell><cell></cell><cell></cell><cell>0.78</cell><cell></cell><cell>0.12</cell></row><row><cell></cell><cell cols="3">After normalization by</cell><cell></cell><cell></cell><cell></cell></row><row><cell></cell><cell cols="2">Co-cited opinion</cell><cell></cell><cell></cell><cell>0.34</cell><cell></cell><cell>0.20</cell></row><row><cell></cell><cell cols="3">Overall opinion similarity</cell><cell></cell><cell>0.82</cell><cell></cell><cell>0.11</cell></row><row><cell></cell><cell cols="3">Co-polar opinion similarity</cell><cell></cell><cell>0.77</cell><cell></cell><cell>0.15</cell></row><row><cell></cell><cell cols="4">Anti-polar opinion similarity</cell><cell>0.54</cell><cell></cell><cell>0.20</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2"><head>Table 5</head><label>5</label><figDesc>Comparing the effectiveness of co-citedness in retrieving textual similar co-citances before and after being normalized by opinion-based measures</figDesc><table><row><cell>Normalization factor</cell><cell>P</cell><cell>Mean difference (raw nDCG mean -</cell><cell>T</cell><cell>Sig.</cell></row><row><cell></cell><cell></cell><cell>normalized nDCG mean)</cell><cell></cell><cell></cell></row><row><cell>Co-cited opinion</cell><cell>@10</cell><cell>-0.162</cell><cell>-4.552</cell><cell>0.000</cell></row><row><cell></cell><cell>@20</cell><cell>-0.149</cell><cell>-4.986</cell><cell>0.000</cell></row><row><cell></cell><cell>@50</cell><cell>-0.133</cell><cell>-5.047</cell><cell>0.000</cell></row><row><cell>Opinion similarity</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>Overall</cell><cell>@10</cell><cell>0.018</cell><cell>2.138</cell><cell>0.041</cell></row><row><cell></cell><cell>@20</cell><cell>0.027</cell><cell>4.083</cell><cell>0.000</cell></row><row><cell></cell><cell>@50</cell><cell>0.037</cell><cell>3.854</cell><cell>0.001</cell></row><row><cell>Co-polar</cell><cell>@10</cell><cell>0.013</cell><cell>2.020</cell><cell>0.053</cell></row><row><cell></cell><cell>@20</cell><cell>0.019</cell><cell>3.067</cell><cell>0.005</cell></row><row><cell></cell><cell>@50</cell><cell>0.049</cell><cell>4.426</cell><cell>0.000</cell></row><row><cell>Anti-polar</cell><cell>@10</cell><cell>-0.028</cell><cell>-1.474</cell><cell>0.151</cell></row><row><cell></cell><cell>@20</cell><cell>-0.031</cell><cell>-1.596</cell><cell>0.121</cell></row><row><cell></cell><cell>@50</cell><cell>-0.037</cell><cell>-1.658</cell><cell>0.108</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_3"><head>Table 6</head><label>6</label><figDesc>Comparing the effectiveness of CPI in retrieving textual similar co-citances before and after being normalized by opinion-based measures</figDesc><table><row><cell>Normalization factor</cell><cell>P</cell><cell>Mean difference (raw nDCG mean -</cell><cell>T</cell><cell>Sig.</cell></row><row><cell></cell><cell></cell><cell>Normalized nDCG Mean)</cell><cell></cell><cell></cell></row><row><cell>Co-cited opinion</cell><cell>@10</cell><cell>-0.474</cell><cell>-9.911</cell><cell>0.000</cell></row><row><cell></cell><cell>@20</cell><cell>-0.475</cell><cell>-12.285</cell><cell>0.000</cell></row><row><cell></cell><cell>@50</cell><cell>-0.428</cell><cell>-12.753</cell><cell>0.000</cell></row><row><cell>Opinion similarity</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>Overall</cell><cell>@10</cell><cell>0.039</cell><cell>2.332</cell><cell>0.027</cell></row><row><cell></cell><cell>@20</cell><cell>0.041</cell><cell>2.664</cell><cell>0.012</cell></row><row><cell></cell><cell>@50</cell><cell>0.035</cell><cell>3.011</cell><cell>0.005</cell></row><row><cell>Co-polar</cell><cell>@10</cell><cell>0.010</cell><cell>0.387</cell><cell>0.701</cell></row><row><cell></cell><cell>@20</cell><cell>0.002</cell><cell>0.077</cell><cell>0.939</cell></row><row><cell></cell><cell>@50</cell><cell>-0.022</cell><cell>-1.039</cell><cell>0.307</cell></row><row><cell>Anti-polar</cell><cell>@10</cell><cell>-0.206</cell><cell>-4.853</cell><cell>0.000</cell></row><row><cell></cell><cell>@20</cell><cell>-0.240</cell><cell>-6.202</cell><cell>0.000</cell></row><row><cell></cell><cell>@50</cell><cell>-0.253</cell><cell>-6.853</cell><cell>0.000</cell></row></table></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="3" xml:id="foot_0"><p>http://senti wordn et.isti.cnr.it/.</p></note>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Purpose and polarity of citation: Towards NLP-based bibliometrics</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Abu-Jbara</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Ezra</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">R</forename><surname>Radev</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">HLT-NAACL</title>
+		<imprint>
+			<date type="published" when="2013">2013</date>
+			<biblScope unit="page" from="596" to="606" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Automatically classifying the role of citations in biomedical articles</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Agarwal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Choubey</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Yu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of American Medical Informatics Association fall symposium (AMIA)</title>
+		<meeting>American Medical Informatics Association fall symposium (AMIA)<address><addrLine>Washington, DC</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2010">2010</date>
+			<biblScope unit="page" from="11" to="15" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<author>
+			<persName><forename type="first">U</forename><forename type="middle">P</forename><surname>Amadi</surname></persName>
+		</author>
+		<title level="m">Exploiting the role of polarity in citation analysis</title>
+		<meeting><address><addrLine>Baltimore County</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2014">2014</date>
+		</imprint>
+		<respStmt>
+			<orgName>University of Maryland</orgName>
+		</respStmt>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Comparing instances of ontological concepts for personalized recommendation in large information spaces</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Andrejko</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Bieliková</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Computing and Informatics</title>
+		<imprint>
+			<biblScope unit="volume">28</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="429" to="452" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Sentiment analysis of citations using sentence structure-based features</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Athar</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the ACL 2011 student session</title>
+		<meeting>the ACL 2011 student session</meeting>
+		<imprint>
+			<publisher>Association for Computational Linguistics</publisher>
+			<date type="published" when="2011">2011</date>
+			<biblScope unit="page" from="81" to="87" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<monogr>
+		<title level="m" type="main">Sentiment analysis of scientific citations</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Athar</surname></persName>
+		</author>
+		<idno>UCAM-CL-TR-856</idno>
+		<imprint>
+			<date type="published" when="2014">2014</date>
+		</imprint>
+		<respStmt>
+			<orgName>University of Cambridge, Computer Laboratory</orgName>
+		</respStmt>
+	</monogr>
+	<note type="report_type">Technical Report</note>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Context-enhanced citation sentiment detection</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Athar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Teufel</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2012 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies</title>
+		<meeting>the 2012 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies</meeting>
+		<imprint>
+			<publisher>Association for Computational Linguistics</publisher>
+			<date type="published" when="2012">2012</date>
+			<biblScope unit="page" from="597" to="601" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">An alternative search strategy to improve information retrieval</title>
+		<author>
+			<persName><forename type="first">O</forename><forename type="middle">M</forename><surname>Badran</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 47th ASIS annual meeting</title>
+		<meeting>the 47th ASIS annual meeting</meeting>
+		<imprint>
+			<date type="published" when="1984">1984</date>
+			<biblScope unit="page" from="137" to="140" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">The combined use of bibliographic coupling and cocitation for document retrieval</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Bichteler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">A</forename><surname>Eaton</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the American Society for Information Science</title>
+		<imprint>
+			<biblScope unit="volume">31</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page">278</biblScope>
+			<date type="published" when="1980">1980</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Test theory for assessing IR test collections</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Bodoff</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Li</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 30th annual international ACM SIGIR conference on research and development in information retrieval</title>
+		<meeting>the 30th annual international ACM SIGIR conference on research and development in information retrieval</meeting>
+		<imprint>
+			<publisher>ACM</publisher>
+			<date type="published" when="2007-07">2007, July</date>
+			<biblScope unit="page" from="367" to="374" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">What do citation counts measure? A review of studies on citing behavior</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Bornmann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">D</forename><surname>Daniel</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Documentation</title>
+		<imprint>
+			<biblScope unit="volume">64</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="45" to="80" />
+			<date type="published" when="2008">2008</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Improving the accuracy of co-citation clustering using full text</title>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">W</forename><surname>Boyack</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Small</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Klavans</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the American Society for Information Science and Technology</title>
+		<imprint>
+			<biblScope unit="volume">64</biblScope>
+			<biblScope unit="issue">9</biblScope>
+			<biblScope unit="page" from="1759" to="1767" />
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Private acts and public objects: An investigation of citer motivations</title>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">A</forename><surname>Brooks</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the American Society for Information Science</title>
+		<imprint>
+			<biblScope unit="volume">36</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="223" to="229" />
+			<date type="published" when="1985">1985</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">Contextual cocitation: Augmenting cocitation analysis and its applications</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Callahan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Hockema</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Eysenbach</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the American Society for Information Science and Technology</title>
+		<imprint>
+			<biblScope unit="volume">61</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="1130" to="1143" />
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">Good to be bad? Distinguishing between positive and negative citations in scientific impact</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">C</forename><surname>Cavalcanti</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">B</forename><surname>Prudêncio</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">S</forename><surname>Pradhan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">Y</forename><surname>Shah</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">S</forename><surname>Pietrobon</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">2011 23rd IEEE international conference on tools with artificial intelligence (ICTAI)</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2011">2011</date>
+			<biblScope unit="page" from="156" to="162" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">Content analysis of references: Adjunct or alternative to citation counting?</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">E</forename><surname>Chubin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">D</forename><surname>Moitra</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Social Studies of Science</title>
+		<imprint>
+			<biblScope unit="volume">5</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="423" to="441" />
+			<date type="published" when="1975">1975</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">Exploiting citation contexts for physics retrieval</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Dabrowska</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Larsen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Second workshop on bibliometric-enhanced information retrieval</title>
+		<imprint>
+			<date type="published" when="2015">2015</date>
+			<biblScope unit="page" from="14" to="21" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">Content-based citation analysis: The next generation of citation analysis</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Ding</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Chambers</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Zhai</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the association for information science and technology</title>
+		<imprint>
+			<biblScope unit="volume">65</biblScope>
+			<biblScope unit="issue">9</biblScope>
+			<biblScope unit="page" from="1820" to="1833" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">Ensemble-style self-training on citation classification</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Dong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">U</forename><surname>Schäfer</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">IJCNLP</title>
+		<imprint>
+			<date type="published" when="2011">2011</date>
+			<biblScope unit="page" from="623" to="631" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">Context sensitive article ranking with citation context analysis</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Doslu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">O</forename><surname>Bingol</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Scientometrics</title>
+		<imprint>
+			<biblScope unit="volume">108</biblScope>
+			<biblScope unit="page" from="653" to="671" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<monogr>
+		<author>
+			<persName><forename type="first">L</forename><surname>Egghe</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Rousseau</surname></persName>
+		</author>
+		<title level="m">Introduction to informetrics: Quantitative methods in library, documentation and information science</title>
+		<meeting><address><addrLine>Amsterdam</addrLine></address></meeting>
+		<imprint>
+			<publisher>Elsevier</publisher>
+			<date type="published" when="1990">1990</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">Blind men and elephants: What do citation summaries tell us about a research article</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Elkiss</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the American Society for Information Science and Technology</title>
+		<imprint>
+			<biblScope unit="volume">59</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="51" to="62" />
+			<date type="published" when="2008">2008</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<monogr>
+		<title level="m" type="main">SentiWordNet: A high-coverage lexical resource for opinion mining</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Esuli</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Sebastiani</surname></persName>
+		</author>
+		<idno>ISTI-PP-002/2007</idno>
+		<ptr target="http://nmis.isti.cnr.it/sebastiani/Publications/2007TR02.pdf" />
+		<imprint>
+			<date type="published" when="2007">2007</date>
+		</imprint>
+		<respStmt>
+			<orgName>Institute of Information Science and Technologies (ISTI) of the Italian National Research Council (CNR</orgName>
+		</respStmt>
+	</monogr>
+	<note type="report_type">Technical Report</note>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">Spread co-citation relationship as a measure for document retrieval</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Eto</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the fifth ACM workshop on research advances in large digital book repositories and complementary media</title>
+		<meeting>the fifth ACM workshop on research advances in large digital book repositories and complementary media</meeting>
+		<imprint>
+			<publisher>ACM</publisher>
+			<date type="published" when="2012">2012</date>
+			<biblScope unit="page" from="7" to="8" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<analytic>
+		<title level="a" type="main">Evaluations of context-based co-citation searching</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Eto</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Scientometrics</title>
+		<imprint>
+			<biblScope unit="volume">94</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="651" to="673" />
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<title level="a" type="main">Document retrieval method using random walk with restart on weighted co-citation network</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Eto</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Proceedings of the American Society for Information Science and Technology</title>
+		<imprint>
+			<biblScope unit="volume">51</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="1" to="4" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<analytic>
+		<title level="a" type="main">Combination effects of word-based and extended co-citation search algorithms</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Eto</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 15th ACM/IEEE-CS joint conference on digital libraries</title>
+		<meeting>the 15th ACM/IEEE-CS joint conference on digital libraries</meeting>
+		<imprint>
+			<publisher>ACM</publisher>
+			<date type="published" when="2015">2015</date>
+			<biblScope unit="page" from="245" to="246" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<title level="a" type="main">Colil: A database and search service for citation contexts in the life sciences domain</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Fujiwara</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Yamamoto</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of biomedical semantics</title>
+		<imprint>
+			<biblScope unit="volume">6</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page">38</biblScope>
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<analytic>
+		<title level="a" type="main">Citation proximity analysis (CPA)-A new approach for identifying related work based on co-citation analysis</title>
+		<author>
+			<persName><forename type="first">B</forename><surname>Gipp</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Beel</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 12th international conference on scientometrics and informetrics (ISSI&apos;09)</title>
+		<meeting>the 12th international conference on scientometrics and informetrics (ISSI&apos;09)<address><addrLine>Rio de Janeiro (Brazil</addrLine></address></meeting>
+		<imprint>
+			<publisher>International Society for Scientometrics and Informetrics</publisher>
+			<date type="published" when="2009">2009</date>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="page" from="571" to="575" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<analytic>
+		<title level="a" type="main">SimCC: A novel method to consider both content and citations for computing similarity of scientific papers</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">R</forename><surname>Hamedani</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">W</forename><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">J</forename><surname>Kim</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Information Sciences</title>
+		<imprint>
+			<biblScope unit="volume">334</biblScope>
+			<biblScope unit="page" from="273" to="292" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<analytic>
+		<title level="a" type="main">Categorising citations to trace research impact</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Hanney</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Grant</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Jones</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Buxton</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 10th international conference of the international society for scientometrics and informetrics</title>
+		<meeting>the 10th international conference of the international society for scientometrics and informetrics<address><addrLine>Stockholm</addrLine></address></meeting>
+		<imprint>
+			<publisher>Karolinska University Press</publisher>
+			<date type="published" when="2005">2005</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<analytic>
+		<title level="a" type="main">EveTAR: Building a largescale multi-task test collection over Arabic tweets</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Hasanain</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Suwaileh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Elsayed</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Kutlu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Almerekhi</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Information Retrieval Journal</title>
+		<imprint>
+			<biblScope unit="volume">21</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="307" to="336" />
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<analytic>
+		<title level="a" type="main">Survey about citation context analysis: Tasks, techniques, and resources</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">Y R I A M</forename><surname>Hernández-Alvarez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">M</forename><surname>Gomez</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Natural Language Engineering</title>
+		<imprint>
+			<biblScope unit="volume">22</biblScope>
+			<biblScope unit="issue">03</biblScope>
+			<biblScope unit="page" from="327" to="349" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<analytic>
+		<title level="a" type="main">Novel citation-based search method for scientific literature: Application to meta-analyses</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">C J</forename><surname>Janssens</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Gwinn</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">BMC Medical Research Methodology</title>
+		<imprint>
+			<biblScope unit="volume">15</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page">1</biblScope>
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<analytic>
+		<title level="a" type="main">Cumulated gain-based evaluation of IR techniques</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>Järvelin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Kekäläinen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">ACM Transactions on Information Systems (TOIS)</title>
+		<imprint>
+			<biblScope unit="volume">20</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="422" to="446" />
+			<date type="published" when="2002">2002</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<analytic>
+		<title level="a" type="main">Content-based author co-citation analysis</title>
+		<author>
+			<persName><forename type="first">Y</forename><forename type="middle">K</forename><surname>Jeong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Ding</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Informetrics</title>
+		<imprint>
+			<biblScope unit="volume">8</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="197" to="211" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b36">
+	<monogr>
+		<title level="m" type="main">Citation function and polarity classification in biomedical papers</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Jia</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2018">2018</date>
+			<biblScope unit="page">5367</biblScope>
+		</imprint>
+	</monogr>
+	<note type="report_type">Electronic Thesis and Dissertation Repository</note>
+</biblStruct>
+
+<biblStruct xml:id="b37">
+	<analytic>
+		<title level="a" type="main">Towards a generic and flexible citation classifier based on a faceted classification scheme</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Jochim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Schütze</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of COLING 2012</title>
+		<meeting>COLING 2012</meeting>
+		<imprint>
+			<date type="published" when="2012">2012</date>
+			<biblScope unit="page" from="1343" to="1358" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b38">
+	<analytic>
+		<title level="a" type="main">Empirical justification of the gain and discount function for nDCG</title>
+		<author>
+			<persName><forename type="first">E</forename><surname>Kanoulas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">A</forename><surname>Aslam</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 18th ACM conference on Information and knowledge management</title>
+		<meeting>the 18th ACM conference on Information and knowledge management</meeting>
+		<imprint>
+			<publisher>ACM</publisher>
+			<date type="published" when="2009">2009</date>
+			<biblScope unit="page" from="611" to="620" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b39">
+	<analytic>
+		<title level="a" type="main">Binary and graded relevance in IR evaluations-Comparison of the effects on ranking of IR systems</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Kekäläinen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Information Processing and Management</title>
+		<imprint>
+			<biblScope unit="volume">41</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="1019" to="1033" />
+			<date type="published" when="2005">2005</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b40">
+	<analytic>
+		<title level="a" type="main">A 1980 letter on the risk of opioid addiction</title>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">T</forename><surname>Leung</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">M</forename><surname>Macdonald</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">B</forename><surname>Stanbrook</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><forename type="middle">A</forename><surname>Dhalla</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">N</forename><surname>Juurlink</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">New England Journal of Medicine</title>
+		<imprint>
+			<biblScope unit="volume">376</biblScope>
+			<biblScope unit="issue">22</biblScope>
+			<biblScope unit="page" from="2194" to="2195" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b41">
+	<analytic>
+		<title level="a" type="main">Improvement of the selectivity of citation indexes to science literature through inclusion of citation relationship indicators</title>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">A</forename><surname>Lipetz</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the Association for Information Science and Technology</title>
+		<imprint>
+			<biblScope unit="volume">16</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="81" to="90" />
+			<date type="published" when="1965">1965</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b42">
+	<analytic>
+		<title level="a" type="main">Sentiment analysis and opinion mining</title>
+		<author>
+			<persName><forename type="first">B</forename><surname>Liu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Synthesis lectures on human language technologies</title>
+		<imprint>
+			<biblScope unit="volume">5</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="1" to="167" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b43">
+	<analytic>
+		<title level="a" type="main">A survey of opinion mining and sentiment analysis</title>
+		<author>
+			<persName><forename type="first">B</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Zhang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Mining text data</title>
+		<meeting><address><addrLine>Boston, MA</addrLine></address></meeting>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2012">2012</date>
+			<biblScope unit="page" from="415" to="463" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b44">
+	<analytic>
+		<title level="a" type="main">Literature retrieval based on citation context</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Ding</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Lin</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Scientometrics</title>
+		<imprint>
+			<biblScope unit="volume">101</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="1293" to="1307" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b45">
+	<analytic>
+		<title level="a" type="main">The negational reference: Or the art of dissembling</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">H</forename><surname>Macroberts</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">R</forename><surname>Macroberts</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Social Studies of Science</title>
+		<imprint>
+			<biblScope unit="volume">14</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="91" to="94" />
+			<date type="published" when="1984">1984</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b46">
+	<analytic>
+		<title level="a" type="main">Problems of citation analysis: A critical review</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">H</forename><surname>Macroberts</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">R</forename><surname>Macroberts</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the American Society for information Science</title>
+		<imprint>
+			<biblScope unit="volume">40</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="342" to="349" />
+			<date type="published" when="1989">1989</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b47">
+	<analytic>
+		<title level="a" type="main">Context based retrieval of scientific publications via reader lens</title>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">S</forename><surname>Mahalakshmi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Siva</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Sendhilkumar</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Computational intelligence in data mining</title>
+		<imprint>
+			<publisher>Springer India</publisher>
+			<date type="published" when="2015">2015</date>
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="page" from="583" to="596" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b48">
+	<analytic>
+		<title level="a" type="main">Bibliographic coupling</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Martyn</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Documentation</title>
+		<imprint>
+			<biblScope unit="volume">20</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page">236</biblScope>
+			<date type="published" when="1964">1964</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b49">
+	<analytic>
+		<title level="a" type="main">Negativity towards negative results: A discussion of the disconnect between scientific worth and scientific culture</title>
+		<author>
+			<persName><forename type="first">N</forename><surname>Matosin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Frank</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Engel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">S</forename><surname>Lum</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">A</forename><surname>Newell</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Disease Models &amp; Mechanisms</title>
+		<imprint>
+			<biblScope unit="volume">7</biblScope>
+			<biblScope unit="page" from="171" to="173" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b50">
+	<analytic>
+		<title level="a" type="main">Some results on the function and quality of citations</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">J</forename><surname>Moravcsik</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Murugesan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Social Studies of Science</title>
+		<imprint>
+			<biblScope unit="volume">5</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="86" to="92" />
+			<date type="published" when="1975">1975</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b51">
+	<analytic>
+		<title level="a" type="main">Citances: Citation sentences for semantic analysis of bioscience text</title>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">I</forename><surname>Nakov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">S</forename><surname>Schwartz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Hearst</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the SIGIR&apos;04 workshop on search and discovery in bioinformatics</title>
+		<meeting>the SIGIR&apos;04 workshop on search and discovery in bioinformatics</meeting>
+		<imprint>
+			<date type="published" when="2004">2004</date>
+			<biblScope unit="page" from="81" to="88" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b52">
+	<analytic>
+		<title level="a" type="main">Sentiment analyzer: Analysis of journal citations from citation databases</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Parthasarathy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">C</forename><surname>Tomar</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">2014 5th international conference-confluence the next generation information technology summit (confluence)</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2014">2014</date>
+			<biblScope unit="page" from="923" to="928" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b53">
+	<analytic>
+		<title level="a" type="main">A survey of sentiment analysis for journal citation</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Parthasarathy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">C</forename><surname>Tomar</surname></persName>
+		</author>
+		<idno type="DOI">10.17485/ijst/2015/v8i35/55134</idno>
+		<ptr target="https://doi.org/10.17485/ijst/2015/v8i35/55134" />
+	</analytic>
+	<monogr>
+		<title level="j">Indian Journal of Science and Technology</title>
+		<imprint>
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b54">
+	<analytic>
+		<title level="a" type="main">Mining opinion polarity relations of citations</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Piao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Ananiadou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Tsuruoka</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Sasaki</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Mcnaught</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International workshop on computational semantics (IWCS)</title>
+		<imprint>
+			<date type="published" when="2007">2007</date>
+			<biblScope unit="page" from="366" to="371" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b55">
+	<analytic>
+		<title level="a" type="main">Comparing citation contexts for information retrieval</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Ritchie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Robertson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Teufel</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 17th ACM conference on Information and knowledge management</title>
+		<meeting>the 17th ACM conference on Information and knowledge management</meeting>
+		<imprint>
+			<publisher>ACM</publisher>
+			<date type="published" when="2008">2008</date>
+			<biblScope unit="page" from="213" to="222" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b56">
+	<analytic>
+		<title level="a" type="main">A fuzzy clustering approach for finding similar documents using a novel similarity measure</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Saraçoğlu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Tütüncü</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Allahverdi</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Expert Systems with Applications</title>
+		<imprint>
+			<biblScope unit="volume">33</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="600" to="605" />
+			<date type="published" when="2007">2007</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b57">
+	<analytic>
+		<title level="a" type="main">TAKE scientist&apos;s workbench: semantic search and citation-based visual navigation in scholar papers</title>
+		<author>
+			<persName><forename type="first">U</forename><surname>Schafer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Spurk</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">IEEE fourth international conference on semantic computing (ICSC)</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2010">2010. 2010</date>
+			<biblScope unit="page" from="317" to="324" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b58">
+	<monogr>
+		<title level="m" type="main">Programming collective intelligence: Building smart web 2.0 applications</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Segaran</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2007">2007</date>
+			<publisher>O&apos;Reilly Media, Inc</publisher>
+			<pubPlace>Beijing</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b59">
+	<analytic>
+		<title level="a" type="main">Citation semantic based approaches to identify article quality</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Sendhilkumar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Elakkiya</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">S</forename><surname>Mahalakshmi</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of international conference ICCSEA</title>
+		<meeting>international conference ICCSEA</meeting>
+		<imprint>
+			<date type="published" when="2013">2013</date>
+			<biblScope unit="page" from="411" to="420" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b60">
+	<analytic>
+		<title level="a" type="main">22 Discourse analysis in the legal context</title>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">W</forename><surname>Shuy</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The Handbook of Discourse Analysis</title>
+		<imprint>
+			<biblScope unit="volume">18</biblScope>
+			<biblScope unit="page">437</biblScope>
+			<date type="published" when="2003">2003</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b61">
+	<analytic>
+		<title level="a" type="main">Co-citation in the scientific literature: A new measure of the relationship between two documents</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Small</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the American Society for information Science</title>
+		<imprint>
+			<biblScope unit="volume">24</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="265" to="269" />
+			<date type="published" when="1973">1973</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b62">
+	<analytic>
+		<title level="a" type="main">Citation context analysis</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Small</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Progress in Communication Sciences</title>
+		<imprint>
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="page" from="287" to="310" />
+			<date type="published" when="1982">1982</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b63">
+	<analytic>
+		<title level="a" type="main">Interpreting maps of science using citation context sentiments: A preliminary investigation</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Small</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Scientometrics</title>
+		<imprint>
+			<biblScope unit="volume">87</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="373" to="388" />
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b64">
+	<analytic>
+		<title level="a" type="main">Citation analysis</title>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">C</forename><surname>Smith</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Library Trends</title>
+		<imprint>
+			<biblScope unit="volume">30</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="83" to="106" />
+			<date type="published" when="1981">1981</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b65">
+	<analytic>
+		<title level="a" type="main">A modified version of the K-means algorithm with a distance based on cluster symmetry</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">C</forename><surname>Su</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">H</forename><surname>Chou</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Transactions on Pattern Analysis and Machine Intelligence</title>
+		<imprint>
+			<biblScope unit="volume">23</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="674" to="680" />
+			<date type="published" when="2001">2001</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b66">
+	<analytic>
+		<title level="a" type="main">Automatic classification of citation function</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Teufel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Siddharthan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Tidhar</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2006 conference on empirical methods in natural language processing</title>
+		<meeting>the 2006 conference on empirical methods in natural language processing</meeting>
+		<imprint>
+			<publisher>Association for Computational Linguistics</publisher>
+			<date type="published" when="2006">2006</date>
+			<biblScope unit="page" from="103" to="110" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b67">
+	<analytic>
+		<title level="a" type="main">An annotation scheme for citation function</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Teufel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Siddharthan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Tidhar</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 7th SIGdial workshop on discourse and dialogue</title>
+		<meeting>the 7th SIGdial workshop on discourse and dialogue</meeting>
+		<imprint>
+			<publisher>Association for Computational Linguistics</publisher>
+			<date type="published" when="2009">2009</date>
+			<biblScope unit="page" from="80" to="87" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b68">
+	<analytic>
+		<title level="a" type="main">On the measurement of test collection reliability</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Urbano</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Marrero</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Martín</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 36th international ACM SIGIR conference on Research and development in information retrieval</title>
+		<meeting>the 36th international ACM SIGIR conference on Research and development in information retrieval</meeting>
+		<imprint>
+			<publisher>ACM</publisher>
+			<date type="published" when="2013">2013</date>
+			<biblScope unit="page" from="393" to="402" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b69">
+	<analytic>
+		<title level="a" type="main">A theoretical analysis of NDCG ranking measures</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">Y</forename><surname>Liu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 26th annual conference on learning theory</title>
+		<meeting>the 26th annual conference on learning theory<address><addrLine>COLT</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2013-04">2013, April. 2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b70">
+	<analytic>
+		<title level="a" type="main">Bag of works retrieval: TF* IDF weighting of co-cited works</title>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">D</forename><surname>White</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">BIR@ ECIR</title>
+		<imprint>
+			<date type="published" when="2016">2016</date>
+			<biblScope unit="page">27</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b71">
+	<analytic>
+		<title level="a" type="main">C-Rank: A link-based similarity measure for scientific literature databases</title>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">H</forename><surname>Yoon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">W</forename><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Park</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Information Sciences</title>
+		<imprint>
+			<biblScope unit="volume">326</biblScope>
+			<biblScope unit="page" from="25" to="40" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b72">
+	<analytic>
+		<title level="a" type="main">Automated citation sentiment analysis: What can we learn from biomedical researchers</title>
+		<author>
+			<persName><forename type="first">B</forename><surname>Yu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Proceedings of the American Society for Information Science and Technology</title>
+		<imprint>
+			<biblScope unit="volume">50</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="1" to="9" />
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

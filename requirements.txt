@@ -1,3 +1,0 @@
-gradio==3.44.2
-Markdown==3.4.4
-PyPDF2==3.0.1

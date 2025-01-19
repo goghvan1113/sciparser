@@ -174,15 +174,15 @@ class ReferenceParser:
                     
                     references[target]["citations"].append(citation_context)
 
-        # Write results to JSON file
-        with open(self.output_json_file, 'w', encoding='utf-8') as f:
-            json.dump(references, f, indent=2, ensure_ascii=False)
+        # # Write results to JSON file
+        # with open(self.output_json_file, 'w', encoding='utf-8') as f:
+        #     json.dump(references, f, indent=2, ensure_ascii=False)
 
         return references
 
 def main():
     """Main function to demonstrate usage"""
-    xml_file = "/home/gaof23/projects/sciparser/tmp/xmls/10.1007_s11192-011-0349-2.grobid.xml"  # Input XML file path
+    xml_file = "/home/gaof23/projects/sciparser/tmp/xmls/10.1007_s41870-019-00409-4.grobid.xml"  # Input XML file path
     output_json = "references.json"    # Output JSON file path
     
     parser = ReferenceParser(xml_file, output_json)
