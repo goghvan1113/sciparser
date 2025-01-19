@@ -1,0 +1,910 @@
+{
+  "b0": {
+    "reference_details": {
+      "authors": [
+        "Y Shao",
+        "L Li",
+        "J Dai",
+        "X Qiu"
+      ],
+      "title": "Character-llm: A trainable agent for role-playing",
+      "year": "2023"
+    },
+    "citations": [
+      {
+        "section": " INTRODUCTION",
+        "text_before": "Recent studies",
+        "citation": "[1]",
+        "text_after": "-   use LLMs as role-playing agents to mimic human replies, showing powerful abilities in maintaining the personalized traits of characters in their response generation process.",
+        "full_context": "Recent studies [1] -   use LLMs as role-playing agents to mimic human replies, showing powerful abilities in maintaining the personalized traits of characters in their response generation process."
+      },
+      {
+        "section": " EXPERIMENT",
+        "text_before": "Character-LLM Dataset",
+        "citation": "[1]",
+        "text_after": ": the Character-LLM dataset contains 9 famous English characters, e.g., Beethoven, Hermione, etc.",
+        "full_context": "Character-LLM Dataset [1] : the Character-LLM dataset contains 9 famous English characters, e.g., Beethoven, Hermione, etc."
+      },
+      {
+        "section": " RELATED WORK",
+        "text_before": "Roleplaying agents show considerable promise and are poised to substantially advance the areas of gaming, literature, and creative industries",
+        "citation": "[1]",
+        "text_after": "-  .",
+        "full_context": "Roleplaying agents show considerable promise and are poised to substantially advance the areas of gaming, literature, and creative industries [1] -  ."
+      },
+      {
+        "section": " RELATED WORK",
+        "text_before": "Character-LLM",
+        "citation": "[1]",
+        "text_after": "developed scenarios using ChatGPT to create conversational data, subsequently training a language model with metaprompts and these conversations.",
+        "full_context": "Character-LLM [1] developed scenarios using ChatGPT to create conversational data, subsequently training a language model with metaprompts and these conversations."
+      }
+    ]
+  },
+  "b1": {
+    "reference_details": {
+      "authors": [
+        "J Zhou",
+        "Z Chen",
+        "D Wan",
+        "B Wen",
+        "Y Song",
+        "J Yu",
+        "Y Huang",
+        "L Peng",
+        "J Yang",
+        "X Xiao"
+      ],
+      "title": "Characterglm: Customizing chinese conversational ai characters with large language models",
+      "year": "2023"
+    },
+    "citations": [
+      {
+        "section": " RELATED WORK",
+        "text_before": "CharacterGLM",
+        "citation": "[2]",
+        "text_after": "trained an open-source character model using data from multiple characters.",
+        "full_context": "CharacterGLM [2] trained an open-source character model using data from multiple characters."
+      }
+    ]
+  },
+  "b2": {
+    "reference_details": {
+      "authors": [
+        "C Li",
+        "Z Leng",
+        "C Yan",
+        "J Shen",
+        "H Wang",
+        "W Mi",
+        "Y Fei",
+        "X Feng",
+        "S Yan",
+        "H Wang"
+      ],
+      "title": "Chatharuhi: Reviving anime character in reality via large language model",
+      "year": "2023"
+    },
+    "citations": [
+      {
+        "section": " EXPERIMENT",
+        "text_before": "The characters are sourced from ChatHaruhi",
+        "citation": "[3]",
+        "text_after": ", RoleLLM   and C.AI   .",
+        "full_context": "The characters are sourced from ChatHaruhi [3] , RoleLLM   and C.AI   ."
+      },
+      {
+        "section": " RELATED WORK",
+        "text_before": "For instance, ChatHaruhi",
+        "citation": "[3]",
+        "text_after": "developed a RAG (Retrieval-Augmented Generation) system that leverages historical dialogues from iconic scenes to facilitate learning from a limited number of examples, thus capturing the personality traits and linguistic styles of characters.",
+        "full_context": "For instance, ChatHaruhi [3] developed a RAG (Retrieval-Augmented Generation) system that leverages historical dialogues from iconic scenes to facilitate learning from a limited number of examples, thus capturing the personality traits and linguistic styles of characters."
+      }
+    ]
+  },
+  "b3": {
+    "reference_details": {
+      "authors": [
+        "N Chen",
+        "Y Wang",
+        "H Jiang",
+        "D Cai",
+        "Y Li",
+        "Z Chen",
+        "L Wang",
+        "J Li"
+      ],
+      "title": "Large language models meet harry potter: A bilingual dataset for aligning dialogue agents with characters",
+      "year": "2022"
+    },
+    "citations": [
+      {
+        "section": " RELATED WORK",
+        "text_before": "In",
+        "citation": "[4]",
+        "text_after": ", dialogue and character data from the Harry Potter novels were utilized to train agents capable of generating responses that align accurately with the context of the scene and the inter-character relationships.",
+        "full_context": "In [4] , dialogue and character data from the Harry Potter novels were utilized to train agents capable of generating responses that align accurately with the context of the scene and the inter-character relationships."
+      }
+    ]
+  },
+  "b4": {
+    "reference_details": {
+      "authors": [
+        "Z Wang",
+        "Z Peng",
+        "H Que",
+        "J Liu",
+        "W Zhou",
+        "Y Wu",
+        "H Guo",
+        "R Gan",
+        "Z Ni",
+        "M Zhang"
+      ],
+      "title": "Rolellm: Benchmarking, eliciting, and enhancing role-playing abilities of large language models",
+      "year": "2023"
+    },
+    "citations": [
+      {
+        "section": " EXPERIMENT",
+        "text_before": "The characters are sourced from ChatHaruhi  , RoleLLM",
+        "citation": "[5]",
+        "text_after": "and C.AI   .",
+        "full_context": "The characters are sourced from ChatHaruhi  , RoleLLM [5] and C.AI   ."
+      },
+      {
+        "section": " RELATED WORK",
+        "text_before": "Conversely, RoleLLM",
+        "citation": "[5]",
+        "text_after": "introduced RoleGPT, which uses role-based prompts for GPT models.",
+        "full_context": "Conversely, RoleLLM [5] introduced RoleGPT, which uses role-based prompts for GPT models."
+      },
+      {
+        "section": " RELATED WORK",
+        "text_before": "RoleLLM",
+        "citation": "[5]",
+        "text_after": "employed GPT to formulate question-answer pairs based on scripts, presenting them in a triplet format consisting of the question, answer, and confidence level.",
+        "full_context": "RoleLLM [5] employed GPT to formulate question-answer pairs based on scripts, presenting them in a triplet format consisting of the question, answer, and confidence level."
+      }
+    ]
+  },
+  "b5": {
+    "reference_details": {
+      "authors": [
+        "J Chen",
+        "X Wang",
+        "R Xu",
+        "S Yuan",
+        "Y Zhang",
+        "W Shi",
+        "J Xie",
+        "S Li",
+        "R Yang",
+        "T Zhu"
+      ],
+      "title": "From persona to personalization: A survey on role-playing language agents",
+      "year": "2024"
+    },
+    "citations": [
+      {
+        "section": " RELATED WORK",
+        "text_before": "Roleplaying agents show considerable promise and are poised to substantially advance the areas of gaming, literature, and creative industries  -",
+        "citation": "[6]",
+        "text_after": ".",
+        "full_context": "Roleplaying agents show considerable promise and are poised to substantially advance the areas of gaming, literature, and creative industries  - [6] ."
+      }
+    ]
+  },
+  "b6": {
+    "reference_details": {
+      "authors": [
+        "K Lu",
+        "B Yu",
+        "C Zhou",
+        "J Zhou"
+      ],
+      "title": "Large language models are superpositions of all characters: Attaining arbitrary role-play via selfalignment",
+      "year": "2024"
+    },
+    "citations": []
+  },
+  "b7": {
+    "reference_details": {
+      "authors": [
+        "M Shanahan",
+        "K Mcdonell",
+        "L Reynolds"
+      ],
+      "title": "Role-play with large language models",
+      "year": "2023"
+    },
+    "citations": []
+  },
+  "b8": {
+    "reference_details": {
+      "authors": [
+        "M Yan",
+        "R Li",
+        "H Zhang",
+        "H Wang",
+        "Z Yang",
+        "J Yan"
+      ],
+      "title": "Larp: Language-agent role play for open-world games",
+      "year": "2023"
+    },
+    "citations": [
+      {
+        "section": " INTRODUCTION",
+        "text_before": "Recent studies  -",
+        "citation": "[9]",
+        "text_after": "use LLMs as role-playing agents to mimic human replies, showing powerful abilities in maintaining the personalized traits of characters in their response generation process.",
+        "full_context": "Recent studies  - [9] use LLMs as role-playing agents to mimic human replies, showing powerful abilities in maintaining the personalized traits of characters in their response generation process."
+      }
+    ]
+  },
+  "b9": {
+    "reference_details": {
+      "authors": [
+        "W Zhong",
+        "L Guo",
+        "Q Gao",
+        "H Ye",
+        "Y Wang"
+      ],
+      "title": "Memorybank: Enhancing large language models with long-term memory",
+      "year": "2024"
+    },
+    "citations": [
+      {
+        "section": " INTRODUCTION",
+        "text_before": "Different attempts have been made in existing studies",
+        "citation": "[10]",
+        "text_after": "-   by using different memory mechanisms in various LLM applications.",
+        "full_context": "Different attempts have been made in existing studies [10] -   by using different memory mechanisms in various LLM applications."
+      },
+      {
+        "section": " INTRODUCTION",
+        "text_before": "For example, the Ebbinghaus forgetting curve has inspired the development of MemoryBank",
+        "citation": "[10]",
+        "text_after": ", facilitating the implementation of a more anthropomorphic memory scheme.",
+        "full_context": "For example, the Ebbinghaus forgetting curve has inspired the development of MemoryBank [10] , facilitating the implementation of a more anthropomorphic memory scheme."
+      },
+      {
+        "section": " RELATED WORK",
+        "text_before": "One such implementation is MemoryBank",
+        "citation": "[10]",
+        "text_after": ", which stores past conversations, event summaries, and user characteristics in a vector library format.",
+        "full_context": "One such implementation is MemoryBank [10] , which stores past conversations, event summaries, and user characteristics in a vector library format."
+      }
+    ]
+  },
+  "b10": {
+    "reference_details": {
+      "authors": [
+        "K Zhang",
+        "F Zhao",
+        "Y Kang",
+        "X Liu"
+      ],
+      "title": "Memory-augmented llm personalization with short-and long-term memory coordination",
+      "year": "2023"
+    },
+    "citations": [
+      {
+        "section": " INTRODUCTION",
+        "text_before": "Furthermore, drawing on Kahneman's Dualprocess theory  , the MaLP framework",
+        "citation": "[11]",
+        "text_after": "introduces an innovative Dual-Process enhanced Memory mechanism that effectively fuses long-term and short-term memory.",
+        "full_context": "Furthermore, drawing on Kahneman's Dualprocess theory  , the MaLP framework [11] introduces an innovative Dual-Process enhanced Memory mechanism that effectively fuses long-term and short-term memory."
+      }
+    ]
+  },
+  "b11": {
+    "reference_details": {
+      "authors": [
+        "J Park",
+        "J O'brien",
+        "C Cai",
+        "M Morris",
+        "P Liang",
+        "M Bernstein"
+      ],
+      "title": "Generative agents: Interactive simulacra of human behavior",
+      "year": "2023"
+    },
+    "citations": [
+      {
+        "section": " RELATED WORK",
+        "text_before": "AI-town",
+        "citation": "[12]",
+        "text_after": "uses a linguistic approach by preserving memory in natural language.",
+        "full_context": "AI-town [12] uses a linguistic approach by preserving memory in natural language."
+      }
+    ]
+  },
+  "b12": {
+    "reference_details": {
+      "authors": [
+        "Z Wang",
+        "Y Chiu",
+        "Y Chiu"
+      ],
+      "title": "Humanoid agents: Platform for simulating human-like generative agents",
+      "year": "2023"
+    },
+    "citations": []
+  },
+  "b13": {
+    "reference_details": {
+      "authors": [
+        "Z Zhang",
+        "X Bo",
+        "C Ma",
+        "R Li",
+        "X Chen",
+        "Q Dai",
+        "J Zhu",
+        "Z Dong",
+        "J.-R Wen"
+      ],
+      "title": "A survey on the memory mechanism of large language model based agents",
+      "year": "2024"
+    },
+    "citations": [
+      {
+        "section": " RELATED WORK",
+        "text_before": "The memory module enables the agent to accumulate experiences, evolve autonomously, and act in a manner that is more consistent, rational, and efficient",
+        "citation": "[14]",
+        "text_after": ".",
+        "full_context": "The memory module enables the agent to accumulate experiences, evolve autonomously, and act in a manner that is more consistent, rational, and efficient [14] ."
+      }
+    ]
+  },
+  "b14": {
+    "reference_details": {
+      "authors": [
+        "S Ge",
+        "C Xiong",
+        "C Rosset",
+        "A Overwijk",
+        "J Han",
+        "P Bennett"
+      ],
+      "title": "Augmenting zero-shot dense retrievers with plug-in mixture-ofmemories",
+      "year": "2023"
+    },
+    "citations": []
+  },
+  "b15": {
+    "reference_details": {
+      "authors": [
+        "B Wang",
+        "X Liang",
+        "J Yang",
+        "H Huang",
+        "S Wu",
+        "P Wu",
+        "L Lu",
+        "Z Ma",
+        "Z Li"
+      ],
+      "title": "Enhancing large language model with self-controlled memory framework",
+      "year": "2024"
+    },
+    "citations": []
+  },
+  "b16": {
+    "reference_details": {
+      "authors": [
+        "Y Yu",
+        "H Li",
+        "Z Chen",
+        "Y Jiang",
+        "Y Li",
+        "D Zhang",
+        "R Liu",
+        "J Suchow",
+        "K Khashanah"
+      ],
+      "title": "Finmem: A performance-enhanced llm trading agent with layered memory and character design",
+      "year": "2023"
+    },
+    "citations": []
+  },
+  "b17": {
+    "reference_details": {
+      "authors": [
+        "X Zhu",
+        "Y Chen",
+        "H Tian",
+        "C Tao",
+        "W Su",
+        "C Yang",
+        "G Huang",
+        "B Li",
+        "L Lu",
+        "X Wang",
+        "Y Qiao",
+        "Z Zhang",
+        "J Dai"
+      ],
+      "title": "Ghost in the minecraft: Generally capable agents for open-world environments via large language models with text-based knowledge and memory",
+      "year": "2023"
+    },
+    "citations": []
+  },
+  "b18": {
+    "reference_details": {
+      "authors": [
+        "C Xiao",
+        "P Zhang",
+        "X Han",
+        "G Xiao",
+        "Y Lin",
+        "Z Zhang",
+        "Z Liu",
+        "M Sun"
+      ],
+      "title": "Infllm: Training-free long-context extrapolation for llms with an efficient context memory",
+      "year": "2024"
+    },
+    "citations": []
+  },
+  "b19": {
+    "reference_details": {
+      "authors": [
+        "C Packer",
+        "S Wooders",
+        "K Lin",
+        "V Fang",
+        "S Patil",
+        "I Stoica",
+        "J Gonzalez"
+      ],
+      "title": "Memgpt: Towards llms as operating systems",
+      "year": "2024"
+    },
+    "citations": []
+  },
+  "b20": {
+    "reference_details": {
+      "authors": [
+        "A Modarressi",
+        "A Imani",
+        "M Fayyaz",
+        "H Schütze"
+      ],
+      "title": "Ret-llm: Towards a general read-write memory for large language models",
+      "year": "2023"
+    },
+    "citations": []
+  },
+  "b21": {
+    "reference_details": {
+      "authors": [
+        "J Kang",
+        "R Laroche",
+        "X Yuan",
+        "A Trischler",
+        "X Liu",
+        "J Fu"
+      ],
+      "title": "Think before you act: Decision transformers with working memory",
+      "year": "2024"
+    },
+    "citations": []
+  },
+  "b22": {
+    "reference_details": {
+      "authors": [
+        "L Liu",
+        "X Yang",
+        "Y Shen",
+        "B Hu",
+        "Z Zhang",
+        "J Gu",
+        "G Zhang"
+      ],
+      "title": "Thinkin-memory: Recalling and post-thinking enable llms with long-term memory",
+      "year": "2023"
+    },
+    "citations": []
+  },
+  "b23": {
+    "reference_details": {
+      "authors": [
+        "G Wang",
+        "Y Xie",
+        "Y Jiang",
+        "A Mandlekar",
+        "C Xiao",
+        "Y Zhu",
+        "L Fan",
+        "A Anandkumar"
+      ],
+      "title": "Voyager: An open-ended embodied agent with large language models",
+      "year": "2023"
+    },
+    "citations": [
+      {
+        "section": " INTRODUCTION",
+        "text_before": "Different attempts have been made in existing studies  -",
+        "citation": "[24]",
+        "text_after": "by using different memory mechanisms in various LLM applications.",
+        "full_context": "Different attempts have been made in existing studies  - [24] by using different memory mechanisms in various LLM applications."
+      }
+    ]
+  },
+  "b24": {
+    "reference_details": {
+      "authors": [
+        "D Kahneman"
+      ],
+      "title": "Thinking, fast and slow",
+      "year": "2011"
+    },
+    "citations": [
+      {
+        "section": " INTRODUCTION",
+        "text_before": "Furthermore, drawing on Kahneman's Dualprocess theory",
+        "citation": "[25]",
+        "text_after": ", the MaLP framework   introduces an innovative Dual-Process enhanced Memory mechanism that effectively fuses long-term and short-term memory.",
+        "full_context": "Furthermore, drawing on Kahneman's Dualprocess theory [25] , the MaLP framework   introduces an innovative Dual-Process enhanced Memory mechanism that effectively fuses long-term and short-term memory."
+      }
+    ]
+  },
+  "b25": {
+    "reference_details": {
+      "authors": [
+        "G Bower"
+      ],
+      "title": "Mood and memory",
+      "year": "1981"
+    },
+    "citations": [
+      {
+        "section": " INTRODUCTION",
+        "text_before": "According to the Mood-Dependent Memory theory, which was proposed by psychologist Gordon H. Bower in 1981",
+        "citation": "[26]",
+        "text_after": ": people recall an event better if they somehow reinstate and recall the original emotion they experienced during learning.",
+        "full_context": "According to the Mood-Dependent Memory theory, which was proposed by psychologist Gordon H. Bower in 1981 [26] : people recall an event better if they somehow reinstate and recall the original emotion they experienced during learning."
+      },
+      {
+        "section": " METHOD",
+        "text_before": "According to Bower's Mood-Dependent Memory theory",
+        "citation": "[26]",
+        "text_after": ": events that are consistent with the character's current emotion are easier to retrieve, we use the cosine distance between two emotion vectors to find emotionally consistent memory fragments, defined as:",
+        "full_context": "According to Bower's Mood-Dependent Memory theory [26] : events that are consistent with the character's current emotion are easier to retrieve, we use the cosine distance between two emotion vectors to find emotionally consistent memory fragments, defined as:"
+      }
+    ]
+  },
+  "b26": {
+    "reference_details": {
+      "authors": [
+        "S Xiao",
+        "Z Liu",
+        "P Zhang",
+        "N Muennighoff"
+      ],
+      "title": "C-pack: Packaged resources to advance general chinese embedding",
+      "year": "2023"
+    },
+    "citations": [
+      {
+        "section": " METHOD",
+        "text_before": "In this paper, the widely used embedding model bge-base-zh-v1.5 developed by BAAI",
+        "citation": "[27]",
+        "text_after": "is used to capture the latent vector of the query, which is a 768-dimensional vector for each query.",
+        "full_context": "In this paper, the widely used embedding model bge-base-zh-v1.5 developed by BAAI [27] is used to capture the latent vector of the query, which is a 768-dimensional vector for each query."
+      }
+    ]
+  },
+  "b27": {
+    "reference_details": {
+      "authors": [
+        "R Plutchik"
+      ],
+      "title": "A general psychoevolutionary theory of emotion",
+      "year": "1980"
+    },
+    "citations": [
+      {
+        "section": " METHOD",
+        "text_before": "The 8 emotional states are defined according to the emotion circle in",
+        "citation": "[28]",
+        "text_after": ".",
+        "full_context": "The 8 emotional states are defined according to the emotion circle in [28] ."
+      }
+    ]
+  },
+  "b28": {
+    "reference_details": {
+      "authors": [
+        "X Wang",
+        "Y Xiao",
+        "J Huang",
+        "S Yuan",
+        "R Xu",
+        "H Guo",
+        "Q Tu",
+        "Y Fei",
+        "Z Leng",
+        "W Wang",
+        "J Chen",
+        "C Li",
+        "Y Xiao"
+      ],
+      "title": "Incharacter: Evaluating personality fidelity in role-playing agents through psychological interviews",
+      "year": "2024"
+    },
+    "citations": [
+      {
+        "section": " EXPERIMENT",
+        "text_before": "• InCharacter Dataset",
+        "citation": "[29]",
+        "text_after": ": this dataset contains 32 characters.",
+        "full_context": "• InCharacter Dataset [29] : this dataset contains 32 characters."
+      },
+      {
+        "section": " EXPERIMENT",
+        "text_before": "Following the evaluations in",
+        "citation": "[29]",
+        "text_after": ".",
+        "full_context": "Following the evaluations in [29] ."
+      }
+    ]
+  },
+  "b29": {
+    "reference_details": {
+      "authors": [
+        "Q Tu",
+        "S Fan",
+        "Z Tian",
+        "R Yan"
+      ],
+      "title": "Charactereval: A chinese benchmark for role-playing conversational agent evaluation",
+      "year": "2024"
+    },
+    "citations": [
+      {
+        "section": " EXPERIMENT",
+        "text_before": "• CharacterEval Dataset",
+        "citation": "[30]",
+        "text_after": ": the dataset consists of 77 distinct characters with 4,564 question-answer pairs.",
+        "full_context": "• CharacterEval Dataset [30] : the dataset consists of 77 distinct characters with 4,564 question-answer pairs."
+      }
+    ]
+  },
+  "b30": {
+    "reference_details": {
+      "authors": [
+        "O John",
+        "L Naumann",
+        "C Soto"
+      ],
+      "title": "Paradigm shift to the integrative big five trait taxonomy: History, measurement, and conceptual issues",
+      "year": "2008"
+    },
+    "citations": [
+      {
+        "section": " EXPERIMENT",
+        "text_before": "Big Five Inventory (BFI)",
+        "citation": "[31]",
+        "text_after": ": The Big Five, also known as the Big Five personality trait theory, is a widely used psychological model that divides personality into five main dimensions: Openness, Conscientiousness, Extraversion, Agreeableness, and Neuroticism.",
+        "full_context": "Big Five Inventory (BFI) [31] : The Big Five, also known as the Big Five personality trait theory, is a widely used psychological model that divides personality into five main dimensions: Openness, Conscientiousness, Extraversion, Agreeableness, and Neuroticism."
+      }
+    ]
+  },
+  "b31": {
+    "reference_details": {
+      "authors": [
+        "Z Du",
+        "Y Qian",
+        "X Liu",
+        "M Ding",
+        "J Qiu",
+        "Z Yang",
+        "J Tang"
+      ],
+      "title": "Glm: General language model pretraining with autoregressive blank infilling",
+      "year": "2022"
+    },
+    "citations": [
+      {
+        "section": " EXPERIMENT",
+        "text_before": "ChatGLM",
+        "citation": "[32]",
+        "text_after": ": we use chatglm3-6b, which is a dialogue pre-training model jointly released by Zhipu AI and Tsinghua University.",
+        "full_context": "ChatGLM [32] : we use chatglm3-6b, which is a dialogue pre-training model jointly released by Zhipu AI and Tsinghua University."
+      }
+    ]
+  },
+  "b32": {
+    "reference_details": {
+      "authors": [
+        "J Bai",
+        "S Bai",
+        "Y Chu",
+        "Z Cui",
+        "K Dang",
+        "X Deng",
+        "Y Fan",
+        "W Ge",
+        "Y Han",
+        "F Huang",
+        "B Hui",
+        "L Ji",
+        "M Li",
+        "J Lin",
+        "R Lin",
+        "D Liu",
+        "G Liu",
+        "C Lu",
+        "K Lu",
+        "J Ma",
+        "R Men",
+        "X Ren",
+        "X Ren",
+        "C Tan",
+        "S Tan",
+        "J Tu",
+        "P Wang",
+        "S Wang",
+        "W Wang",
+        "S Wu",
+        "B Xu",
+        "J Xu",
+        "A Yang",
+        "H Yang",
+        "J Yang",
+        "S Yang",
+        "Y Yao",
+        "B Yu",
+        "H Yuan",
+        "Z Yuan",
+        "J Zhang",
+        "X Zhang",
+        "Y Zhang",
+        "Z Zhang",
+        "C Zhou",
+        "J Zhou",
+        "X Zhou",
+        "T Zhu"
+      ],
+      "title": "Qwen technical report",
+      "year": "2023"
+    },
+    "citations": [
+      {
+        "section": " EXPERIMENT",
+        "text_before": "Qwen",
+        "citation": "[33]",
+        "text_after": ": the version in our experiments is Qwen1.5-72B-Chat-GPTQ-Int4, which is a model in the Qwen1.5 series with 72 billion parameters.",
+        "full_context": "Qwen [33] : the version in our experiments is Qwen1.5-72B-Chat-GPTQ-Int4, which is a model in the Qwen1.5 series with 72 billion parameters."
+      }
+    ]
+  },
+  "b33": {
+    "reference_details": {
+      "authors": [
+        "L Ouyang",
+        "J Wu",
+        "X Jiang",
+        "D Almeida",
+        "C Wainwright",
+        "P Mishkin",
+        "C Zhang",
+        "S Agarwal",
+        "K Slama",
+        "A Ray"
+      ],
+      "title": "Training language models to follow instructions with human feedback",
+      "year": "2022"
+    },
+    "citations": [
+      {
+        "section": " EXPERIMENT",
+        "text_before": "GPT",
+        "citation": "[34]",
+        "text_after": ": we use gpt-3.5-turbo-0125, which is a largescale language model developed by OpenAI and is known for its efficient generation capabilities.",
+        "full_context": "GPT [34] : we use gpt-3.5-turbo-0125, which is a largescale language model developed by OpenAI and is known for its efficient generation capabilities."
+      }
+    ]
+  },
+  "b34": {
+    "reference_details": {
+      "authors": [
+        "C Hu",
+        "J Fu",
+        "C Du",
+        "S Luo",
+        "J Zhao",
+        "H Zhao"
+      ],
+      "title": "Chatdb: Augmenting llms with databases as their symbolic memory",
+      "year": "2023"
+    },
+    "citations": [
+      {
+        "section": " RELATED WORK",
+        "text_before": "Retrieval Augmented Generation (RAG) technology is widely used",
+        "citation": "[35]",
+        "text_after": "to access the related memory to enhance the generation of role-playing agents, termed Memory RAG.",
+        "full_context": "Retrieval Augmented Generation (RAG) technology is widely used [35] to access the related memory to enhance the generation of role-playing agents, termed Memory RAG."
+      }
+    ]
+  },
+  "b35": {
+    "reference_details": {
+      "authors": [
+        "L Wang",
+        "C Ma",
+        "X Feng",
+        "Z Zhang",
+        "H Yang",
+        "J Zhang",
+        "Z Chen",
+        "J Tang",
+        "X Chen",
+        "Y Lin"
+      ],
+      "title": "A survey on large language model based autonomous agents",
+      "year": "2024"
+    },
+    "citations": [
+      {
+        "section": " RELATED WORK",
+        "text_before": "For example, an LLM-based automatic agent architecture proposed in",
+        "citation": "[36]",
+        "text_after": "contains four components: a profiling module, a memory module, a planning module, and an action module.",
+        "full_context": "For example, an LLM-based automatic agent architecture proposed in [36] contains four components: a profiling module, a memory module, a planning module, and an action module."
+      }
+    ]
+  },
+  "b36": {
+    "reference_details": {
+      "authors": [
+        "Y Wu",
+        "M Rabe",
+        "D Hutchins",
+        "C Szegedy"
+      ],
+      "title": "Memorizing transformers",
+      "year": "2022"
+    },
+    "citations": [
+      {
+        "section": " RELATED WORK",
+        "text_before": "For instance, MemTRM",
+        "citation": "[37]",
+        "text_after": "maintains past key-value pairs and employs the query vector of the current input to conduct Knearest neighbor searches, applying mixed attention to both the current input and the past memories.",
+        "full_context": "For instance, MemTRM [37] maintains past key-value pairs and employs the query vector of the current input to conduct Knearest neighbor searches, applying mixed attention to both the current input and the past memories."
+      }
+    ]
+  },
+  "b37": {
+    "reference_details": {
+      "authors": [
+        "W Wang",
+        "L Dong",
+        "H Cheng",
+        "X Liu",
+        "X Yan",
+        "J Gao",
+        "F Wei"
+      ],
+      "title": "Augmenting language models with long-term memory",
+      "year": "2024"
+    },
+    "citations": [
+      {
+        "section": " RELATED WORK",
+        "text_before": "To address this, LongMEM",
+        "citation": "[38]",
+        "text_after": "separates the processes of memory storage and retrieval.",
+        "full_context": "To address this, LongMEM [38] separates the processes of memory storage and retrieval."
+      }
+    ]
+  }
+}

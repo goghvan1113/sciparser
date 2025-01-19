@@ -17,6 +17,7 @@ class CrossrefPaper(Document):
         self.ref_type = ref_type
         self._entity = None if ('entity' not in kwargs) else kwargs['entity']
         self.data = None
+        self.last_request_cached = False
         self._fetch_data()
 
     @retry(tries=3, delay=2)
@@ -29,6 +30,8 @@ class CrossrefPaper(Document):
             "mailto": "1663653541@qq.com"
         }
         response = cached_get(url, params=params)
+        self.last_request_cached = getattr(response, 'from_cache', False)
+        print(f"Crossref API {'使用缓存' if self.last_request_cached else '发送请求'}: {self.ref_obj}")
         if response and response.status_code == 200:
             self.data = response.json()
         else:

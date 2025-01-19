@@ -30,13 +30,14 @@ class CachedSemanticScholarWrapper:
                           (paper_id TEXT PRIMARY KEY, 
                            data TEXT,
                            timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)''')
-            # 创建标题-DOI缓存表
+            # 创建标题-DOI-PaperId缓存表
             conn.execute('''CREATE TABLE IF NOT EXISTS title_doi_cache
                           (title TEXT PRIMARY KEY,
                            doi TEXT,
+                           paper_id TEXT,
                            timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)''')
             
-    def get_paper_citations(self, paper_id, fields=None, limit=100):
+    def get_paper_citations(self, paper_id, fields=None, limit=100, use_cache=None, override_cache=False):
         """
         获取论文引用的包装方法，增加缓存功能
         
@@ -44,12 +45,22 @@ class CachedSemanticScholarWrapper:
             paper_id: 论文ID (DOI等)
             fields: 需要返回的字段列表
             limit: 返回结果数量限制
+            use_cache: 是否使用缓存，如果为None则使用实例的默认设置
+            override_cache: 是否强制更新缓存
+            
+        Returns:
+            PaginatedResults: 引用结果
         """
         self.last_request_cached = False  # 重置标记
+        use_cache = self.use_cache if use_cache is None else use_cache
         
-        if not self.use_cache:
+        if not use_cache or override_cache:
+            # 不使用缓存或强制更新缓存
+            print(f"Semantic Scholar API 发送请求{'并更新缓存' if override_cache else ''}: {paper_id}")
             results = self.sch.get_paper_citations(paper_id, fields, limit)
-            self._last_results = results  # 保存结果
+            if override_cache:
+                self._save_to_cache(paper_id, results)
+            self._last_results = results
             return results
             
         # 尝试从缓存获取
@@ -57,15 +68,15 @@ class CachedSemanticScholarWrapper:
         
         if cached_data is None:
             # 缓存未命中，调用原始方法并存储结果
-            print(f"Cache miss for paper_id: {paper_id}")
+            print(f"Semantic Scholar API 发送请求: {paper_id}")
             results = self.sch.get_paper_citations(paper_id)
             self._save_to_cache(paper_id, results)
             cached_data = results
         else:
             # 缓存命中
             self.last_request_cached = True
-            print(f"Cache hit for paper_id: {paper_id}")
-            
+            print(f"Semantic Scholar API 使用缓存: {paper_id}")
+                            
         # 处理fields过滤
         if fields is not None:
             cached_data = self._filter_fields(cached_data, fields)
@@ -229,83 +240,85 @@ class CachedSemanticScholarWrapper:
         except Exception as e:
             return f"Error saving DOIs to file: {str(e)}"
 
-    def get_doi_by_title(self, title: str) -> str:
-        """通过论文标题查询DOI（带缓存）
+    def get_doi_by_title(self, title: str) -> tuple:
+        """通过论文标题查询DOI和PaperId（带缓存）
         
         Args:
             title: 论文标题
             
         Returns:
-            str: 论文的DOI，如果未找到返回None
+            tuple: (doi, paper_id)，如果未找到返回(None, None)
         """
         self.last_request_cached = False
         
         if self.use_cache:
             # 尝试从缓存获取
-            cached_doi = self._get_doi_from_cache(title)
-            if cached_doi is not None:
+            cached_result = self._get_doi_from_cache(title)
+            if cached_result is not None:
                 self.last_request_cached = True
                 print(f"Cache hit for title: {title}")
-                return cached_doi
+                return cached_result
                 
         try:
             # 使用search_paper搜索论文
-            results = self.sch.search_paper(title, fields=['title', 'externalIds'])
+            results = self.sch.search_paper(title, fields=['title', 'externalIds', 'paperId'])
             
             # 检查是否有结果
             if not results or not results.items:
                 if self.use_cache:
-                    self._save_doi_to_cache(title, None)  # 缓存未找到的结果
-                return None
+                    self._save_doi_to_cache(title, None, None)  # 缓存未找到的结果
+                return None, None
                 
             # 获取第一个结果
             first_paper = results.items[0]
             
             # 检查标题是否匹配（忽略大小写和空格）
             if self._normalize_title(first_paper.title) == self._normalize_title(title):
-                # 从externalIds中获取DOI
+                # 从externalIds中获取DOI和paperId
                 doi = None
                 if hasattr(first_paper, 'externalIds') and first_paper.externalIds.get('DOI'):
                     doi = first_paper.externalIds['DOI']
                 
+                paper_id = first_paper.paperId if hasattr(first_paper, 'paperId') else None
+                
                 # 保存到缓存
                 if self.use_cache:
-                    self._save_doi_to_cache(title, doi)
+                    self._save_doi_to_cache(title, doi, paper_id)
                     
-                return doi
+                return doi, paper_id
                     
             if self.use_cache:
-                self._save_doi_to_cache(title, None)  # 缓存未找到的结果
-            return None
+                self._save_doi_to_cache(title, None, None)  # 缓存未找到的结果
+            return None, None
             
         except Exception as e:
             print(f"通过标题查询DOI时出错: {str(e)}")
-            return None
+            return None, None
             
-    def _get_doi_from_cache(self, title: str) -> str:
-        """从缓存中获取DOI"""
+    def _get_doi_from_cache(self, title: str) -> tuple:
+        """从缓存中获取DOI和PaperId"""
         try:
             with sqlite3.connect(self.db_path) as conn:
                 cursor = conn.cursor()
                 cursor.execute(
-                    "SELECT doi FROM title_doi_cache WHERE title = ?",
+                    "SELECT doi, paper_id FROM title_doi_cache WHERE title = ?",
                     (self._normalize_title(title),)
                 )
                 result = cursor.fetchone()
-                return result[0] if result else None
+                return result if result else None
         except Exception as e:
             print(f"从缓存读取DOI时出错: {str(e)}")
             return None
             
-    def _save_doi_to_cache(self, title: str, doi: str):
-        """保存DOI到缓存"""
+    def _save_doi_to_cache(self, title: str, doi: str, paper_id: str):
+        """保存DOI和PaperId到缓存"""
         try:
             with sqlite3.connect(self.db_path) as conn:
                 conn.execute(
-                    "INSERT OR REPLACE INTO title_doi_cache (title, doi) VALUES (?, ?)",
-                    (self._normalize_title(title), doi)
+                    "INSERT OR REPLACE INTO title_doi_cache (title, doi, paper_id) VALUES (?, ?, ?)",
+                    (self._normalize_title(title), doi, paper_id)
                 )
-                print(f"Successfully cached DOI for title: {title}")
+                print(f"Successfully cached DOI and PaperId for title: {title}")
         except Exception as e:
             print(f"保存DOI到缓存时出错: {str(e)}")
 
@@ -314,6 +327,20 @@ class CachedSemanticScholarWrapper:
         if not title:
             return ""
         return title.lower().replace(' ', '')
+
+    @property
+    def citing_paperIds(self):
+        """获取引用论文的PaperId列表"""
+        if not self._last_results:
+            return []
+        
+        paper_ids = []
+        for citation in self._last_results.items:
+            paper_id = citation['citingPaper'].get('paperId')
+            if paper_id and paper_id.strip():
+                paper_ids.append(paper_id)
+            
+        return paper_ids
 
 
 # 使用示例
@@ -334,14 +361,16 @@ if __name__ == "__main__":
     for title in test_titles:
         print(f"\n查询标题: {title}")
         # 第一次查询
-        doi = sch.get_doi_by_title(title)
+        doi, paper_id = sch.get_doi_by_title(title)
         print(f"DOI: {doi}")
+        print(f"PaperId: {paper_id}")
         print(f"是否使用缓存: {sch.was_last_request_cached()}")
         
         # 第二次查询（应该使用缓存）
         print("\n再次查询相同标题:")
-        doi = sch.get_doi_by_title(title)
+        doi, paper_id = sch.get_doi_by_title(title)
         print(f"DOI: {doi}")
+        print(f"PaperId: {paper_id}")
         print(f"是否使用缓存: {sch.was_last_request_cached()}")
         print("-"*50)
     

@@ -137,6 +137,13 @@ class PaperDownloader:
             try:
                 cmd = self._build_command('doi', doi)
                 result = subprocess.run(cmd, shell=True, check=True, capture_output=True, text=True)
+                
+                # 重命名文件，将%替换为_
+                old_name = os.path.join(self.download_dir, f"{doi.replace('/', '_')}.pdf")
+                new_name = os.path.join(self.download_dir, f"{doi.replace('/', '_').replace('%', '_')}.pdf")
+                if os.path.exists(old_name) and '%' in old_name:
+                    os.rename(old_name, new_name)
+                    
                 log_messages.append(f'Successfully processed DOI: "{doi}"')
                 self.logger.info(f'Successfully downloaded paper for DOI: {doi}')
             except subprocess.CalledProcessError as e:
@@ -159,6 +166,17 @@ class PaperDownloader:
         try:
             cmd = self._build_command('doi_file', file_path)
             result = subprocess.run(cmd, shell=True, check=True, capture_output=True, text=True)
+            
+            # 读取DOI文件并重命名包含%的文件
+            with open(file_path, 'r') as f:
+                dois = [line.strip() for line in f if line.strip()]
+                
+            for doi in dois:
+                old_name = os.path.join(self.download_dir, f"{doi.replace('/', '_')}.pdf")
+                new_name = os.path.join(self.download_dir, f"{doi.replace('/', '_').replace('%', '_')}.pdf")
+                if os.path.exists(old_name) and '%' in old_name:
+                    os.rename(old_name, new_name)
+            
             log_msg = f'Successfully processed DOI file: "{file_path}"'
             self.logger.info(log_msg)
             return log_msg

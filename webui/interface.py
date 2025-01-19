@@ -7,7 +7,7 @@ sys.path.append(root_dir)
 import gradio as gr
 import base64
 from app.pipeline import ResearchPipeline, CachedGrobidParser
-# from app.refparser import ReferenceParser
+from app.refparser import ReferenceParser
 from grobid_parser import parse
 from retrievers.crossref_paper import CrossrefPaper
 from retrievers.s2_paper import CachedSemanticScholarWrapper
@@ -17,7 +17,7 @@ import markdown
 class RefParserUI:
     def __init__(self):
         self.title = "引文分析工具"
-        self.pipeline = ResearchPipeline(cache_dir='./tmp')
+        self.pipeline = ResearchPipeline()
     
     def view_pdf(self, pdf_file):
         """显示PDF文件"""
@@ -52,16 +52,33 @@ class RefParserUI:
     def _process_citations(self, title):
         """处理引用信息"""
         try:
-            # 使用ResearchPipeline处理
-            pipeline = ResearchPipeline(cache_dir='./tmp')
-            result = pipeline.process_paper(title)
+            # 收集缓存状态信息
+            cache_logs = []
+            
+            # 使用默认缓存目录的pipeline
+            result = self.pipeline.process_paper(title)
+            
+            # 收集各个组件的缓存状态
+            if hasattr(result.get('crossref_paper'), 'last_request_cached'):
+                status = '使用缓存' if result['crossref_paper'].last_request_cached else '发送请求'
+                cache_logs.append(f"Crossref API {status}: {title}")
+                
+            if hasattr(result.get('s2_wrapper'), 'last_request_cached'):
+                status = '使用缓存' if result['s2_wrapper'].last_request_cached else '发送请求'
+                cache_logs.append(f"Semantic Scholar API {status}: {title}")
+                
+            if hasattr(result.get('grobid_parser'), 'last_request_cached'):
+                status = '使用缓存' if result['grobid_parser'].last_request_cached else '发送请求'
+                cache_logs.append(f"GROBID解析 {status}")
             
             # 生成HTML输出
             info_html = self._generate_paper_info_html(result['original_paper'])
             citations_html = self._generate_citations_html(result['citation_results'], result['citing_papers'])
             
-            # 生成下载日志
+            # 在下载日志中添加缓存状态信息
+            cache_status = '\n'.join(cache_logs)
             download_log = (
+                f"缓存状态:\n{cache_status}\n\n"
                 f"原始论文: {result['original_paper'].title}\n"
                 f"DOI: {result['original_paper'].doi}\n"
                 f"DOIs保存至: {result['doi_file']}\n"
@@ -73,7 +90,7 @@ class RefParserUI:
             
         except Exception as e:
             error_msg = f"处理引用时出错: {str(e)}"
-            print(error_msg)  # 打印错误信息以便调试
+            print(error_msg)
             return "", "", error_msg
 
     def _generate_references_html(self, references):
@@ -104,7 +121,6 @@ class RefParserUI:
         info_html += "<h2>Paper Information</h2>"
         info_html += f"<p><b>Title:</b> {paper.title}</p>"
         info_html += f"<p><b>DOI:</b> {paper.doi}</p>"
-        info_html += f"<p><b>Publication Date:</b> {paper.publication_date}</p>"
         info_html += "</div>"
         return info_html
 
@@ -121,7 +137,10 @@ class RefParserUI:
             citations_html += "<div class='citation-item' style='margin-bottom: 20px; padding: 15px; border: 1px solid #ddd;'>"
             citations_html += f"<p><b>标题:</b> {paper.title}</p>"
             if paper.doi:
+                safe_doi = paper.doi.replace('/', '_')
                 citations_html += f"<p><b>DOI:</b> {paper.doi}</p>"
+                citations_html += f"<a href='tmp/papers/{safe_doi}.pdf' download>Download PDF</a> "
+                citations_html += f"<a href='tmp/xmls/{safe_doi}.grobid.xml' download>Download XML</a>"
             
             # 添加引用上下文
             contexts = doi_to_contexts.get(paper.doi, [])
@@ -146,7 +165,7 @@ class RefParserUI:
             return "", "", "", "Please upload a PDF file first"
             
         try:
-            grobid_parser = CachedGrobidParser(cache_dir='./tmp')
+            grobid_parser = CachedGrobidParser() # 使用默认的缓存目录
             xml = grobid_parser.parse_document(pdf_file.name)
             md = grobid_parser.parse_document_md(xml)
             res = markdown.markdown(md, extensions=['tables']).replace("<s>", "")
@@ -154,7 +173,9 @@ class RefParserUI:
             res_xml = f'{xml}'
             res_md = f'{md}'
             
-            xml_file = f"tmp/{pdf_file.name.split('/')[-1].replace('.pdf', '')}.grobid.xml"
+            # 修正XML文件路径
+            xml_file = os.path.join(self.pipeline.xml_dir, 
+                                  f"{os.path.basename(pdf_file.name).replace('.pdf', '')}.grobid.xml")
             parser = ReferenceParser(xml_file, "references.json")
             references = parser.parse_references()
             

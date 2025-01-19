@@ -1,8 +1,3 @@
-"""
-Reference parser for extracting citations and their contexts from TEI XML
-@Author: Assistant
-"""
-
 import os
 import sys
 
@@ -187,7 +182,7 @@ class ReferenceParser:
 
 def main():
     """Main function to demonstrate usage"""
-    xml_file = "tmp/What Makes a Good Dataset for Knowledge Distillation_.grobid.xml"  # Input XML file path
+    xml_file = "/home/gaof23/projects/sciparser/tmp/xmls/10.1007_s11192-011-0349-2.grobid.xml"  # Input XML file path
     output_json = "references.json"    # Output JSON file path
     
     parser = ReferenceParser(xml_file, output_json)
