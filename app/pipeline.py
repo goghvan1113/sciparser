@@ -327,8 +327,8 @@ class ResearchPipeline:
             print(f"\n处理论文时出错: {str(e)}")
             raise Exception(f"处理论文时出错: {str(e)}")
 
-    def process_paper_from_pdf(self, pdf_path):
-        """从PDF文件处理论文的工作流
+    def process_paper_from_pdf(self, pdf_path: str) -> dict:
+        """从PDF文件处理论文
         
         Args:
             pdf_path: PDF文件路径
@@ -369,17 +369,27 @@ class ResearchPipeline:
             
             print(f"找到论文DOI: {paper_doi}")
             
-            # 3. 重命名PDF和XML文件
+            # 3. 复制并重命名PDF和XML文件
             print("\n3. 重命名文件...")
             safe_doi = paper_doi.replace('/', '_')
             new_pdf_path = os.path.join(self.pdf_dir, f"{safe_doi}.pdf")
             new_xml_path = os.path.join(self.xml_dir, f"{safe_doi}.grobid.xml")
             
-            os.rename(pdf_path, new_pdf_path)
+            # 如果是上传的文件，先复制到papers目录
+            if not pdf_path.startswith(self.pdf_dir):
+                import shutil
+                shutil.copy2(pdf_path, new_pdf_path)
+                print(f"PDF文件已复制到: {new_pdf_path}")
+            elif pdf_path != new_pdf_path:  # 如果已在papers目录但名字不同
+                os.rename(pdf_path, new_pdf_path)
+                print(f"PDF文件已重命名为: {new_pdf_path}")
+            
+            # 重命名XML文件
             current_xml_path = os.path.join(self.xml_dir, 
                 f"{os.path.basename(pdf_path).replace('.pdf', '')}.grobid.xml")
-            os.rename(current_xml_path, new_xml_path)
-            print("文件重命名完成")
+            if os.path.exists(current_xml_path) and current_xml_path != new_xml_path:
+                os.rename(current_xml_path, new_xml_path)
+                print("XML文件重命名完成")
             
             original_paper = ResearchDocument(title=original_title, doi=paper_doi)
             
@@ -495,9 +505,9 @@ def main():
         print(f"开始处理论文: {test_title}")
         print("="*50)
         
-        # result = pipeline.process_paper_from_pdf("/home/gaof23/projects/sciparser/tmp/papers/10.18653_v1_2023.findings-emnlp.234.pdf")
+        result = pipeline.process_paper_from_pdf("tmp/papers/10.48550_arXiv.2308.14522.pdf")
         # 处理论文
-        result = pipeline.process_paper(test_title)
+        # result = pipeline.process_paper(test_title)
         
         # 打印结果
         print(f"原始论文:")

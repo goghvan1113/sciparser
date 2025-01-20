@@ -1,0 +1,2447 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Do LLMs Think Fast and Slow? A Causal Study on Sentiment Analysis</title>
+				<funder ref="#_fUtp4hE">
+					<orgName type="full">Precision Health Initiative at the University of Michigan</orgName>
+				</funder>
+				<funder>
+					<orgName type="full">Future of Life Institute and Open Philanthropy</orgName>
+				</funder>
+				<funder ref="#_FmRaegB">
+					<orgName type="full">Haslerstiftung</orgName>
+				</funder>
+				<funder ref="#_dnmmAfM">
+					<orgName type="full">ELISE</orgName>
+				</funder>
+				<funder ref="#_a9keVKk">
+					<orgName type="full">John Templeton Foundation</orgName>
+				</funder>
+				<funder ref="#_BPQ8C2E">
+					<orgName type="full">German Federal Ministry of Education and Research (BMBF): Tübingen AI Center</orgName>
+				</funder>
+				<funder ref="#_gn7x9VE #_WwKVXnB">
+					<orgName type="full">unknown</orgName>
+				</funder>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Zhiheng</forename><surname>Lyu</surname></persName>
+							<email>zhlyu@cs.hku.hk</email>
+							<affiliation key="aff0">
+								<orgName type="laboratory">MPI for Intelligent Systems</orgName>
+								<orgName type="institution" key="instit1">University of Hong Kong</orgName>
+								<orgName type="institution" key="instit2">University of Toronto</orgName>
+								<orgName type="institution" key="instit3">ETH Zürich</orgName>
+								<orgName type="institution" key="instit4">University of Michigan</orgName>
+								<orgName type="institution" key="instit5">ETH Zürich</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Zhijing</forename><surname>Jin</surname></persName>
+							<email>zjin@cs.toronto.edu</email>
+							<affiliation key="aff0">
+								<orgName type="laboratory">MPI for Intelligent Systems</orgName>
+								<orgName type="institution" key="instit1">University of Hong Kong</orgName>
+								<orgName type="institution" key="instit2">University of Toronto</orgName>
+								<orgName type="institution" key="instit3">ETH Zürich</orgName>
+								<orgName type="institution" key="instit4">University of Michigan</orgName>
+								<orgName type="institution" key="instit5">ETH Zürich</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Fernando</forename><surname>Gonzalez</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="laboratory">MPI for Intelligent Systems</orgName>
+								<orgName type="institution" key="instit1">University of Hong Kong</orgName>
+								<orgName type="institution" key="instit2">University of Toronto</orgName>
+								<orgName type="institution" key="instit3">ETH Zürich</orgName>
+								<orgName type="institution" key="instit4">University of Michigan</orgName>
+								<orgName type="institution" key="instit5">ETH Zürich</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Rada</forename><surname>Mihalcea</surname></persName>
+							<email>mihalcea@umich.edu</email>
+							<affiliation key="aff0">
+								<orgName type="laboratory">MPI for Intelligent Systems</orgName>
+								<orgName type="institution" key="instit1">University of Hong Kong</orgName>
+								<orgName type="institution" key="instit2">University of Toronto</orgName>
+								<orgName type="institution" key="instit3">ETH Zürich</orgName>
+								<orgName type="institution" key="instit4">University of Michigan</orgName>
+								<orgName type="institution" key="instit5">ETH Zürich</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Bernhard</forename><surname>Schölkopf</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="laboratory">MPI for Intelligent Systems</orgName>
+								<orgName type="institution" key="instit1">University of Hong Kong</orgName>
+								<orgName type="institution" key="instit2">University of Toronto</orgName>
+								<orgName type="institution" key="instit3">ETH Zürich</orgName>
+								<orgName type="institution" key="instit4">University of Michigan</orgName>
+								<orgName type="institution" key="instit5">ETH Zürich</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Mrinmaya</forename><surname>Sachan</surname></persName>
+							<email>msachan@ethz.ch</email>
+							<affiliation key="aff0">
+								<orgName type="laboratory">MPI for Intelligent Systems</orgName>
+								<orgName type="institution" key="instit1">University of Hong Kong</orgName>
+								<orgName type="institution" key="instit2">University of Toronto</orgName>
+								<orgName type="institution" key="instit3">ETH Zürich</orgName>
+								<orgName type="institution" key="instit4">University of Michigan</orgName>
+								<orgName type="institution" key="instit5">ETH Zürich</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Do LLMs Think Fast and Slow? A Causal Study on Sentiment Analysis</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<idno type="MD5">477A7B660E8704E2AFA88BB7BAEFF001</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.2-SNAPSHOT" ident="GROBID" when="2025-01-20T09:21+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Sentiment analysis (SA) aims to identify the sentiment expressed in a text, such as a product review. Given a review and the sentiment associated with it, this work formulates SA as a combination of two tasks: (1) a causal discovery task that distinguishes whether a review "primes" the sentiment (Causal Hypothesis C1), or the sentiment "primes" the review (Causal Hypothesis C2); and (2) the traditional prediction task to model the sentiment using the review as input. Using the peak-end rule in psychology, we classify a sample as C1 if its overall sentiment score approximates an average of all the sentence-level sentiments in the review, and C2 if the overall sentiment score approximates an average of the peak and end sentiments. For the prediction task, we use the discovered causal mechanisms behind the samples to improve LLM performance by proposing causal prompts that give the models an inductive bias of the underlying causal graph, leading to substantial improvements by up to 32.13 F1 points on zero-shot five-class SA. 1 Peak-End Rule (from Thinking Fast and Slow): -For slow thinking, overall sentiment ≈ average feeling -For fast thinking, overall sentiment ≈ average of the peak (most intensive) and end feelings This was a great spot to take a break from it all and just people watch. We sat at the bar facing the casino and we were entertained the whole time. The mini grilled cheese (appetizer) was fantastic. It came with a tomato based dipping sauce that was the perfect compliment to the bite sized wedges. Tip -ask for two dipping sauces because one just won't do.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">Introduction</head><p>Sentiment analysis (SA) is the task of identifying the sentiment y given a piece of text x. The field has a rich history originating from subjectivity analysis <ref type="bibr" target="#b70">(Wiebe, 1994;</ref><ref type="bibr" target="#b11">Hatzivassiloglou and Wiebe, 2000)</ref>, and developed rapidly with the availability of large opinionated online data such as reviews with ratings (Turney, 2002; <ref type="bibr" target="#b37">Nasukawa and Yi, 2003;</ref><ref type="bibr" target="#b76">Zhang et al., 2015;</ref><ref type="bibr">Keung et al., 2020, inter alia)</ref>.</p><p>Despite recent advances in large language models (LLMs), it is still challenging to address the finegrained five-class SA (which corresponds to the five star ratings in most datasets) for documentlevel classification <ref type="bibr" target="#b4">(Choi et al., 2020</ref>; Fei et al., * Equal contributions. 1 Our code is at <ref type="url" target="https://github.com/cogito233/causal-sa">https://github.com/cogito233/causal-sa</ref>.</p><p>2023; <ref type="bibr" target="#b64">Truicȃ et al., 2021)</ref>, due to the subtle nature of the task including aspects such as inter-aspect relations, commonsense reasoning, among others <ref type="bibr" target="#b47">(Poria et al., 2023;</ref><ref type="bibr" target="#b68">Venkit et al., 2023)</ref>.</p><p>In this paper, we propose a causally-informed solution for the SA task. Different from the approach of naïvely applying up-to-date LLMs, we leverage insights from causal inference to propose a reformulation for SA into two tasks, as in Figure <ref type="figure">1</ref>: <ref type="bibr">(1)</ref> a causal discovery task to identify the cause-effect relation between the review X and the sentiment Y , and (2) the traditional prediction task f : x → y to model the sentiment using the review as input.</p><p>We first look into the causal discovery task. In the study of affect science <ref type="bibr" target="#b51">(Salovey and Mayer, 2004;</ref><ref type="bibr" target="#b0">Barrett, 2006;</ref><ref type="bibr" target="#b8">Feinstein, 2013)</ref>, language can be the cause of emotion (Satpute et al., 2013; Kassam and Mendes, 2013) -namely a review priming the following sentiment, i.e., the Causal Hypothesis C1 of X → Y ); or emotion can affect the use of language (Barrett, 2006) -namely sentiment priming the review as an ad-hoc justification for the emotion, i.e., the Causal Hypothesis C2 of Y → X. These two processes might arise from the data annotation process <ref type="bibr" target="#b22">(Jin et al., 2021)</ref>, but is hard to discover post-hoc in existing datasets.</p><p>Given the possibility of both causal directions X → Y or Y → X in the SA data, we identify the actual underlying mechanism based on insights from psychology <ref type="bibr" target="#b23">(Kahneman, 2011;</ref><ref type="bibr" target="#b6">Epstein, 1994)</ref>. Specifically, we identify the correspondence of the above two causal mechanisms with the Fast and Slow Thinking systems <ref type="bibr" target="#b23">(Kahneman, 2011)</ref>: (1) a review-driven sentiment (as in C1) largely resembles the Slow Thinking process applying reasoning based on evidence, and (2) the process of first coming up with the sentiment and then justifying it by a review (as in C2) conforms to Fast Thinking. Given this correspondence, we apply the peak-end rule Figure <ref type="figure">1</ref>: An overview of the paper structure, where we first investigate the causal discovery task, and then use it to improve LLM performance. For each document-level text review, we parse its emotion arc consisting of the sentiment of each sentence in the review, and then use the peak-end rule <ref type="bibr" target="#b25">(Kahneman et al., 1993;</ref><ref type="bibr" target="#b23">Kahneman, 2011)</ref> to identify whether the overall sentiment is an average of the arc (corresponding to Slow Thinking), or an average of the peak and end sentiments (corresponding to Fast Thinking).</p><p>from psychology <ref type="bibr" target="#b25">(Kahneman et al., 1993;</ref><ref type="bibr" target="#b23">Kahneman, 2011)</ref>. As shown in the right part of Figure <ref type="figure">1</ref>, we classify a sample as C1 if its overall sentiment score approximates an average of all the sentencelevel sentiments in the review, and as C2 if the overall sentiment score approximates an average of the peak and end sentiments.</p><p>Based on the identified causal mechanism behind SA data from the causal discovery task, we further explore how it can improve prediction performance in the era of LLMs. Existing literature highlights "causal alignment," namely to align the prediction direction along the underlying causal direction <ref type="bibr" target="#b22">(Jin et al., 2021;</ref><ref type="bibr" target="#b54">Schölkopf, 2022;</ref><ref type="bibr" target="#b56">Schölkopf et al., 2021)</ref>, but to our knowledge we are the first to explore how causal alignment improves model performance of SA in the era of LLMs. Specifically, we answer three subquestions: (Q1) If using the standard SA prompt, do models perform differently on C1/C2 data? (Q2) Does it help if we make the prompt aware of the underlying causality, i.e., use causal prompts? And (Q3) When prompted causally, do LLMs mechanistically understand the corresponding causal processes?</p><p>Our empirical results show that under the standard prompt, LLMs perform better on data corresponding to the C2 causal process. Moreover, causal prompts aligned with the causal direction of the data can substantially improve the performance of zero-shot SA. Finally, we apply mechanistic inter-pretability methods to probe the models, and find that there is still improvement space for LLMs to correctly grasp the essence of the two causal processes. In summary, the contributions of this paper are as follows:</p><p>1. We propose the dual nature of SA as a combination of two tasks: a causal discovery task, and a prediction task. 2. For causal discovery, we ground the two possible causal processes in psychology, and use the peak-end rule to identify them.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.">For the prediction task, we inspect existing</head><p>LLMs' performance on data corresponding to the two underlying causal processes, and design causal prompts to improve model performance by up to 32.13 F1 points.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">Problem Formulation of SA</head><p>In this section, we formulate SA as a combination of two tasks: the traditional prediction task in NLP and the causal discovery task in statistics, which we will introduce in the following.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.1">The Prediction Task (in NLP)</head><p>SA is a prediction task to identify the sentiment y given a piece of text x. We adopt the setup in most existing SA datasets <ref type="bibr" target="#b31">(Maas et al., 2011;</ref><ref type="bibr" target="#b76">Zhang et al., 2015;</ref><ref type="bibr" target="#b27">Keung et al., 2020)</ref>, where the text x is a review consisting of n sentences (t 1 , . . . , t n ), and the label y is a sentiment score corresponding to the star rating of the review in 1 (most negative), 2, . . . , 5 (most positive).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.2">The Cause-Effect Discovery Task (in Statistics)</head><p>As a separate problem, there is an established task in causal discovery, the causal-effect problem (see the review by Janzing, 2019), which aims to tell the cause from effect using only observational data. Its formal formulation is as follows: Suppose we have an i.i.d. dataset D := {(x i , y i )} n i=1 containing n observational data pairs of the two variables, X and Y . The task is to infer whether X causes Y (i.e., X → Y ), or Y causes X (i.e., Y → X), if one out of the two is true. In causality, "→" indicates the directional causal relation between two variables. The two hypotheses can also be expressed in their equivalent structural causal models (SCMs; <ref type="bibr" target="#b43">Pearl et al., 2000)</ref> as introduced in Peters et al. (2017):</p><formula xml:id="formula_0">Causal Hypothesis 1 (C1): X → Y<label>(1)</label></formula><formula xml:id="formula_1">⇔ Y := f Y (X, N Y ) with N Y ⊥ X ,<label>(2)</label></formula><p>Causal Hypothesis 2 (C2): Y → X</p><formula xml:id="formula_2">⇔ X := f X (Y, N X ) with N X ⊥ Y ,<label>(3)</label></formula><p>where N i is an unobserved noise term orthogonal to the input distribution.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.3">Causality and NLP Model Performance</head><p>For many years, causality and machine learning have been two separate domains on their own. Recently, researchers started to think about how the causal knowledge of the data can improve machine learning performance on the prediction task, especially for the two variable cause-effect case <ref type="bibr" target="#b55">(Schölkopf et al., 2012;</ref><ref type="bibr" target="#b22">Jin et al., 2021;</ref><ref type="bibr" target="#b38">Ni et al., 2022)</ref>. The essence of this line of research is that causality makes the two learning tasks x → y and y → x asymmetric, as one function's prediction direction aligns with the ground-truth causal direction behind the two random variables, and another contradicts. We call this phenomenon "causal alignment," or "direction match," of the prediction task and the causality.</p><p>To contrast the contribution of our work, we review the previous literature on causal alignment, which only shows its effect on the performance of trainedfrom-scratch machine learning models, without any indications in the era of LLMs: All the above findings are drawn under the training condition that we can isolate the training data to be only of one causal direction. In the era of LLMs, we have seen substantial differences: (1) the training data can be a mixture of both causal directions, (2) the operationalization of the prediction task is through prompting, but no longer a separate model for each direction, and, (3) in general, research has shifted to designing better prompts for already pre-trained models in their inference mode.</p><p>Given these changes, we use the rest of the paper to address the following research questions:</p><p>1. What is the causal direction in SA? (Section 3) 2. Can causal alignment help us improve SA prompts in the era of LLMs? (Section 4)</p><p>3 Causal Discovery: Does Sentiment Cause the Review, or Vice Versa?</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1">Problem Setup</head><p>As mentioned previously, the setup of the bivariate causal discovery problem is to infer whether X causes Y (C1), or Y causes X (C2), based on a dataset D := {(x i , y i )} n i=1 containing only observational data of the joint distribution.</p><p>Challenges The common paradigm to check causal discovery results is to generate simulated data, of which the ground truth causal graph is known <ref type="bibr" target="#b75">(Zhang and Hyvärinen, 2009;</ref><ref type="bibr" target="#b60">Spirtes and Zhang, 2016)</ref>. However, in the context of the es-tablished SA datasets, such as Yelp <ref type="bibr" target="#b76">(Zhang et al., 2015)</ref>, Amazon <ref type="bibr" target="#b27">(Keung et al., 2020)</ref>, and App Review <ref type="bibr" target="#b9">(Grano et al., 2017)</ref>, we would not be able to track each individual user and survey their original causal process when composing the review and the rating. Another solution would also be difficult, as it would require SA to abandon all the above wellestablished datasets, and meticulously collect new data while surveying the users' underlying causal process.</p><p>Our Approach In the context of our work, we propose that there are still rich findings that we could derive from the observation-only data in the existing datasets, without interviewing or conducting new costly data collection.</p><p>The key to our approach is the psychology theories of the two causal processes, as the relation between sentiment and text has been well-studied and verified by randomized control trials (RCTs), among many other experiments. In the rest of the section, we first introduce in Section 3.2 the psychology theories of fast and slow thinking, followed by the Peak-End Rule as the quantitative signal. Then, we operationalize the theory with computational techniques in Section 3.3, and the report findings on three different SA datasets in Section 3.4.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2">Psychological Processes Underlying Sentiment Processing</head><p>Two Systems of Emotional Responses In psychology, the bifurcation into System 1 and System 2 in human decision-making, including sentiment processing, has garnered substantial empirical support <ref type="bibr" target="#b23">(Kahneman, 2011;</ref><ref type="bibr" target="#b6">Epstein, 1994)</ref>.</p><p>System 1, or the "Fast Thinking" system, operates involuntarily, effortlessly, and without conscious awareness. It is often optimized in evolution to provide rapid responses to environmental stimuli (LeDoux, 1998), and guides most of our daily cognitive processing <ref type="bibr" target="#b23">(Kahneman, 2011)</ref>, and emotional responses such as fear or joy <ref type="bibr" target="#b74">(Zajonc, 1980)</ref>.</p><p>Conversely, System 2, often termed as "Slow Thinking," is deliberate, slower, and more rational, requires more conscious effort <ref type="bibr" target="#b23">(Kahneman, 2011)</ref>, and allows for self-regulation and thoughtful consideration before making decisions <ref type="bibr" target="#b1">(Baumeister et al., 1998)</ref>. The interplay between these systems influences everything from mundane to critical decisions, highlighting the complexity of human emotional and cognitive processing <ref type="bibr" target="#b24">(Kahneman and Frederick, 2002;</ref><ref type="bibr" target="#b23">Kahneman, 2011)</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Correspondence to the Two Causal Processes</head><p>There is a nice correspondence between the fast/slow thinking systems and our two causal hypotheses. As mentioned previously, the Causal Hypothesis 2 (C2) posits Y → X, where the sentiment Y causes the review X, which aligns well with the Fast Thinking system <ref type="bibr" target="#b23">(Kahneman, 2011;</ref><ref type="bibr" target="#b29">LeDoux, 1998)</ref> showing that, in the Fast Thinking system, people's emotional memories of an experience are disproportionately influenced by its most intense point (the "peak") and its conclusion (the "end"), rather than by the average experience as in the Slow Thinking system. The important role of peak and end for the fast thinking system implies that it is the intensity of specific moments that dominate memory and judgment.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.3">Operationalizing the Theory</head><p>We summarize the previous psychological insights in the upper left part of Figure <ref type="figure">1</ref>, where the Causal Hypothesis 1 corresponds to taking the average of all emotional experiences mentioned in the review X for the sentiment Y , and the Causal Hypothesis 2 uses the peak and end emotions in the review X to derive the sentiment Y . In this section, we introduce a formalization of the theory, and suggest signals to distinguish the two causal hypotheses.</p><p>Emotion Arc To capture the aforementioned trajectory of emotional experiences, we use the concept of the emotion arc example of which we visualize in Figure <ref type="figure">1</ref>. Contextualizing it in the task of SA, we formally define an emotion arc of the review as follows. Given a review x consisting of n sentences (t 1 , . . . , t n ), we identify the sentiment for each of them, thus obtaining a series of sentiment labels (s 1 , . . . , s n ).</p><p>We denote this series as the emotion arc e := (s 1 , . . . , s n ) of the review.</p><p>The Two Causal Processes Provided the notion of the emotion arc e := (s 1 , . . . , s n ) for a review x, we formulate the sentiment labels corresponding to the two causal processes as follows:</p><p>Slow Thinking (Causal Process 1):</p><formula xml:id="formula_4">ŷavg = 1 n (s 1 + • • • + s n ) ,<label>(5)</label></formula><formula xml:id="formula_5">λ 1 = |y -ŷavg | ,<label>(6)</label></formula><p>Fast Thinking (Causal Process 2):</p><formula xml:id="formula_6">ŷpeakEnd = 1 2 (Peak(s 1 , . . . , s n ) + s n ) ,<label>(7)</label></formula><formula xml:id="formula_7">λ 2 = |y -ŷpeakEnd | ,<label>(8)</label></formula><p>where λ i indicates the alignment of the actual sentiment y with the Causal Process i, and Peak(•) selects the sentiment with the strongest intensity by its distance from the neutral sentiment 3, which is the middle point among the sentiment range 1-5, i.e., Peak(s 1 , . . . , s n ) := s argmax i |s i -3| .</p><p>Here, we interpret λ i as an indicator for each causal process, where a small value (with the best value being zero) implies the alignment with the process i. We show two examples in Table <ref type="table" target="#tab_2">2</ref>, one aligning well with the Causal Process C1 with a small λ 1 , and another aligning well with the Causal Process C2 with a small λ 2 .  Since we need to utilize the emotion arc, we keep only reviews with at least five sentences, after sentence tokenization using the Spacy package (Honnibal and Montani, 2017). We apply this filtering above on the test set of the Yelp dataset, the English test of Amazon, and the unsplit entire dataset of App Review. We report the statistics of remaining samples in Table <ref type="table" target="#tab_1">1</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.4">Findings on</head><p>To obtain the emotion arcs, we calculate the sentiment score of each sentence produced by the Table <ref type="table">4</ref>: Performance on Yelp using the causal prompts on the two causal subsets. We report the average performance across the five paraphrases for each prompt, with the standard deviation.</p><p>sentiment-analysis pipeline 2 from Huggingface <ref type="bibr" target="#b71">(Wolf et al., 2020)</ref>.</p><p>Causal Discovery For each input sample, we process them as in Table <ref type="table" target="#tab_2">2</ref>, namely first obtaining the sentence-level sentiments to form the emotion arc, and then calculating the alignment scores λ 1 and λ 2 for each causal process, respectively. We consider an example as dominated by the causal process C i if the alignment score λ i is more optimal than the other. We report the resulting statistics in Table 1. For each dataset, we describe their overall statistics, as well as the statistics of data with the underlying causal process of C1, and that of C2. We can see that Yelp and Amazon have an almost balanced split of C1 and C2, while App Review has 61% C2 data compared to 39% C1 data. See Appendix B.2 for an additional visualization of the λ 1 -λ 2 distribution across the 1K data points.</p><p>4 How to Improve Sentiment Classifiers with Causal Alignment?</p><p>Using our proposed causal discovery method, we have identified two distinct subsets with their corresponding causal processes C1 and C2. Now, we address the last practical question proposed in Section 2.3:</p><p>Can causal alignment help us improve SA in the era of LLMs?</p><p>Specifically, we take the commonly used approach 2 <ref type="url" target="https://huggingface.co/distilbert-base-uncasedfinetuned-sst-2-english">https://huggingface.co/distilbert-base-uncasedfinetuned-sst-2-english</ref>. See details in Appendix A. <ref type="bibr">2.</ref> in the era of LLMs, i.e., prompting pre-trained LLMs for the SA task, and look into how alignment with the underlying causal process could help SA performance. We answer the following three subquestions in this section: Q1. Using the standard SA prompt, do models perform differently on C1/C2 data? (Section 4.1) Q2. Does it help if we make the prompt aware of the underlying causality, i.e., use causal prompts? (Section 4.2) Q3. When prompted causally, do LLMs really understand the causal processes? (Section 4. We also add a random baseline which uniformly samples the label space for each input.</p><p>We use the standard prompt formulation for SA in the format of "[Instruction] Review Text: {x}\n Label:". The experiments are on a set of randomly selected 1K samples from the test set of Yelp-5 <ref type="bibr" target="#b76">(Zhang et al., 2015)</ref>, due to the time-and cost-expensive inference of the above LLMs. (E.g., LLaMa/Alpaca takes 96 GPU hours to run.) See more experimental details in Appendix A.1.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results</head><p>We show the performance of the six LLMs in Table <ref type="table" target="#tab_3">3</ref>, and report the F1 and accuracy across the five-class classification on Yelp-5. We can see that the existing LLMs perform the best on the subset with the causal process C2, implying that the decision pattern of LLMs is closer to the Fast Thinking system, which takes the peak-end average of the emotion arc.</p><p>4.2 Q2: Do Causal Prompts Help?</p><p>Designing Causal Prompts Inspired by the fact that models perform differently on C1/C2 data, our next question is, will it help if we directly give a hint to the LLMs about the underlying causal graph?</p><p>Prompt Design C1</p><p>As a customer writing a review, I initially composed the following feedback: "[review]" After carefully considering the facts, I selected a star rating from the options of "1", "2", "3", "4", or "5". My final rating was: C2</p><p>As a customer writing a review, I initially selected a star rating from the options "1", "2", "3", "4", and "5", and then provided the following explanations in my review: "[review]" The review clarifies why I gave a rating of Table <ref type="table">5</ref>: Causally-aware prompts describing the SA task in contexts with the C1 and C2 causal graphs.</p><p>To this end, we propose the idea of causal prompts, which are prompts that describe the causal story behind the input and output variables. We list our designed prompts for the C1 and C2 stories in Table <ref type="table">5</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results</head><p>We report the performance for all combinations of the dataset natures and prompt natures in Table <ref type="table">4</ref>, where we find that the most-performant setting uses Prompt C2 on the data subset with the same causal nature, C2. This alignment leads to the best performance across almost all models by both F1 and accuracy. On the C2 data, we also see that Prompt C2 outperforms the standard SA prompt in Table <ref type="table" target="#tab_3">3</ref> by a substantial margin, such as 32.13 F1 points increase for GPT-2, and 14.23 F1 points increase for GPT-4.</p><p>However, although Prompt C2 shows a strong performance, the other causal prompt, i.e., Prompt C1, does not always help the data subset C1 in all cases, from which we raise a further question -how well do LLMs really mechanistically understand our prompts? We explore this question in the next section.</p><p>4.3 Q3: Can LLMs Correctly Capture the Causal Stories in the Prompts?</p><p>Although the proposal of the two causal prompts is intuitive for humans, we still need to inspect whether LLMs are able to understand them correctly.</p><p>Method Mechanistically, for a model to solve SA for the causal process C1 correctly, it needs to treat the sentence-level sentiments across all sentences equally; and for a model to solve SA for the causal process C2 correctly, it needs to pay more attention to the peak and end sentiments on the emotion arc.</p><p>Targeting the two mechanisms, we use causal tracing <ref type="bibr" target="#b33">(Meng et al., 2022)</ref> to attribute the final sentiment prediction to the source sentences in the input. Briefly, causal tracing uses causal mediation analysis <ref type="bibr" target="#b41">(Pearl, 2001)</ref> to quantify the causal contribution of the internal neuron activations of a model to its final prediction <ref type="bibr" target="#b69">(Vig et al., 2020)</ref>. We use causal tracing to inspect the causal effects of the hidden states on the model prediction, using the open-weight models, LLaMa and Alpaca. We use the causal effects of the first-layer neurons for each sentence, which we aggregate to obtain the final prediction. See implementation details in Appendix A.3.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results</head><p>We plot the causal attribution results of how much each sentence contributes to the final prediction in Figure <ref type="figure" target="#fig_3">2</ref>. Here, the ideal behavior of the models is that Prompt C1 should trigger uniform attention over all the sentences, which is roughly observed through the more even shades of color of the "Prompt C1" row than the "Prompt C2" row in Figure <ref type="figure" target="#fig_3">2</ref> in the row of "Prompt C1".</p><p>On the other hand, Prompt C2 should trigger more attention to the sentences corresponding to the peak and end sentiments. For this, we see the models have high attention to the middle sentence, as in the "Prompt C2" row in Figure <ref type="figure" target="#fig_3">2</ref>. The average causal effect of the peak sentence on predictions under Prompt C2 is 3% higher than the mean effect for the LLaMa model, and 39% higher for the Alpaca model. This aligns with our expectation that the peak sentence would have a high contribution. Nonetheless, note that no model sufficiently attends to the end sentence under Prompt C2. This implies that they do not fully grasp the expected contribution pattern of the peak-end rule, missing the significant role of the end sentence.  As for our causal prompts, the most similar studies are the non-causally-grounded explorations for prompt tuning, such as by varying the patterns of masked language modeling (Schick and Schütze, 2022) and using the noisy channel method <ref type="bibr" target="#b34">(Min et al., 2022)</ref>. However, these studies are not aware of the underlying causal processes, thus neglecting the connection of prompts with the causal nature of data, and also the explicit causal story of the sentiment-review relation.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6">Conclusion</head><p>In conclusion, we have formulated the task of SA into a prediction problem and a causal discovery problem. We first identified the cause-effect relation among existing SA datasets, namely whether the review primes the rating, or the sentimental judgment primed the review writing process. To achieve this causal discovery, we obtain insights from existing psychology studies, namely aligning the above two causal processes with the famous Fast Thinking and Slow Thinking systems, with their distinct qualitative signals. Given the causal understanding of the dataset, we further improve the performance of LLMs on SA using our proposed causal prompts. Our research paves the way for more causally-aware future research in SA.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Limitations and Future Work</head><p>This study has several limitations. First, the rapid progression of LLMs makes it challenging to keep up with all newly proposed models and architectures. Since our work covers only a set of recent LLMs at the time of this study, we encourage future research to apply our methods to additional LLMs and other SA datasets.</p><p>Although our study is grounded in well-established psychological theories, there remains the possibility that new theories could emerge, necessitating updates to the calculation of the λ values for the two causal processes. However, the causal processes identified in this work appear plausible, as evidenced by the effectiveness of the causally aligned prompts in improving language model performance.</p><p>Regarding the causal graph formulation, we focus on basic bivariate causal graphs, but future work could include more variables, such as confounders, mediators, and colliders.</p><p>The nature of this work is to introduce a paradigm shift for SA, and formulate the task differently. Therefore, we see lots of space for future extensions, such as to explore the causal nature of SA in different settings, different languages, and also aspect-based sentiment analysis <ref type="bibr">(Pontiki et</ref>  </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Ethical Considerations</head><p>Regarding data concerns and user privacy, our study employs several established NLP datasets, and the examples we cite do not include sensitive user information.</p><p>Concerning potential stakeholders and misuse, this research primarily introduces a new perspective on the SA task. A possible negative impact concerns the general application of SA, which could be used to analyze user mentality for surveillance or fraudulent purposes. We acknowledge that studies on SA inherently involve these risks, and we firmly oppose the misuse of SA models in such contexts.</p><p>Fernando Gonzalez joined the project in the final but crucial iteration, and helped with the implementation of the modeling part, mechanistic interpretability, as well as part of the data analysis.</p><p>Professors Mrinmaya Sachan, Rada Mihalcea, and Bernhard Schölkopf supervised the project and gave lots of constructive advice on the writing.</p><p>Prompt Design As a proficient data annotator in natural language processing (NLP), your responsibility is to determine the sentiment of the given review text. Please assign a sentiment value from "1" (very negative) to "5" (very positive). Review Text: "[review]" Sentiment Score: As a skilled data annotator in the field of natural language processing (NLP), your task is to evaluate the sentiment of the given review text. Please classify the sentiment using a scale from "1" (highly negative) to "5" (highly positive). Review Text: "[review]" Sentiment Rating: As an expert data annotator for NLP tasks, you are required to assess the sentiment of the provided review text. Kindly rate the sentiment on a scale of "1" (extremely negative) to "5" (extremely positive). Review Text: "[review]" Sentiment Score: As a proficient data annotator in natural language processing (NLP), your responsibility is to determine the sentiment of the given review text. Please assign a sentiment value from "1" (very negative) to "5" (very positive). Review Text: "[review]" Sentiment Assesment:</p><p>Table <ref type="table">6</ref>: Four additional paraphrases of the neutral prompt (C0) generated with GPT-4.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A.4.3 Causal Prompts</head><p>In addition to the standard C1 and C2 prompts in the main paper, we show the four paraphrases for each of them in Tables <ref type="table">7</ref> and<ref type="table" target="#tab_6">8</ref>, respectively.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B Additional Experimental Results</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B.1 Few-Shot Results</head><p>For reproducibility and controllability, we use the zero-shot prompting setting across the experiments in the main paper, to avoid randomness in fewshot prompting according to which examples are selected as the few shots, and the order of the examples.</p><p>As a supplementary information in case this is of some readers' interest, we provide the few-shot prompting results in Tables <ref type="table">9</ref> and<ref type="table" target="#tab_7">10</ref>.</p><formula xml:id="formula_8">B.2 λ 1 -λ 2 Distribution Plot</formula><p>To provide a clear understanding of the distributions of λ 1 and λ 2 , we include their density plots of the causal processes C1 and C2 in Figure <ref type="figure" target="#fig_5">3</ref>. The mean values of λ 1 and λ 2 for each group are in Table <ref type="table" target="#tab_1">11</ref>.</p><p>Further, we performed the Mann-Whitney U rank test to determine if the underlying distributions of Prompt Design As a customer sharing my experience, I crafted the following review: "[review]" Taking into account the details of my experience, I chose a star rating from the available options of "1","2", "3", "4", or "5". My ultimate rating is: As a client providing my opinion, I penned down the subsequent evaluation: "[review]" Upon thorough reflection of my encounter, I picked a star rating among the choices of "1","2", "3", "4", or "5". My conclusive rating stands at: As a patron expressing my thoughts, I drafted the ensuing commentary: "[review]" After meticulously assessing my experience, I opted for a star rating from the range of "1","2", "3", "4", or "5". My definitive rating turned out to be: As a consumer conveying my perspective, I authored the following assessment: "[review]" By carefully weighing the aspects of my interaction, I determined a star rating from the possibilities of "1","2", "3", "4", or "5". My final verdict on the rating is:</p><p>Table <ref type="table">7</ref>: Four additional paraphrases of the causal prompt C1 generated with GPT-4.</p><p>λ 1 and λ 2 for groups C1 and C2 are the same. The results are as follows:</p><p>• For λ 1 , the p-value is 8.4572 × 10 -71 , leading us to reject the null hypothesis that the two groups come from the same distribution. • For λ 2 , the p-value is 1.36138 × 10 -11 , also leading us to reject the null hypothesis that the distributions are the same.</p><p>These statistical results indicate significant differences between the distributions of λ 1 and λ 2 across the causal process groups, which indicate distinct underlying characteristics in the sentiment dynamics of the two groups.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>C Emotion Arc Clustering</head><p>We analyze the emotional arc patterns of Yelp reviews. Reagan et al. ( <ref type="formula">2016</ref>) identified 6 basic emotional arc shapes in stories. However, reviews are usually shorter and therefore present fewer variations. We take each sentence of the review and predict its sentiment. Then we divide the review into ten bins and compute an average sentence sentiment for each decile to make reviews with different lengths comparable. Reviews shorter than 10 sentences generate null values for some deciles which we fill with the information of the next decile. In Figure <ref type="figure" target="#fig_9">5</ref>, we illustrate the 4 clusters found, they have the following characteristics:</p><p>Positive + Early Rise: This cluster primarily comprises highly positive reviews, where customers Prompt Design As a customer sharing my experience, I first chose a star rating from the available choices of "1","2", "3", "4", or "5", and subsequently elaborated on my decision with the following statement: "[review]"</p><p>The review elucidates the reasoning behind my assigned rating of As a client providing my opinion, I initially picked a star rating from the range of "1" to "5", and then proceeded to justify my selection with the following commentary: "[review]"</p><p>The review sheds light on the rationale for my given rating of As a patron expressing my thoughts, I started by selecting a star rating from the scale of "1" to "5", and then offered an explanation for my choice in the following review text: "[review]"</p><p>The review expounds on the basis for my designated rating of As a consumer conveying my perspective, I began by opting for a star rating within the "1" to "5" spectrum, and then detailed my reasoning in the subsequent review passage: "[review]"</p><p>The review delineates the grounds for my conferred rating of Table <ref type="table">9</ref>: Few-shot performance of the standard SA prompts on Yelp-5. We use five paraphrases for the prompt, and report the average performance with the standard deviation.</p><p>express satisfaction and praise for their overall experience. Interestingly, 21.1% of these reviews begin with a negative first sentence, which often indicates initially low expectations or a negative first impression. However, despite the initial negativity, the reviews tend to turn positive as customers elaborate on their positive experiences.</p><p>Negative + Early Fall: This cluster mainly consists of predominantly negative reviews. Similarly to the Positive cluster, some reviews (28.14%) start with a sentence with the opposite sentiment, usually indicating high expectations followed by disappointment.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Rise:</head><p>The main characteristic of this cluster is the positive ending of the review, despite the initial negativity observed in the first half, with an average sentiment of -1.63. An important fraction of the reviews in this cluster (52.49%) start with a positive comment as a summary, but then proceed  to highlight the negative aspects of the experience. Despite the initial criticisms, the reviews conclude with positive points, suggesting that the overall experience was still satisfactory.</p><p>Fall: In contrast to the previous cluster, the Fall cluster is characterized by a negative ending of the review, despite a generally positive first half with an average sentiment of 2.18. An important proportion (36%) of the reviews in this cluster begin with a negative comment as a summary, but then proceed to describe the positive aspects before eventually highlighting the negative ones. This cluster showcases a shift in sentiment from positive to negative, indicating a decline in satisfaction as the review progresses.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>D Additional Interpretability by Shapley Values</head><p>We further analyze the effect of each part of the prompts on LLaMa's predictions. Using 50 reviews, we compute the shapley values of each to-  ken. In Figure <ref type="figure">6</ref> we observe that the tokens with the largest shapley values are the ones in the end, which is expected since they are the ones helping to form a grammatically correct sentence. To account for that, we subtracted the average shapley values computed for the other possible start rating answers. In Figure <ref type="figure">7</ref> we show the adjusted shapley values. We observe that the tokens in prompt C1 have a larger effect than the tokens in prompt C2. The words introducing the review have a positive effect on C2 but a negative one on C1. Whereas, the phrase "I chose a star rating" has a negative effect on C2 but a positive one on C1.   There are many better vegetarian and vegan options to choose from Review: I do like my Mad Mex, however predictable and non-authentic it may be. The portion sizes are mammoth and I come away with a satisfied sense of regret. Their beer menu is happily extensive. Charging me $9 for chips and salsa is a bit of crime, wouldn't ya say though!?! I mean, c'mon! Our service has most times been lackinga bit rushed and on the inattentive side. Also, why do you require your wait staff to not servestraws/ lemons/etc unless asked by cusotmers-weirdness-cut out these odd cost-cutting, anti-service friendly measures please </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head></head><label></label><figDesc>, as it rapidly generates an emotional reaction Y , and then writes text to justify it Y . On the other hand, the Causal Hypothesis 1 (C1) refers to the case where X → Y , namely the review X causing the sentiment Y . It is an instance of Slow Thinking (Baumeister et al., 1998; Kahneman and Frederick, 2002), which deliberately uses conscious efforts to list out the up-and downsides of an experience in the review X, and come up with a thoughtful final decision as the rating Y .Quantitative Signals of the Two Processes In sentiment processing, an evidence for the two processes is the famous<ref type="bibr" target="#b25">Kahneman et al. (1993)</ref> study illustrating the Peak-End Rule of how individuals recall and evaluate past emotional experiences, which we show in Figure1. As we know, fast thinking is prone to systematic biases and errors in the judgment<ref type="bibr" target="#b66">(Tversky and Kahneman, 1974)</ref>, and the<ref type="bibr" target="#b25">Kahneman et al. (1993)</ref> study provides important quantitative results</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head></head><label></label><figDesc>SA DatasetsDataset Setup We adopt three commonly used datasets in SA: Yelp<ref type="bibr" target="#b76">(Zhang et al., 2015)</ref>, Amazon<ref type="bibr" target="#b27">(Keung et al., 2020)</ref>, and App Review (Grano Example of a C1-Dominant Review • This was a great spot to take a break from it all and just people watch. s1 = 4.57 • We sat at the bar facing the casino and we were entertained the whole time.s2 = 4.67 • The mini grilled cheese (appetizer) was fantastic. s3 = 4.53 • It came with a tomato based dipping sauce that was the perfect compliment to the bite sized wedges. s4 = 4.20 • Tip -ask for two dipping sauces because one just won't do. s5 = 1.60 Stars y: 4 Psychology Scores (↓): λ1 = 0.0884 &lt; λ2 = 0.8683 Example of a C2-Dominant Review • I read the reviews and should have steered away... but it looked interesting. s1 = 3.72 • Salad was wilted, menus are on the wall, with no explanation so you are ordering blind, service was NOT with a smile from the bartender to the waitress, to the server who helped the waitress, and the waitress never checked back to see how everything is. s2 = 2.20 • Terribly overpriced for what you get, and as an Italian, this does not even pass for a facsimile thereof! s3 = 1.45 • Stay away for sure. s4 = 1.85 • I only gave them one star, as I had to fill something in, they should get no stars! s5 = 1.32 Stars y: 1 Psychology Scores (↓): λ1 = 1.1827 &gt; λ2 = 0.3647</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>3 ) 4 . 1</head><label>341</label><figDesc>Q1: Do Models Perform Differently on C1/C2 Data? Experimental Setup The first question is whether models perform differently on data with the causal nature of C1 or C2. We use the subsets identified by our psychologically-grounded causal discovery, and test a variety of available autoregressive LLMs, including the open-weight GPT-2 (Radford et al., 2019), LLaMa (Touvron et al., 2023), and Alpaca (Taori et al., 2023); as well as the closed-weight models with OpenAI API, the instruction-tuned GPT-3 (text-davinci-002) (Brown et al., 2020; Ouyang et al., 2022), GPT-3.5 (gpt-3.5turbo-0613), GPT-4 (gpt-4-0613) (OpenAI, 2023).</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 2 :</head><label>2</label><figDesc>Figure 2: Causal attribution in LLaMa-7B and Alpaca-7B, showing how much each sentence contributes to the prediction probability.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>(</head><label></label><figDesc>2011) uses the two systems of thinking to reveal the mechanisms of how people come up with their sentiment, where fast thinking conforms to the peak-end rule<ref type="bibr" target="#b25">(Kahneman et al., 1993)</ref>, and slow thinking is more reflective of the overall sentiment.Cause-Effect DistinctionDistinguishing the cause from effect based on observational data is a long-standing and fundamental problem in causality (Hoyer et al., 2008; Zhang and Hyvärinen, 2009; Janzing, 2019). Existing methods to address this problem are based on statistics (Hoyer et al., 2008; Peters et al., 2010; Shajarisales et al., 2015; Mooij et al., 2014), physics (Janzing, 2007; Janzing et al., 2016), information theory (Janzing et al., 2012; Chaves et al., 2014; Mejia et al., 2022), and algorithmic complexity (Janzing and Schölkopf, 2010; Jin et al., 2021). However, we are the first to look at the rich nature of NLP datasets, and directly approach the difference in the causal and anticausal mechanisms grounded in interdisciplinary insights.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Figure 3 :</head><label>3</label><figDesc>Figure 3: The λ1-λ2 density plots of C1 (above) and C2 (below).</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head></head><label></label><figDesc>1 ) 4.48 5.62 µ(λ 2 ) 7.31 3.02Table 11: Mean values of the lambdas for C1 and C2.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_7"><head>Figure 4 :</head><label>4</label><figDesc>Figure 4: The λ1-λ2 plot on Yelp-5 (left), Amazon (middle), and App Review (right). We draw the y = x diagonal line, and the orange dots in the upper-left triangle represent the C1-dominant subset, and green dots in the lower-right triangle are the C2-dominant subset.</figDesc><graphic coords="17,111.96,340.48,136.07,99.25" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_9"><head>Figure 5 :</head><label>5</label><figDesc>Figure 5: Four emotion arc clusters.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1"><head>Table 1 :</head><label>1</label><figDesc>Statistics of the entire datasets and their C1 and C2 subsets for Yelp, Amazon, and App Review. We can see that a roughly balanced number of reviews aligning with the C1 and C2 processes.</figDesc><table><row><cell></cell><cell>Yelp</cell><cell></cell><cell></cell><cell>Amazon</cell><cell></cell><cell></cell><cell>App Review</cell><cell></cell></row><row><cell>All</cell><cell>C1</cell><cell>C2</cell><cell>All</cell><cell>C1</cell><cell>C2</cell><cell>All</cell><cell>C1</cell><cell>C2</cell></row><row><cell cols="9"># Samples # Sents/Review 11.11 34,851 19,557 (56%) 15,294 (44%) 2,582 1,393 (54%) 1,189 (46%) 9,696 3,809 (39%) 5,887 (61%) 11.30 10.87 6.70 6.62 6.80 6.34 6.33 6.35 # Words/Sent 15.53 15.55 15.49 11.04 11.28 10.77 10.53 10.90 10.29 Vocab Size 64,864 48,889 44,826 10,271 7,609 7,049 20,248 12,773 15,400 Avg Sentiment 2.93 2.74 3.18 2.94 2.82 3.07 2.9 2.72 3.02 Avg λ1 3.78 2.97 4.83 3.77 3.10 4.55 6.03 5.18 6.58 Avg λ2 4.48 6.05 2.48 4.21 5.72 2.45 5.10 7.96 3.26</cell></row></table><note><p><p><ref type="bibr" target="#b50">(Reagan et al., 2016)</ref></p>, an</p></note></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2"><head>Table 2 :</head><label>2</label><figDesc>Examples of C1-and C2-dominant reviews. et al., 2017). For the Amazon data, we concatenate each review's title with its text. Since the model performance on many binary classification datasets is saturated (Poria et al., 2023; Yang et al., 2019), we use the 5-way classification version of the SA datasets when applicable.</figDesc><table /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_3"><head>Table 3 :</head><label>3</label><figDesc>±2.07 10.23 ±4.12 31.78 ±5.32 46.01 ±5.35 52.71 ±1.73 57.98 ±5.11 59.54 ±4.69 C1 Subset 21.36 ±2.26 5.80 ±3.11 27.30 ±4.73 37.77 ±7.66 43.96 ±2.93 58.64 ±1.48 58.62 ±2.54 C2 Subset 20.43 ±2.95 16.37 ±5.33 37.66 ±7.86 55.82 ±4.02 65.40 ±1.37 59.09 ±9.13 62.57 ±6.85 Accuracy Overall 19.78 ±2.07 23.06 ±2.10 39.28 ±5.07 47.72 ±4.19 53.22 ±1.35 58.36 ±4.13 59.84 ±4.17 C1 Subset 20.61 ±2.23 16.18 ±1.59 36.55 ±4.05 42.14 ±5.26 43.61 ±2.89 59.89 ±1.09 59.62 ±1.96 C2 Subset 18.86 ±2.78 30.79 ±2.68 42.33 ±7.24 53.93 ±3.91 63.93 ±1.28 56.66 ±8.08 60.08 ±7.05 Performance of different models on the five-class classification of Yelp-5. We use five paraphrases for the prompt (in Appendix A.4), and report the average performance with the standard deviation. Prompt=C1 20.47 ±2.47 6.12 ±2.77 55.16 ±7.16 52.74 ±5.04 38.36 ±6.66 60.62 ±3.24 54.23 ±4.17 Data=C1, Prompt=C2 20.26 ±2.31 15.98 ±3.59 36.22 ±8.95 35.10 ±5.40 54.44 ±1.64 52.85 ±6.01 58.58 ±3.33 Data=C2, Prompt=C1 22.35 ±3.02 31.98 ±8.66 56.69 ±8.46 54.74 ±14.26 74.64 ±3.06 78.18 ±1.21 72.52 ±3.68 Data=C2, Prompt=C2 20.35 ±2.18 48.50 ±7.66 66.82 ±7.90 71.22 ±3.99 77.09 ±1.33 78.16 ±1.81 76.80 ±1.36 Acc Data=C1, Prompt=C1 19.60 ±2.67 12.96 ±2.91 58.23 ±5.30 55.81 ±4.00 43.16 ±6.20 60.39 ±3.25 54.06 ±3.97 Data=C1, Prompt=C2 19.68 ±2.46 22.61 ±5.73 43.07 ±8.18 41.45 ±4.06 56.36 ±1.94 53.11 ±5.89 58.68 ±3.45 Data=C2, Prompt=C1 20.97 ±3.19 43.51 ±6.30 57.54 ±7.21 54.82 ±12.59 76.60 ±3.23 77.38 ±1.43 70.69 ±3.93 Data=C2, Prompt=C2 19.03 ±2.18 51.59 ±5.09 68.16 ±9.24 71.83 ±4.33 76.70 ±1.35 78.92 ±1.31 75.38 ±1.70</figDesc><table><row><cell></cell><cell></cell><cell>Random</cell><cell>GPT-2 XL LLaMa-7B Alpaca-7B</cell><cell>GPT-3</cell><cell>GPT-3.5</cell><cell>GPT-4</cell></row><row><cell>F1</cell><cell>Overall</cell><cell>19.82 Random</cell><cell>GPT-2 XL LLaMa-7B Alpaca-7B</cell><cell>GPT-3</cell><cell>GPT-3.5</cell><cell>GPT-4</cell></row><row><cell></cell><cell>Data=C1,</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>F1</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_6"><head>Table 8 :</head><label>8</label><figDesc>Four additional paraphrases of the causal prompt C2 generated with GPT-4.</figDesc><table><row><cell></cell><cell>Random</cell><cell>GPT-3 Few-Shot</cell></row><row><cell>F1 Accuracy</cell><cell>Overall C1 Subset 21.36 ±2.26 19.82 ±2.07 C2 Subset 20.43 ±2.95 Overall 19.78 ±2.07 C1 Subset 20.61 ±2.23 C2 Subset 18.86 ±2.78</cell><cell>63.35 ±0.80 54.44 ±1.24 75.65 ±0.45 64.14 ±0.86 54.22 ±1.28 75.18 ±0.53</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_7"><head>Table 10 :</head><label>10</label><figDesc>Few-shot performance on Yelp using two different causal prompts on the two causal subsets. We use five paraphrases for each prompt, and report the mean performance with the standard deviation.</figDesc><table /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_8"><head></head><label></label><figDesc>Adjusted shapley values for the 2 types of prompt.Positive + Early Rise Review: Was there last Friday. Seats right in front if the stage. The show was good. The headliner, while a bit long, was good. Fantastic service from our waitresses. Will definitely go back. Review: This is by far my favorite Panera location in the Pittsburgh area. Friendly, plenty of room to sit, and good quality food &amp; coffee. Panera is a great place to hang out and read the news -they even have free WiFi! Try their toasted sandwiches, especially the chicken bacon dijon. Negative + Early Fall Review: Pass on this place, there are better restaurants mere feet away. The menu here is too large, which is a sure sign none of the food is going to be good. And, its not good. Some of the salads are alright, but its just not good food. The service is friendly and prompt, but the beer is over priced. They do have a good selection though. This place is open late if you need a bite to eat, but there are so much better options out there. Review: Wings are overpriced. And the quality of them are bad. They were tough and greasy. The staff are pleasant but then over all experience was too expensive for a sports bar. Rise Review: To be honest, I feel that this is one of the most overpriced restaurants in the entire city. The food is average to good, the place is beautiful with outdoor seating, but in my opinion the price is just not worth it. They have a really good happy hour, so I would definitely recommend going to that and maybe trying an appetizer or two. Review: The first time I came here, I waited in line for 20 minutes. When it was my turn, I realized I left my wallet in the car. It hurt so bad, I didn't come back for a year. I can walk to this place from my house-which is dangerous because those biscuits are just OH SO DREAMY. I can't describe them. Just get some. Do I feel guilty about noshing on fabulous Strawberry Napoleons and Jewish Pizza (kind of like a modified, yet TOTALLY delicious fruitcake bar) at 10:15am? Hecks, naw... But they do have quiche and some other breakfast-y items for those who prefer a more traditional approach to your stomach's opening ceremony. Just go early :) They open at 10 on Saturdays. And bring cash...it's easier that way. Fall Review: It's cheap, I'll say that, but otherwise it's bland food served by workers who mostly don't seem to notice they're working, and when they do, only respond snarkily.</figDesc><table><row><cell></cell><cell></cell><cell cols="2">Prompt C1 Prompt C1</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell cols="2">Prompt C2 Prompt C2</cell><cell></cell><cell></cell></row><row><cell>As a customer sharing my experience , I craft ed the following review : T aking into account the details of my experience , I chose a star rating from the available options of " 1 ", " 2 ", " 3 ", " 4 ", or " 5 ". My ult imate rating is : As a customer sharing my experience , I craft ed the following review : T aking into account the details of my experience , I chose a star rating from the available options of " 1 ", " 2 ", " 3 ", " 4 ", or " 5 ". My ult imate rating is :</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>As a customer sharing my experience , I first chose a star rating from the available choices of " 1 ", " 2 ", " 3 ", " 4 ", and " 5 ", and subsequently elabor ated on my decision with the following statement : The review el uc id ates the reasoning behind my assigned rating of As a customer sharing my experience , I first chose a star rating from the available choices of " 1 ", " 2 ", " 3 ", " 4 ", and " 5 ", and subsequently elabor ated on my decision with the following statement : The review el uc id ates the reasoning behind my assigned rating of</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>0.02</cell><cell>1</cell><cell>0.2 0.00</cell><cell>0.3 0.02</cell><cell>0.4</cell><cell>0.04</cell><cell>0.5 Mean Shapley Values Mean Shapley Values</cell><cell>0.0 0.005</cell><cell>0.2 0.000</cell><cell>0.4</cell><cell>0.6 0.005</cell><cell>0.8 0.010</cell><cell>1.0</cell></row><row><cell></cell><cell></cell><cell cols="7">Figure 6: Shapley values for the 2 types of prompt. Figure 7:</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>9370</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_9"><head>Table 12 :</head><label>12</label><figDesc>Example reviews for each emotion arc cluster.</figDesc><table /></figure>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div><head>Acknowledgment</head><p>We thank <rs type="person">Luigi Gresele</rs> and <rs type="person">Dominik Janzing</rs> for constructive discussions of the formulation and landscape of existing literature of causality. We thank <rs type="person">Julius von Kügelgen</rs> for brainstorming the idea of quantifiable footprints for causal and anticausal relations as a followup of <ref type="bibr" target="#b22">Jin et al. (2021)</ref>. The work also benefits from the discussion with <rs type="person">Jacob Eisenstein</rs> on whether NLP datasets are causal or anticausal as a followup of <ref type="bibr" target="#b67">Veitch et al. (2021)</ref>. For the domain knowledge on psychology, especially affect science, we thank <rs type="person">Prof Erik C. Nook</rs> at the <rs type="affiliation">Department of Psychology at Princeton University</rs> for the discussions and pointers. We thank labmates at <rs type="affiliation">LIT lab at University of Michigan</rs> for many helpful feedback on the writing, especially <rs type="person">Joan Nwatu</rs>, <rs type="person">Siyang Liu</rs>, and <rs type="person">Aylin Gunal</rs>. This material is based in part upon works supported by the <rs type="funder">German Federal Ministry of Education and Research (BMBF): Tübingen AI Center</rs>, <rs type="grantNumber">FKZ: 01IS18039B</rs>; by the <rs type="programName">Machine Learning Cluster of Excellence</rs>, EXC number <rs type="grantNumber">2064/1 -</rs>Project number <rs type="grantNumber">390727645</rs>; by the <rs type="funder">Precision Health Initiative at the University of Michigan</rs>; by the <rs type="funder">John Templeton Foundation</rs> (Grant #<rs type="grantNumber">61156</rs>); by a <rs type="grantName">Responsible AI grant</rs> by the <rs type="funder">Haslerstiftung</rs>; and an <rs type="grantName">ETH Grant</rs> (<rs type="grantNumber">ETH-19 21-1</rs>). <rs type="person">Zhijing Jin</rs> is supported by PhD fellowships from the <rs type="funder">Future of Life Institute and Open Philanthropy</rs>, travel support from <rs type="funder">ELISE</rs> (<rs type="grantNumber">GA no 951847</rs>) for the <rs type="programName">ELLIS program</rs>, and API credits by the <rs type="programName">OpenAI Researcher Access Program</rs>.</p></div>
+			</div>
+			<listOrg type="funding">
+				<org type="funding" xml:id="_BPQ8C2E">
+					<idno type="grant-number">FKZ: 01IS18039B</idno>
+					<orgName type="program" subtype="full">Machine Learning Cluster of Excellence</orgName>
+				</org>
+				<org type="funding" xml:id="_gn7x9VE">
+					<idno type="grant-number">2064/1 -</idno>
+				</org>
+				<org type="funding" xml:id="_fUtp4hE">
+					<idno type="grant-number">390727645</idno>
+				</org>
+				<org type="funding" xml:id="_a9keVKk">
+					<idno type="grant-number">61156</idno>
+					<orgName type="grant-name">Responsible AI grant</orgName>
+				</org>
+				<org type="funding" xml:id="_FmRaegB">
+					<idno type="grant-number">ETH-19 21-1</idno>
+					<orgName type="grant-name">ETH Grant</orgName>
+				</org>
+				<org type="funding" xml:id="_dnmmAfM">
+					<idno type="grant-number">GA no 951847</idno>
+					<orgName type="program" subtype="full">ELLIS program</orgName>
+				</org>
+				<org type="funding" xml:id="_WwKVXnB">
+					<orgName type="program" subtype="full">OpenAI Researcher Access Program</orgName>
+				</org>
+			</listOrg>
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Author Contributions</head><p>For the idea formulation, Zhijing Jin drew inspirations from her previous work <ref type="bibr" target="#b22">(Jin et al., 2021)</ref> and proposed to extend it to LLMs. During the internship of Zhiheng Lyu at ETH Zürich hosted under Prof Mrinmaya Sachan and mentored by Zhijing, Zhiheng first explored whether LLMs show a distinct fingerprint for causal and anticausal prompts in a workshop paper <ref type="bibr" target="#b30">(Lyu et al., 2022)</ref>. Then Zhijing got inspired by chats with psychology researchers in affect science that the phenomena of sentiment-primed text and text-primed sentiments can be grounded in actual psychology studies. Hence, we started to explore this paper's idea together.</p><p>Zhiheng Lyu conducted all the experiments and analyses, proposed various novel experimental designs, structured the storyline, and did tremendous hard work to make the paper happen.</p><p>Zhijing Jin closely mentored the project, proposed the initial idea as well as the Fast and Slow Thinking formulation, and wrote the entire current version of the paper.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A Implementation Details</head><p>A.1 Model Details Using Closed-Weight Models For the use of GPT model series, we use the OpenAI API, 3 with a text generation temperature of 0. We spent around 400 USD across around 20-30K single API calls.</p><p>Using Open-Weight Models For reproducibility, we set the generation temperature to 0 for all the models used in our work. For the open-weight models, GPT2-XL, LLaMa-7B and Alpaca-7B, it took around 24 hours on 4 GPUs RTX 2080 to generate their predictions on 1K data points for the 5 paraphrases of the causally-neutral prompt (denoted as C0), and on 500 data points for the 5 paraphrases of the C1 prompt, and 5 paraphrases of the C2 prompt. The causal tracing experiments with LLaMa-7B and Alpaca-7B on 100 data points took around 24 hours each using one GPU V100.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A.2 Sentence Sentiment Score Calculation</head><p>We apply the inverse sigmoid function to convert sentiment score probabilities from the range [0</p><p>where p is the probability of the positive class.</p><p>In practice, we cap the output of the logit function to the range [-10, 10] as the sentence sentiment score. Namely, score(p) = max(-10, min(10, log (logit(p)))) .</p><p>In this way, our scores fall between -10 and 10, corresponding approximately to probabilities of the positive label between 0.0001 and 0.9999.</p><p>To map our 5-class scores to the [-10, 10] range, we assign the class labels as follows: -10 corresponds to the label 1, -5 to the label 2, 0 to the label 3, 5 to the label 4, and 10 to the label 5.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A.3 Implementation Details for Causal Tracing</head><p>We introduce the workings of the causal tracing method <ref type="bibr" target="#b33">(Meng et al., 2022)</ref> as follows. First, we compute the hidden states of the residual stream of LLaMa-7B's layers for two inputs, (1) the original 3 <ref type="url" target="https://openai.com/api/">https://openai.com/api/</ref> input: the prompt+review, and (2) the corrupted input: prompt + a corrupted version of the review by adding random noise immediately after the token embeddings. Then, we restore one by one the clean state of the residual stream into the corrupted version and measure the effect of the clean state on the probability of the originally predicted token for each token sequence and layer position.</p><p>Since this process is highly time-consuming, taking around 12 hours for 50 samples even using the smallest LLaMa model with 7B parameters, we do a case study on the 7B LLaMa and Alpaca using 100 random samples from the 1K test set. For these experiments, we follow the idea of APE <ref type="bibr" target="#b77">(Zhou et al., 2023)</ref> to use the best-performing prompts on the 1k test set for C1 and C2.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A.4 Prompts</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A.4.1 Prompts to Get Paraphrases</head><p>Since we need to report the average performance across five paraphrases of the same prompt, for each original prompt, we call GPT to generate the four paraphrases.</p><p>Below is the prompt that we used for this paraphrase generation process:</p><p>You are an expert in prompt engineering for large language models (LLMs). And you are also a native English speaker who writes fluent and grammatically correct text.</p><p>Given the following prompt for NLP sentiment analysis, you provide four alternative prompts. We queried the GPT-4 model with temperature 0 on June 8, 2023.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A.4.2 Neutral Prompt</head><p>In addition to the standard prompt to query LLMs in the main paper, we show its four paraphrases in Table <ref type="table">6</ref>.</p></div>			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Solving the emotion paradox: Categorization and the experience of emotion</title>
+		<author>
+			<persName><forename type="first">Lisa</forename><surname>Feldman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Barrett</forename></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Personality and social psychology review</title>
+		<imprint>
+			<biblScope unit="volume">10</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="20" to="46" />
+			<date type="published" when="2006">2006</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Ego depletion: is the active self a limited resource</title>
+		<author>
+			<persName><surname>Rf Baumeister</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Bratslavsky</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Muraven</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Tice</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Personality and Social Psychology</title>
+		<imprint>
+			<biblScope unit="volume">74</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="1252" to="1265" />
+			<date type="published" when="1998">1998</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Language models are fewshot learners</title>
+		<author>
+			<persName><forename type="first">B</forename><surname>Tom</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Benjamin</forename><surname>Brown</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Nick</forename><surname>Mann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Melanie</forename><surname>Ryder</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jared</forename><surname>Subbiah</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Prafulla</forename><surname>Kaplan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Arvind</forename><surname>Dhariwal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pranav</forename><surname>Neelakantan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Girish</forename><surname>Shyam</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Amanda</forename><surname>Sastry</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sandhini</forename><surname>Askell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ariel</forename><surname>Agarwal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Gretchen</forename><surname>Herbert-Voss</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tom</forename><surname>Krueger</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Rewon</forename><surname>Henighan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Aditya</forename><surname>Child</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Daniel</forename><forename type="middle">M</forename><surname>Ramesh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jeffrey</forename><surname>Ziegler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Clemens</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Christopher</forename><surname>Winter</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mark</forename><surname>Hesse</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Eric</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mateusz</forename><surname>Sigler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Scott</forename><surname>Litwin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Benjamin</forename><surname>Gray</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jack</forename><surname>Chess</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Christopher</forename><surname>Clark</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sam</forename><surname>Berner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alec</forename><surname>Mccandlish</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ilya</forename><surname>Radford</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dario</forename><surname>Sutskever</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Amodei</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Advances in Neural Information Processing Systems 33: Annual Conference on Neural Information Processing Systems 2020</title>
+		<meeting><address><addrLine>NeurIPS; virtual</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2020-12-06">2020. 2020. December 6-12, 2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Inferring latent structures via information inequalities</title>
+		<author>
+			<persName><forename type="first">Rafael</forename><surname>Chaves</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lukas</forename><surname>Luft</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">O</forename><surname>Thiago</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">David</forename><surname>Maciel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dominik</forename><surname>Gross</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bernhard</forename><surname>Janzing</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Schölkopf</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the Thirtieth Conference on Uncertainty in Artificial Intelligence, UAI 2014</title>
+		<meeting>the Thirtieth Conference on Uncertainty in Artificial Intelligence, UAI 2014<address><addrLine>Quebec City, Quebec, Canada</addrLine></address></meeting>
+		<imprint>
+			<publisher>AUAI Press</publisher>
+			<date type="published" when="2014-07-23">2014. July 23-27, 2014</date>
+			<biblScope unit="page" from="112" to="121" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Improving document-level sentiment classification using importance of sentences</title>
+		<author>
+			<persName><forename type="first">Gihyeon</forename><surname>Choi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shinhyeok</forename><surname>Oh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Harksoo</forename><surname>Kim</surname></persName>
+		</author>
+		<idno type="DOI">10.3390/e22121336</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Entropy</title>
+		<imprint>
+			<biblScope unit="volume">22</biblScope>
+			<biblScope unit="issue">12</biblScope>
+			<biblScope unit="page">1336</biblScope>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Learning with compositional semantics as structural inference for subsentential sentiment analysis</title>
+		<author>
+			<persName><forename type="first">Yejin</forename><surname>Choi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Claire</forename><surname>Cardie</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Conference on Empirical Methods in Natural Language Processing</title>
+		<meeting><address><addrLine>Honolulu, Hawaii, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>ACL</publisher>
+			<date type="published" when="2008-10-27">2008. 2008. 25-27 October 2008</date>
+			<biblScope unit="page" from="793" to="801" />
+		</imprint>
+	</monogr>
+	<note>, A meeting of SIGDAT, a Special Interest Group of the ACL</note>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Integration of the cognitive and the psychodynamic unconscious</title>
+		<author>
+			<persName><forename type="first">Seymour</forename><surname>Epstein</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">American psychologist</title>
+		<imprint>
+			<biblScope unit="volume">49</biblScope>
+			<biblScope unit="issue">8</biblScope>
+			<biblScope unit="page">4</biblScope>
+			<date type="published" when="1994">1994</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Reasoning implicit sentiment with chain-of-thought prompting</title>
+		<author>
+			<persName><forename type="first">Bobo</forename><surname>Hao Fei</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qian</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lidong</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Fei</forename><surname>Bing</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tat-Seng</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Chua</surname></persName>
+		</author>
+		<idno type="DOI">10.18653/v1/2023.acl-short.101</idno>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 61st Annual Meeting of the Association for Computational Linguistics</title>
+		<meeting>the 61st Annual Meeting of the Association for Computational Linguistics<address><addrLine>Toronto, Canada</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computational Linguistics</publisher>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="page" from="1171" to="1182" />
+		</imprint>
+	</monogr>
+	<note>: Short Papers)</note>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Lesion studies of human emotion and feeling</title>
+		<author>
+			<persName><forename type="first">Justin</forename><forename type="middle">S</forename><surname>Feinstein</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Current opinion in neurobiology</title>
+		<imprint>
+			<biblScope unit="volume">23</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page">8</biblScope>
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<monogr>
+		<title level="m" type="main">Software applications user reviews</title>
+		<author>
+			<persName><forename type="first">Giovanni</forename><surname>Grano</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andrea</forename><forename type="middle">Di</forename><surname>Sorbo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Francesco</forename><surname>Mercaldo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Corrado</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Gerardo</forename><surname>Visaggio</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sebastiano</forename><surname>Canfora</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Panichella</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+			<biblScope unit="volume">4</biblScope>
+			<biblScope unit="page">5</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Predicting the semantic orientation of adjectives</title>
+		<author>
+			<persName><forename type="first">Vasileios</forename><surname>Hatzivassiloglou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kathleen</forename><forename type="middle">R</forename><surname>Mckeown</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 35th annual meeting of the association for computational linguistics and eighth conference of the european chapter of the association for computational linguistics</title>
+		<meeting>the 35th annual meeting of the association for computational linguistics and eighth conference of the european chapter of the association for computational linguistics</meeting>
+		<imprint>
+			<publisher>Association for Computational Linguistics</publisher>
+			<date type="published" when="1997">1997</date>
+			<biblScope unit="page" from="174" to="181" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Effects of adjective orientation and gradability on sentence subjectivity</title>
+		<author>
+			<persName><forename type="first">Vasileios</forename><surname>Hatzivassiloglou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Janyce</forename><forename type="middle">M</forename><surname>Wiebe</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 18th conference on Computational linguistics</title>
+		<meeting>the 18th conference on Computational linguistics</meeting>
+		<imprint>
+			<date type="published" when="2000">2000</date>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="page">8</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Aspect-based sentiment analysis using BERT</title>
+		<author>
+			<persName><forename type="first">Mickel</forename><surname>Hoang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Oskar</forename><surname>Alija Bihorac</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jacobo</forename><surname>Rouces</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 22nd Nordic Conference on Computational Linguistics</title>
+		<meeting>the 22nd Nordic Conference on Computational Linguistics<address><addrLine>NoDaLiDa; Turku, Finland</addrLine></address></meeting>
+		<imprint>
+			<publisher>Linköping University Electronic Press</publisher>
+			<date type="published" when="2019-09-30">2019. 2019. September 30 -October 2, 2019</date>
+			<biblScope unit="page" from="187" to="196" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<monogr>
+		<title level="m" type="main">spaCy 2: Natural language understanding with Bloom embeddings, convolutional neural networks and incremental parsing</title>
+		<author>
+			<persName><forename type="first">Matthew</forename><surname>Honnibal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ines</forename><surname>Montani</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+	<note>To appear</note>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">Nonlinear causal discovery with additive noise models</title>
+		<author>
+			<persName><forename type="first">Patrik</forename><forename type="middle">O</forename><surname>Hoyer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dominik</forename><surname>Janzing</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Joris</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jonas</forename><surname>Mooij</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bernhard</forename><surname>Peters</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Schölkopf</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the Twenty-Second Annual Conference on Neural Information Processing Systems</title>
+		<meeting>the Twenty-Second Annual Conference on Neural Information Processing Systems<address><addrLine>Vancouver, British Columbia, Canada</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2008-12-08">2008. December 8-11, 2008</date>
+			<biblScope unit="page" from="689" to="696" />
+		</imprint>
+	</monogr>
+	<note>Advances in Neural Information Processing Systems 21</note>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title/>
+	</analytic>
+	<monogr>
+		<title level="j">Inc</title>
+		<imprint>
+			<biblScope unit="volume">8</biblScope>
+			<publisher>Curran Associates</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<monogr>
+		<title level="m" type="main">A systematic review of aspect-based sentiment analysis (ABSA): domains, methods, and trends</title>
+		<author>
+			<persName><forename type="first">Cathy</forename><surname>Yan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Paul</forename><surname>Hua</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Katerina</forename><surname>Denny</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jörg</forename><surname>Taskova</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Wicker</surname></persName>
+		</author>
+		<idno type="DOI">10.48550/ARXIV.2311.10777</idno>
+		<idno>CoRR, abs/2311.10777</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<monogr>
+		<author>
+			<persName><forename type="first">Dominik</forename><surname>Janzing</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:0708.3411</idno>
+		<title level="m">On causally asymmetric versions of occam&apos;s razor and their relation to thermodynamics</title>
+		<imprint>
+			<date type="published" when="2007">2007</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">The cause-effect problem: Motivation, ideas, and popular misconceptions</title>
+		<author>
+			<persName><forename type="first">Dominik</forename><surname>Janzing</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/978-3-030-21810-2\_1</idno>
+	</analytic>
+	<monogr>
+		<title level="m">Cause Effect Pairs in Machine Learning</title>
+		<editor>
+			<persName><forename type="first">Isabelle</forename><surname>Guyon</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Alexander</forename><forename type="middle">R</forename><surname>Statnikov</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Berna</forename><surname>Bakir</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Batu</forename></persName>
+		</editor>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="page">8</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">Algorithmic independence of initial condition and dynamical law in thermodynamics and 9362 causal inference</title>
+		<author>
+			<persName><forename type="first">Dominik</forename><surname>Janzing</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Rafael</forename><surname>Chaves</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bernhard</forename><surname>Schölkopf</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">New Journal of Physics</title>
+		<imprint>
+			<biblScope unit="volume">18</biblScope>
+			<biblScope unit="issue">9</biblScope>
+			<biblScope unit="page">93052</biblScope>
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">Informationgeometric approach to inferring causal directions</title>
+		<author>
+			<persName><forename type="first">Dominik</forename><surname>Janzing</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Joris</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kun</forename><surname>Mooij</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jan</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jakob</forename><surname>Lemeire</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Povilas</forename><surname>Zscheischler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bastian</forename><surname>Daniusis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bernhard</forename><surname>Steudel</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Schölkopf</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.artint.2012.01.002</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Artif. Intell</title>
+		<imprint>
+			<biblScope unit="volume">182</biblScope>
+			<biblScope unit="issue">183</biblScope>
+			<biblScope unit="page" from="1" to="31" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">Causal inference using the algorithmic Markov condition</title>
+		<author>
+			<persName><forename type="first">Dominik</forename><surname>Janzing</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bernhard</forename><surname>Schölkopf</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Transactions on Information Theory</title>
+		<imprint>
+			<biblScope unit="volume">56</biblScope>
+			<biblScope unit="issue">10</biblScope>
+			<biblScope unit="page">8</biblScope>
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">Causal direction of data collection matters: Implications of causal and anticausal learning for NLP</title>
+		<author>
+			<persName><forename type="first">Zhijing</forename><surname>Jin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jingwei</forename><surname>Julius Von Kügelgen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tejas</forename><surname>Ni</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ayush</forename><surname>Vaidhya</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mrinmaya</forename><surname>Kaushal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bernhard</forename><surname>Sachan</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Schoelkopf</surname></persName>
+		</author>
+		<idno type="DOI">10.18653/v1/2021.emnlp-main.748</idno>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2021 Conference on Empirical Methods in Natural Language Processing</title>
+		<meeting>the 2021 Conference on Empirical Methods in Natural Language Processing</meeting>
+		<imprint>
+			<publisher>Association for Computational Linguistics</publisher>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="page">9</biblScope>
+		</imprint>
+	</monogr>
+	<note>, pages 9499-9513, Online and Punta Cana, Dominican Republic</note>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">Thinking, fast and slow</title>
+		<author>
+			<persName><forename type="first">Daniel</forename><surname>Kahneman</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Farrar</title>
+		<imprint>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page">8</biblScope>
+			<date type="published" when="2011">2011</date>
+			<publisher>Straus and Giroux</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<monogr>
+		<title level="m" type="main">Representativeness revisited: Attribute substitution in intuitive judgment</title>
+		<author>
+			<persName><forename type="first">Daniel</forename><surname>Kahneman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shane</forename><surname>Frederick</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2002">2002</date>
+			<publisher>Cambridge University Press</publisher>
+			<biblScope unit="page" from="49" to="81" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<title level="a" type="main">When more pain is preferred to less: Adding a better end</title>
+		<author>
+			<persName><forename type="first">Barbara</forename><forename type="middle">L</forename><surname>Daniel Kahneman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Charles</forename><forename type="middle">A</forename><surname>Fredrickson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Donald</forename><forename type="middle">A</forename><surname>Schreiber</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Redelmeier</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Psychological science</title>
+		<imprint>
+			<biblScope unit="volume">4</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page">8</biblScope>
+			<date type="published" when="1993">1993</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<analytic>
+		<title level="a" type="main">The effects of measuring emotion: Physiological reactions to emotional situations depend on whether someone is asking</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Karim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wendy</forename><forename type="middle">Berry</forename><surname>Kassam</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Mendes</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">PloS one</title>
+		<imprint>
+			<biblScope unit="volume">8</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page">8</biblScope>
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<title level="a" type="main">The multilingual Amazon reviews corpus</title>
+		<author>
+			<persName><forename type="first">Phillip</forename><surname>Keung</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yichao</forename><surname>Lu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">György</forename><surname>Szarvas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Noah</forename><forename type="middle">A</forename><surname>Smith</surname></persName>
+		</author>
+		<idno type="DOI">10.18653/v1/2020.emnlp-main.369</idno>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2020 Conference on Empirical Methods in Natural Language Processing (EMNLP)</title>
+		<meeting>the 2020 Conference on Empirical Methods in Natural Language Processing (EMNLP)</meeting>
+		<imprint>
+			<publisher>Association for Computational Linguistics</publisher>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="page">8</biblScope>
+		</imprint>
+	</monogr>
+	<note>Online</note>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<analytic>
+		<title level="a" type="main">Convolutional neural networks for sentence classification</title>
+		<author>
+			<persName><forename type="first">Yoon</forename><surname>Kim</surname></persName>
+		</author>
+		<idno type="DOI">10.3115/v1/d14-1181</idno>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2014 Conference on Empirical Methods in Natural Language Processing, EMNLP 2014</title>
+		<meeting>the 2014 Conference on Empirical Methods in Natural Language Processing, EMNLP 2014<address><addrLine>Doha, Qatar</addrLine></address></meeting>
+		<imprint>
+			<publisher>ACL</publisher>
+			<date type="published" when="2014-10-25">2014. October 25-29, 2014</date>
+			<biblScope unit="page" from="1746" to="1751" />
+		</imprint>
+	</monogr>
+	<note>, A meeting of SIGDAT, a Special Interest Group of the ACL</note>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<monogr>
+		<author>
+			<persName><forename type="first">Joseph</forename><forename type="middle">E</forename><surname>Ledoux</surname></persName>
+		</author>
+		<title level="m">The emotional brain: The mysterious underpinnings of emotional life</title>
+		<imprint>
+			<publisher>Simon and Schuster</publisher>
+			<date type="published" when="1998">1998</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<analytic>
+		<title level="a" type="main">Can large language models distinguish cause from effect?</title>
+		<author>
+			<persName><forename type="first">Zhiheng</forename><surname>Lyu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhijing</forename><surname>Jin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Rada</forename><surname>Mihalcea</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mrinmaya</forename><surname>Sachan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bernhard</forename><surname>Schölkopf</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">UAI 2022 Workshop on Causal Representation Learning</title>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<analytic>
+		<title level="a" type="main">Learning word vectors for sentiment analysis</title>
+		<author>
+			<persName><forename type="first">Andrew</forename><surname>Maas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Raymond</forename><forename type="middle">E</forename><surname>Daly</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Peter</forename><forename type="middle">T</forename><surname>Pham</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dan</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andrew</forename><forename type="middle">Y</forename><surname>Ng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Christopher</forename><surname>Potts</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 49th annual meeting of the association for computational linguistics: Human language technologies</title>
+		<meeting>the 49th annual meeting of the association for computational linguistics: Human language technologies</meeting>
+		<imprint>
+			<date type="published" when="2011">2011</date>
+			<biblScope unit="page" from="142" to="150" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<analytic>
+		<title level="a" type="main">Obtaining causal information by merging datasets with MAXENT</title>
+		<author>
+			<persName><forename type="first">Sergio</forename><surname>Hernan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Garrido</forename><surname>Mejia</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Elke</forename><surname>Kirschbaum</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dominik</forename><surname>Janzing</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Artificial Intelligence and Statistics, AIS-TATS 2022</title>
+		<title level="s">Proceedings of Machine Learning Research</title>
+		<meeting><address><addrLine>Virtual Event</addrLine></address></meeting>
+		<imprint>
+			<publisher>PMLR</publisher>
+			<date type="published" when="2022-03">2022. March 2022</date>
+			<biblScope unit="volume">151</biblScope>
+			<biblScope unit="page" from="581" to="603" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<monogr>
+		<title level="m" type="main">Locating and editing factual associations in gpt</title>
+		<author>
+			<persName><forename type="first">Kevin</forename><surname>Meng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">David</forename><surname>Bau</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alex</forename><surname>Andonian</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yonatan</forename><surname>Belinkov</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2202.05262.7</idno>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page">14</biblScope>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<analytic>
+		<title level="a" type="main">Noisy channel language model prompting for few-shot text classification</title>
+		<author>
+			<persName><forename type="first">Sewon</forename><surname>Min</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mike</forename><surname>Lewis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hannaneh</forename><surname>Hajishirzi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Luke</forename><surname>Zettlemoyer</surname></persName>
+		</author>
+		<idno type="DOI">10.18653/v1/2022.acl-long.365</idno>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 60th Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers)</title>
+		<meeting>the 60th Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers)<address><addrLine>Dublin, Ireland</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computational Linguistics</publisher>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page" from="5316" to="5330" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<monogr>
+		<title level="m" type="main">Distinguishing cause from effect using observational data: Methods and benchmarks</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Joris</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jonas</forename><surname>Mooij</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dominik</forename><surname>Peters</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jakob</forename><surname>Janzing</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bernhard</forename><surname>Zscheischler</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Schölkopf</surname></persName>
+		</author>
+		<idno>CoRR, abs/1412.3773</idno>
+		<imprint>
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b36">
+	<analytic>
+		<title level="a" type="main">Document-level sentiment classification: An empirical comparison between svm and ann</title>
+		<author>
+			<persName><forename type="first">Rodrigo</forename><surname>Moraes</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">João</forename><forename type="middle">Francisco</forename><surname>Valiati</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wilson P Gavião</forename><surname>Neto</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Expert Systems with Applications</title>
+		<imprint>
+			<biblScope unit="volume">40</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="621" to="633" />
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b37">
+	<analytic>
+		<title level="a" type="main">Sentiment analysis: Capturing favorability using natural language processing</title>
+		<author>
+			<persName><forename type="first">Tetsuya</forename><surname>Nasukawa</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jeonghee</forename><surname>Yi</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2nd international conference on Knowledge capture</title>
+		<meeting>the 2nd international conference on Knowledge capture</meeting>
+		<imprint>
+			<publisher>ACM</publisher>
+			<date type="published" when="2003">2003</date>
+			<biblScope unit="page" from="70" to="77" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b38">
+	<analytic>
+		<title level="a" type="main">Original or translated? A causal analysis of the impact of translationese on machine translation performance</title>
+		<author>
+			<persName><forename type="first">Jingwei</forename><surname>Ni</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhijing</forename><surname>Jin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Markus</forename><surname>Freitag</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mrinmaya</forename><surname>Sachan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bernhard</forename><surname>Schölkopf</surname></persName>
+		</author>
+		<idno type="DOI">10.48550/arXiv.2303.08774</idno>
+		<idno>CoRR, abs/2303.08774</idno>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2022 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies</title>
+		<meeting>the 2022 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies<address><addrLine>Seattle, United States</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computational Linguistics. 3 OpenAI</publisher>
+			<date type="published" when="2022">2022. 2023</date>
+			<biblScope unit="page" from="5303" to="5320" />
+		</imprint>
+	</monogr>
+	<note type="report_type">GPT-4 technical report</note>
+</biblStruct>
+
+<biblStruct xml:id="b39">
+	<monogr>
+		<title level="m" type="main">Training language models to follow instructions with human feedback</title>
+		<author>
+			<persName><forename type="first">Long</forename><surname>Ouyang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jeff</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xu</forename><surname>Jiang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Diogo</forename><surname>Almeida</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Carroll</forename><forename type="middle">L</forename><surname>Wainwright</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pamela</forename><surname>Mishkin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chong</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sandhini</forename><surname>Agarwal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Katarina</forename><surname>Slama</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alex</forename><surname>Ray</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">John</forename><surname>Schulman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jacob</forename><surname>Hilton</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Fraser</forename><surname>Kelton</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Luke</forename><surname>Miller</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Maddie</forename><surname>Simens</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Amanda</forename><surname>Askell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Peter</forename><surname>Welinder</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Paul</forename><forename type="middle">F</forename><surname>Christiano</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jan</forename><surname>Leike</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ryan</forename><surname>Lowe</surname></persName>
+		</author>
+		<idno type="DOI">10.48550/arXiv.2203.02155</idno>
+		<idno>CoRR, abs/2203.02155</idno>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b40">
+	<analytic>
+		<title level="a" type="main">Thumbs up? Sentiment classification using machine learning techniques</title>
+		<author>
+			<persName><forename type="first">Bo</forename><surname>Pang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lillian</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shivakumar</forename><surname>Vaithyanathan</surname></persName>
+		</author>
+		<idno type="DOI">10.3115/1118693.1118704</idno>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2002 Conference on Empirical Methods in Natural Language Processing, EMNLP 2002</title>
+		<meeting>the 2002 Conference on Empirical Methods in Natural Language Processing, EMNLP 2002<address><addrLine>Philadelphia, PA, USA</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2002-07-06">2002. July 6-7, 2002</date>
+			<biblScope unit="page" from="79" to="86" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b41">
+	<analytic>
+		<title level="a" type="main">Direct and indirect effects</title>
+		<author>
+			<persName><forename type="first">Judea</forename><surname>Pearl</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3501714.3501736</idno>
+	</analytic>
+	<monogr>
+		<title level="m">UAI &apos;01: Proceedings of the 17th Conference in Uncertainty in Artificial Intelligence</title>
+		<meeting><address><addrLine>University of Washington, Seattle, Washington, USA</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2001-08-02">2001. August 2-5, 2001</date>
+			<biblScope unit="page" from="411" to="420" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b42">
+	<monogr>
+		<title/>
+		<author>
+			<persName><forename type="first">Morgan</forename><surname>Kaufmann</surname></persName>
+		</author>
+		<imprint>
+			<biblScope unit="volume">7</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b43">
+	<monogr>
+		<title level="m" type="main">Causality: Models, reasoning and inference</title>
+		<author>
+			<persName><forename type="first">Judea</forename><surname>Pearl</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2000">2000</date>
+			<publisher>Cambridge University Press</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b44">
+	<analytic>
+		<title level="a" type="main">Identifying cause and effect on discrete data using additive noise models</title>
+		<author>
+			<persName><forename type="first">Jonas</forename><surname>Peters</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dominik</forename><surname>Janzing</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bernhard</forename><surname>Schölkopf</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the Thirteenth International Conference on Artificial Intelligence and Statistics, AISTATS 2010</title>
+		<meeting>the Thirteenth International Conference on Artificial Intelligence and Statistics, AISTATS 2010<address><addrLine>Chia Laguna Resort, Sardinia, Italy</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2010-05-13">2010. May 13-15, 2010</date>
+			<biblScope unit="volume">9</biblScope>
+			<biblScope unit="page" from="597" to="604" />
+		</imprint>
+	</monogr>
+	<note>JMLR.org</note>
+</biblStruct>
+
+<biblStruct xml:id="b45">
+	<monogr>
+		<title level="m" type="main">Elements of causal inference: Foundations and learning algorithms</title>
+		<author>
+			<persName><forename type="first">Jonas</forename><surname>Peters</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dominik</forename><surname>Janzing</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bernhard</forename><surname>Schölkopf</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+			<publisher>The MIT Press</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b46">
+	<analytic>
+		<title level="a" type="main">Semeval-2014 task 4: Aspect based sentiment analysis</title>
+		<author>
+			<persName><forename type="first">Maria</forename><surname>Pontiki</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dimitris</forename><surname>Galanis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">John</forename><surname>Pavlopoulos</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Harris</forename><surname>Papageorgiou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ion</forename><surname>Androutsopoulos</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Suresh</forename><surname>Manandhar</surname></persName>
+		</author>
+		<idno type="DOI">10.3115/v1/s14-2004</idno>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 8th International Workshop on Semantic Evaluation, Se-mEval@COLING 2014</title>
+		<meeting>the 8th International Workshop on Semantic Evaluation, Se-mEval@COLING 2014<address><addrLine>Dublin, Ireland</addrLine></address></meeting>
+		<imprint>
+			<publisher>The Association for Computer Linguistics</publisher>
+			<date type="published" when="2014-08-23">2014. August 23-24, 2014</date>
+			<biblScope unit="page" from="27" to="35" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b47">
+	<analytic>
+		<title level="a" type="main">Beneath the tip of the iceberg: Current challenges and new directions in sentiment analysis research</title>
+		<author>
+			<persName><forename type="first">Soujanya</forename><surname>Poria</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Devamanyu</forename><surname>Hazarika</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Navonil</forename><surname>Majumder</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Rada</forename><surname>Mihalcea</surname></persName>
+		</author>
+		<idno type="DOI">10.1109/TAFFC.2020.3038167</idno>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Trans. Affect. Comput</title>
+		<imprint>
+			<biblScope unit="volume">14</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page">5</biblScope>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b48">
+	<analytic>
+		<title level="a" type="main">Language models are unsupervised multitask learners</title>
+		<author>
+			<persName><forename type="first">Alec</forename><surname>Radford</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jeffrey</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Rewon</forename><surname>Child</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">David</forename><surname>Luan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dario</forename><surname>Amodei</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ilya</forename><surname>Sutskever</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">OpenAI Blog</title>
+		<imprint>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="issue">8</biblScope>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b49">
+	<analytic>
+		<title level="a" type="main">Exploring the limits of transfer learning with a unified text-to-text transformer</title>
+		<author>
+			<persName><forename type="first">Colin</forename><surname>Raffel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Noam</forename><surname>Shazeer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Adam</forename><surname>Roberts</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Katherine</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sharan</forename><surname>Narang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Michael</forename><surname>Matena</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yanqi</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wei</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Peter</forename><forename type="middle">J</forename><surname>Liu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Machine Learning Research</title>
+		<imprint>
+			<biblScope unit="volume">21</biblScope>
+			<biblScope unit="issue">140</biblScope>
+			<biblScope unit="page" from="1" to="67" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b50">
+	<analytic>
+		<title level="a" type="main">The emotional arcs of stories are dominated by six basic shapes</title>
+		<author>
+			<persName><forename type="first">Andrew</forename><forename type="middle">J</forename><surname>Reagan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lewis</forename><surname>Mitchell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dilan</forename><surname>Kiley</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Christopher</forename><forename type="middle">M</forename><surname>Danforth</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Peter</forename><forename type="middle">Sheridan</forename><surname>Dodds</surname></persName>
+		</author>
+		<idno type="DOI">10.1140/epjds/s13688-016-0093-1</idno>
+	</analytic>
+	<monogr>
+		<title level="j">EPJ Data Sci</title>
+		<imprint>
+			<biblScope unit="volume">5</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page">15</biblScope>
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b51">
+	<analytic>
+		<title level="a" type="main">Emotional intelligence</title>
+		<author>
+			<persName><forename type="first">Peter</forename><surname>Salovey</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">John</forename><forename type="middle">D</forename><surname>Mayer</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Dude publishing</title>
+		<imprint>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="page">8</biblScope>
+			<date type="published" when="2004">2004</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b52">
+	<analytic>
+		<title level="a" type="main">The functional neural architecture of self-reports of affective experience</title>
+		<author>
+			<persName><forename type="first">Jocelyn</forename><surname>Ajay B Satpute</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jochen</forename><surname>Shu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mathieu</forename><surname>Weber</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kevin</forename><forename type="middle">N</forename><surname>Roy</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Ochsner</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Biological psychiatry</title>
+		<imprint>
+			<biblScope unit="volume">73</biblScope>
+			<biblScope unit="issue">7</biblScope>
+			<biblScope unit="page">8</biblScope>
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b53">
+	<analytic>
+		<title level="a" type="main">True fewshot learning with Prompts-A real-world perspective</title>
+		<author>
+			<persName><forename type="first">Timo</forename><surname>Schick</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hinrich</forename><surname>Schütze</surname></persName>
+		</author>
+		<idno type="DOI">10.1162/tacl_a_00485</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Transactions of the Association for Computational Linguistics</title>
+		<imprint>
+			<biblScope unit="volume">10</biblScope>
+			<biblScope unit="page" from="716" to="731" />
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b54">
+	<monogr>
+		<title level="m" type="main">Probabilistic and Causal Inference: The Works of Judea Pearl</title>
+		<author>
+			<persName><forename type="first">Bernhard</forename><surname>Schölkopf</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3501714.3501755</idno>
+		<editor>Hector Geffner, Rina Dechter, and Joseph Y. Halpern</editor>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+			<publisher>ACM</publisher>
+			<biblScope unit="volume">36</biblScope>
+			<biblScope unit="page">3</biblScope>
+		</imprint>
+	</monogr>
+	<note>Causality for machine learning</note>
+</biblStruct>
+
+<biblStruct xml:id="b55">
+	<analytic>
+		<title level="a" type="main">On causal and anticausal learning</title>
+		<author>
+			<persName><forename type="first">Bernhard</forename><surname>Schölkopf</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dominik</forename><surname>Janzing</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jonas</forename><surname>Peters</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Eleni</forename><surname>Sgouritsa</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kun</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Joris</forename><forename type="middle">M</forename><surname>Mooij</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 29th International Conference on Machine Learning, ICML 2012</title>
+		<meeting>the 29th International Conference on Machine Learning, ICML 2012<address><addrLine>Edinburgh, Scotland, UK</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2012-06-26">2012. June 26 -July 1, 2012</date>
+		</imprint>
+	</monogr>
+	<note>icml.cc / Omnipress</note>
+</biblStruct>
+
+<biblStruct xml:id="b56">
+	<monogr>
+		<title level="m" type="main">Towards causal representation learning</title>
+		<author>
+			<persName><forename type="first">Bernhard</forename><surname>Schölkopf</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Francesco</forename><surname>Locatello</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Stefan</forename><surname>Bauer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Nan</forename><forename type="middle">Rosemary</forename><surname>Ke</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Nal</forename><surname>Kalchbrenner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Anirudh</forename><surname>Goyal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yoshua</forename><surname>Bengio</surname></persName>
+		</author>
+		<idno>CoRR, abs/2102.11107</idno>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b57">
+	<monogr>
+		<title level="m" type="main">Towards the first adversarially robust neural network model on mnist</title>
+		<author>
+			<persName><forename type="first">Lukas</forename><surname>Schott</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jonas</forename><surname>Rauber</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Matthias</forename><surname>Bethge</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wieland</forename><surname>Brendel</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1805.09190</idno>
+		<imprint>
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b58">
+	<analytic>
+		<title level="a" type="main">Telling cause from effect in deterministic linear dynamical systems</title>
+		<author>
+			<persName><forename type="first">Naji</forename><surname>Shajarisales</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dominik</forename><surname>Janzing</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bernhard</forename><surname>Schölkopf</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Michel</forename><surname>Besserve</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 32nd International Conference on Machine Learning, ICML 2015</title>
+		<meeting>the 32nd International Conference on Machine Learning, ICML 2015<address><addrLine>Lille, France</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2015-06-11">2015. 6-11 July 2015</date>
+			<biblScope unit="volume">37</biblScope>
+			<biblScope unit="page" from="285" to="294" />
+		</imprint>
+	</monogr>
+	<note>JMLR Workshop and Conference Proceedings</note>
+</biblStruct>
+
+<biblStruct xml:id="b59">
+	<analytic>
+		<title level="a" type="main">Recursive deep models for semantic compositionality over a sentiment treebank</title>
+		<author>
+			<persName><forename type="first">Richard</forename><surname>Socher</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alex</forename><surname>Perelygin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jean</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jason</forename><surname>Chuang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Christopher</forename><forename type="middle">D</forename><surname>Manning</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andrew</forename><surname>Ng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Christopher</forename><surname>Potts</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2013 conference on empirical methods in natural language processing</title>
+		<meeting>the 2013 conference on empirical methods in natural language processing</meeting>
+		<imprint>
+			<date type="published" when="2013">2013</date>
+			<biblScope unit="page" from="1631" to="1642" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b60">
+	<analytic>
+		<title level="a" type="main">Causal discovery and inference: Concepts and recent methodological advances</title>
+		<author>
+			<persName><forename type="first">Peter</forename><surname>Spirtes</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kun</forename><surname>Zhang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Applied informatics</title>
+		<imprint>
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="page" from="1" to="28" />
+			<date type="published" when="2016">2016</date>
+			<publisher>SpringerOpen</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b61">
+	<analytic>
+		<title level="a" type="main">Adapting naive bayes to domain adaptation for sentiment analysis</title>
+		<author>
+			<persName><forename type="first">Songbo</forename><surname>Tan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xueqi</forename><surname>Cheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yuefen</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hongbo</forename><surname>Xu</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/978-3-642-00958-7_31</idno>
+	</analytic>
+	<monogr>
+		<title level="m">Advances in Information Retrieval, 31th European Conference on IR Research, ECIR 2009</title>
+		<title level="s">Lecture Notes in Computer Science</title>
+		<meeting><address><addrLine>Toulouse, France</addrLine></address></meeting>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2009-04-06">2009. April 6-9, 2009</date>
+			<biblScope unit="volume">5478</biblScope>
+			<biblScope unit="page" from="337" to="349" />
+		</imprint>
+	</monogr>
+	<note>Proceedings</note>
+</biblStruct>
+
+<biblStruct xml:id="b62">
+	<monogr>
+		<author>
+			<persName><forename type="first">Rohan</forename><surname>Taori</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ishaan</forename><surname>Gulrajani</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tianyi</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yann</forename><surname>Dubois</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xuechen</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Carlos</forename><surname>Guestrin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Percy</forename><surname>Liang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tatsunori</forename><forename type="middle">B</forename><surname>Hashimoto</surname></persName>
+		</author>
+		<ptr target="https://github.com/tatsu-lab/stanford_alpaca" />
+		<title level="m">Stanford alpaca: An instruction-following llama model</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b63">
+	<monogr>
+		<title level="m" type="main">Llama: Open and efficient foundation language models</title>
+		<author>
+			<persName><forename type="first">Hugo</forename><surname>Touvron</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Thibaut</forename><surname>Lavril</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Gautier</forename><surname>Izacard</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xavier</forename><surname>Martinet</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Marie-Anne</forename><surname>Lachaux</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Timothée</forename><surname>Lacroix</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Baptiste</forename><surname>Rozière</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Naman</forename><surname>Goyal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Eric</forename><surname>Hambro</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Faisal</forename><surname>Azhar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Aurélien</forename><surname>Rodriguez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Armand</forename><surname>Joulin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Edouard</forename><surname>Grave</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Guillaume</forename><surname>Lample</surname></persName>
+		</author>
+		<idno type="DOI">10.48550/arXiv.2302.13971</idno>
+		<idno>CoRR, abs/2302.13971</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b64">
+	<analytic>
+		<title level="a" type="main">Topic-based document-level sentiment analysis using contextual cues</title>
+		<author>
+			<persName><forename type="first">Ciprian-Octavian</forename><surname>Truicȃ</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Elena-Simona</forename><surname>Apostol</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Maria-Luiza S</forename></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Adrian</forename><surname>Paschke</surname></persName>
+		</author>
+		<idno type="DOI">10.3390/math9212722</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Mathematics</title>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<biblScope unit="issue">21</biblScope>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b65">
+	<analytic>
+		<title level="a" type="main">Thumbs up or thumbs down? semantic orientation applied to unsupervised classification of reviews</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Peter</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Turney</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 40th Annual Meeting of the Association for Computational Linguistics</title>
+		<meeting>the 40th Annual Meeting of the Association for Computational Linguistics<address><addrLine>Philadelphia, PA, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>ACL</publisher>
+			<date type="published" when="2002-07-06">2002. July 6-12, 2002</date>
+			<biblScope unit="page" from="417" to="424" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b66">
+	<analytic>
+		<title level="a" type="main">Judgment under uncertainty: Heuristics and biases: Biases in judgments reveal some heuristics of thinking under uncertainty</title>
+		<author>
+			<persName><forename type="first">Amos</forename><surname>Tversky</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Daniel</forename><surname>Kahneman</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Science</title>
+		<imprint>
+			<biblScope unit="volume">185</biblScope>
+			<biblScope unit="issue">4157</biblScope>
+			<biblScope unit="page" from="1124" to="1131" />
+			<date type="published" when="1974">1974</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b67">
+	<analytic>
+		<title level="a" type="main">Counterfactual invariance to spurious correlations in text classification</title>
+		<author>
+			<persName><forename type="first">Victor</forename><surname>Veitch</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D'</forename><surname>Alexander</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Steve</forename><surname>Amour</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jacob</forename><surname>Yadlowsky</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Eisenstein</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Advances in Neural Information Processing Systems</title>
+		<imprint>
+			<biblScope unit="volume">34</biblScope>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b68">
+	<analytic>
+		<title level="a" type="main">The sentiment problem: A critical survey towards deconstructing sentiment analysis</title>
+		<author>
+			<persName><forename type="first">Pranav</forename><surname>Venkit</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mukund</forename><surname>Srinath</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sanjana</forename><surname>Gautam</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Saranya</forename><surname>Venkatraman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Vipul</forename><surname>Gupta</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Rebecca</forename><surname>Passonneau</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shomir</forename><surname>Wilson</surname></persName>
+		</author>
+		<idno type="DOI">10.18653/v1/2023.emnlp-main.848</idno>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2023 Conference on Empirical Methods in Natural Language Processing</title>
+		<meeting>the 2023 Conference on Empirical Methods in Natural Language Processing<address><addrLine>Singapore</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computational Linguistics</publisher>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page" from="13743" to="13763" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b69">
+	<monogr>
+		<title level="m" type="main">Causal mediation analysis for interpreting neural nlp: The case of gender bias</title>
+		<author>
+			<persName><forename type="first">Jesse</forename><surname>Vig</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sebastian</forename><surname>Gehrmann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yonatan</forename><surname>Belinkov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sharon</forename><surname>Qian</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Daniel</forename><surname>Nevo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Simas</forename><surname>Sakenis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jason</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yaron</forename><surname>Singer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Stuart</forename><surname>Shieber</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b70">
+	<analytic>
+		<title level="a" type="main">Tracking point of view in narrative</title>
+		<author>
+			<persName><forename type="first">Janyce</forename><forename type="middle">M</forename><surname>Wiebe</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Computational Linguistics</title>
+		<imprint>
+			<biblScope unit="volume">20</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="233" to="287" />
+			<date type="published" when="1994">1994</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b71">
+	<analytic>
+		<title level="a" type="main">Transformers: State-of-theart natural language processing</title>
+		<author>
+			<persName><forename type="first">Thomas</forename><surname>Wolf</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lysandre</forename><surname>Debut</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Victor</forename><surname>Sanh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Julien</forename><surname>Chaumond</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Clement</forename><surname>Delangue</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Anthony</forename><surname>Moi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pierric</forename><surname>Cistac</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tim</forename><surname>Rault</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Rémi</forename><surname>Louf</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Morgan</forename><surname>Funtowicz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Joe</forename><surname>Davison</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sam</forename><surname>Shleifer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Clara</forename><surname>Patrick Von Platen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yacine</forename><surname>Ma</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Julien</forename><surname>Jernite</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Canwen</forename><surname>Plu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Teven</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sylvain</forename><surname>Le Scao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mariama</forename><surname>Gugger</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Quentin</forename><surname>Drame</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alexander</forename><forename type="middle">M</forename><surname>Lhoest</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Rush</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2020 Conference on Empirical Methods in Natural Language Processing: System Demonstrations</title>
+		<meeting>the 2020 Conference on Empirical Methods in Natural Language Processing: System Demonstrations</meeting>
+		<imprint>
+			<publisher>Association for Computational Linguistics</publisher>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="page" from="38" to="45" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b72">
+	<analytic>
+		<title level="a" type="main">Tasty burgers, soggy fries: Probing aspect robustness in aspect-based sentiment analysis</title>
+		<author>
+			<persName><forename type="first">Xiaoyu</forename><surname>Xing</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhijing</forename><surname>Jin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Di</forename><surname>Jin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bingning</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qi</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xuanjing</forename><surname>Huang</surname></persName>
+		</author>
+		<idno type="DOI">10.18653/v1/2020.emnlp-main.292</idno>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2020 Conference on Empirical Methods in Natural Language Processing (EMNLP)</title>
+		<title level="s">Online. Association for Computational Linguistics</title>
+		<meeting>the 2020 Conference on Empirical Methods in Natural Language Processing (EMNLP)</meeting>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="volume">8</biblScope>
+			<biblScope unit="page">9</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b73">
+	<monogr>
+		<title level="m" type="main">Xlnet: Generalized autoregressive pretraining for language understanding</title>
+		<author>
+			<persName><forename type="first">Zhilin</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zihang</forename><surname>Dai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yiming</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jaime</forename><forename type="middle">G</forename><surname>Carbonell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ruslan</forename><surname>Salakhutdinov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Quoc</forename><forename type="middle">V</forename><surname>Le</surname></persName>
+		</author>
+		<idno>CoRR, abs/1906.08237. 5</idno>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="page">8</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b74">
+	<analytic>
+		<title level="a" type="main">Feeling and thinking: Preferences need no inferences</title>
+		<author>
+			<persName><surname>Robert B Zajonc</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">American psychologist</title>
+		<imprint>
+			<biblScope unit="volume">35</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page">151</biblScope>
+			<date type="published" when="1980">1980</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b75">
+	<analytic>
+		<title level="a" type="main">Causality discovery with additive disturbances: An informationtheoretical perspective</title>
+		<author>
+			<persName><forename type="first">Kun</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Aapo</forename><surname>Hyvärinen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Machine Learning and Knowledge Discovery in Databases: European Conference, ECML PKDD 2009</title>
+		<meeting><address><addrLine>Bled, Slovenia</addrLine></address></meeting>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2009-09-07">2009. September 7-11, 2009</date>
+			<biblScope unit="volume">20</biblScope>
+			<biblScope unit="page">8</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b76">
+	<analytic>
+		<title level="a" type="main">Character-level convolutional networks for text classification</title>
+		<author>
+			<persName><forename type="first">Xiang</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Junbo</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yann</forename><surname>Lecun</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Advances in neural information processing systems</title>
+		<imprint>
+			<biblScope unit="volume">28</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page">8</biblScope>
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b77">
+	<analytic>
+		<title level="a" type="main">Large language models are human-level prompt engineers</title>
+		<author>
+			<persName><forename type="first">Yongchao</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andrei</forename><forename type="middle">Ioan</forename><surname>Muresanu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ziwen</forename><surname>Han</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Keiran</forename><surname>Paster</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Silviu</forename><surname>Pitis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Harris</forename><surname>Chan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jimmy</forename><surname>Ba</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">The Eleventh International Conference on Learning Representations, ICLR 2023</title>
+		<meeting><address><addrLine>Kigali, Rwanda</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="0119">2023. May 1-5, 2023. 1 19.60 ±2.67 50.12 ±0.71 Data=C1. 2 19.68 ±2.46 53.83 ±2.46 Data=C2. 1 20.97 ±3.19 81. 2 19.03 ±2.18 76.36 ±1.53</date>
+		</imprint>
+	</monogr>
+	<note>OpenReview.net. 14 Random GPT-3 Few-Shot F1 Data=C1, Prompt=C1 20.47 ±2.47 49.18 ±0.76 Data=C1, Prompt=C2 20.26 ±2.31 52.79 ±2.64 Data=C2, Prompt=C1 22.35 ±3.02 80.46 ±1.29 Data=C2, Prompt=C2 20.35 ±2.18 75.88 ±1.86 Acc Data=C1. .21 ±1.17 Data=C2</note>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

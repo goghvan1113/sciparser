@@ -1,0 +1,1412 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">A Multi-task Framework with Enhanced Hierarchical Attention for Sentiment Analysis on Classical Chinese Poetry: Utilizing Information from Short Lines</title>
+				<funder ref="#_sMbbngU">
+					<orgName type="full">Flemish Government</orgName>
+				</funder>
+				<funder ref="#_fgVyZGT">
+					<orgName type="full">Artificial Intelligence</orgName>
+				</funder>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Quanqi</forename><surname>Du</surname></persName>
+							<email>quanqi.du@ugent.be</email>
+						</author>
+						<author>
+							<persName><forename type="first">Veronique</forename><surname>Hoste</surname></persName>
+							<email>veronique.hoste@ugent.be</email>
+						</author>
+						<author>
+							<affiliation key="aff0">
+								<orgName type="department">LT3</orgName>
+								<orgName type="institution">Ghent University Groot</orgName>
+								<address>
+									<addrLine>Brittanniëlaan 45</addrLine>
+									<postCode>9000</postCode>
+									<settlement>Gent Flanders</settlement>
+									<country key="BE">Belgium</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<affiliation key="aff1">
+								<orgName type="institution">Ghent University Groot</orgName>
+								<address>
+									<addrLine>Brittanniëlaan 45</addrLine>
+									<postCode>9000</postCode>
+									<settlement>Gent Flanders</settlement>
+									<country key="BE">Belgium</country>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">A Multi-task Framework with Enhanced Hierarchical Attention for Sentiment Analysis on Classical Chinese Poetry: Utilizing Information from Short Lines</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<idno type="MD5">4AA37B978B4785AD49CC5156C809549F</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.2-SNAPSHOT" ident="GROBID" when="2025-01-20T09:29+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Classical Chinese poetry has a long history, dating back to the 11th century BC. By investigating the sentiment expressed in the poetry, we can gain more insights in the emotional life and history development in ancient Chinese culture. To help improve the sentiment analysis performance in the field of classical Chinese poetry, we propose to utilize the unique information from the individual short lines that compose the poem, and introduce a multi-task framework with hierarchical attention enhanced with short line sentiment labels. Specifically, the multi-task framework comprises sentiment analysis for both the overall poem and the short lines, while the hierarchical attention consists of word-and sentence-level attention, with the latter enhanced with additional information from short line sentiments. Our experimental results showcase that our approach leveraging more fine-grained information from short lines outperforms the state-ofthe-art, achieving an accuracy score of 72.88% and an F1-macro score of 71.05%.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">Introduction</head><p>Classical Chinese poetry generally refers to Chinese poetry composed in certain traditional forms and written in classical Chinese, a special terse, rhythmic and musical version of Chinese that is different from the modern Chinese today and mainly used in classical literature. As one of the earliest forms and most important genres of traditional literature, classical Chinese poetry is a crucial carrier of the thoughts and emotions of ancient Chinese literati. 1 In fact, it is widely believed that "emotion" is the essence of classical Chinese literary culture <ref type="bibr" target="#b42">(Xia, 2021)</ref>. By investigating the emotion expression in classical Chinese poetry, we are able to have a glimpse of the personal and social issues involved in the poetry, through which we can 1 <ref type="url" target="https://www.zgbk.com/ecph/words?SiteID=1&amp;ID=389600&amp;Type=bkztb&amp;SubID=683">https://www.zgbk.com/ecph/words?SiteID=1&amp;ID= 389600&amp;Type=bkztb&amp;SubID=683</ref>  gain more insights into the ancient Chinese culture <ref type="bibr" target="#b12">(Hou and Frank, 2015;</ref><ref type="bibr" target="#b39">Wei et al., 2020;</ref><ref type="bibr" target="#b46">Zhang et al., 2023)</ref>.</p><p>However, compared with the study of emotion in other text genres we encounter in modern life, such as news articles <ref type="bibr" target="#b22">(Nemes and Kiss, 2021)</ref> and reviews <ref type="bibr" target="#b44">(Yi and Liu, 2020)</ref>, there is less research on poetry <ref type="bibr">(Ahmad et al., 2020a)</ref>, not to mention on classical Chinese poetry <ref type="bibr" target="#b33">(Tang et al., 2020)</ref>. Actually, it is more challenging to process ancient Chinese texts than modern Chinese text. On the one hand, the classical Chinese has some old vocabulary and phrases that have been replaced or fallen out of usage in modern Chinese. For instance, the pronouns in ancient Chinese are quite different from those in modern Chinese, as shown in Figure 1. On the other hand, the grammar of ancient Chinese is more concise and flexible compared to modern Chinese. As for classical Chinese poetry, it is considered as a more complicated synthesis of imagery and symbolism, allusions, quotations and derivation, and antithesis <ref type="bibr">(Liu, 2022)</ref>. All these factors make it a difficult task to conduct sentiment analysis in classical Chinese poetry.</p><p>To analyse sentiment in classical Chinese poetry, previous studies have explored different methods, for example, constructing sentiment lexicons <ref type="bibr" target="#b12">(Hou and Frank, 2015;</ref><ref type="bibr" target="#b46">Zhang et al., 2023)</ref>, transferring knowledge from modern Chinese <ref type="bibr" target="#b48">(Zhao et al., 2014)</ref>, or extracting imagery words <ref type="bibr" target="#b27">(Shen et al., 2019;</ref><ref type="bibr" target="#b30">Su et al., 2023)</ref>. Although these studies improved the general performance for the task of sentiment analysis in classical Chinese poetry, by utilizing special words in the poems or drawing upon knowledge beyond the poems, they did not consider the compositional structure of the poems. Usually, a classical Chinese poem comprises several short lines, which may show different emotions, and in return, contribute to the overall emotion expression of the poem. Thus in this paper, for the task of sentiment analysis of classical Chinese poetry, we propose to take the sentiment of short lines into consideration by using a multi-task framework with a hierarchical attention network, which includes the sentiment analysis task of both the overall poem and the short lines of which the poem is comprised. We will show that, by leveraging the sentiment information from the short lines, we can outperform the current state-of-the-art in sentiment analysis of ancient Chinese poetry.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">Related Work</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.1">Sentiment analysis for computational poetry studies</head><p>Sentiment analysis using computational methodologies is receiving increasing attention in literary studies <ref type="bibr" target="#b16">(Kim and Klinger, 2021)</ref>. In 2012, Kao and Jurafsky applied sentiment lexicons to investigate whether the affect expressed in a poem makes it more beautiful or not. Later, <ref type="bibr" target="#b9">Delmonte et al. (2013)</ref> introduced the SPARSAR system for the syntactic, semantic and prosodic analysis of poetry, which also includes a sentiment analysis module. In the comparison of formal and informal texts, <ref type="bibr" target="#b14">Kaur and Saini (2014)</ref> found that taking into account genrespecific features helped to improve sentiment analysis performance on formal texts (including poetry).</p><p>More recently, the advantages of machine learning further promoted the task of sentiment analysis in poetry. <ref type="bibr" target="#b24">Promrit and Waijanya (2017)</ref>   <ref type="bibr" target="#b33">(Tang et al., 2020)</ref>, Punjabi poetry <ref type="bibr" target="#b15">(Kaur and Saini, 2020)</ref> and Latin poetry <ref type="bibr" target="#b29">(Sprugnoli et al., 2022)</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.2">Sentiment analysis for classical Chinese poetry</head><p>Although classifying the sentiment in classical Chinese poetry helps to investigate the ancient cultural and emotional life, this task is not as popular as in texts of other fields. Most studies in this field focus on the poems from the Tang Dynasty, which is believed to be the Gold Age of poetry, with over 50,000 poems created and surviving to this day. Besides the construction of sentiment lexicons, scholars also investigated extracting more information from the poems. <ref type="bibr" target="#b18">Li and Li (2018)</ref> introduced the Frequent Pattern Growth Algorithm with the Term Frequency-Inverse Document Frequency to capture the hidden relationships between each word. <ref type="bibr" target="#b27">(Shen et al., 2019)</ref> explored ways to extract sentimental imageries at the levels of both character and word and integrated this information in the task of sentiment analysis. To utilize the imagery words, <ref type="bibr" target="#b30">Su et al. (2023)</ref> introduced related visual modality information and obtained better performance in sentiment analysis of classical Chinese poetry.</p><p>In addition to the information present in classical Chinese poetry, some scholars also tried to incorporate external knowledge into the task of sentiment analysis. <ref type="bibr" target="#b48">Zhao et al. (2014)</ref> introduced the modern translations of ancient texts and transferred this knowledge in the translation to the classical Chinese poems. <ref type="bibr" target="#b20">Liu et al. (2020)</ref> incorporated the knowledge of classical Chinese poetry from appreciation/translation annotations into the knowledge graph construction.</p><p>Furthermore, more recently, the development of large language models also aided in the promotion of research on classical Chinese literature. In 2021, <ref type="bibr">Tian et al. released</ref> AnchiBERT, a pre-trained language model based on the architecture of BERT and trained on large-scale ancient Chinese corpora. Then, based on BERT-base-Chinese from Google<ref type="foot" target="#foot_1">foot_1</ref> and Chinese-BERT-wwm <ref type="bibr" target="#b8">(Cui et al., 2021)</ref>, <ref type="bibr">Wang et al. (2022)</ref> designed the pre-trained model Siku-BERT and SikuRoBERTa specifically for ancient Chinese. There are also other similar models for ancient Chinese, e.g., BERT-ancient-Chinese <ref type="bibr" target="#b38">(Wang and Ren, 2022)</ref>, GuwenBERT, 4 GujiBERT <ref type="bibr" target="#b36">(Wang et al., 2023)</ref>, and BERT_CCPoem,<ref type="foot" target="#foot_3">foot_3</ref> which is particularly designed for classical Chinese poetry.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.3">Sentiment analysis with multi-task learning and a hierarchical attention network</head><p>Traditional sentiment analysis is approached as an independent single task, but recent research has shown that it can also be considered as one of the sub-tasks in multi-task learning. <ref type="bibr" target="#b2">Balikas et al. (2017)</ref> incorporated two sentiment analysis tasks (one with a 3-category label set and the other with a more fine-grained 5-category label set) into a multitask model and demonstrated benefits by jointly learning the two sub-tasks for tweets. Aspect-based sentiment analysis is also a field where it is a common practice to simultaneously model the aspect term extraction and the corresponding sentiment classification <ref type="bibr" target="#b10">(He et al., 2019;</ref><ref type="bibr" target="#b47">Zhao et al., 2023;</ref><ref type="bibr" target="#b41">Wu et al., 2023;</ref><ref type="bibr" target="#b26">Rani and Jain, 2024)</ref>. Scholars also investigated combining with sentiment analysis other emotion-related tasks, e.g., complaint identification <ref type="bibr" target="#b28">(Singh et al., 2022)</ref> and sarcasm <ref type="bibr">detection (Tan et al., 2023)</ref>. <ref type="bibr" target="#b4">Chauhan et al. (2020)</ref> even proposed an all-in-one multi-task framework that incorporates five sub-tasks, including humour, sarcasm, offensive content, motivational content detection and sentiment analysis.</p><p>Following the "Attention is all you need" credo from <ref type="bibr" target="#b35">Vaswani et al. (2017)</ref>, the attention mechanism has been investigated in many variants and the hierarchical attention network (HAN) <ref type="bibr" target="#b43">(Yang et al., 2016)</ref> is one of them. HAN contains the attention mechanisms at different levels, such as the word-level and sentence-level, capturing important words/sentences in the task context. It has been shown that HAN performs well with longsequence information, especially when the information is ordered in a certain structure, for example in document-level classification <ref type="bibr" target="#b23">(Pappas and Popescu-Belis, 2017)</ref> and translation (Werlen et al., As mentioned above, previous studies suggest that multi-tasking helps to improve the performance of sentiment analysis, but there is little such research in the field of classical Chinese poetry, which is mainly investigated by constructing auxiliary lexicons or by fusing knowledge from sources beyond the poetry. On the other hand, as classical Chinese poetry is highly structured and information-condensed, we hypothesize it is promising to apply HAN for sentiment analysis of this special genre, which has never been done before. In this paper, we aim to utilize the sentiment knowledge of the short lines to help predict the overall sentiment of the poetry with a HAN-based multi-task framework.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">Dataset</head><p>Building a classical Chinese poetry corpus for sentiment analysis is not trivial, since full comprehension of the poems is one of the most important preconditions for sentiment labelling, which sets high expectations for annotators. Thanks to the work of <ref type="bibr" target="#b5">Chen et al. (2019)</ref>, we now have a finegrained sentimental poetry corpus (FSPC), which we are going to utilize in our experiments.</p><p>FSPC is composed of 5,000 classical Chinese poems. Each poem and each line in the poem are manually annotated by experts in Chinese literature with five classes, ranging from negative and implicit negative, over neutral, and to implicit positive and positive, as shown in Figure <ref type="figure" target="#fig_1">2</ref>. Compared with negative and positive, implicit sentiments refer to the emotions that are suggested or hinted at but not directly stated. Due to the unbalanced label distribution, the implicit sentiments are merged into negative or positive, respectively, in later experiments. It should also be noted that the sentiment of each line can be different from each other, as shown in Figure <ref type="figure" target="#fig_2">3</ref>, with the sentiment of the first line being neutral or implicit while the last line is often aligned with the overall sentiment of the poem <ref type="bibr" target="#b5">(Chen et al., 2019)</ref>. This suggests each line of the poem may have a varied contribution to the holistic sentiment of the whole poem, and it would be beneficial if we take into consideration the unique sentiment label of each line in the sentiment analysis of the whole poem.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">Method</head><p>To investigate whether the task of sentiment analysis for the whole poem can benefit from the introduction of short line information, we use a framework that fine-tunes a pre-trained model with labels of both the lines and the overall poem, as shown in Figure <ref type="figure" target="#fig_3">4</ref>.</p><p>Data pre-processing Each poem consists of 4 lines, and along with the poem, sentiment labels of both the lines and the overall poem are used for the pre-trained model fine-tuning. The use of "|" as separators between short lines in FSPC makes it easy to identify the line border. Feature extraction and fine-tuning The pretrained model is used both in the feature extraction and fine-tuning stage. In the former case, the architecture of the pre-trained model is preserved, taking in the texts and outputting the feature vectors for the next stage. In the fine-tuning stage, two linear transformation layers are added at the end of the pre-trained model as classifiers for sentiment in the short lines and the overall poem, respectively.</p><p>Both classifier 1 and classifier 2 use word-level attention, and sentence-level attention is also applied in classifier 2. For both the lines and the overall poem, the cross-entropy loss between the predicted logits and the true labels is calculated. The two loss values are then added to get a combined loss, based on which backpropagation is performed to compute gradients for model parameter updates.</p><p>It should be noted that for the short lines, each of them is independently encoded, and the encoding of the whole poem and the short lines are conducted separately.</p><p>Enhanced sentence-level attention To exploit the short line label information in the sentiment prediction task of the overall poem, additional information derived from the line labels is integrated into the sentence-level attention scores.</p><p>Output evaluation For the evaluation of the model predictions, both accuracy and F1-macro score are applied. Accuracy is one of the most intuitive performance evaluation metrics, but it may be misleading due to its sensitivity to class imbalance, which is why we also report the F1-macro score.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">Experiment and Results</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.1">Experimental set-up</head><p>To evaluate the influence of sentiment analysis for short lines as a sub-task in the multi-task framework, we take the single task of sentiment analysis for the overall poems as the baseline.</p><p>We choose the dataset FSPC in our experiments. Considering the imbalanced distribution of the original five category labels, as shown in Figure <ref type="figure" target="#fig_1">2</ref>, we merge the label implicit negative into negative, and implicit positive into positive. As the prediction difficulty of each poem may vary, ten-fold crossvalidation <ref type="bibr" target="#b17">(Kohavi, 1995)</ref> is applied in the experiment, providing a more reliable estimate of the model's performance compared to a single traintest split. The results reported later are the average results of the ten folds.</p><p>We designed two experiments: experiment 1 compares the influence of the framework complexity on the model prediction, while experiment 2 compares the performance of frameworks based on different pre-trained models.</p><p>Experiment 1 In this experiment, two modes are designed with the pre-trained model SikuBERT, namely the multi-task mode and the single-task mode, with the latter including only the sentiment analysis task of the overall poem, used for the ablation study. For the multi-task mode, HAN is added and then additional information from the short line labels is combined with HAN to the network. It is expected that HAN is able to better capture the hierarchical structure of classical Chinese poetry.</p><p>Experiment 2 Apart from SikuBERT, we also investigated other pre-traind models, i.e. BERT-base-Chinese, SikuRoberta, BERT-ancient-Chinese and BERT_CCPoem within the best framework from Experiment 1.</p><p>Hyperparameters For a fair comparison, all experiments are performed with the same dataset and hyperparameter settings. The optimizer is AdamW, with a learning rate of 1e-6. The epoch is set to 10 in experiment 1 and 20 in experiment 2, while the batch size is always set to 8. The mechanism of early stopping is applied in the experiment and the monitor is set as evaluation loss while the patience is set to 3. It should be noted that in both experiment 1 and 2, the early stopping is always triggered before the training reaches the epoch limit.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.2">Experimental results</head><p>Benchmark To the best of our knowledge, there are recently 2 published studies on 3-class sentiment prediction with FSPC, evaluated with accuracy or F1 scores, and the best model achieved an F1-macro score of 64.8%, as shown in Table <ref type="table" target="#tab_2">1</ref>. <ref type="bibr" target="#b45">Zhang et al. (2022)</ref>  vectors with two pre-trained models separately and then fuse them to enrich text vector information, while <ref type="bibr" target="#b11">Hong et al. (2023)</ref> built a hybrid corpus of classical Chinese poetry with its modern Chinese translation, on the basis of which they fine-tuned a ChineseBERT model <ref type="bibr" target="#b31">(Sun et al., 2021)</ref>. Both these studies experimented with overall poem sentiment only.</p><p>Experiment 1 As shown in Table <ref type="table" target="#tab_3">2</ref>, the sentiment analysis performance improves with the increase in model complexity. To start with, the accuracy and F1-macro of the single-task model are 69.00% and 66.27% respectively, which already outperforms previous models in Table <ref type="table" target="#tab_2">1</ref>, which suggests the advantage of pre-trained models specifically designed for ancient Chinese, as the studies of both <ref type="bibr" target="#b45">Zhang et al. (2022)</ref> and <ref type="bibr" target="#b11">Hong et al. (2023)</ref> are based on pre-trained models for modern Chinese only.</p><p>Compared with the single-task model, the multitask model achieves slightly higher scores in both accuracy (+0.32%) and F1 (+0.23%), suggesting the positive influence of the additional short line information on the performance of the overall poem sentiment prediction. Moreover, when the HAN is applied to the framework, a more noticeable improvement is witnessed, with an increase of 0.74% in accuracy and 0.99% in macro F1, indicating the advantage of HAN in dealing with structured texts. Furthermore, the introduction of short line labels has a positive influence on the model performance, reaching an accuracy score of 70.96% and an F1macro score of 68.51%. We could thus conclude that leveraging both the poem structure and the fine-grained sentiment information at the line level Table <ref type="table">3</ref>: Accuracy and F1-macro scores of the overall poem sentiment analysis task using different pre-trained models in combination with the best framework in Experiment 1 (multi-task+HAN+line label).</p><p>is advantageous for sentiment classification of the classical Chinese poems.</p><p>Experiment 2 Results of other pre-trained models with the best framework in Experiment 1 are shown in Table <ref type="table">3</ref>. The F1-macro scores range from 65.24% to 71.05%, the latter being obtained by SikuRoBERTa.</p><p>BERT-base-Chinese is the only model that is not pre-trained specifically for ancient Chinese. Considering the difference between ancient Chinese and modern Chinese, it is not surprising that BERT-base-Chinese does not perform better with classical Chinese poems than most of the other models, except the model BERT_CCPoem. Although BERT_CCPoem is the only model pretrained specifically for Chinese ancient poems in the experiments, it shows worse accuracy and macro F1-scores compared to the other models. One possible reason could be that the training data of BERT_CCPoem is limited to poems, resulting in a smaller vocabulary of 11,809, while other models, such as BERT-base-Chinese and BERT-ancient-Chinese have a larger vocabulary of 21,128 and 38,208 respectively.</p><p>The SikuRoBERTa-based model within the proposed framework (multi-task+HAN+line label) in our experiments achieves the best performance, with an accuracy of 72.88% and an F1-macro score of 71.05%, outperforming previous studies, as shown in Table <ref type="table" target="#tab_2">1</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6">Prediction Analysis</head><p>With the ten-fold cross-validation in Experiment 2, we obtained predictions for all 5,000 poems using the SikuRoBERTa model in the multi-task framework with line-label-enhanced hierarchical attention, as shown in Figure <ref type="figure" target="#fig_5">5</ref>.</p><p>First of all, it is clear that the model performs better with poems with clear sentiment polarities, i.e., negative and positive, reaching an accuracy of around 80%, while the model has only fair predictions with neutral poems, with an accuracy of about 52%. For the negative and positive poems, more wrong predictions are distributed on their nearest sentiment neighbour, i.e., neutral, rather than the far/opposite sentiment neighbours, i.e., positive and negative respectively, suggesting the model's ability to differentiate between positive and negative poems.</p><p>As for the neutral poems, the model achieves an accuracy of 52.03%, which is far less than the performance with negative and positive poems, indicating that differentiating between neutral and implicit sentiment is still challenging. Although only about half are correctly predicted, around one-third of the wrong predictions are predicted as negative and the rest as positive, with the latter outnumbering and even doubling the former, indicating that the model tends to have more non-negative predictions on neutral poems. To gain more insights into this tendency, we further investigated the short line labels of 194 false negative poems and 443 false positive poems which are labelled as neutral by the annotators as shown in Figure <ref type="figure" target="#fig_5">5</ref>. For both the false negative and false positive groups of poems, we plotted the sentiment label distribution of each line group (i.e. all first lines are joined into one group, the same holds for the second lines, etc.), and the results are shown in Figure <ref type="figure" target="#fig_6">6</ref> and<ref type="figure" target="#fig_7">7</ref>.</p><p>As shown in Figure <ref type="figure" target="#fig_6">6</ref>, for the 194 neutral poems that are predicted as negative by the model, line 1 and line 2 seem to hold sentiment labels that  contain almost equal percentages of negative and positive labels. In line 3, however, there is more negative sentiment labelled than positive and this tendency continues in line 4, where the negative sentiment reaches 41.75%, which is more than four times of the number of positive annotations. On the other hand, as shown in Figure <ref type="figure" target="#fig_7">7</ref>, when we consider the sentiment annotations at the line level of the 443 neutral poems that were predicted as positive by the model, we see an opposite tendency with always more positive sentiment labels than negative ones. Based on the sentiment distribution across short lines, we hypothesize that although the model fails to make correct predictions for about half of the neutral poems, it still senses the more implicit sentiment polarities in the poems, leading to negative predictions for the more negative poems and positive predictions for the more positive poems.</p><p>Moreover, we also investigate specific poems where there is a significant difference between the true labels and the predictions. By significant difference, we refer to the cases where the poem is classified with the complete opposite polarity of its labeled polarity, e.g. the overall sentiment of the poem is predicted as positive while the true label is negative, or vice versa. Of the 5,000 poems, there were in total 144 poems classified with this opposite polarity, and we found that this opposite polarity labelling happens both at the line level and the poem level. Figure <ref type="figure" target="#fig_8">8</ref> shows an example poem with its manual annotations and model predictions for the short lines and the overall poem. For the short lines, the model predicted positive instead of neutral for the first and the third lines, and predicted neutral instead of negative for the last line, generally upgrading the short line sentiment toward the polarity of positive, which might lead to the positive overall prediction. However, if contextual or topic information of the poem, which is "farewell", would be provided, and if the model learns from other poems that "farewell" is usually related to negative emotions, the possibility of the model predicting this poem as overall negative would increase.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="7">Conclusion</head><p>In this paper, we introduced a multi-task framework with enhanced hierarchical attention for sentiment analysis on classical Chinese poetry. This multi-task framework consists of two sub-tasks, the sub-task of sentiment analysis on the short lines in the poem, and the sub-task of sentiment analysis on the overall poem. For the latter task, a hierarchical attention network composed of word-and sentence-level attention was applied. Furthermore, to further utilize the information from short lines, additional information from short line sentiment was introduced to the sentence-level attention.</p><p>Experiments on the FSPC dataset show that our framework, compared with the single-task setup and based on the pre-trained model SikuBERT, yields a increase of macro F1 from 66.27% to 68.51%. We also experimented with other pretrained models, and the best performance is demonstrated by SikuRoBERTa, with an accuracy of 72.88% and an F1-macro of 71.05%, thus largely outperforming the state-of-the-art with an increase 5.78% in accuracy and 6.25% in F1-macro score <ref type="bibr" target="#b11">(Hong et al., 2023)</ref>.</p><p>We also investigated the SikuRoBERTa-based model predictions in more detail. We found that the model achieves an accuracy of about 80% with negative and positive poems, but only an accuracy of around 50% with neutral poems, which might be related to the "implicit emotion" writing style favoured in classical Chinese poems. Moreover, a further look at the predictions on the neutral poems suggested that the incorrect predictions are subtly aligned with the more prominent positive or negative sentiment polarities in the short lines, which indicates that regardless of the incorrect predictions on the neutral poems, the model still senses whether the poems are more positive or negative.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="8">Future Work</head><p>The multi-task framework proposed in this paper has demonstrated potential in the task of sentiment analysis on classical Chinese poetry. It would also be interesting to introduce the task of emotion recognition in the framework, although this might require more annotations. Moreover, as the introduction of short line labels helps to improve the model performance, it is also promising to include additional information, such as the background or the topic of the poem to make more accurate predictions. We will also investigate how these different types of information can be optimally fused.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="9">Limitation</head><p>In the experiment of this paper, the results are limited to the dataset FSPC which contains 5000 instances. A larger dataset would help to produce a stronger statement.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 :</head><label>1</label><figDesc>Figure 1: Pronoun changes from ancient Chinese to modern Chinese.</figDesc><graphic coords="1,338.88,219.91,152.79,54.81" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 2 :</head><label>2</label><figDesc>Figure 2: Sentiment label distribution in FSPC, with negative and positive abbreviated as neg. and pos. respectively.</figDesc><graphic coords="3,306.14,70.87,218.26,134.00" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 3 :</head><label>3</label><figDesc>Figure 3: An example of the different sentiment labels at the line level and the overall sentiment of a given poem. Note that the English translation comes from ChatGPT and works only as reference.</figDesc><graphic coords="4,70.87,70.87,218.27,140.89" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 4 :</head><label>4</label><figDesc>Figure 4: Framework to fine-tune the pre-trained model to predict labels of individual lines and the overall poem.</figDesc><graphic coords="4,306.14,70.87,218.27,95.00" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Figure 5 :</head><label>5</label><figDesc>Figure 5: Sentiment prediction distribution of SikuRoBERTa-based multi-task framework with enhanced hierarchical attention. The X-axis represents the predicted labels, while the Y-axis stands for the true labels</figDesc><graphic coords="6,317.06,70.87,196.44,158.49" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>Figure 6 :</head><label>6</label><figDesc>Figure 6: True sentiment label distribution across short lines in 194 neutral poems that are predicted as negative.</figDesc><graphic coords="7,70.87,70.87,218.26,134.88" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_7"><head>Figure 7 :</head><label>7</label><figDesc>Figure 7: True sentiment label distribution across short lines in 443 neutral poems that are predicted as positive.</figDesc><graphic coords="7,70.87,252.21,218.27,129.74" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_8"><head>Figure 8 :</head><label>8</label><figDesc>Figure 8: Comparison of the true labels and predictions of one poem. Note that the English translation comes from ChatGPT and works only as reference.</figDesc><graphic coords="7,306.14,70.87,218.27,133.78" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2"><head>Table 1 :</head><label>1</label><figDesc>proposed to extract word Benchmark results on the sentiment analysis task trained and evaluated with the FSPC dataset only.</figDesc><table><row><cell>Studies</cell><cell>Acc</cell><cell>F1</cell></row><row><cell>Zhang et al. (2022)</cell><cell>NA</cell><cell>64.38</cell></row><row><cell cols="3">Hong et al. (2023) 67.10 64.80</cell></row><row><cell>Method</cell><cell></cell><cell>Acc</cell><cell>F1</cell></row><row><cell>single-task</cell><cell></cell><cell cols="2">69.00 66.27</cell></row><row><cell>multi-task</cell><cell></cell><cell cols="2">69.32 66.50</cell></row><row><cell>multi-task + HAN</cell><cell></cell><cell cols="2">70.06 67.49</cell></row><row><cell cols="4">multi-task + HAN + line label 70.96 68.51</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_3"><head>Table 2 :</head><label>2</label><figDesc>Accuracy and F1-macro scores on the overall poem sentiment analysis task on the FSPC dataset based on the SikuBERT pre-trained model.</figDesc><table /></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="2" xml:id="foot_0"><p>https://www.zgbk.com/ecph/words?SiteID=1&amp;ID= 272482&amp;Type=bkdzb&amp;SubID=808</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="3" xml:id="foot_1"><p>https://huggingface.co/google-bert/bert-base-chinese</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="4" xml:id="foot_2"><p>https://github.com/ethan-yt/guwenbert</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="5" xml:id="foot_3"><p>https://github.com/THUNLP-AIPoet/BERT-CCPoem</p></note>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div><head n="10">Acknowledgements</head><p>This research received funding from the <rs type="funder">Flemish Government</rs> under the <rs type="programName">Research Program</rs> <rs type="funder">Artificial Intelligence</rs> (<rs type="grantNumber">174E07824</rs>). We would also like to thank the anonymous reviewers for their valuable and constructive feedback.</p></div>
+			</div>
+			<listOrg type="funding">
+				<org type="funding" xml:id="_sMbbngU">
+					<orgName type="program" subtype="full">Research Program</orgName>
+				</org>
+				<org type="funding" xml:id="_fgVyZGT">
+					<idno type="grant-number">174E07824</idno>
+				</org>
+			</listOrg>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Classification of poetry text into the emotional states using deep learning technique</title>
+		<author>
+			<persName><forename type="first">Shakeel</forename><surname>Ahmad</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Muhammad</forename><forename type="middle">Zubair</forename><surname>Asghar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Fahad</forename><surname>Mazaed Alotaibi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sherafzal</forename><surname>Khan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Access</title>
+		<imprint>
+			<biblScope unit="volume">8</biblScope>
+			<biblScope unit="page" from="73865" to="73878" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Classification of poetry text into the emotional states using deep learning technique</title>
+		<author>
+			<persName><forename type="first">Shakeel</forename><surname>Ahmad</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Muhammad</forename><forename type="middle">Zubair</forename><surname>Asghar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Fahad</forename><surname>Mazaed Alotaibi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sherafzal</forename><surname>Khan</surname></persName>
+		</author>
+		<idno type="DOI">10.1109/ACCESS.2020.2987842</idno>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Access</title>
+		<imprint>
+			<biblScope unit="volume">8</biblScope>
+			<biblScope unit="page" from="73865" to="73878" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Multitask learning for fine-grained twitter sentiment analysis</title>
+		<author>
+			<persName><forename type="first">Georgios</forename><surname>Balikas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Simon</forename><surname>Moura</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Massih-Reza</forename><surname>Amini</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 40th international ACM SIGIR conference on research and development in information retrieval</title>
+		<meeting>the 40th international ACM SIGIR conference on research and development in information retrieval</meeting>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+			<biblScope unit="page" from="1005" to="1008" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">E-learning text sentiment classification using hierarchical attention network (han)</title>
+		<author>
+			<persName><forename type="first">Abdessamad</forename><surname>Chanaa</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">International Journal of Emerging Technologies in Learning (iJET)</title>
+		<imprint>
+			<biblScope unit="volume">16</biblScope>
+			<biblScope unit="issue">13</biblScope>
+			<biblScope unit="page" from="157" to="167" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">All-in-one: A deep attentive multi-task learning framework for humour, sarcasm, offensive, motivation, and sentiment on memes</title>
+		<author>
+			<persName><forename type="first">Dushyant</forename><surname>Singh Chauhan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">R</forename><surname>Dhanush</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Asif</forename><surname>Ekbal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pushpak</forename><surname>Bhattacharyya</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 1st conference of the Asia-Pacific chapter of the association for computational linguistics and the 10th international joint conference on natural language processing</title>
+		<meeting>the 1st conference of the Asia-Pacific chapter of the association for computational linguistics and the 10th international joint conference on natural language processing</meeting>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="page" from="281" to="290" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Sentimentcontrollable chinese poetry generation</title>
+		<author>
+			<persName><forename type="first">Huimin</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiaoyuan</forename><surname>Yi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Maosong</forename><surname>Sun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Cheng</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wenhao</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhipeng</forename><surname>Guo</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the Twenty-Eighth International Joint Conference on Artificial Intelligence</title>
+		<meeting>the Twenty-Eighth International Joint Conference on Artificial Intelligence<address><addrLine>Macao, China</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Aspect-level sentiment classification with heat (hierarchical attention) network</title>
+		<author>
+			<persName><forename type="first">Jiajun</forename><surname>Cheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shenglin</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jiani</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Irwin</forename><surname>King</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xin</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hui</forename><surname>Wang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2017 ACM on Conference on Information and Knowledge Management</title>
+		<meeting>the 2017 ACM on Conference on Information and Knowledge Management</meeting>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+			<biblScope unit="page" from="97" to="106" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Hierarchical attention networks for cyberbullying detection on the instagram social network</title>
+		<author>
+			<persName><forename type="first">Lu</forename><surname>Cheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ruocheng</forename><surname>Guo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yasin</forename><surname>Silva</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Deborah</forename><surname>Hall</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Huan</forename><surname>Liu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2019 SIAM international conference on data mining</title>
+		<meeting>the 2019 SIAM international conference on data mining</meeting>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="page" from="235" to="243" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Pre-training with whole word masking for Chinese BERT</title>
+		<author>
+			<persName><forename type="first">Yiming</forename><surname>Cui</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wanxiang</forename><surname>Che</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ting</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bing</forename><surname>Qin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ziqing</forename><surname>Yang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE/ACM Transactions on Audio, Speech, and Language Processing</title>
+		<imprint>
+			<biblScope unit="volume">29</biblScope>
+			<biblScope unit="page" from="3504" to="3514" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Computing poetry style</title>
+		<author>
+			<persName><forename type="first">Rodolfo</forename><surname>Delmonte</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the First International Workshop on Emotion and Sentiment in Social and Expressive Media: approaches and perspectives from AI (ES-SEM 2013)</title>
+		<title level="s">CEUR Workshop Proceedings (CEUR-WS</title>
+		<meeting>the First International Workshop on Emotion and Sentiment in Social and Expressive Media: approaches and perspectives from AI (ES-SEM 2013)</meeting>
+		<imprint>
+			<date type="published" when="1096">2013. 1096</date>
+			<biblScope unit="page" from="148" to="155" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">An interactive multi-task learning network for end-to-end aspect-based sentiment analysis</title>
+		<author>
+			<persName><forename type="first">Ruidan</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sun</forename><surname>Wee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hwee Tou</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Daniel</forename><surname>Ng</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Dahlmeier</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 57th Annual Meeting of the Association for Computational Linguistics</title>
+		<meeting>the 57th Annual Meeting of the Association for Computational Linguistics</meeting>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="page" from="504" to="515" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">A hybrid corpus based fine-grained semantic alignment method for pre-trained language model of ancient Chinese poetry</title>
+		<author>
+			<persName><forename type="first">Jie</forename><surname>Hong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tingting</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jie</forename><surname>Mei</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ming</forename><surname>Dong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zheming</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xinhui</forename><surname>Tu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">2023 IEEE International Conference on Big Data (BigData)</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page" from="4794" to="4801" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Analyzing sentiment in classical Chinese poetry</title>
+		<author>
+			<persName><forename type="first">Yufang</forename><surname>Hou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Anette</forename><surname>Frank</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 9th SIGHUM workshop on language Technology for Cultural Heritage, social sciences, and humanities (LaTeCH)</title>
+		<meeting>the 9th SIGHUM workshop on language Technology for Cultural Heritage, social sciences, and humanities (LaTeCH)</meeting>
+		<imprint>
+			<date type="published" when="2015">2015</date>
+			<biblScope unit="page" from="15" to="24" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">A computational analysis of style, affect, and imagery in contemporary poetry</title>
+		<author>
+			<persName><forename type="first">Justine</forename><surname>Kao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dan</forename><surname>Jurafsky</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the NAACL-HLT 2012 workshop on computational linguistics for literature</title>
+		<meeting>the NAACL-HLT 2012 workshop on computational linguistics for literature</meeting>
+		<imprint>
+			<date type="published" when="2012">2012</date>
+			<biblScope unit="page" from="8" to="17" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">Emotion detection and sentiment analysis in text corpus: a differential study with informal and formal writing styles</title>
+		<author>
+			<persName><forename type="first">Jasleen</forename><surname>Kaur</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Jatinderkumar</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Saini</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">International Journal of Computer Application</title>
+		<imprint>
+			<biblScope unit="page" from="975" to="8887" />
+			<date type="published" when="2014">2014</date>
+			<publisher>ISSN</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">Designing Punjabi poetry classifiers using machine learning and different textual features</title>
+		<author>
+			<persName><forename type="first">Jasleen</forename><surname>Kaur</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Jatinderkumar</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Saini</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Int. Arab J. Inf. Technol</title>
+		<imprint>
+			<biblScope unit="volume">17</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="38" to="44" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">A survey on sentiment and emotion analysis for computational literary studies</title>
+		<author>
+			<persName><forename type="first">Evgeny</forename><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Roman</forename><surname>Klinger</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Zeitschrift für digitale Geisteswissenschafte</title>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">A study of cross-validation and bootstrap for accuracy estimation and model selection</title>
+		<author>
+			<persName><forename type="first">Ron</forename><surname>Kohavi</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 14th International Joint Conference on Artificial Intelligence -Volume 2, IJCAI&apos;95</title>
+		<meeting>the 14th International Joint Conference on Artificial Intelligence -Volume 2, IJCAI&apos;95<address><addrLine>San Francisco, CA, USA</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="1995">1995</date>
+			<biblScope unit="page" from="1137" to="1143" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">Research on sentiment classification for Tang poetry based on TF-IDF and FPgrowth</title>
+		<author>
+			<persName><forename type="first">Gang</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jie</forename><surname>Li</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">IEEE 3rd Advanced Information Technology, Electronic and Automation Control Conference (IAEAC)</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2018">2018. 2018</date>
+			<biblScope unit="page" from="630" to="634" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<monogr>
+		<title level="m" type="main">The art of Chinese poetry</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">Y</forename><surname>James</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Liu</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+	<note>Routledge</note>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">The construction and analysis of classical Chinese poetry knowledge graph</title>
+		<author>
+			<persName><forename type="first">Yutong</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bin</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ting</forename><surname>Bai</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Computer Research and Development</title>
+		<imprint>
+			<biblScope unit="volume">57</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="1252" to="1268" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">A hierarchical attention network-based approach for depression detection from transcribed clinical interviews</title>
+		<author>
+			<persName><forename type="first">Adria</forename><surname>Mallol-Ragolta</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ziping</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lukas</forename><surname>Stappen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Nicholas</forename><surname>Cummins</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Björn</forename><forename type="middle">W</forename><surname>Schuller</surname></persName>
+		</author>
+		<idno type="DOI">10.21437/Interspeech.2019-2036</idno>
+	</analytic>
+	<monogr>
+		<title level="m">20th Annual Conference of the International Speech Communication Association (INTER-SPEECH 2019)</title>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="page" from="221" to="225" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">Prediction of stock values changes using sentiment analysis of stock news headlines</title>
+		<author>
+			<persName><forename type="first">László</forename><surname>Nemes</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Attila</forename><surname>Kiss</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Information and Telecommunication</title>
+		<imprint>
+			<biblScope unit="volume">5</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="375" to="394" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">Multilingual hierarchical attention networks for document classification</title>
+		<author>
+			<persName><forename type="first">Nikolaos</forename><surname>Pappas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andrei</forename><surname>Popescu-Belis</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the Eighth International Joint Conference on Natural Language Processing</title>
+		<meeting>the Eighth International Joint Conference on Natural Language Processing</meeting>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="page" from="1015" to="1025" />
+		</imprint>
+	</monogr>
+	<note>Long Papers</note>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<analytic>
+		<title level="a" type="main">Convolutional neural networks for Thai poem classification</title>
+		<author>
+			<persName><forename type="first">Nuttachot</forename><surname>Promrit</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sajjaporn</forename><surname>Waijanya</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Advances in Neural Networks-ISNN 2017: 14th International Symposium, ISNN 2017</title>
+		<meeting><address><addrLine>Sapporo, Hakodate, and Muroran, Hokkaido, Japan</addrLine></address></meeting>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2017-06-21">2017. June 21-26, 2017</date>
+			<biblScope unit="volume">14</biblScope>
+			<biblScope unit="page" from="449" to="456" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<title level="a" type="main">Sentiment analysis for Konkani Language: Konkani Poetry, a case study</title>
+		<author>
+			<persName><forename type="first">Annie</forename><surname>Rajan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ambuja</forename><surname>Salgaonkar</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ICT Systems and Sustainability: Proceedings of ICT4SD 2019</title>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="page" from="321" to="329" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<analytic>
+		<title level="a" type="main">Aspect-based sentiment analysis of drug reviews using multi-task learning based dual BiLSTM model</title>
+		<author>
+			<persName><forename type="first">Somiya</forename><surname>Rani</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Amita</forename><surname>Jain</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Multimedia Tools and Applications</title>
+		<imprint>
+			<biblScope unit="volume">83</biblScope>
+			<biblScope unit="issue">8</biblScope>
+			<biblScope unit="page" from="22473" to="22501" />
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<title level="a" type="main">Sentiment analysis for Tang poetry based on imagery aided and classifier fusion</title>
+		<author>
+			<persName><forename type="first">Yabo</forename><surname>Shen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yong</forename><surname>Ma</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chunguo</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shidang</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mingliang</forename><surname>Gu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chaojin</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yun</forename><surname>Jin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yingli</forename><surname>Shen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Artificial Intelligence for Communications and Networks: First EAI International Conference</title>
+		<meeting><address><addrLine>AICON; Harbin, China</addrLine></address></meeting>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2019-05-25">2019. 2019. May 25-26, 2019</date>
+			<biblScope unit="page" from="283" to="290" />
+		</imprint>
+	</monogr>
+	<note>Proceedings, Part II</note>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<analytic>
+		<title level="a" type="main">Multitask learning for complaint identification and sentiment analysis</title>
+		<author>
+			<persName><forename type="first">Apoorva</forename><surname>Singh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sriparna</forename><surname>Saha</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Md</forename><surname>Hasanuzzaman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kuntal</forename><surname>Dey</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Cognitive Computation</title>
+		<imprint>
+			<biblScope unit="volume">14</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="212" to="227" />
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<analytic>
+		<title level="a" type="main">Sentiment analysis of Latin poetry: First experiments on the Odes of Horace</title>
+		<author>
+			<persName><forename type="first">Rachele</forename><surname>Sprugnoli</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Francesco</forename><surname>Mambrini</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Marco</forename><surname>Passarotti</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Giovanni</forename><surname>Moretti</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Computational Linguistics CliC-it</title>
+		<imprint>
+			<biblScope unit="page">314</biblScope>
+			<date type="published" when="2021">2022. 2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<analytic>
+		<title level="a" type="main">MISC: A multimodal approach for sentiment classification of classical Chinese poetry</title>
+		<author>
+			<persName><forename type="first">Chang</forename><surname>Su</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shupin</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chalian</forename><surname>Luo</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Intelligent Computing</title>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page" from="432" to="442" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<analytic>
+		<title level="a" type="main">Chinese-BERT: Chinese pretraining enhanced by glyph and Pinyin information</title>
+		<author>
+			<persName><forename type="first">Zijun</forename><surname>Sun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiaoya</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiaofei</forename><surname>Sun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yuxian</forename><surname>Meng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiang</forename><surname>Ao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qing</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Fei</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jiwei</forename><surname>Li</surname></persName>
+		</author>
+		<idno type="DOI">10.18653/v1/2021.acl-long.161</idno>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 59th Annual Meeting of the Association for Computational Linguistics and the 11th International Joint Conference on Natural Language Processing</title>
+		<meeting>the 59th Annual Meeting of the Association for Computational Linguistics and the 11th International Joint Conference on Natural Language Processing</meeting>
+		<imprint>
+			<publisher>Association for Computational Linguistics</publisher>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="page" from="2065" to="2075" />
+		</imprint>
+	</monogr>
+	<note>Long Papers</note>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<analytic>
+		<title level="a" type="main">Sentiment analysis and sarcasm detection using deep multi-task learning</title>
+		<author>
+			<persName><forename type="first">Yik</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tan</forename></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chee-Onn</forename><surname>Chow</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jeevan</forename><surname>Kanesan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Joon</forename><surname>Huang Chuah</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yongliang</forename><surname>Lim</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Wireless personal communications</title>
+		<imprint>
+			<biblScope unit="volume">129</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="2213" to="2237" />
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<analytic>
+		<title level="a" type="main">A neural network-based sentiment analysis scheme for Tang poetry</title>
+		<author>
+			<persName><forename type="first">Yongrui</forename><surname>Tang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xumei</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Peng</forename><surname>Qi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yan</forename><surname>Sun</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">2020 International Wireless Communications and Mobile Computing (IWCMC)</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="page" from="1783" to="1788" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<analytic>
+		<title level="a" type="main">AnchiBERT: A pre-trained model for ancient Chinese language understanding and generation</title>
+		<author>
+			<persName><forename type="first">Huishuang</forename><surname>Tian</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kexin</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dayiheng</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jiancheng</forename><surname>Lv</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Joint Conference on Neural Networks (IJCNN)</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2021">2021. 2021</date>
+			<biblScope unit="page" from="1" to="8" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<analytic>
+		<title level="a" type="main">Attention is all you need</title>
+		<author>
+			<persName><forename type="first">Ashish</forename><surname>Vaswani</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Noam</forename><surname>Shazeer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Niki</forename><surname>Parmar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jakob</forename><surname>Uszkoreit</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Llion</forename><surname>Jones</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Aidan</forename><forename type="middle">N</forename><surname>Gomez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Łukasz</forename><surname>Kaiser</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Illia</forename><surname>Polosukhin</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Advances in neural information processing systems</title>
+		<imprint>
+			<biblScope unit="volume">30</biblScope>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b36">
+	<monogr>
+		<title level="m" type="main">GujiBERT and GujiGPT: Construction of intelligent information processing foundation language models for ancient texts</title>
+		<author>
+			<persName><forename type="first">Dongbo</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chang</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhixiao</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Si</forename><surname>Shen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Liu</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bin</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Haotian</forename><surname>Hu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mengcheng</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Litao</forename><surname>Lin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xue</forename><surname>Zhao</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2307.05354</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b37">
+	<analytic>
+		<title level="a" type="main">Sikubert and sikuroberta: Construction and application of pretrained models of Siku Quanshu in orientation to digital humanities</title>
+		<author>
+			<persName><forename type="first">Dongbo</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chang</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zihe</forename><surname>Zhu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jiangfeng</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Haotian</forename><surname>Hu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Si</forename><surname>Shen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bin</forename><surname>Li</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Library Tribune</title>
+		<imprint>
+			<biblScope unit="volume">42</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="31" to="43" />
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b38">
+	<analytic>
+		<title level="a" type="main">The uncertaintybased retrieval framework for ancient Chinese CWS and POS</title>
+		<author>
+			<persName><forename type="first">Pengyu</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhichen</forename><surname>Ren</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the Second Workshop on Language Technologies for Historical and Ancient Languages</title>
+		<meeting>the Second Workshop on Language Technologies for Historical and Ancient Languages</meeting>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page" from="164" to="168" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b39">
+	<analytic>
+		<title level="a" type="main">GeLaiGeLai: a visual platform for analysis of classical Chinese poetry based on knowledge graph</title>
+		<author>
+			<persName><forename type="first">Yuting</forename><surname>Wei</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Huazheng</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jiaqi</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yutong</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yun</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bin</forename><surname>Wu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">IEEE International Conference on Knowledge Graph (ICKG)</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2020">2020. 2020</date>
+			<biblScope unit="page" from="513" to="520" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b40">
+	<analytic>
+		<title level="a" type="main">Documentlevel neural machine translation with hierarchical attention networks</title>
+		<author>
+			<persName><forename type="first">Lesly</forename><surname>Miculicich Werlen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dhananjay</forename><surname>Ram</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Nikolaos</forename><surname>Pappas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">James</forename><surname>Henderson</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2018 Conference on Empirical Methods in Natural Language Processing</title>
+		<meeting>the 2018 Conference on Empirical Methods in Natural Language Processing</meeting>
+		<imprint>
+			<date type="published" when="2018">2018</date>
+			<biblScope unit="page" from="2947" to="2954" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b41">
+	<analytic>
+		<title level="a" type="main">Multi-tasking for aspect-based sentiment analysis via constructing auxiliary self-supervision acop task</title>
+		<author>
+			<persName><forename type="first">Zhaozhen</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Guoyi</forename><surname>Cao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wanghao</forename><surname>Mo</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Access</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b42">
+	<analytic>
+		<title level="a" type="main">Poetry and emotion in classical Chinese literature</title>
+		<author>
+			<persName><forename type="first">Chen</forename><surname>Xia</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">The Routledge Handbook of Chinese Studies</title>
+		<imprint>
+			<publisher>Routledge</publisher>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="page" from="289" to="303" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b43">
+	<analytic>
+		<title level="a" type="main">Hierarchical attention networks for document classification</title>
+		<author>
+			<persName><forename type="first">Zichao</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Diyi</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chris</forename><surname>Dyer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiaodong</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alex</forename><surname>Smola</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Eduard</forename><surname>Hovy</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2016 conference of the North American chapter of the association for computational linguistics: human language technologies</title>
+		<meeting>the 2016 conference of the North American chapter of the association for computational linguistics: human language technologies</meeting>
+		<imprint>
+			<date type="published" when="2016">2016</date>
+			<biblScope unit="page" from="1480" to="1489" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b44">
+	<analytic>
+		<title level="a" type="main">Machine learning based customer sentiment analysis for recommending shoppers, shops based on customers&apos; review</title>
+		<author>
+			<persName><forename type="first">Shanshan</forename><surname>Yi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiaofang</forename><surname>Liu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Complex &amp; Intelligent Systems</title>
+		<imprint>
+			<biblScope unit="volume">6</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="621" to="634" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b45">
+	<analytic>
+		<title level="a" type="main">SAmodel: multi-feature fusion poetic sentiment analysis based on a hybrid word vector model</title>
+		<author>
+			<persName><forename type="first">Lingli</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yadong</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qikai</forename><surname>Chu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pan</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Guijuan</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Weihan</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yu</forename><surname>Qiu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yi</forename><surname>Li</surname></persName>
+		</author>
+		<idno type="DOI">10.1109/PRAI55851.2022.9904158</idno>
+	</analytic>
+	<monogr>
+		<title level="m">2022 5th International Conference on Pattern Recognition and Artificial Intelligence (PRAI)</title>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page" from="984" to="988" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b46">
+	<analytic>
+		<title level="a" type="main">A method of constructing a fine-grained sentiment lexicon for the humanities computing of classical Chinese poetry</title>
+		<author>
+			<persName><forename type="first">Wei</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hao</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Min</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sanhong</forename><surname>Deng</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Neural Computing and Applications</title>
+		<imprint>
+			<biblScope unit="volume">35</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="2325" to="2346" />
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b47">
+	<analytic>
+		<title level="a" type="main">Aspect-based sentiment analysis via multitask learning for online reviews</title>
+		<author>
+			<persName><forename type="first">Guoshuai</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yiling</forename><surname>Luo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qiang</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xueming</forename><surname>Qian</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Knowledge-Based Systems</title>
+		<imprint>
+			<biblScope unit="volume">264</biblScope>
+			<biblScope unit="page">110326</biblScope>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b48">
+	<analytic>
+		<title level="a" type="main">Sentiment analysis based on transfer learning for Chinese ancient literature</title>
+		<author>
+			<persName><forename type="first">Huidong</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bin</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Haoyu</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chuan</forename><surname>Shi</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">2014 International Conference on Behavioral, Economic, and Socio-Cultural Computing</title>
+		<meeting><address><addrLine>BESC</addrLine></address></meeting>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2014">2014. 2014</date>
+			<biblScope unit="page" from="1" to="7" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

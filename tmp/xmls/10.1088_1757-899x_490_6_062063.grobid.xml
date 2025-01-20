@@ -1,0 +1,474 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Word-level sentiment analysis with reinforcement learning</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author role="corresp">
+							<persName><forename type="first">Ruiqi</forename><surname>Chen</surname></persName>
+							<email>chenruiqi@bupt.edu.cn</email>
+							<affiliation key="aff0">
+								<orgName type="department">School of Computer</orgName>
+								<orgName type="institution">Beijing University of Posts and Telecommunications</orgName>
+								<address>
+									<settlement>Beijing</settlement>
+									<country key="CN">China</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Yanquan</forename><surname>Zhou</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">School of Computer</orgName>
+								<orgName type="institution">Beijing University of Posts and Telecommunications</orgName>
+								<address>
+									<settlement>Beijing</settlement>
+									<country key="CN">China</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Liujie</forename><surname>Zhang</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">School of Computer</orgName>
+								<orgName type="institution">Beijing University of Posts and Telecommunications</orgName>
+								<address>
+									<settlement>Beijing</settlement>
+									<country key="CN">China</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Xiuyu</forename><surname>Duan</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">School of Computer</orgName>
+								<orgName type="institution">Beijing University of Posts and Telecommunications</orgName>
+								<address>
+									<settlement>Beijing</settlement>
+									<country key="CN">China</country>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Word-level sentiment analysis with reinforcement learning</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<idno type="MD5">3FE067620C5F924C5461C498CC39C8DC</idno>
+					<idno type="DOI">10.1088/1757-899X/490/6/062063</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.2-SNAPSHOT" ident="GROBID" when="2025-01-20T09:20+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Reinforcement learning (RL) imitates how human perceive the word and acquire knowledge. We manage to propose a RL method to realize text sentiment analysis. We describe a new framework named Word-level Sentiment LSTM (WS-LSTM), which means we use such framework to get sentiment tendency for each word in a sentence. We suppose Positive, Neural and Negative as actions and establish three different LSTM tunnels for each action. When we choose an action for a word, relative LSTM tunnel will be chosen to handle the input. After traversing a whole sentence, we get both word-level sentiment sequence and a sentence-level representation. Such representation is used in classification and we success in getting a sentence-level sentiment analysis. Results show that our method can get sentiment for each word in a specific task. As to the word-level analysis, results from several datasets show that our method plays an acceptable job.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.">Introduction</head><p>Sentiment analysis is a significant branch under natural language processing (NLP), first used by Nasukawa and Yi, 2003 <ref type="bibr" target="#b0">[1]</ref>. Text sentiment analysis is a computational study of sentiments and, further, opinion. It can provide useful information when we need to make a decision <ref type="bibr" target="#b2">[2]</ref>.</p><p>Researchers manage to use RNN in NLP. Lai et al. construct a mixture neural network with RNN and CNN for text classification <ref type="bibr" target="#b3">[3]</ref>. Long Short-Term Memory (LSTM) is an available improvement from Recurrent Neural Networks (RNN). With special structure which is named gate, LSTM is more capable to deal with context information <ref type="bibr" target="#b4">[4]</ref>. <ref type="bibr">Sundermeyer et al.</ref> propose LSTM with language model <ref type="bibr" target="#b5">[5]</ref>. Rao et al. use LSTM with word embeddings to classify text <ref type="bibr" target="#b6">[6]</ref>. <ref type="bibr">Wang et al.</ref> propose a LSTM model based on attention for aspect-level sentiment analysis <ref type="bibr" target="#b7">[7]</ref>.</p><p>Reinforcement learning is an important branch under machine learning, differing from both supervised learning and unsupervised learning <ref type="bibr" target="#b8">[8]</ref>. There are two popular algorithms: Deep Q-Network (DQN) and Actor-Critic Algorithms (AC). Mnih et al. present a deep neural network with the base of Q-learning and establish DQN <ref type="bibr" target="#b9">[9]</ref>. DQN has been a popular algorithms with a large number of papers in recent years. Moreover, AC algorithms has two parts, actor and critic, and plays a better job in continuous task <ref type="bibr" target="#b10">[10,</ref><ref type="bibr" target="#b11">11]</ref>. Additionally, some RL algorithms are applied to solve classification task. Wiering et al. models classification task as a sequential problems and propose an actor-critic learning automaton algorithms <ref type="bibr" target="#b12">[12]</ref>. Zhang et al. design two LSTM models and propose RL method to discover task-relevant structures.</p><p>We design a RL method with LSTM model to build a novel neural network. We use such network to analysis word-level sentiment. The actions are defined as negative, neural and positive. Actions represent tendency of each word in a sentence. considers experiential knowledge from existing sentiment dictionaries. We propose three different LSTM cells as tunnels to evaluate the actions. On other word, after choosing an action as actor, we will choose the relative tunnel as critic. The state for agent is represented by the hidden state from LSTM. The tunnels share the same hidden state rather than parameters in memory cell. The output from LSTM cell is used as the structure representation for sentence. As to reward, we calculate cross entropy between predicted results with manual label. Additionally, we include a hyper-parameter to encourage utilizing the experiential knowledge. The reward is delayed so that we can use policy gradient to update model <ref type="bibr" target="#b13">[13]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.">Model</head><p>We design a series of actions in analyzing text sentiment in order to imitate human cognitive process as shown in Figure <ref type="figure" target="#fig_0">1</ref>. The network is separated into two parts: one is proposed to realize RL algorithms, which we call RL-Network (RLNet); while the other is proposed to realize classification, which we call Classification-Network (CNet). They will be described detailly in follow paper. The RLNet is based on Actor-Critic algorithms. As to the Actor, we choose a sentiment for each word as action. As to the Critic, the action is graded and the stated is changed.</p><p>In actor part, when choosing an action for a word, we use a revised -greedy algorithm. We managed to build a positive-word dictionary and a negative-word dictionary. Word out of both dictionaries are regarded as neural word. During training, we choose sentiment of the word according to dictionaries with probability 1-. By contrast, we arbitrarily choose an action with probability . The final policy we need is represented as:</p><p>(1) where denotes the states at timestep, denotes the input at timestep, and denotes the parameter of RLNet. Generally, timestep refers to the word of the sentence. In critic part, we build three tunnels <ref type="bibr" target="#b14">[14]</ref> , where the subscripts refer to (similarly hereinafter). The tunnels has same structure, as well as sharing the hidden state which is relevant to agent state. However, they do not share memory cell. With different actions, we will choose the relative tunnel as follow:</p><p>(2) denotes the previous memory cell, denotes the previous hidden state, denotes the input from word. The last output will be used as the structure representation of the whole sentence.</p><p>The representation will be used in analyzing sentence-level sentiment through CNet. The CNet is based on fully-connected layer with dropout and softmax.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.">Optimization function</head><p>Our model can acquire word-level sentiment as well as sentence-level sentiment result, which can be used in calculating cross entropy as loss function:</p><p>(3) where p(x) denotes predicted result, q(x) denotes the actual label. The loss function is applied to train CNet and Critic part in RLNet.</p><p>In order to better use the experiential knowledge, we tend to choose the same sentiment with dictionary when choosing an action. Thus, we define the reward in reinforcement learning as bellow:</p><p>H + (4) where H is from (3), is a hyper-parameter for balance, L' denotes the number of word sentiment corresponding to dictionaries and L denotes the length of the sentence.</p><p>As to the Actor part, we use the policy gradients to optimize the model:</p><p>(5)</p><p>As we use the complete return from time a whole sentence, we apply REINFROCE and eligibility vector. So the ( <ref type="formula">5</ref>) is transformed into:</p><p>(6)</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.">Experiment 4.1 Datasets and parameter</head><p>We evaluated our models with datasets as below:  MR: Movie review. This dataset contains 5331 positive and 5331 negative reviews (Pang and Lee 2005).  AF: Amazon food review. We choose reviews with 5 point grade as positive data and reviews with 1 point grade as negative data.  AM: Amazon mobile review. We choose the data the same as AF.</p><p> Word Vectors: Download from (nlp.stanford.edu).</p><p>The datasets are separated into {train, test, dev} with ratio 6:3:1. The dropout possibility is set to 0.5. The -greedy is set to 0.5. The epoch is set to 3 with 10 as mini-batch. The learning rate is 0.001.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2">Word-level results</head><p>Our model manages to get word-level sentiment after traversing the whole sentence. Examples about word feel-good and unendurable are listed in Table <ref type="table" target="#tab_1">1</ref>.</p><p>Our model successes in analyzing the words out of sentiment dictionary. Take feel-good as examples. The word refers to positive sentiment but is not mentioned in dictionary. However, in the test dataset. This word appears six times. Four of them are analyzed as positive, while the other two are analyzed as neural.</p><p>In general, there are 58 thousand words in the test dataset. We get the sentiment for each word with our model and compared with the dictionary. The results are show in Table <ref type="table" target="#tab_2">2</ref>. The label Dictionary+Model refers to the words which has the same results between dictionaries and our model. The sentence-level classification results is listed in Table <ref type="table" target="#tab_3">3</ref>. The results show that our model does not play better than ID-LSTM in MR dataset, but better than the baselines. All models play a good game in AM and AF datasets. Nevertheless, it proves that our model does not decrease the sentencelevel accuracy when analyzing word-level sentiment. Note that our model get the best result with epoch set to 3 and using the 300-dimensional word vectors. Experiments prove that the parameters play important role in training.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.">Discussion and conclusion</head><p>We manage to modify the human emotional fluctuation when reading a text. Consequently, we apply reinforcement learning to learn how people do such job. We creatively design three sentiments as actions and use a hidden state to represent agent condition. And we success in combine text sentiment analysis with reinforcement learning.</p><p>Our model can get word-level sentiment sequence with a relatively good result through reinforcement learning. However, some words are not judged perfectly. The structure representation for whole sentence is applied to get the sentence-level sentiment and the result is relatively better than the baselines.</p><p>It is a hard job to apply reinforcement learning to text classification task. In the future work, we will try to enhance the accuracy for our model. Possible jobs are to modify the gradients and the reward function, or to use tree structures.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 .</head><label>1</label><figDesc>Figure 1. WS-LSTM model. refers to the state, refers to the action and refers to the word at timestep. refers to the relative tunnel, where the subscripts refer to sentiment .</figDesc><graphic coords="3,74.89,275.79,445.80,189.40" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head></head><label></label><figDesc>SAMSE 2018 IOP Conf. Series: Materials Science and Engineering 490 (2019) 062063 IOP Publishing doi:10.1088/1757-899X/490/6/062063 3 where denotes the function of LSTM structure,</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0"><head></head><label></label><figDesc></figDesc><graphic coords="1,37.50,454.29,520.00,336.41" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head></head><label></label><figDesc>During training, we use a revised -greedy which</figDesc><table><row><cell>SAMSE 2018</cell><cell>IOP Publishing</cell></row><row><cell>IOP Conf. Series: Materials Science and Engineering 490 (2019) 062063</cell><cell>doi:10.1088/1757-899X/490/6/062063</cell></row><row><cell>2</cell><cell></cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1"><head>Table 1 .</head><label>1</label><figDesc>Word-sentiment examples Remark: the label in brackets refers to the sentiment of the word. {neg, neu, pos} refers to {negative, neural, positive}. Words with no brackets are analyzed as neural sentiment.</figDesc><table><row><cell>sentiment</cell><cell>sentence</cell></row><row><cell>neg</cell><cell>offers a guilt-free trip into feel-good(NEU) territory .</cell></row><row><cell>neg</cell><cell>a feel-good(POS) movie that doesn't give you enough to feel good(NEU)</cell></row><row><cell></cell><cell>about .</cell></row><row><cell>pos</cell><cell>a feel-good(POS) picture in the best sense of the term .</cell></row><row><cell>pos</cell><cell>would be an unendurable(NEG) viewing experience for this ultra-</cell></row><row><cell></cell><cell>provincial(NEU) new…</cell></row><row><cell>pos</cell><cell>as crimes go , writer-director michael kalesniko's how to kill your neighbor's</cell></row><row><cell></cell><cell>dog is slight(NEU) but unendurable(NEG) .</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2"><head>Table 2 .</head><label>2</label><figDesc>Word-level results for test dataset</figDesc><table><row><cell>Sentiment</cell><cell>According</cell><cell>Count</cell></row><row><cell>neg</cell><cell>Dictionary</cell><cell>2164</cell></row><row><cell>neg</cell><cell>Model</cell><cell>793</cell></row><row><cell>neg</cell><cell>Dictionary+Model</cell><cell>164</cell></row><row><cell>pos</cell><cell>Dictionary</cell><cell>4655</cell></row><row><cell>pos</cell><cell>Model</cell><cell>879</cell></row><row><cell>pos</cell><cell>Dictionary+Model</cell><cell>273</cell></row><row><cell>4.3 Sentence-level results</cell><cell></cell><cell></cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_3"><head>Table 3 .</head><label>3</label><figDesc>Sentence-level sentiment results</figDesc><table><row><cell>Dataset</cell><cell>MR</cell><cell>AM</cell><cell>AF</cell></row><row><cell>CNN</cell><cell>73.8%</cell><cell>90.2%</cell><cell>94.3%</cell></row><row><cell>LSTM</cell><cell>74.5%</cell><cell>96.7%</cell><cell>92.2%</cell></row><row><cell>RCNN</cell><cell>76.1%</cell><cell>95.2%</cell><cell>94.7%</cell></row><row><cell>ID-LSTM</cell><cell>81.6%*</cell><cell>--</cell><cell>--</cell></row><row><cell>WS-LSTM</cell><cell>78.9%</cell><cell>93.5%</cell><cell>95.1%</cell></row><row><cell cols="3">Remark: the result of ID-LSTM is from (Zhang, Huang and Zhao 2017)</cell><cell></cell></row></table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">Sentiment analysis:capturing favorability using natural language processing[C]// International Conference on Knowledge Capture</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Nasukawa</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Yi</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2003">2003</date>
+			<publisher>DBLP</publisher>
+			<biblScope unit="page" from="70" to="77" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<author>
+			<persName><forename type="first">W</forename><surname>Strunk</surname><genName>Jr</genName></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">B</forename><surname>White</surname></persName>
+		</author>
+		<title level="m">The Elements of Style</title>
+		<meeting><address><addrLine>New York</addrLine></address></meeting>
+		<imprint>
+			<publisher>Macmillan</publisher>
+			<date type="published" when="1979">1979</date>
+		</imprint>
+	</monogr>
+	<note>third ed</note>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<title level="m" type="main">Sentiment Analysis and Opinion Mining[C]// Synthesis Lectures on Human Language Technologies</title>
+		<author>
+			<persName><forename type="first">B</forename><surname>Liu</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2012">2012</date>
+			<publisher>Morgan &amp; Claypool</publisher>
+			<biblScope unit="page" from="152" to="153" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Recurrent Convolutional Neural Networks for Text Classification</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Lai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Liu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">AAAI</title>
+		<imprint>
+			<biblScope unit="page" from="2267" to="2273" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">LSTM: A Search Space Odyssey</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>Greff</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R K</forename><surname>Srivastava</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Koutník</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Transactions on Neural Networks &amp; Learning Systems</title>
+		<imprint>
+			<biblScope unit="volume">28</biblScope>
+			<biblScope unit="issue">10</biblScope>
+			<biblScope unit="page" from="2222" to="2232" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">LSTM Neural Networks for Language Modeling</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Sundermeyer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Schlüter</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Ney</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Interspeech</title>
+		<imprint>
+			<biblScope unit="page" from="601" to="608" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<monogr>
+		<title level="m" type="main">Actionable and Political Text Classification using Word Embeddings and LSTM</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Rao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Spasojevic</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<monogr>
+		<title level="m" type="main">Attention-based LSTM for Aspect-level Sentiment Classification[C]// Conference on Empirical Methods in Natural Language Processing</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Zhu</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2016">2016</date>
+			<biblScope unit="page" from="606" to="615" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Reinforcement Learning: An Introduction</title>
+		<author>
+			<persName><forename type="first">R S</forename><surname>Sutton</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Barto</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Transactions on Neural Networks</title>
+		<imprint>
+			<biblScope unit="volume">16</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="285" to="286" />
+			<date type="published" when="2005">2005</date>
+		</imprint>
+	</monogr>
+	<note>J</note>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<monogr>
+		<title level="m" type="main">Playing Atari with Deep Reinforcement Learning</title>
+		<author>
+			<persName><forename type="first">V</forename><surname>Mnih</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Kavukcuoglu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Silver</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2013">2013</date>
+		</imprint>
+		<respStmt>
+			<orgName>Computer Science</orgName>
+		</respStmt>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Actor-critic algorithms</title>
+		<author>
+			<persName><forename type="first">Vijaymohan</forename><surname>Konda</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">J]. Siam Journal on Control and Optimization</title>
+		<imprint>
+			<biblScope unit="volume">42</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="1143" to="1166" />
+			<date type="published" when="2003">2003</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Deterministic policy gradient algorithms</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Silver</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Lever</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Heess</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on International Conference on Machine Learning</title>
+		<imprint>
+			<date type="published" when="2014">2014</date>
+			<biblScope unit="page" from="387" to="395" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Reinforcement learning algorithms for solving classification problems</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">A</forename><surname>Wiering</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Hasselt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">D</forename><surname>Pietersma</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">J</title>
+		<imprint>
+			<biblScope unit="page" from="91" to="96" />
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">Policy Gradient Methods for Reinforcement Learning with Function Approximation</title>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">S</forename><surname>Sutton</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Submitted to Advances in Neural Information Processing Systems</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="page" from="1057" to="1063" />
+			<date type="published" when="1999">1999</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">Tunnel Effect in CNNs: Image Reconstruction From Max Switch Locations</title>
+		<author>
+			<persName><forename type="first">M D L R S</forename><surname>Andre</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Rieger</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Hannemose</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">J]. IEEE Signal Processing Letters</title>
+		<imprint>
+			<biblScope unit="volume">24</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="254" to="258" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<monogr>
+		<title level="m" type="main">Document Modeling with Gated Recurrent Neural Network for Sentiment Classification[C]// Conference on Empirical Methods in Natural Language Processing</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Tang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Qin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Liu</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2015">2015</date>
+			<biblScope unit="page" from="1422" to="1432" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<monogr>
+		<title level="m" type="main">Deep Reinforcement Learning: An Overview</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Li</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<monogr>
+		<title level="m" type="main">Sentiment Analysis and Opinion Mining</title>
+		<author>
+			<persName><forename type="first">B</forename><surname>Liu</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2012">2012</date>
+			<publisher>Morgan &amp; Claypool</publisher>
+			<biblScope unit="page">167</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">Seeing stars: exploiting class relationships for sentiment categorization with respect to rating scales[C]// Meeting on Association for Computational Linguistics</title>
+		<author>
+			<persName><forename type="first">B</forename><surname>Pang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Lee</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Association for Computational Linguistics</title>
+		<imprint>
+			<biblScope unit="page" from="115" to="124" />
+			<date type="published" when="2005">2005</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>
