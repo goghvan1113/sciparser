@@ -1,0 +1,3834 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Unsupervised Graph Neural Architecture Search with Disentangled Self-supervision</title>
+				<funder ref="#_hWVKfsp #_kTbxecu #_SgBQEKX #_dqAxREK">
+					<orgName type="full">National Natural Science Foundation of China</orgName>
+				</funder>
+				<funder>
+					<orgName type="full">Beijing Key Lab of Networked Multimedia</orgName>
+				</funder>
+				<funder ref="#_vaYDHPr #_bHWkHuw">
+					<orgName type="full">Beijing National Research Center for Information Science and Technology</orgName>
+				</funder>
+				<funder ref="#_Ppc6BM9">
+					<orgName type="full">China Postdoctoral Science Foundation</orgName>
+				</funder>
+				<funder ref="#_nfeTks5">
+					<orgName type="full">China National Postdoctoral Program for Innovative Talents</orgName>
+				</funder>
+				<funder ref="#_JwQzhfT">
+					<orgName type="full">National Key Research and Development Program of China</orgName>
+				</funder>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability  status="unknown">
+					<licence/>
+				</availability>
+				<date type="published" when="2024-03-08">8 Mar 2024</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Zeyang</forename><surname>Zhang</surname></persName>
+							<email>zy-zhang20@mails.tsinghua.edu.cn</email>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Computer Science and Technology</orgName>
+								<orgName type="institution" key="instit1">BNRist</orgName>
+								<orgName type="institution" key="instit2">Tsinghua University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Xin</forename><surname>Wang</surname></persName>
+							<email>xin_wang@tsinghua.edu.cn</email>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Computer Science and Technology</orgName>
+								<orgName type="institution" key="instit1">BNRist</orgName>
+								<orgName type="institution" key="instit2">Tsinghua University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Ziwei</forename><surname>Zhang</surname></persName>
+							<email>zwzhang@tsinghua.edu.cn</email>
+						</author>
+						<author>
+							<persName><forename type="first">Guangyao</forename><surname>Shen</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Computer Science and Technology</orgName>
+								<orgName type="institution" key="instit1">BNRist</orgName>
+								<orgName type="institution" key="instit2">Tsinghua University</orgName>
+							</affiliation>
+							<affiliation key="aff1">
+								<orgName type="institution">Tencent</orgName>
+								<address>
+									<addrLine>Wechat</addrLine>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Shiqi</forename><surname>Shen</surname></persName>
+							<email>shiqishen@tencent.com</email>
+						</author>
+						<author>
+							<persName><forename type="first">Wenwu</forename><surname>Zhu</surname></persName>
+							<email>wwzhu@tsinghua.edu.cn</email>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Computer Science and Technology</orgName>
+								<orgName type="institution" key="instit1">BNRist</orgName>
+								<orgName type="institution" key="instit2">Tsinghua University</orgName>
+							</affiliation>
+							<affiliation key="aff1">
+								<orgName type="institution">Tencent</orgName>
+								<address>
+									<addrLine>Wechat</addrLine>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Unsupervised Graph Neural Architecture Search with Disentangled Self-supervision</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date type="published" when="2024-03-08">8 Mar 2024</date>
+						</imprint>
+					</monogr>
+					<idno type="MD5">D347C44D9F91B9E53F190ED3C95A7D97</idno>
+					<idno type="arXiv">arXiv:2403.05064v1[cs.LG]</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.2-SNAPSHOT" ident="GROBID" when="2025-01-20T06:46+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>The existing graph neural architecture search (GNAS) methods heavily rely on supervised labels during the search process, failing to handle ubiquitous scenarios where supervisions are not available. In this paper, we study the problem of unsupervised graph neural architecture search, which remains unexplored in the literature. The key problem is to discover the latent graph factors that drive the formation of graph data as well as the underlying relations between the factors and the optimal neural architectures. Handling this problem is challenging given that the latent graph factors together with architectures are highly entangled due to the nature of the graph and the complexity of the neural architecture search process. To address the challenge, we propose a novel Disentangled Self-supervised Graph Neural Architecture Search (DSGAS) model, which is able to discover the optimal architectures capturing various latent graph factors in a self-supervised fashion based on unlabeled graph data. Specifically, we first design a disentangled graph super-network capable of incorporating multiple architectures with factor-wise disentanglement, which are optimized simultaneously. Then, we estimate the performance of architectures under different factors by our proposed self-supervised training with joint architecture-graph disentanglement. Finally, we propose a contrastive search with architecture augmentations to discover architectures with factor-specific expertise. Extensive experiments on 11 real-world datasets demonstrate that the proposed DSGAS model is able to achieve state-ofthe-art performance against several baseline methods in an unsupervised manner.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">Introduction</head><p>Graph neural architecture search (GNAS), aiming to automatically discover the optimal architecture for graph neural network (GNN) based on graph-structured data and task, has shown remarkable progress in enhancing the predictive power and saving human endeavors for various graph applications <ref type="bibr" target="#b0">[1]</ref>. The existing GNAS methods generally follow a supervised paradigm such that they optimize the weights within architectures given a training dataset with a supervised loss (e.g., the cross entropy loss of label predictions) and estimate the architecture performance based on the validation dataset with supervision signals. For example, the label prediction accuracy is adopted for architecture ranking during the neural architecture search process <ref type="bibr" target="#b1">[2,</ref><ref type="bibr" target="#b2">3,</ref><ref type="bibr" target="#b3">4]</ref>. As a result, supervised labels become indispensable for applying the existing GNAS methods.</p><p>However, ground-truth labels in reality may be extremely scarce or hardly available in many graph applications. For example, a variety of biological problems require a significant amount of human labors and time costs in clinical tests to obtain labels for supervision <ref type="bibr" target="#b4">[5,</ref><ref type="bibr" target="#b5">6,</ref><ref type="bibr" target="#b6">7]</ref>. As the existing GNAS approaches heavily rely on supervised labels for weight training and architecture evaluation, they will suffer from performance deterioration in unsupervised settings, failing to discover optimal architectures in the scenarios where labels are scarce or not available.</p><p>In this paper, we study unsupervised graph neural architecture search, i.e., discovering optimal GNN architectures without labels for graph-structured data, which remains unexplored in the literature.</p><p>The key problem lies in two important aspects: i) discover the latent graph factors that drive the formation process of graph data <ref type="bibr" target="#b7">[8,</ref><ref type="bibr" target="#b8">9,</ref><ref type="bibr" target="#b9">10,</ref><ref type="bibr" target="#b10">11,</ref><ref type="bibr" target="#b11">12,</ref><ref type="bibr" target="#b12">13,</ref><ref type="bibr" target="#b13">14]</ref>; ii) capture the underlying relations between the factors and the optimal neural architectures. For instance, a molecular graph may consist of groups of atoms as well as bonds representing different functional units <ref type="bibr" target="#b14">[15]</ref>, requiring different optimal neural architectures to make accurate predictions.</p><p>Nevertheless, solving the problem is highly non-trivial and challenging given that the hidden factors are entangled in the graph and very difficult to capture, e.g., a social network may contain several communities originating from various interests (e.g., sports, games, etc.) <ref type="bibr" target="#b15">[16,</ref><ref type="bibr" target="#b9">10]</ref>, with the nodes and edges belonging to different communities mixing together. Moreover, the architectures with different functional factors are also entangled within the weight-sharing super-network <ref type="bibr" target="#b16">[17,</ref><ref type="bibr" target="#b17">18,</ref><ref type="bibr" target="#b18">19]</ref>, resulting in inaccurate architecture performance estimations under different hidden factors.</p><p>To tackle the challenge, we propose a novel unsupervised graph neural architecture search method, i.e., Disentangled Self-supervised Graph Neural Architecture Search (DSGAS) <ref type="foot" target="#foot_0">3</ref> . Given graph data without supervised labels, our proposed DSGAS model can discover the optimal architectures capturing multiple latent factors in a self-supervised fashion. In particular, we first design a disentangled graph super-network, where multiple architectures are disentangled for simultaneous optimization w.r.t various latent factors. Then, we propose a self-supervised training with joint architecturegraph disentanglement, which disentangles architectures and graphs within a common latent space. The super-network is trained through a routing mechanism between architectures, graphs and selfsupervised tasks, to obtain an accurate estimation of the architecture performance under each latent factor. Finally, we propose a contrastive search with architecture augmentations, where a novel architecture-level instance discrimination task is introduced to discover architectures with distinct capabilities of capturing various factors in a self-supervised fashion. Extensive experiments show that the proposed DSGAS model is able to significantly outperform the state-of-the-art GNAS baselines under both unsupervised and semi-supervised settings. Detailed ablation studies and analyses also demonstrate that DSGAS is able to discover effective architectures with our proposed disentangled self-supervision designs. The contributions of this paper are summarized as follows:</p><p>• We are the first to study the problem of unsupervised graph neural architecture search and propose the Disentangled Self-supervised Graph Neural Architecture Search (DSGAS) model capable of discovering the optimal architectures without labels, to the best of our knowledge.</p><p>• We introduce three novel modules, i) disentangled graph architecture super-network, ii) selfsupervised training with joint architecture-graph disentanglement and iii) contrastive search with architecture augmentations, which can discover the optimal architectures capturing various graph latent factors with disentangled self-supervision.</p><p>• Extensive experiments on 11 real-world graph datasets show that our proposed method DSGAS is able to discover effective graph neural architectures without supervised labels and significantly outperform the state-of-the-art baselines in both unsupervised and semi-supervised settings.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">Preliminaries and Problem Formulation</head><p>Graph Neural Architecture Search Denote the graph space as G and the label space as Y. A graph neural network can be denoted as a function f α,w : G → Y, which is characterized by architecture parameters α ∈ A and learnable weights w ∈ W given an architecture space A and a weight space W. Graph neural architecture search (GNAS) aims at automating the design of graph neural architectures, i.e., obtaining the best-performed architectures by searching α. As α is usually instantiated as selecting GNN operations, e.g., GCN <ref type="bibr" target="#b19">[20]</ref>, GAT <ref type="bibr" target="#b20">[21]</ref>, GIN <ref type="bibr" target="#b21">[22]</ref>, we also call α as operation choices for brevity. Generally, GNAS solves the bi-level optimization problem <ref type="bibr" target="#b22">[23]</ref> :</p><formula xml:id="formula_0">α * = arg min α∈A L val (α, w * (α)),<label>(1) s</label></formula><formula xml:id="formula_1">.t. w * (α) = arg min w∈W(α) L train (α, w),<label>(2)</label></formula><p>where L train and L val denotes the loss of the predictions of the architecture f α,w (•) against supervised labels on training and validation datasets. The optimization problem can be viewed as having two objectives that Eq.( <ref type="formula" target="#formula_1">2</ref>) aims to obtain accurate architecture performance estimation, and Eq.( <ref type="formula" target="#formula_0">1</ref>) aims to search the best-performed architectures. To avoid the cost of training from scratch for each architecture, the super-network <ref type="bibr" target="#b23">[24,</ref><ref type="bibr" target="#b24">25]</ref> arises as a commonly adopted technique to obtain faster architecture performance estimation, where the architecture candidates are viewed as sub-networks of the super-network, and their weights are shared during the training process.</p><p>Unsupervised Graph Neural Architecture Search We consider the problem of unsupervised graph neural architecture where labels, which are adopted for the performance estimation and the search process in the supervised GNAS, are not accessible. The problem of unsupervised GNAS can be formulated as optimizing an architecture generator that is able to discover powerful architectures by exploiting inherent graph properties without labels, i.e., G → f α,w instead of (G, Y) → f α,w as done by supervised GNAS methods. Then, the discovered architectures f α,w (•) can be utilized in downstream tasks, e.g., finetuning the weights w or the operation choices α, or extra shallow classifiers for further prediction.</p><p>3 Disentangled Self-supervised Graph Neural Architecture Search</p><p>In this section, we introduce Disentangled Self-supervised Graph Neural Architecture Search (DSGAS) to search architectures without labels, by proposing three key components: disentangled graph architecture super-network, self-supervised training with joint architecture-graph disentanglement, and contrastive search with architecture augmentations.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1">Disentangled Graph Architecture Super-Network</head><p>To discover architectures that potentially have optimal performance, we resort to guiding the search towards architectures' capabilities of capturing the inherent graph factors, which are shown important in the graph formation <ref type="bibr" target="#b7">[8,</ref><ref type="bibr" target="#b8">9]</ref>. As architectures may expert in different graph factors, we propose a disentangled graph architecture super-network to incorporate K different architectures to be estimated and searched w.r.t factors simultaneously, where the hyperparameter K denotes the number of factors.</p><p>Disentangled Super-Network Layer For each super-network layer, we adopt K mixed operations parameterized by different α to learn K-chunk graph representations:</p><formula xml:id="formula_2">H k ← GNN α k (H, A) ,<label>(3)</label></formula><p>where A is the adjacency matrix of the graph, H denotes the input graph representations, and GNN α k (•) denotes the mixed GNN operations parameterized by α k . For the convenience of differentiable optimization, we adopt continuous parameterization and weight-sharing mechanism <ref type="bibr" target="#b24">[25]</ref> to implement the mixed operations:</p><formula xml:id="formula_3">GNN α k (H, A) = |O| i=1 α k,i GNN i (H, A), (<label>4</label></formula><formula xml:id="formula_4">)</formula><p>where |O| is the number of GNN operation choices, α k,i = exp(θα k,i ) j exp(θα k,j ) denotes the probability of the i-th operation for the k-th architecture α k , and θ is learnable parameters.</p><p>Overall Disentangled Super-Network The overall super-network is constructed in the form of a directed acyclic graph (DAG) with an ordered sequence of disentangled super-network layers. More details about the DAG construction and the according GNN operations for each disentangled super-network layer are included in Appendix. The output of the last layer Z = [H 1 , H 2 , . . . , H K ] describes the various aspects of the graphs and serves as the final graph representations, which can be utilized or finetuned in downstream tasks. In this way, the architectures' operation choices α = [α 1 , α 2 , . . . , α K ] and weights w are incorporated in one super-network. For brevity, we use f α k ,w (•) to denote the k-th architecture induced from the super-network. Note that the design of K operation choices alleviates the entanglement of architectures by providing more flexible choices of paths <ref type="bibr" target="#b25">[26]</ref> in the super-network. For instance, the 'mean' operation captures structural properties while the 'max' operation captures representative elements <ref type="bibr" target="#b21">[22]</ref>, and in this case, our design can capture both of them by choosing corresponding operations to learn respective representations instead of choosing only one of them which may conflict each other.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2">Self-supervised Training with Joint Architecture-Graph Disentanglement</head><p>Inspired by graph self-supervised learning, we utilize graph pretext tasks to measure the architectures' capabilities of capturing latent factors. Predictive pretext tasks <ref type="bibr" target="#b26">[27]</ref>, for example, design a pseudo label generator s(•), and optimize the prediction probability<ref type="foot" target="#foot_1">foot_1</ref> p(s(G i )|G i ). However, the tasks usually take holistic views of the graphs and neglect the entanglement of the latent factors, which may lead to suboptimal performance estimation. Therefore, to disentangle the factors, we transform the probability into the expectation of multiple subtasks under different latent factors by the Bayesian formula:</p><formula xml:id="formula_5">p(s(G i )|G i ) = E p(k|Gi) p(s(G i )|G i , k),<label>(5)</label></formula><p>where p(k|G i ) denotes the probability of latent factor k given the i-th graph instance G i , and p(s(G i )|G i , k) denotes the pretext task under k-th latent factor. An intuitive explanation of Eq. ( <ref type="formula" target="#formula_5">5</ref>) is that it first infers the latent factors and then conducts factor-specific self-supervised training to capture the latent factors, which we describe in detail as follows.</p><p>Architecture-aware Latent Factor Inference Directly modeling p(k|G i ) is difficult as we do not know prior what GNN encoders are suitable for inferring the latent factors. Intuitively, one solution is to get the architectures being searched involved in the inference stage. By the Bayesian formula, we factorize the probability w.r.t architecture choices:</p><formula xml:id="formula_6">p(k|G i ) = E p(αj |Gi) p(k|G i , α j ),<label>(6)</label></formula><p>where p(α j |G i ) is a prior distribution, and we adopt a uniform distribution for simplicity. Then we can model the probability distributions of latent factors given the graph G i by utilizing the architectures being searched:</p><formula xml:id="formula_7">p(k|G i , α j ) = exp ϕ(z i,j ||Enc(α j ), c k ) K m=1 exp ϕ(z i,j ||Enc(α j ), c m ) ,<label>(7)</label></formula><p>where c k is a learnable vector to represent the k-th latent factor, and z i,k = f α k ,w (G i ) denotes the graph representations output by the k-th architecture for the graph G i . Enc(•) denotes architecture encoding techniques to obtain embeddings of operation choices α so that the structural properties and correlations of the neural architectures can be considered <ref type="bibr" target="#b27">[28,</ref><ref type="bibr" target="#b28">29]</ref>.</p><p>Factor-aware Graph Self-Supervised Learning Under the k-th latent factor, we leverage the corresponding architectures f α k ,w (•) for conducting the factor-specific pretext tasks as p(s(G i )|G i , k) to estimate the capturing capabilities of architectures under various factors. The overall objective is to maximize Eq.( <ref type="formula" target="#formula_5">5</ref>), and the loss can be calculated by</p><formula xml:id="formula_8">1 N i -log E p(k|Gi) p(s(G i )|G i , k) ≤ 1 N i E p(k|Gi) -log p(s(G i )|G i , k) , (<label>8</label></formula><formula xml:id="formula_9">)</formula><p>where N is the number of samples and the upper bound is obtained by Jensen's Inequality. Then we can generalize our method to other graph self-supervised tasks with specially-designed task loss functions by defining -log p(s(G i )|G i , k) as the task loss function l(f α k ,w , G i ) for the graph G i under the k-th factor, and calculate the loss by</p><formula xml:id="formula_10">L w = 1 N i E p(k|Gi) l(f α k ,w , G i ) .<label>(9)</label></formula><p>In this way, the disentangled architectures in Sec. 3.1 coupled with factors disentangled from graph data can be routed pairwisely, and trained with factor-specific self-supervision to obtain more accurate performance estimation under each factor. Similar to <ref type="bibr" target="#b24">[25]</ref>, the super-network weights are updated with w = w -λ w ∇ w L w to obtain the weights that can represent the architectures' capabilities.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.3">Contrastive Search with Architecture Augmentations</head><p>In this section, we focus on encouraging the disentanglement of architectures and searching architectures with distinct capabilities of capturing different factors. The main insight of our proposed search method is intuitively based on the following two observations shown in the literature: 1) As architectures similar in operation choices and topologies have similar capabilities of capturing semantics for downstream tasks <ref type="bibr" target="#b27">[28,</ref><ref type="bibr" target="#b29">30,</ref><ref type="bibr" target="#b30">31]</ref>, slight modifying the architecture will have a slight influence on its capability. 2) Since different GNN architectures expert in different downstream tasks <ref type="bibr">[32]</ref>, the architectures searched for different disentangled latent factors are expected to have dissimilar capabilities under different factors.</p><p>Contrastive Search Inspired by self-supervised contrastive learning <ref type="bibr" target="#b32">[33,</ref><ref type="bibr" target="#b33">34]</ref> that capture discriminative features by pulling similar instances together and pushing dissimilar instances away in the latent space, we propose an architecture-level instance discrimination task to encourage the architectures to capture various latent factors. The task is defined as</p><formula xml:id="formula_11">p(s(α k )|G i , α k ) = exp ϕ(z i,k , z ′ i,s(α k ) ) N j=1 exp ϕ(z i,j , z ′ i,s(αj ) ) , (<label>10</label></formula><formula xml:id="formula_12">)</formula><formula xml:id="formula_13">z i,k = f α k ,w (G i ), z ′ i,k = T f (f α k ,w )(G i ),<label>(11)</label></formula><p>where s(α k ) is assigned to k as surrogate labels for the architecture, ϕ(•) calculates the similarity of two embeddings and T f (•) denotes architecture augmentations that transform an architecture to another architecture with similar capabilities capturing factors, i.e., f α k ,w → f ′ α k ,w . Then the loss function can be calculated by</p><formula xml:id="formula_14">L α = i -log E p(α k |Gi) p(s(α k )|G i , α k ).<label>(12)</label></formula><p>Similar to <ref type="bibr" target="#b24">[25]</ref>, the architecture parameters are updated with α = α-λ α ∇ α L α to search architectures with better capabilities of capturing factors.</p><p>Architecture Augmentations To create various views of architectures, we design three basic architecture augmentations from the perspectives of architecture operation choices α, architecture weights w and the internal embeddings H:</p><p>• Operation Choice Perturbation. This augmentation randomly reshapes the distributions of the mixed operations by altering the temperature in the softmax function in Eq. ( <ref type="formula" target="#formula_3">4</ref>) with</p><formula xml:id="formula_15">α k,i = exp(θ α k,i /τ ) j exp(θ α k,j /τ ) ,<label>(13)</label></formula><p>where the temperature τ is sampled from a uniform distribution U([1/r 1 , r 1 ]), and r 1 ≥ 1 is a hyper-parameter controlling the perturbation degree.</p><p>• Weight Perturbation. This augmentation randomly adds Gaussian noises ϵ ∼ N (0, σ 2 ) to r 2 % of the architecture weights w, where r 2 controls the perturbation ratio, and σ 2 is the standard deviation of the weights.</p><p>• Embedding Dropout. This augmentation randomly drops r 3 % of the embeddings H output from the mixed operations, where r 3 controls the dropout ratio.</p><p>Note that these architecture augmentations can further be randomly composed to generate mixed augmentations.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">Experiments</head><p>In this section, we conduct experiments on 8 real-world datasets with unsupervised settings to verify the design of our method. We also include detailed ablation studies to analyze the effectiveness of each component, and 3 real-world datasets in semi-supervised settings to show that our method can alleviate the label scarcity issues by pretraining the super-network.</p><p>Baselines We compare our method with 11 baselines from the following two different categories.</p><p>• Manually designed GNNs. We include five representative GNNs as our baselines, i.e., GCN <ref type="bibr" target="#b19">[20]</ref>, GAT <ref type="bibr" target="#b20">[21]</ref>, GIN <ref type="bibr" target="#b21">[22]</ref>, GraphSage <ref type="bibr" target="#b34">[35]</ref>, GraphConv <ref type="bibr" target="#b35">[36]</ref> and a simple baseline MLP, which constitutes our search space. For graph-level classification tasks, we adopt global mean pooling for each layer and concatenation to obtain the graph representations for these baselines.</p><p>• Graph neural architecture search. We include representative GNAS baselines GraphNAS <ref type="bibr" target="#b2">[3]</ref>, PAS <ref type="bibr" target="#b3">[4]</ref> and GASSO <ref type="bibr" target="#b36">[37]</ref>, where PAS is specially designed for graph-level classification tasks by searching the pooling operations, and GASSO is specially designed for node-level classification tasks by searching the graph structures simultaneously. We also include two classical NAS baselines, random search and DARTS <ref type="bibr" target="#b24">[25]</ref>. As these baselines are not specially designed for graphs, we adopt our search space for these baselines. Datasets For unsupervised settings, we conduct experiments on four graph-level classification datasets including PROTEINS <ref type="bibr" target="#b37">[38]</ref>, DD <ref type="bibr" target="#b38">[39]</ref>, MUTAG <ref type="bibr" target="#b39">[40]</ref>, IMDB-B <ref type="bibr" target="#b40">[41]</ref> from TUDataset <ref type="bibr" target="#b41">[42]</ref> and four node-level classification datasets Coauthor CS, Coauthor Physics from the Microsoft Academic Graph <ref type="bibr" target="#b42">[43]</ref>, Amazon Computers, Amazon Photos from the Amazon Co-purchase Graph <ref type="bibr" target="#b43">[44]</ref>. For semi-supervised settings, we adopt three real-world datasets, OGBG-Molhiv, OGBN-Arxiv <ref type="bibr" target="#b44">[45]</ref> Table <ref type="table">2</ref>: The results (accuracy%) of all the methods on the real-world datasets in unsupervised settings. Numbers after the ± signs represent standard deviations. The best results are in bold and the second-best results are underlined. As the search space of GASSO and PAS do not suit the graph-level and node-level tasks respectively, we omit their results. and Wechat-Video <ref type="foot" target="#foot_2">5</ref> . The datasets cover various graph-related fields including small molecules, bioinformatics, social networks, e-commerce networks, and academic coauthorship networks. The statistics are summarized in Table <ref type="table" target="#tab_0">1</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Super-network</head><p>We briefly introduce the super-network construction as follows. The super-network consists of two parts, the operation pool and the directed acyclic graph (DAG). The operation pool includes several node aggregation operations (e.g., GCN, GIN, GAT, etc.), graph pooling operations (e.g., SortPool, AttentionPool, etc.), and layer merging operations (e.g., MaxMerge, ConcatMerge, etc.). The DAG determines how the operations are connected to calculate the graph representations for the subsequent classification tasks.</p><p>More details of the experiments are provided in the Appendix, including additional experiments and analyses, experimental setups, configurations, and implementation details.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1">Main Results</head><p>Unsupervised Settings From the experimental results summarized in Table <ref type="table">2</ref>, we have the following observations: 1) GNNs perform differently on various datasets. The best GNN baselines for these datasets are GraphSage, GAT, GraphConv, GraphConv, GAT, GCN, GCN, GraphConv successively, and the performance varies greatly across datasets and GNNs. It verifies that no GNN architecture is dominant for all datasets, which is consistent with the literature [32] and shows the demand for automated GNN architecture designing based on the data characteristics to obtain the optimal representations. 2) Most GNAS baselines fail in the unsupervised setting. Since the existing GNAS baselines highly rely on supervised signals to search the architectures, they inherently do not suit the unsupervised settings. As an ad hoc remedy for the existing GNAS baselines in unsupervised settings, we substitute the supervised metrics with the self-supervised ones during the searching process as simple extensions. However, these GNAS baselines, contrary to supervised settings, do not guarantee better performance than manually designed GNNs for all datasets. For example, all GNAS baselines even perform worse than manually designed GNNs on DD dataset and do not have significant improvements on most datasets. The reasons behind might be that simply using graph self-supervised metrics does not consider the entanglement of architectures and factors, leading to inaccurate estimation of the architectures' capabilities. 3) Our method has significant improvements over the baselines on most datasets. Compared with manually designed GNN baselines, DSGAS has a performance improvement of 3.1% on PROTEINS and over 1% on most datasets. We contribute this to its ability of automatically tailoring GNNs for various datasets, showing its effectiveness of automatic GNN designing. DSGAS also significantly surpasses GNAS baselines, showing its superiority in graph neural architecture search in unsupervised settings, which benefits from the design of discovering architectures that can capture various graph factors in a self-supervised fashion.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>10% 5% 1%</head><p>Label Rate (OGBG-Molhiv)  Semi-supervised Settings From Figure <ref type="figure">2</ref>, we have the following observations: Compared with the baselines, DSGAS significantly alleviates the performance drop when the number of available supervised labels is fewer, which verifies that our method fully exploits latent factors inside graph data and boost the supervised architecture search stage by warming up the weights and architecture parameters of the super-network. Its significant improvement over the ablated version DSGAS-P also verifies the effectiveness of pretraining the super-network by the proposed modules of self-supervised training with joint architecture-graph disentanglement and contrastive search with architecture augmentations. For example, our model with the pretraining stage has an absolute improvement of 5% on Wechat-Video dataset with 1% labels compared with the ablated version without the pretraining stage, which shows the effects of pretraining the super-networks on alleviating the label scarcity issues. In comparison, the performance of other baselines decays significantly more than our method, showing that current GNAS can not tackle scenarios with scarce labels. For example, on OGBG-Molhiv, PAS is the best baseline while the worst with 10% and 1% labels respectively, which may due to the inaccurate performance estimation with scarce labels. The phenomenon further strengthens the necessity of designing effective unsupervised GNAS methods.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2">Additional Experiments</head><p>Ablation Studies We evaluate the effectiveness of each module of our framework by comparing the following ablated versions of our method: DSGAS-CONT removes our proposed contrastive search module and search architectures with the vanilla self-supervised loss. DSGAS-FA further replaces our proposed factor-aware training module with the vanilla self-supervised training. DSGAS-DISEN further replaces our proposed disentangled super-network with the vanilla super-network. We compare the performance of the ablated versions and the best GNAS baselines on the real-world datasets under unsupervised settings. From Figure <ref type="figure">3a</ref>, we have the following observations. First, our proposed DSGAS outperforms all the variants on all datasets, demonstrating the effectiveness of each component of our proposed framework in searching graph architectures under unsupervised settings. Second, DSGAS-CONT drops drastically in performance on all datasets compared to the full version, showing the superiority of our proposed disentangled contrastive architecture search module in searching architectures. Third, the performance also decays for DSGAS-FA and DSGAS-DISEN on most datasets, showing the necessity of capturing various latent factors with different architectures.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Architecture Visualizations</head><p>We visualize the architectures searched on different unsupervised datasets in Figure <ref type="figure" target="#fig_2">4</ref>. It shows that the searched architectures of different factors adopt quite different GNN operations while sometimes sharing the same operations, which leads to an overall architecture with complex internal connections between operations. This phenomenon implies that DSGAS can optimize the architecture operation choices as well as the operation connections for different factors to have a competitive performance on various graph datasets, which also verifies the superiority of DSGAS in automated architecture search to save human endeavors for architecture designs.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Effects of Architecture Augmentations</head><p>In Figure <ref type="figure">3b</ref>, we show the results of different architecture augmentation methods on different datasets compared with the best GNAS baseline. We find that though the best augmentations differ among datasets, they have similar performance improvements in most cases, which verifies the design of contrastive search with architecture augmentations.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">Related Works</head><p>Graph Neural Architecture Search Instead of manually designing more sophisticated models for various scenarios, neural architecture search, aiming to automatically discover the optimal architectures for given tasks, emerges as a hot topic recently in computer vision <ref type="bibr" target="#b45">[46,</ref><ref type="bibr" target="#b22">23]</ref>, natural language processing <ref type="bibr" target="#b46">[47]</ref>, graph representation learning <ref type="bibr" target="#b0">[1,</ref><ref type="bibr" target="#b47">48,</ref><ref type="bibr" target="#b48">49]</ref>, etc. In the field of graph representation learning with various applications <ref type="bibr" target="#b49">[50,</ref><ref type="bibr" target="#b50">51,</ref><ref type="bibr" target="#b51">52,</ref><ref type="bibr" target="#b52">53,</ref><ref type="bibr" target="#b53">54]</ref>, graph neural architecture search (GNAS) methods, as the most related to our works, can be roughly classified into reinforcementlearning-based methods <ref type="bibr" target="#b2">[3,</ref><ref type="bibr" target="#b54">55]</ref>, evolutionary-based methods <ref type="bibr" target="#b55">[56,</ref><ref type="bibr" target="#b1">2,</ref><ref type="bibr" target="#b56">57,</ref><ref type="bibr" target="#b57">58]</ref>, and differentiable methods <ref type="bibr" target="#b58">[59,</ref><ref type="bibr" target="#b59">60,</ref><ref type="bibr" target="#b60">61,</ref><ref type="bibr" target="#b61">62,</ref><ref type="bibr" target="#b36">37,</ref><ref type="bibr" target="#b62">63,</ref><ref type="bibr" target="#b3">4,</ref><ref type="bibr" target="#b63">64,</ref><ref type="bibr" target="#b64">65]</ref>. However, supervised labels are indispensable for the existing GNAS methods to conduct neural architecture search, which limits their applications in widely-existed scenarios where labels are scarce or not available.</p><p>Unsupervised Neural Architecture Search In unsupervised settings, some neural architecture search methods replace supervised labels with self-supervised loss during searching <ref type="bibr" target="#b65">[66,</ref><ref type="bibr" target="#b66">67,</ref><ref type="bibr" target="#b67">68,</ref><ref type="bibr" target="#b68">69,</ref><ref type="bibr" target="#b69">70,</ref><ref type="bibr" target="#b70">71]</ref>. Another classic of related methods design special metrics, whose calculation does not depend on labels, as proxies for model performance estimation <ref type="bibr" target="#b71">[72,</ref><ref type="bibr" target="#b72">73]</ref>. For example, UnNAS <ref type="bibr" target="#b73">[74]</ref> adopts pretext tasks like image rotation, coloring images, solving puzzles, etc. However, these methods are specially designed for computer vision, and can not be directly adopted to graph data. Some GNAS works exploit self-supervised loss as auxiliaries to augment the supervised search process <ref type="bibr" target="#b62">[63]</ref>, but the supervised labels are still mandatory for its search. To the best of our knowledge, this is the first work on unsupervised graph neural architecture search.</p><p>Graph Self-supervised Learning Graph self-supervised learning <ref type="bibr" target="#b74">[75,</ref><ref type="bibr" target="#b75">76]</ref> is devoted to obtaining graph representations by extracting informative knowledge with well-designed pretext tasks without labels, which can be roughly classified into contrastive <ref type="bibr" target="#b76">[77,</ref><ref type="bibr" target="#b77">78,</ref><ref type="bibr" target="#b78">79,</ref><ref type="bibr" target="#b79">80,</ref><ref type="bibr" target="#b80">81,</ref><ref type="bibr" target="#b81">82,</ref><ref type="bibr" target="#b82">83,</ref><ref type="bibr" target="#b83">84,</ref><ref type="bibr" target="#b84">85,</ref><ref type="bibr" target="#b85">86]</ref> and generative <ref type="bibr" target="#b86">[87,</ref><ref type="bibr" target="#b87">88,</ref><ref type="bibr" target="#b75">76,</ref><ref type="bibr" target="#b88">89]</ref>, and predictive methods <ref type="bibr" target="#b89">[90,</ref><ref type="bibr" target="#b90">91,</ref><ref type="bibr" target="#b91">92]</ref>. The existing graph self-supervised learning methods usually focus on designing better pretext tasks with a fixed GNN <ref type="bibr" target="#b92">[93,</ref><ref type="bibr" target="#b93">94,</ref><ref type="bibr" target="#b94">95,</ref><ref type="bibr" target="#b95">96]</ref> encoder such as GCN <ref type="bibr" target="#b19">[20]</ref>, GAT <ref type="bibr" target="#b20">[21]</ref> and GIN <ref type="bibr" target="#b21">[22]</ref>. Another class of related methods attempt to automate the choices of pretext tasks <ref type="bibr" target="#b96">[97,</ref><ref type="bibr" target="#b97">98,</ref><ref type="bibr" target="#b98">99,</ref><ref type="bibr" target="#b99">100,</ref><ref type="bibr" target="#b100">101]</ref>. We mainly consider graph neural architecture in unsupervised settings, while other pretext tasks are orthogonal to our framework and can be incorporated.</p><p>Disentangled Representation Learning The primary objective of disentangled representation learning is to delineate and interpret the various latent factors which influence the data we encounter in an observable context, rendering each of these factors as unique vector representations <ref type="bibr" target="#b101">[102,</ref><ref type="bibr" target="#b102">103]</ref>.</p><p>It has emerged to be a useful tool in various domains, including those of computer vision [104, 105, 106, 107, 108, 109], and recommendation systems <ref type="bibr" target="#b109">[110,</ref><ref type="bibr" target="#b110">111,</ref><ref type="bibr" target="#b111">112,</ref><ref type="bibr" target="#b112">113,</ref><ref type="bibr" target="#b113">114,</ref><ref type="bibr" target="#b114">115,</ref><ref type="bibr" target="#b115">116,</ref><ref type="bibr" target="#b116">117]</ref>, graph representation learning <ref type="bibr" target="#b8">[9,</ref><ref type="bibr" target="#b117">118,</ref><ref type="bibr" target="#b9">10,</ref><ref type="bibr" target="#b13">14,</ref><ref type="bibr" target="#b10">11,</ref><ref type="bibr" target="#b118">119,</ref><ref type="bibr" target="#b119">120,</ref><ref type="bibr" target="#b120">121]</ref>. As the most related, GRACES <ref type="bibr" target="#b62">[63]</ref> characterize the graph latent factors inside data by designing a self-supervised disentangled graph encoder, and conduct graph neural architecture search for each graph to handle graph distribution shifts, while the training and searching process still follows the supervised paradigm. In contrast, we focus on automating the GNN designs with disentangled self-supervision in this paper.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6">Conclusions</head><p>In this paper, we propose a novel Disentangled Self-Supervised Graph Neural Architecture Search (DSGAS) framework to automate the GNN designs with disentangled self-supervision, which includes disentangled graph architecture super-network, self-supervised training with joint architecture-graph disentanglement and contrastive search with architecture augmentations. Extensive experiments demonstrate that our proposed method can discover architectures with capabilities of capturing various graph latent factors and significantly outperform the state-of-the-art GNAS baselines. Detailed ablation studies and analyses show the effectiveness of our method design. One limitation is that in this paper we mainly focus on homogeneous graphs, and we leave extending our method to heterogeneous graphs for further explorations. A function that calculates the similarity of two embeddings</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A Notations</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B Additional Experiments and Analyses</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B.1 Complexity Analysis</head><p>Denote the number of nodes and edges in the graph as N and E, the number of latent factors as K, the number of operation choices as |O|, the dimensionality of hidden representations as d. The time complexity of the disentangled super-network is O(K|E|d + K|V |d 2 ), where the computation for each factor is fully parallelizable and amenable to GPU acceleration, and K is usually a small constant. The time complexity of the self-supervised training and contrastive search modules is both O(K 2 d 2 ). As architectures under different factors share the parameters, the number of learnable parameters is the same as classical graph super-network, i.e., O(|O|d 2 ). Therefore, the complexity of our method is comparable to classical GNAS methods.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B.2 Empirical Running Time</head><p>We make the comparisons of different NAS methods in terms of the empirical running time. The time is tested with one NVIDIA 3090 GPU. As shown in the Table <ref type="table" target="#tab_4">4</ref> and Table <ref type="table" target="#tab_5">5</ref>, the running time of our method DSGAS is on par with the state-of-the-art one-shot NAS methods (e.g., DARTS, GASSO, and PAS), which is much more efficient than the multi-trial NAS methods (e.g., random search and GraphNAS). While being competitive in efficiency, our method has significant performance improvements over the baselines. The empirical results also confirm the theoretical complexity analysis in Section B.1 that our method does not introduce many additional computational costs.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B.3 Search Space Analysis</head><p>We show how the performance of DSGAS changes when the search space is larger on the Computers dataset in the Table <ref type="table" target="#tab_6">6</ref> and Table <ref type="table" target="#tab_7">7</ref>. In Table <ref type="table" target="#tab_6">6</ref> , we enlarge the search space by gradually increasing the GNN operation pool , i.e. increasing the number of available GNN options. In Table <ref type="table" target="#tab_7">7</ref>, we enlarge the search space by gradually increasing the number of factors , i.e. increasing the number of paths to capture graph factors. As shown in the tables, when the search space is larger, the performance of our method gradually improves, which verifies that our method can discover better architectures with a larger search space.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B.4 Discussions of the Searched Architectures</head><p>We visualize several searched architectures in Figure <ref type="figure" target="#fig_2">4</ref> of the main paper, which are powerful yet complex. Here, we make following discussions about the searched architectures.</p><p>We observe that in different random training runs, while the searched architectures show similar performance, their DAGs are not the same, which is consistent with the NAS literature <ref type="bibr" target="#b29">[30,</ref><ref type="bibr" target="#b30">31]</ref>. A possible reason is that there exist plenty of different architectures with very similar performance in the large graph architecture search space <ref type="bibr" target="#b48">[49]</ref>. As shown in Table <ref type="table">2</ref> in the main paper, our method has relatively low performance variance and high performance expectation, which shows that our method can better search for the potential top-ranked architectures than baselines.</p><p>The number of factors K, which reflects the assumption of the number of graph factors to be captured inside the data, controls the searchable architectures in our method. When K = 1, our method can include single simple architectures with arbitrary operation combinations. When K ≥ 1, our method can discover more sophisticated architectures to capture the inherent graph factors and obtain better performance. Empirically, we observe that when K ≥ 1, the searched architectures are more complex than single architectures but are also more competitive in capturing the graph properties, which verifies the design of our method.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B.5 Additional Results in Unsupervised Settings</head><p>We provide the experimental results on Cora, CiteSeer, and PubMed in Table <ref type="table" target="#tab_8">8</ref>. We follow the public data splits <ref type="bibr" target="#b76">[77]</ref> of Cora, Citeseer, and Pubmed, and conduct graph neural architecture search without labels. Similar to other unsupervised node classification datasets in the paper, we train the super-network with fixed epochs , and for evaluation, we train a linear classifier and report the mean accuracy and standard deviations on the test nodes of 5 runs with different random seeds. As shown in the Table <ref type="table" target="#tab_8">8</ref>, our method DSGAS has significant performance improvement over the NAS baselines. Setups Following previous works of graph self-supervised learning <ref type="bibr" target="#b84">[85,</ref><ref type="bibr" target="#b75">76]</ref>, we first pretrain the models by self-supervised loss with fixed epochs, and then evaluate the models by finetuning an extra classifier. As supervised labels are not available in unsupervised settings, for fair comparisons, all the methods adopt the same self-supervised tasks, <ref type="bibr" target="#b84">[85]</ref> and <ref type="bibr" target="#b75">[76]</ref> for graph and node classification tasks respectively. For GNAS baselines, the self-supervised loss is utilized to train the model parameters as well as select the architectures.</p><p>Evaluation protocols For graph-level classification tasks, the obtained graph representations are evaluated by an SVM classifier with a 10-fold cross-validation and the process is repeated by five times with different seeds. For node-level classification tasks, the obtained node representations are evaluated by a logistic regression classifier with random splits twenty times. The average accuracies and their standard deviations are reported. These protocols are kept the same for all methods to guarantee fair comparisons. We summarize the pipeline of unsupervised settings for DSGAS in Algorithm 1. Calculate the contrastive search loss with architecture augmentations L α as Eq. <ref type="bibr" target="#b11">(12)</ref> 6:</p><p>Update the super-network operation choices with α = α -λ α ∇ α L α 7: end for 8: Evaluate the searched model with linear protocols.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>C.2 Semi-supervised Settings</head><p>Setups To further test the performance of GNAS in scenarios with scarce labels instead of exactly no labels, we conduct semi-supervised experiments with limited labels, i.e., using 10%,5%,1% labels for both training and validation. In this setting, we compare the differentiable GNAS baselines, including DARTS, PAS and GASSO, which train super-network weights with training datasets and optimize architecture parameters with validation datasets as in supervised settings. For DSGAS, it first pretrains the super-network by methods mentioned in Section 3.2 and Section 3.3, and then continues the search process as traditional supervised GNAS. We also include DSGAS-P, which does not adopt the pretraining stage, as an ablated baseline.</p><p>Evaluation protocols For OGBG-Molhiv and OGBN-Arxiv, the splits are the same in the open graph benchmark <ref type="bibr" target="#b44">[45]</ref>. For Wechat-Video, we adopt random splits with a ratio of 6:2:2 for training, validation, and testing by multi-label stratified splitting <ref type="bibr" target="#b121">[122]</ref>. The available training and validation labels are randomly sampled with a stratified sampling for settings of labeling rates 1%, 5%, and 10%. We train the models with early-stop patience 50, and then we adopt the best-performed checkpoint on validation data split, which is tested on testing data split to obtain the reported results. These splits and the training strategies are kept the same for all methods to guarantee fair comparisons. The experiments are run five times with different random seeds. We summarize the pipeline of semi-supervised settings for DSGAS in Algorithm 2.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Algorithm 2</head><p>The pipeline of semi-supervised settings for DSGAS Require: Graph G with limited labels, training epochs L, earlystop patience E.</p><p>1: Construct the dientangled graph architecture super-networks with randomly initialized weights w and operation choices α. 2: Pretraining the super-networks for w and α using Algorithm 1 3: for l = 1, . . . , L do 4:</p><p>Calculate the supervised loss on training data L w .</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>5:</head><p>Update the super-network weights with w = w -λ w ∇ w L w .</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>6:</head><p>Calculate the supervised loss on validation data L α .</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>7:</head><p>Update the super-network operation choices with α = α -λ α ∇ α L α .</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>8:</head><p>if the validation accuracy is non-increasing for E epochs then </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>D Implementation Details D.1 Super-network Construction</head><p>The super-network generally consists of two parts, the operation pool and the directed acyclic graph (DAG) that wires the operations. Following <ref type="bibr" target="#b3">[4]</ref>, we adopt three kinds of operations in the operation pool as follows:</p><p>• Node aggregation operations, which aggregate messages from the neighborhood to update the node representations, including GCN <ref type="bibr" target="#b19">[20]</ref>, GAT <ref type="bibr" target="#b20">[21]</ref>, GIN <ref type="bibr" target="#b21">[22]</ref>, GraphConv <ref type="bibr" target="#b35">[36]</ref>, GraphSage <ref type="bibr" target="#b34">[35]</ref>. MLP (Multi-layer Perceptrons) is also included as an operation that does not utilize the neighborhood. • Graph pooling operations, which aggregate node representations to obtain graph-level representations, including SortPool <ref type="bibr" target="#b122">[123]</ref>, AttentionPool <ref type="bibr" target="#b123">[124]</ref>, MaxPool, MeanPool and SumPool. For example, MeanPool takes the average of the node representations as the graph representation. • Layer merging operations, which aggregate representations from intermediate layers to formulate more expressive representations, including MaxMerge, ConcatMerge, SumMerge and MeanMerge. For example, MaxMerge selects the max values in multiple representations from intermediate layers.</p><p>For brevity, we denote 'Agg','Pool','Merge' as node aggregation operations, graph pooling operations, and layer merging operations respectively. Following <ref type="bibr" target="#b36">[37]</ref>, the DAG for node classification tasks is a straightforward path, i.e., H l+1 = Agg l (H l , A), and the embeddings of the last layer are utilized for downstream tasks, where H l denotes the hidden embeddings output by the l-th layer, and A denotes the graph adjacency matrix. Following <ref type="bibr" target="#b3">[4]</ref>, the DAG for graph classification tasks is constructed by H l+1 = Agg l (H l , A), Z l = Pool l (H l , A), and the merged representations Merge(Z 1 , Z 2 , . . . , Z L ) are utilized for downstream tasks, where L is the number of layers.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>D.2 Hyperparameters</head><p>For fair comparisons, all methods adopt the same dimensionality, number of layers and normalization techniques.</p><p>For graph classification datasets, we adopt the dimensionality as 32, the number of layers as 3 and batch normalization <ref type="bibr" target="#b124">[125]</ref>. For node classification datasets, we adopt the dimensionality as 128 and the number of layers as 2 and layer normalization <ref type="bibr" target="#b125">[126]</ref>. Adam optimizer <ref type="bibr" target="#b126">[127]</ref> is adopted to optimize the model weights and another SGD optimizer is adopted to optimize architecture parameters for NAS methods. For our method, we adopt K = 3 for all node classification datasets and K = 4 for all graph classification datasets, and the hyperparameters that control the perturbation degree for the architecture augmentations of operation choices, weights and embeddings are set to 1.1, 0.1, 0.05 respectively for all datasets.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>D.3 Configurations</head><p>All experiments are conducted with:</p><p>• Operating System: Ubuntu 20.04.5 LTS • CPU: Intel(R) Xeon(R) Gold 6240 CPU @ 2.60GHz • GPU: NVIDIA GeForce RTX 3090 with 24 GB of memory • Software: Python 3.9.12, Cuda 11.3, PyTorch <ref type="bibr" target="#b127">[128]</ref> 1.12.1, PyTorch Geometric <ref type="bibr" target="#b128">[129]</ref> 2.0.4.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 :</head><label>1</label><figDesc>Figure 1: The framework of Disentangled Self-supervised Graph Neural Architecture Search (DSGAS), including the following three key components: 1) Disentangled graph architecture supernetwork enables multiple architectures to be disentangled and optimized simultaneously in an end-toend manner. 2) Self-supervised training with joint architecture-graph disentanglement estimates the performance of architectures under various latent factors by considering the relationship between architectures, graphs and factors. 3) Contrastive search with architecture augmentations encourages and discovers architectures with distinct capabilities of capturing factors. (Best viewed in color)</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 2 :Figure 3 :</head><label>23</label><figDesc>Figure 2: The performance of GNAS methods on real-world datasets under semi-supervised settings, where DSGAS-P denotes DSGAS without pretraining. The results are averaged by five random runs. (Best viewed in color)</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 4 :</head><label>4</label><figDesc>Figure 4: Visualizations of the search architectures on different datasets. Nodes denote GNN operations except that 'INPUT' denotes the input graphs with structures and features. Directed edges denote calculation flows, where different colors denote the architecture operation choices under different factors. (Best viewed in color)</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Algorithm 1 3 :) 4 :</head><label>134</label><figDesc>The pipeline of unsupervised settings for DSGAS Require: Graph G without labels, training epochs L. 1: Construct the dientangled graph architecture super-networks with randomly initialized weights w and operation choices α. 2: for l = 1, . . . , L do Calculate the self-supervised training loss with architecture-graph disentanglement L w as Eq. (9Update the super-network weights with w = w -λ w ∇ w L w 5:</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>12 :</head><label>12</label><figDesc>Evaluate the searched model on testing data.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head>Table 1 :</head><label>1</label><figDesc>Summary of dataset statistics. Unsup./Semi. denotes Unsupervised and Semi-supervised settings. Graph/Node denotes graph and node classification tasks. ACC/AUC denotes Accuracy and ROC-AUC evaluation metrics.</figDesc><table><row><cell>Datasets</cell><cell cols="3">MUTAG IMDB-B PROTEINS</cell><cell>DD</cell><cell cols="2">Computers Photos</cell><cell>CS</cell><cell cols="4">Physics OGBG-Molhiv OGBN-Arxiv Wechat-Video</cell></row><row><cell>Setting</cell><cell>Unsup.</cell><cell>Unsup.</cell><cell>Unsup.</cell><cell>Unsup.</cell><cell>Unsup.</cell><cell>Unsup.</cell><cell>Unsup.</cell><cell>Unsup.</cell><cell>Semi.</cell><cell>Semi.</cell><cell>Semi.</cell></row><row><cell>Task</cell><cell>Graph</cell><cell>Graph</cell><cell>Graph</cell><cell>Graph</cell><cell>Node</cell><cell>Node</cell><cell>Node</cell><cell>Node</cell><cell>Graph</cell><cell>Node</cell><cell>Node</cell></row><row><cell>Evaluation Metrirc</cell><cell>ACC</cell><cell>ACC</cell><cell>ACC</cell><cell>ACC</cell><cell>ACC</cell><cell>ACC</cell><cell>ACC</cell><cell>ACC</cell><cell>AUC</cell><cell>ACC</cell><cell>AUC</cell></row><row><cell># Graphs</cell><cell>188</cell><cell>1,000</cell><cell>1,113</cell><cell>1,178</cell><cell>1</cell><cell>1</cell><cell>1</cell><cell>1</cell><cell>41,127</cell><cell>1</cell><cell>1</cell></row><row><cell># Avg. Nodes</cell><cell>17</cell><cell>19</cell><cell>39</cell><cell>284</cell><cell>13,752</cell><cell>7,650</cell><cell>18,333</cell><cell>34,493</cell><cell>26</cell><cell>169,343</cell><cell>60,774</cell></row><row><cell># Avg. Edges</cell><cell>56</cell><cell>211</cell><cell>183</cell><cell>1,714</cell><cell>505,474</cell><cell cols="3">245,812 182,121 530,417</cell><cell>28</cell><cell>2,484,941</cell><cell>3,182,156</cell></row><row><cell># Features</cell><cell>7</cell><cell>1</cell><cell>3</cell><cell>89</cell><cell>767</cell><cell>745</cell><cell>6,805</cell><cell>8,415</cell><cell>300</cell><cell>128</cell><cell>512</cell></row><row><cell># Classes</cell><cell>2</cell><cell>2</cell><cell>2</cell><cell>2</cell><cell>10</cell><cell>8</cell><cell>15</cell><cell>5</cell><cell>2</cell><cell>40</cell><cell>13</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_3"><head>Table 3 :</head><label>3</label><figDesc>Summary of notations and their descriptions.</figDesc><table><row><cell cols="2">Notations Descriptions</cell></row><row><cell cols="2">G, Y, A, W Graph space, label space, architecture space and weight space</cell></row><row><cell>α, w</cell><cell>Architecture operation choices and architecture weight</cell></row><row><cell>H, A</cell><cell>Graph embeddings and adjacency matrix</cell></row><row><cell>O, |O|</cell><cell>A pool of GNN operations and the number of operations</cell></row><row><cell>f α,w (•)</cell><cell>A GNN characterized by operation choices α and weight w</cell></row><row><cell>s(•)</cell><cell>Pseudo label generator defined by pretext tasks</cell></row><row><cell>c</cell><cell>Learnable vectors for the latent factors</cell></row><row><cell>K</cell><cell>The number of the latent factors</cell></row><row><cell>r</cell><cell>Perturbation ratio in architecture augmentations</cell></row><row><cell>T f (•)</cell><cell>Architecture augmentation function</cell></row><row><cell>Enc(•)</cell><cell>Architecture encoding function</cell></row><row><cell>l, L</cell><cell>loss functions</cell></row><row><cell>ϕ(•)</cell><cell></cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_4"><head>Table 4 :</head><label>4</label><figDesc>Comparisons of NAS methods in terms of empirical running time and performance on unsupervised graph classification datasets (with single NVIDIA GeForce RTX 3090).</figDesc><table><row><cell>Data</cell><cell cols="2">PROTEINS</cell><cell>DD</cell><cell></cell><cell cols="2">MUTAG</cell><cell cols="2">IMDB-B</cell></row><row><cell>Metric</cell><cell cols="8">ACC(%) Time(s) ACC(%) Time(s) ACC(%) Time(s) ACC(%) Time(s)</cell></row><row><cell>Random</cell><cell>74.5±0.9</cell><cell>2952</cell><cell>74.8±1.3</cell><cell>9401</cell><cell>82.1±2.8</cell><cell>949</cell><cell>69.0±2.1</cell><cell>2535</cell></row><row><cell>DARTS</cell><cell>73.6±0.9</cell><cell>80</cell><cell>75.7±0.9</cell><cell>650</cell><cell>86.5±2.3</cell><cell>21</cell><cell>70.4±0.6</cell><cell>65</cell></row><row><cell cols="2">GraphNAS 73.6±0.7</cell><cell>1897</cell><cell>75.2±0.9</cell><cell>7830</cell><cell>77.5±0.7</cell><cell>273</cell><cell>62.7±1.3</cell><cell>1595</cell></row><row><cell>PAS</cell><cell>74.6±0.3</cell><cell>156</cell><cell>76.5±0.9</cell><cell>931</cell><cell>84.0±1.6</cell><cell>36</cell><cell>64.6±13.8</cell><cell>127</cell></row><row><cell>GASSO</cell><cell>-</cell><cell></cell><cell>-</cell><cell></cell><cell>-</cell><cell></cell><cell>-</cell><cell></cell></row><row><cell>DSGAS</cell><cell>76.0±0.2</cell><cell>471</cell><cell>78.4±0.7</cell><cell>1800</cell><cell>88.7±0.7</cell><cell>41</cell><cell>72.0±0.5</cell><cell>261</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_5"><head>Table 5 :</head><label>5</label><figDesc>Comparisons of NAS methods in terms of empirical running time and performance on unsupervised node classification datasets (with single NVIDIA GeForce RTX 3090).</figDesc><table><row><cell>Data</cell><cell>CS</cell><cell></cell><cell cols="2">Computers</cell><cell cols="2">Physics</cell><cell>Photo</cell><cell></cell></row><row><cell>Metric</cell><cell cols="8">ACC(%) Time(s) ACC(%) Time(s) ACC(%) Time(s) ACC(%) Time(s)</cell></row><row><cell>Random</cell><cell>92.9±0.3</cell><cell>1071</cell><cell>84.8±0.4</cell><cell>3605</cell><cell>95.4±0.1</cell><cell>2095</cell><cell>91.1±0.6</cell><cell>522</cell></row><row><cell>DARTS</cell><cell>92.8±0.3</cell><cell>34</cell><cell>79.7±0.5</cell><cell>79</cell><cell>95.2±0.1</cell><cell>75</cell><cell>91.5±0.6</cell><cell>13</cell></row><row><cell cols="2">GraphNAS 91.6±0.3</cell><cell>647</cell><cell>69.0±0.6</cell><cell>5295</cell><cell>94.5±0.1</cell><cell>2268</cell><cell>89.3±0.7</cell><cell>435</cell></row><row><cell>PAS</cell><cell>-</cell><cell></cell><cell>-</cell><cell></cell><cell>-</cell><cell></cell><cell>-</cell><cell></cell></row><row><cell>GASSO</cell><cell>93.1±0.3</cell><cell>34</cell><cell>84.9±0.4</cell><cell>69</cell><cell>95.7±0.1</cell><cell>75</cell><cell>92.0±0.3</cell><cell>13</cell></row><row><cell>DSGAS</cell><cell>93.5±0.2</cell><cell>49</cell><cell>86.6±0.4</cell><cell>201</cell><cell>95.7±0.1</cell><cell>99</cell><cell>93.3±0.3</cell><cell>20</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_6"><head>Table 6 :</head><label>6</label><figDesc>The performance of our method with increasing number of available GNN options on the Computers dataset.</figDesc><table><row><cell>|O|</cell><cell>2</cell><cell>3</cell><cell>4</cell><cell>5</cell></row><row><cell cols="5">ACC(%) 84.8±0.4 86.2±0.3 86.6±0.3 86.6±0.4</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_7"><head>Table 7 :</head><label>7</label><figDesc>The performance of our method with increasing number of available factors on the Computers dataset.</figDesc><table><row><cell>K</cell><cell>2</cell><cell>3</cell><cell>4</cell><cell>5</cell></row><row><cell cols="5">ACC(%) 85.1±0.4 86.6±0.4 87.3±0.4 86.5±0.4</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_8"><head>Table 8 :</head><label>8</label><figDesc>The performance of NAS methods on other graph datasets in unsupervised settings.</figDesc><table><row><cell>Data</cell><cell>Cora</cell><cell>Citeseer Pubmed</cell></row><row><cell>DARTS</cell><cell cols="2">78.4±0.3 71.1±0.8 78.8±0.7</cell></row><row><cell cols="3">GraphNAS 81.5±0.6 70.4±1.1 79.9±0.9</cell></row><row><cell>GASSO</cell><cell cols="2">80.2±0.8 69.5±1.1 78.1±0.8</cell></row><row><cell>DSGAS</cell><cell cols="2">83.5±0.4 72.2±1.4 80.6±0.4</cell></row><row><cell>C Experimental Details</cell><cell></cell><cell></cell></row><row><cell>C.1 Unsupervised Settings</cell><cell></cell><cell></cell></row></table></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="3" xml:id="foot_0"><p>The codes are available at Github.</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="4" xml:id="foot_1"><p>We take graph classification as an example for simplicity, while the case of node classification can be easily extended.</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="5" xml:id="foot_2"><p>https://algo.weixin.qq.com/</p></note>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div><head>Acknowledgements</head><p>This work was supported by the <rs type="funder">National Key Research and Development Program of China</rs> No. <rs type="grantNumber">2020AAA0106300</rs>, <rs type="funder">National Natural Science Foundation of China</rs> (No. <rs type="grantNumber">62222209</rs>, <rs type="grantNumber">62250008</rs>, <rs type="grantNumber">62102222</rs>, <rs type="grantNumber">62206149</rs>), <rs type="funder">Beijing National Research Center for Information Science and Technology</rs> under Grant No. <rs type="grantNumber">BNR2023RC01003</rs>, <rs type="grantNumber">BNR2023TD03006</rs>, <rs type="funder">China National Postdoctoral Program for Innovative Talents</rs> No. <rs type="grantNumber">BX20220185</rs>, <rs type="funder">China Postdoctoral Science Foundation</rs> No. <rs type="grantNumber">2022M711813</rs>, and <rs type="funder">Beijing Key Lab of Networked Multimedia</rs>. All opinions, findings, conclusions, and recommendations in this paper are those of the authors and do not necessarily reflect the views of the funding agencies.</p></div>
+			</div>
+			<listOrg type="funding">
+				<org type="funding" xml:id="_JwQzhfT">
+					<idno type="grant-number">2020AAA0106300</idno>
+				</org>
+				<org type="funding" xml:id="_hWVKfsp">
+					<idno type="grant-number">62222209</idno>
+				</org>
+				<org type="funding" xml:id="_kTbxecu">
+					<idno type="grant-number">62250008</idno>
+				</org>
+				<org type="funding" xml:id="_SgBQEKX">
+					<idno type="grant-number">62102222</idno>
+				</org>
+				<org type="funding" xml:id="_dqAxREK">
+					<idno type="grant-number">62206149</idno>
+				</org>
+				<org type="funding" xml:id="_vaYDHPr">
+					<idno type="grant-number">BNR2023RC01003</idno>
+				</org>
+				<org type="funding" xml:id="_bHWkHuw">
+					<idno type="grant-number">BNR2023TD03006</idno>
+				</org>
+				<org type="funding" xml:id="_nfeTks5">
+					<idno type="grant-number">BX20220185</idno>
+				</org>
+				<org type="funding" xml:id="_Ppc6BM9">
+					<idno type="grant-number">2022M711813</idno>
+				</org>
+			</listOrg>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">Automated machine learning on graphs: A survey</title>
+		<author>
+			<persName><forename type="first">Ziwei</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xin</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wenwu</forename><surname>Zhu</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2103.00742</idno>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Autograph: Automated graph neural network</title>
+		<author>
+			<persName><forename type="first">Yaoman</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Irwin</forename><surname>King</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Neural Information Processing</title>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="page" from="189" to="201" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Graph neural architecture search</title>
+		<author>
+			<persName><forename type="first">Yang</forename><surname>Gao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hong</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Peng</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chuan</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yue</forename><surname>Hu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">IJCAI</title>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="volume">20</biblScope>
+			<biblScope unit="page" from="1403" to="1409" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Pooling architecture search for graph classification</title>
+		<author>
+			<persName><forename type="first">Lanning</forename><surname>Wei</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Huan</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Quanming</forename><surname>Yao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhiqiang</forename><surname>He</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 30th ACM International Conference on Information &amp; Knowledge Management</title>
+		<meeting>the 30th ACM International Conference on Information &amp; Knowledge Management</meeting>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="page" from="2091" to="2100" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">How much do clinical trials cost</title>
+		<author>
+			<persName><forename type="first">Linda</forename><surname>Martin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Melissa</forename><surname>Hutchens</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Conrad</forename><surname>Hawkins</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alaina</forename><surname>Radnov</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nat Rev Drug Discov</title>
+		<imprint>
+			<biblScope unit="volume">16</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="381" to="382" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Artificial intelligence in drug discovery and development</title>
+		<author>
+			<persName><forename type="first">Debleena</forename><surname>Paul</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Gaurav</forename><surname>Sanap</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Snehal</forename><surname>Shenoy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dnyaneshwar</forename><surname>Kalyane</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kiran</forename><surname>Kalia</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Rakesh K Tekade</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Drug discovery today</title>
+		<imprint>
+			<biblScope unit="volume">26</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page">80</biblScope>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Why 90% of clinical drug development fails and how to improve it</title>
+		<author>
+			<persName><forename type="first">Duxin</forename><surname>Sun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wei</forename><surname>Gao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hongxiang</forename><surname>Hu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Simon</forename><surname>Zhou</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Acta Pharmaceutica Sinica B</title>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Graph neural networks for social recommendation</title>
+		<author>
+			<persName><forename type="first">Wenqi</forename><surname>Fan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yao</forename><surname>Ma</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qing</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yuan</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Eric</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jiliang</forename><surname>Tang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dawei</forename><surname>Yin</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">The world wide web conference</title>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="page" from="417" to="426" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Disentangled graph convolutional networks</title>
+		<author>
+			<persName><forename type="first">Jianxin</forename><surname>Ma</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Peng</forename><surname>Cui</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kun</forename><surname>Kuang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xin</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wenwu</forename><surname>Zhu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International conference on machine learning</title>
+		<imprint>
+			<publisher>PMLR</publisher>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="page" from="4212" to="4221" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Factorizable graph convolutional networks</title>
+		<author>
+			<persName><forename type="first">Yiding</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zunlei</forename><surname>Feng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mingli</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xinchao</forename><surname>Wang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Advances in Neural Information Processing Systems</title>
+		<imprint>
+			<biblScope unit="volume">33</biblScope>
+			<biblScope unit="page" from="20286" to="20296" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<monogr>
+		<title level="m" type="main">Disentangled graph neural networks for session-based recommendation</title>
+		<author>
+			<persName><forename type="first">Ansong</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhiyong</forename><surname>Cheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Fan</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zan</forename><surname>Gao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Weili</forename><surname>Guan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yuxin</forename><surname>Peng</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2201.03482</idno>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Graph-wise common latent factor extraction for unsupervised graph representation learning</title>
+		<author>
+			<persName><forename type="first">Thilini</forename><surname>Cooray</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ngai-Man</forename><surname>Cheung</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the AAAI Conference on Artificial Intelligence</title>
+		<meeting>the AAAI Conference on Artificial Intelligence</meeting>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page" from="6420" to="6428" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<monogr>
+		<title level="m" type="main">Decoupled self-supervised learning for non-homophilous graphs</title>
+		<author>
+			<persName><forename type="first">Teng</forename><surname>Xiao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhengyu</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhimeng</forename><surname>Guo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zeyang</forename><surname>Zhuang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Suhang</forename><surname>Wang</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2206.03601</idno>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">Disentangled contrastive learning on graphs</title>
+		<author>
+			<persName><forename type="first">Haoyang</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xin</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ziwei</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zehuan</forename><surname>Yuan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hang</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wenwu</forename><surname>Zhu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Advances in Neural Information Processing Systems</title>
+		<imprint>
+			<biblScope unit="volume">34</biblScope>
+			<biblScope unit="page" from="21872" to="21884" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">Hierarchical graph representation learning with differentiable pooling</title>
+		<author>
+			<persName><forename type="first">Zhitao</forename><surname>Ying</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jiaxuan</forename><surname>You</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Christopher</forename><surname>Morris</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiang</forename><surname>Ren</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Will</forename><surname>Hamilton</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jure</forename><surname>Leskovec</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Advances in neural information processing systems</title>
+		<imprint>
+			<biblScope unit="volume">31</biblScope>
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">Gnnexplainer: Generating explanations for graph neural networks</title>
+		<author>
+			<persName><forename type="first">Zhitao</forename><surname>Ying</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dylan</forename><surname>Bourgeois</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jiaxuan</forename><surname>You</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Marinka</forename><surname>Zitnik</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jure</forename><surname>Leskovec</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Advances in neural information processing systems</title>
+		<imprint>
+			<biblScope unit="volume">32</biblScope>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">Fair darts: Eliminating unfair advantages in differentiable architecture search</title>
+		<author>
+			<persName><forename type="first">Xiangxiang</forename><surname>Chu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tianbao</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bo</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jixiang</forename><surname>Li</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">European conference on computer vision</title>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="page" from="465" to="480" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">Fairnas: Rethinking evaluation fairness of weight sharing neural architecture search</title>
+		<author>
+			<persName><forename type="first">Xiangxiang</forename><surname>Chu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bo</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ruijun</forename><surname>Xu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF International Conference on Computer Vision</title>
+		<meeting>the IEEE/CVF International Conference on Computer Vision</meeting>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="page" from="12239" to="12248" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<monogr>
+		<title level="m" type="main">Supernet in neural architecture search: A taxonomic survey</title>
+		<author>
+			<persName><forename type="first">Stephen</forename><surname>Cha</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Taehyeon</forename><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hayeon</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Se-Young</forename><surname>Yun</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2204.03916</idno>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<monogr>
+		<title level="m" type="main">Semi-supervised classification with graph convolutional networks</title>
+		<author>
+			<persName><forename type="first">N</forename><surname>Thomas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Max</forename><surname>Kipf</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Welling</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1609.02907</idno>
+		<imprint>
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">Graph attention networks</title>
+		<author>
+			<persName><forename type="first">Petar</forename><surname>Veličković</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Guillem</forename><surname>Cucurull</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Arantxa</forename><surname>Casanova</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Adriana</forename><surname>Romero</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pietro</forename><surname>Lio</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yoshua</forename><surname>Bengio</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Learning Representations</title>
+		<imprint>
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<monogr>
+		<title level="m" type="main">How powerful are graph neural networks?</title>
+		<author>
+			<persName><forename type="first">Keyulu</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Weihua</forename><surname>Hu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jure</forename><surname>Leskovec</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Stefanie</forename><surname>Jegelka</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1810.00826</idno>
+		<imprint>
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">Neural architecture search: A survey</title>
+		<author>
+			<persName><forename type="first">Thomas</forename><surname>Elsken</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jan</forename><surname>Hendrik Metzen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Frank</forename><surname>Hutter</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Machine Learning Research</title>
+		<imprint>
+			<biblScope unit="volume">20</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="1997" to="2017" />
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">Efficient neural architecture search via parameters sharing</title>
+		<author>
+			<persName><forename type="first">Hieu</forename><surname>Pham</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Melody</forename><surname>Guan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Barret</forename><surname>Zoph</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Quoc</forename><surname>Le</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jeff</forename><surname>Dean</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International conference on machine learning</title>
+		<imprint>
+			<publisher>PMLR</publisher>
+			<date type="published" when="2018">2018</date>
+			<biblScope unit="page" from="4095" to="4104" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<monogr>
+		<title level="m" type="main">Darts: Differentiable architecture search</title>
+		<author>
+			<persName><forename type="first">Hanxiao</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Karen</forename><surname>Simonyan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yiming</forename><surname>Yang</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1806.09055</idno>
+		<imprint>
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<title level="a" type="main">Single path one-shot neural architecture search with uniform sampling</title>
+		<author>
+			<persName><forename type="first">Zichao</forename><surname>Guo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiangyu</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Haoyuan</forename><surname>Mu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wen</forename><surname>Heng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zechun</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yichen</forename><surname>Wei</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jian</forename><surname>Sun</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">European conference on computer vision</title>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="page" from="544" to="560" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<analytic>
+		<title level="a" type="main">Self-supervised learning on graphs: Contrastive, generative, or predictive</title>
+		<author>
+			<persName><forename type="first">Lirong</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Haitao</forename><surname>Lin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Cheng</forename><surname>Tan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhangyang</forename><surname>Gao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Stan</forename><forename type="middle">Z</forename><surname>Li</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Transactions on Knowledge and Data Engineering</title>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<title level="a" type="main">Does unsupervised architecture representation learning help neural architecture search?</title>
+		<author>
+			<persName><forename type="first">Shen</forename><surname>Yan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yu</forename><surname>Zheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wei</forename><surname>Ao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiao</forename><surname>Zeng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mi</forename><surname>Zhang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Advances in Neural Information Processing Systems</title>
+		<imprint>
+			<biblScope unit="volume">33</biblScope>
+			<biblScope unit="page" from="12486" to="12498" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<analytic>
+		<title level="a" type="main">Neural architecture optimization</title>
+		<author>
+			<persName><forename type="first">Renqian</forename><surname>Luo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Fei</forename><surname>Tian</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tao</forename><surname>Qin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Enhong</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tie-Yan</forename><surname>Liu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Advances in neural information processing systems</title>
+		<imprint>
+			<biblScope unit="volume">31</biblScope>
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<analytic>
+		<title level="a" type="main">Nas-bench-101: Towards reproducible neural architecture search</title>
+		<author>
+			<persName><forename type="first">Chris</forename><surname>Ying</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Aaron</forename><surname>Klein</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Eric</forename><surname>Christiansen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Esteban</forename><surname>Real</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kevin</forename><surname>Murphy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Frank</forename><surname>Hutter</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Machine Learning</title>
+		<imprint>
+			<publisher>PMLR</publisher>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="page" from="7105" to="7114" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<analytic>
+		<title level="a" type="main">Surrogate nas benchmarks: Going beyond the limited search spaces of tabular nas benchmarks</title>
+		<author>
+			<persName><forename type="first">Arber</forename><surname>Zela</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Julien</forename><surname>Niklas Siems</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lucas</forename><surname>Zimmer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jovita</forename><surname>Lukasik</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Margret</forename><surname>Keuper</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Frank</forename><surname>Hutter</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Tenth International Conference on Learning Representations</title>
+		<imprint>
+			<publisher>OpenReview. net</publisher>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page" from="1" to="36" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<analytic>
+		<title level="a" type="main">Design space for graph neural networks</title>
+		<author>
+			<persName><forename type="first">Jiaxuan</forename><surname>You</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhitao</forename><surname>Ying</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jure</forename><surname>Leskovec</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Advances in Neural Information Processing Systems</title>
+		<imprint>
+			<biblScope unit="volume">33</biblScope>
+			<biblScope unit="page" from="17009" to="17021" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<analytic>
+		<title level="a" type="main">Self-supervised learning: Generative or contrastive</title>
+		<author>
+			<persName><forename type="first">Xiao</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Fanjin</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhenyu</forename><surname>Hou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Li</forename><surname>Mian</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhaoyu</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jing</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jie</forename><surname>Tang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Transactions on Knowledge and Data Engineering</title>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<monogr>
+		<title level="m" type="main">Chaos is a ladder: A new theoretical understanding of contrastive learning via augmentation overlap</title>
+		<author>
+			<persName><forename type="first">Yifei</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qi</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yisen</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jiansheng</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhouchen</forename><surname>Lin</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2203.13457</idno>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<analytic>
+		<title level="a" type="main">Inductive representation learning on large graphs</title>
+		<author>
+			<persName><forename type="first">Will</forename><surname>Hamilton</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhitao</forename><surname>Ying</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jure</forename><surname>Leskovec</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Advances in neural information processing systems</title>
+		<imprint>
+			<biblScope unit="volume">30</biblScope>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<analytic>
+		<title level="a" type="main">Weisfeiler and leman go neural: Higher-order graph neural networks</title>
+		<author>
+			<persName><forename type="first">Christopher</forename><surname>Morris</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Martin</forename><surname>Ritzert</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Matthias</forename><surname>Fey</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jan</forename><surname>William L Hamilton</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Gaurav</forename><surname>Eric Lenssen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Martin</forename><surname>Rattan</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Grohe</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the AAAI conference on artificial intelligence</title>
+		<meeting>the AAAI conference on artificial intelligence</meeting>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="page" from="4602" to="4609" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b36">
+	<analytic>
+		<title level="a" type="main">Graph differentiable architecture search with structure learning</title>
+		<author>
+			<persName><forename type="first">Yijian</forename><surname>Qin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xin</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zeyang</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wenwu</forename><surname>Zhu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Advances in Neural Information Processing Systems</title>
+		<imprint>
+			<biblScope unit="volume">34</biblScope>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b37">
+	<analytic>
+		<title level="a" type="main">Distinguishing enzyme structures from non-enzymes without alignments</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Paul</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andrew</forename><forename type="middle">J</forename><surname>Dobson</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Doig</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of molecular biology</title>
+		<imprint>
+			<biblScope unit="volume">330</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="771" to="783" />
+			<date type="published" when="2003">2003</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b38">
+	<analytic>
+		<title level="a" type="main">Weisfeiler-lehman graph kernels</title>
+		<author>
+			<persName><forename type="first">Nino</forename><surname>Shervashidze</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pascal</forename><surname>Schweitzer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Erik</forename></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jan</forename><surname>Van Leeuwen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kurt</forename><surname>Mehlhorn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Karsten</forename><forename type="middle">M</forename><surname>Borgwardt</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Machine Learning Research</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="issue">9</biblScope>
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b39">
+	<analytic>
+		<title level="a" type="main">Structure-activity relationship of mutagenic aromatic and heteroaromatic nitro compounds. correlation with molecular orbital energies and hydrophobicity</title>
+		<author>
+			<persName><forename type="first">Asim</forename><surname>Kumar Debnath</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Rosa</forename><forename type="middle">L</forename><surname>Lopez De Compadre</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Gargi</forename><surname>Debnath</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alan</forename><forename type="middle">J</forename><surname>Shusterman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Corwin</forename><surname>Hansch</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of medicinal chemistry</title>
+		<imprint>
+			<biblScope unit="volume">34</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="786" to="797" />
+			<date type="published" when="1991">1991</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b40">
+	<analytic>
+		<title level="a" type="main">Deep graph kernels</title>
+		<author>
+			<persName><forename type="first">Pinar</forename><surname>Yanardag</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Vishwanathan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 21th ACM SIGKDD international conference on knowledge discovery and data mining</title>
+		<meeting>the 21th ACM SIGKDD international conference on knowledge discovery and data mining</meeting>
+		<imprint>
+			<date type="published" when="2015">2015</date>
+			<biblScope unit="page" from="1365" to="1374" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b41">
+	<monogr>
+		<title level="m" type="main">Tudataset: A collection of benchmark datasets for learning with graphs</title>
+		<author>
+			<persName><forename type="first">Christopher</forename><surname>Morris</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Nils</forename><forename type="middle">M</forename><surname>Kriege</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Franka</forename><surname>Bause</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kristian</forename><surname>Kersting</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Petra</forename><surname>Mutzel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Marion</forename><surname>Neumann</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2007.08663</idno>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b42">
+	<analytic>
+		<title level="a" type="main">An overview of microsoft academic service (mas) and applications</title>
+		<author>
+			<persName><forename type="first">Arnab</forename><surname>Sinha</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhihong</forename><surname>Shen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yang</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hao</forename><surname>Ma</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Darrin</forename><surname>Eide</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bo-June</forename><surname>Hsu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kuansan</forename><surname>Wang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 24th international conference on world wide web</title>
+		<meeting>the 24th international conference on world wide web</meeting>
+		<imprint>
+			<date type="published" when="2015">2015</date>
+			<biblScope unit="page" from="243" to="246" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b43">
+	<analytic>
+		<title level="a" type="main">Image-based recommendations on styles and substitutes</title>
+		<author>
+			<persName><forename type="first">Julian</forename><surname>Mcauley</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Christopher</forename><surname>Targett</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qinfeng</forename><surname>Shi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Anton</forename><surname>Van Den</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Hengel</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 38th international ACM SIGIR conference on research and development in information retrieval</title>
+		<meeting>the 38th international ACM SIGIR conference on research and development in information retrieval</meeting>
+		<imprint>
+			<date type="published" when="2015">2015</date>
+			<biblScope unit="page" from="43" to="52" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b44">
+	<analytic>
+		<title level="a" type="main">Open graph benchmark: Datasets for machine learning on graphs</title>
+		<author>
+			<persName><forename type="first">Weihua</forename><surname>Hu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Matthias</forename><surname>Fey</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Marinka</forename><surname>Zitnik</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yuxiao</forename><surname>Dong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hongyu</forename><surname>Ren</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bowen</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Michele</forename><surname>Catasta</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jure</forename><surname>Leskovec</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Advances in neural information processing systems</title>
+		<imprint>
+			<biblScope unit="volume">33</biblScope>
+			<biblScope unit="page" from="22118" to="22133" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b45">
+	<analytic>
+		<title level="a" type="main">A comprehensive survey of neural architecture search: Challenges and solutions</title>
+		<author>
+			<persName><forename type="first">Pengzhen</forename><surname>Ren</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yun</forename><surname>Xiao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiaojun</forename><surname>Chang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Po-Yao</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhihui</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiaojiang</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xin</forename><surname>Wang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">ACM Computing Surveys (CSUR)</title>
+		<imprint>
+			<biblScope unit="volume">54</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="1" to="34" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b46">
+	<analytic>
+		<title level="a" type="main">Neural architecture search for transformers: A survey</title>
+		<author>
+			<persName><forename type="first">Krishna</forename><surname>Teja Chitty-Venkata</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Murali</forename><surname>Emani</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Venkatram</forename><surname>Vishwanath</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Arun K</forename><surname>Somani</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Access</title>
+		<imprint>
+			<biblScope unit="volume">10</biblScope>
+			<biblScope unit="page" from="108374" to="108412" />
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b47">
+	<analytic>
+		<title level="a" type="main">Autogl: A library for automated graph learning</title>
+		<author>
+			<persName><forename type="first">Chaoyu</forename><surname>Guan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ziwei</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Haoyang</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Heng</forename><surname>Chang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zeyang</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yijian</forename><surname>Qin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jiyan</forename><surname>Jiang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xin</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wenwu</forename><surname>Zhu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ICLR 2021 Workshop GTRL</title>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b48">
+	<monogr>
+		<title level="m" type="main">Nas-bench-graph: Benchmarking graph neural architecture search</title>
+		<author>
+			<persName><forename type="first">Yijian</forename><surname>Qin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ziwei</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xin</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zeyang</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wenwu</forename><surname>Zhu</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2206.09166</idno>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b49">
+	<analytic>
+		<title level="a" type="main">Deep learning on graphs: A survey</title>
+		<author>
+			<persName><forename type="first">Ziwei</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Peng</forename><surname>Cui</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wenwu</forename><surname>Zhu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Transactions on Knowledge and Data Engineering</title>
+		<imprint>
+			<biblScope unit="volume">34</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="249" to="270" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b50">
+	<monogr>
+		<author>
+			<persName><forename type="first">Ziwei</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Haoyang</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zeyang</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yijian</forename><surname>Qin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xin</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wenwu</forename><surname>Zhu</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2308.14522</idno>
+		<title level="m">Large graph models: A perspective</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b51">
+	<analytic>
+		<title level="a" type="main">Learning to solve travelling salesman problem with hardness-adaptive curriculum</title>
+		<author>
+			<persName><forename type="first">Zeyang</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ziwei</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xin</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wenwu</forename><surname>Zhu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Thirty-Fifth AAAI Conference on Artificial Intelligence</title>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b52">
+	<monogr>
+		<author>
+			<persName><forename type="first">Ziwei</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xin</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zeyang</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Peng</forename><surname>Cui</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wenwu</forename><surname>Zhu</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2112.12345</idno>
+		<title level="m">Revisiting transformation invariant geometric deep learning: Are initial representations all you need?</title>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b53">
+	<monogr>
+		<title level="m" type="main">Llm4dyg: Can large language models solve problems on dynamic graphs?</title>
+		<author>
+			<persName><forename type="first">Zeyang</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xin</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ziwei</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Haoyang</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yijian</forename><surname>Qin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Simin</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wenwu</forename><surname>Zhu</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b54">
+	<monogr>
+		<title level="m" type="main">Auto-gnn: Neural architecture search of graph neural networks</title>
+		<author>
+			<persName><forename type="first">Kaixiong</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qingquan</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiao</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xia</forename><surname>Hu</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1909.03184</idno>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b55">
+	<analytic>
+		<title level="a" type="main">Neural architecture search in graph neural networks</title>
+		<author>
+			<persName><forename type="first">Matheus</forename><surname>Nunes</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Gisele</forename><forename type="middle">L</forename><surname>Pappa</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Brazilian Conference on Intelligent Systems</title>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="page" from="302" to="317" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b56">
+	<analytic>
+		<title level="a" type="main">Genetic-gnn: Evolutionary architecture search for graph neural networks</title>
+		<author>
+			<persName><forename type="first">Min</forename><surname>Shi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">David</forename><forename type="middle">A</forename><surname>Wilson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xingquan</forename><surname>Zhu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yu</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yuan</forename><surname>Zhuang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jianxun</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yufei</forename><surname>Tang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Knowledge-Based Systems</title>
+		<imprint>
+			<biblScope unit="page">108752</biblScope>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b57">
+	<analytic>
+		<title level="a" type="main">Deep and flexible graph neural architecture search</title>
+		<author>
+			<persName><forename type="first">Wentao</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zheyu</forename><surname>Lin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yu</forename><surname>Shen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yang</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhi</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bin</forename><surname>Cui</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Machine Learning</title>
+		<imprint>
+			<publisher>PMLR</publisher>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page" from="26362" to="26374" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b58">
+	<analytic>
+		<title level="a" type="main">Diffmg: Differentiable meta graph search for heterogeneous graph neural networks</title>
+		<author>
+			<persName><forename type="first">Yuhui</forename><surname>Ding</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Quanming</forename><surname>Yao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Huan</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tong</forename><surname>Zhang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 27th ACM SIGKDD Conference on Knowledge Discovery &amp; Data Mining</title>
+		<meeting>the 27th ACM SIGKDD Conference on Knowledge Discovery &amp; Data Mining</meeting>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="page" from="279" to="288" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b59">
+	<analytic>
+		<title level="a" type="main">Search to aggregate neighborhood for graph neural network</title>
+		<author>
+			<persName><surname>Zhao Huan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">U</forename><surname>Yao Quanming</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Weiwei</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">2021 IEEE 37th International Conference on Data Engineering</title>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="page" from="552" to="563" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b60">
+	<analytic>
+		<title level="a" type="main">One-shot graph neural architecture search with dynamic search space</title>
+		<author>
+			<persName><forename type="first">Yanxi</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zean</forename><surname>Wen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yunhe</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chang</forename><surname>Xu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the AAAI Conference on Artificial Intelligence</title>
+		<meeting>the AAAI Conference on Artificial Intelligence</meeting>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="volume">35</biblScope>
+			<biblScope unit="page" from="8510" to="8517" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b61">
+	<analytic>
+		<title level="a" type="main">Rethinking graph neural architecture search from message-passing</title>
+		<author>
+			<persName><forename type="first">Shaofei</forename><surname>Cai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Liang</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jincan</forename><surname>Deng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Beichen</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zheng-Jun</forename><surname>Zha</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Li</forename><surname>Su</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qingming</forename><surname>Huang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition</title>
+		<meeting>the IEEE/CVF Conference on Computer Vision and Pattern Recognition</meeting>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="page" from="6657" to="6666" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b62">
+	<analytic>
+		<title level="a" type="main">Graph neural architecture search under distribution shifts</title>
+		<author>
+			<persName><forename type="first">Yijian</forename><surname>Qin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xin</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ziwei</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pengtao</forename><surname>Xie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wenwu</forename><surname>Zhu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Machine Learning</title>
+		<imprint>
+			<publisher>PMLR</publisher>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page" from="18083" to="18095" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b63">
+	<analytic>
+		<title level="a" type="main">Dynamic heterogeneous graph attention neural architecture search</title>
+		<author>
+			<persName><forename type="first">Zeyang</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ziwei</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xin</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yijian</forename><surname>Qin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wenwu</forename><surname>Zhou Qin</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Zhu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Thirty-Seventh AAAI Conference on Artificial Intelligence</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b64">
+	<analytic>
+		<title level="a" type="main">Multi-task graph neural architecture search with task-aware collaboration and curriculum</title>
+		<author>
+			<persName><forename type="first">Yijian</forename><surname>Qin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xin</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ziwei</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hong</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wenwu</forename><surname>Zhu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Advances in neural information processing systems</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b65">
+	<monogr>
+		<title level="m" type="main">Self-supervised neural architecture search</title>
+		<author>
+			<persName><forename type="first">Sapir</forename><surname>Kaplan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Raja</forename><surname>Giryes</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2007.01500</idno>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b66">
+	<monogr>
+		<title level="m" type="main">Self-supervised neural architecture search for imbalanced datasets</title>
+		<author>
+			<persName><forename type="first">Aleksandr</forename><surname>Timofeev</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Grigorios</forename><forename type="middle">G</forename><surname>Chrysos</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Volkan</forename><surname>Cevher</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2109.08580</idno>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b67">
+	<analytic>
+		<title level="a" type="main">Csnas: Contrastive self-supervised learning neural architecture search via sequential model-based optimization</title>
+		<author>
+			<persName><forename type="first">Nam</forename><surname>Nguyen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Morris</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chang</forename></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Transactions on Artificial Intelligence</title>
+		<imprint>
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="609" to="624" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b68">
+	<analytic>
+		<title level="a" type="main">Bossnas: Exploring hybrid cnn-transformers with block-wisely self-supervised neural architecture search</title>
+		<author>
+			<persName><forename type="first">Changlin</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tao</forename><surname>Tang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Guangrun</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jiefeng</forename><surname>Peng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bing</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiaodan</forename><surname>Liang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiaojun</forename><surname>Chang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF International Conference on Computer Vision</title>
+		<meeting>the IEEE/CVF International Conference on Computer Vision</meeting>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="page" from="12281" to="12291" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b69">
+	<monogr>
+		<title level="m" type="main">Towards self-supervised and weight-preserving neural architecture search</title>
+		<author>
+			<persName><forename type="first">Zhuowei</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yibo</forename><surname>Gao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhenzhou</forename><surname>Zha</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhiqiang</forename><surname>Hu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qing</forename><surname>Xia</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shaoting</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dimitris</forename><forename type="middle">N</forename><surname>Metaxas</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2206.04125</idno>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b70">
+	<analytic>
+		<title level="a" type="main">Automated unsupervised graph representation learning</title>
+		<author>
+			<persName><forename type="first">Zhenyu</forename><surname>Hou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yukuo</forename><surname>Cen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yuxiao</forename><surname>Dong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jie</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jie</forename><surname>Tang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Transactions on Knowledge and Data Engineering</title>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b71">
+	<analytic>
+		<title level="a" type="main">Neural architecture search with random labels</title>
+		<author>
+			<persName><forename type="first">Xuanyang</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pengfei</forename><surname>Hou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiangyu</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jian</forename><surname>Sun</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition</title>
+		<meeting>the IEEE/CVF Conference on Computer Vision and Pattern Recognition</meeting>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="page" from="10907" to="10916" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b72">
+	<analytic>
+		<title level="a" type="main">Neural architecture search without training</title>
+		<author>
+			<persName><forename type="first">Joe</forename><surname>Mellor</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jack</forename><surname>Turner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Amos</forename><surname>Storkey</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Elliot</forename><forename type="middle">J</forename><surname>Crowley</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Machine Learning</title>
+		<imprint>
+			<publisher>PMLR</publisher>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="page" from="7588" to="7598" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b73">
+	<analytic>
+		<title level="a" type="main">Are labels necessary for neural architecture search?</title>
+		<author>
+			<persName><forename type="first">Chenxi</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Piotr</forename><surname>Dollár</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kaiming</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ross</forename><surname>Girshick</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alan</forename><surname>Yuille</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Saining</forename><surname>Xie</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">European Conference on Computer Vision</title>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="page" from="798" to="813" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b74">
+	<analytic>
+		<title level="a" type="main">Graph self-supervised learning: A survey</title>
+		<author>
+			<persName><forename type="first">Yixin</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ming</forename><surname>Jin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shirui</forename><surname>Pan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chuan</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yu</forename><surname>Zheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Feng</forename><surname>Xia</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Philip</forename><surname>Yu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Transactions on Knowledge and Data Engineering</title>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b75">
+	<monogr>
+		<title level="m" type="main">Self-supervised representation learning via latent graph prediction</title>
+		<author>
+			<persName><forename type="first">Yaochen</forename><surname>Xie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhao</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shuiwang</forename><surname>Ji</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2202.08333</idno>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b76">
+	<analytic>
+		<title level="a" type="main">Deep graph infomax</title>
+		<author>
+			<persName><forename type="first">Petar</forename><surname>Velickovic</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">William</forename><surname>Fedus</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pietro</forename><surname>William L Hamilton</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yoshua</forename><surname>Liò</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Devon</forename><surname>Bengio</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Hjelm</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">ICLR (Poster)</title>
+		<imprint>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page">4</biblScope>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b77">
+	<monogr>
+		<title level="m" type="main">Infograph: Unsupervised and semisupervised graph-level representation learning via mutual information maximization</title>
+		<author>
+			<persName><forename type="first">Fan-Yun</forename><surname>Sun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jordan</forename><surname>Hoffmann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Vikas</forename><surname>Verma</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jian</forename><surname>Tang</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1908.01000</idno>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b78">
+	<analytic>
+		<title level="a" type="main">Graph representation learning via graphical mutual information maximization</title>
+		<author>
+			<persName><forename type="first">Zhen</forename><surname>Peng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wenbing</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Minnan</forename><surname>Luo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qinghua</forename><surname>Zheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yu</forename><surname>Rong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tingyang</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Junzhou</forename><surname>Huang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of The Web Conference</title>
+		<meeting>The Web Conference</meeting>
+		<imprint>
+			<date type="published" when="2020">2020. 2020</date>
+			<biblScope unit="page" from="259" to="270" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b79">
+	<analytic>
+		<title level="a" type="main">Self-supervised graph-level representation learning with local and global structure</title>
+		<author>
+			<persName><forename type="first">Minghao</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hang</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bingbing</forename><surname>Ni</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hongyu</forename><surname>Guo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jian</forename><surname>Tang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Machine Learning</title>
+		<imprint>
+			<publisher>PMLR</publisher>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="page" from="11548" to="11558" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b80">
+	<analytic>
+		<title level="a" type="main">Gcc: Graph contrastive coding for graph neural network pre-training</title>
+		<author>
+			<persName><forename type="first">Jiezhong</forename><surname>Qiu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qibin</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yuxiao</forename><surname>Dong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jing</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hongxia</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ming</forename><surname>Ding</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kuansan</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jie</forename><surname>Tang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 26th ACM SIGKDD International Conference on Knowledge Discovery &amp; Data Mining</title>
+		<meeting>the 26th ACM SIGKDD International Conference on Knowledge Discovery &amp; Data Mining</meeting>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="page" from="1150" to="1160" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b81">
+	<monogr>
+		<title level="m" type="main">Generative subgraph contrast for selfsupervised graph representation learning</title>
+		<author>
+			<persName><forename type="first">Yuehui</forename><surname>Han</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Le</forename><surname>Hui</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Haobo</forename><surname>Jiang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jianjun</forename><surname>Qian</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jin</forename><surname>Xie</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2207.11996</idno>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b82">
+	<analytic>
+		<title level="a" type="main">Let invariant rationale discovery inspire graph contrastive learning</title>
+		<author>
+			<persName><forename type="first">Sihang</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiang</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">An</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yingxin</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiangnan</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tat-Seng</forename><surname>Chua</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Machine Learning</title>
+		<imprint>
+			<publisher>PMLR</publisher>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page" from="13052" to="13065" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b83">
+	<monogr>
+		<title level="m" type="main">Deep graph contrastive representation learning</title>
+		<author>
+			<persName><forename type="first">Yanqiao</forename><surname>Zhu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yichen</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Feng</forename><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qiang</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shu</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Liang</forename><surname>Wang</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2006.04131</idno>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b84">
+	<analytic>
+		<title level="a" type="main">Graph contrastive learning with augmentations</title>
+		<author>
+			<persName><forename type="first">Yuning</forename><surname>You</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tianlong</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yongduo</forename><surname>Sui</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ting</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhangyang</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yang</forename><surname>Shen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Advances in Neural Information Processing Systems</title>
+		<imprint>
+			<biblScope unit="volume">33</biblScope>
+			<biblScope unit="page" from="5812" to="5823" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b85">
+	<analytic>
+		<title level="a" type="main">Contrastive multi-view representation learning on graphs</title>
+		<author>
+			<persName><forename type="first">Kaveh</forename><surname>Hassani</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Amir</forename><surname>Hosein</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Khasahmadi</forename></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Machine Learning</title>
+		<imprint>
+			<publisher>PMLR</publisher>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="page" from="4116" to="4126" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b86">
+	<monogr>
+		<title level="m" type="main">Graphmae: Self-supervised masked graph autoencoders</title>
+		<author>
+			<persName><forename type="first">Zhenyu</forename><surname>Hou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiao</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yuxiao</forename><surname>Dong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chunjie</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jie</forename><surname>Tang</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2205.10803</idno>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b87">
+	<monogr>
+		<title level="m" type="main">Maskgae: Masked graph modeling meets graph autoencoders</title>
+		<author>
+			<persName><forename type="first">Jintang</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ruofan</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wangbin</forename><surname>Sun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Liang</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sheng</forename><surname>Tian</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Liang</forename><surname>Zhu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Changhua</forename><surname>Meng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zibin</forename><surname>Zheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Weiqiang</forename><surname>Wang</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2205.10053</idno>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b88">
+	<analytic>
+		<title level="a" type="main">Graphmae2: A decoding-enhanced masked self-supervised graph learner</title>
+		<author>
+			<persName><forename type="first">Zhenyu</forename><surname>Hou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yufei</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yukuo</forename><surname>Cen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiao</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yuxiao</forename><surname>Dong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Evgeny</forename><surname>Kharlamov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jie</forename><surname>Tang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the ACM Web Conference</title>
+		<meeting>the ACM Web Conference</meeting>
+		<imprint>
+			<date type="published" when="2023">2023. 2023</date>
+			<biblScope unit="page" from="737" to="746" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b89">
+	<analytic>
+		<title level="a" type="main">When does self-supervision help graph convolutional networks?</title>
+		<author>
+			<persName><forename type="first">Yuning</forename><surname>You</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tianlong</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhangyang</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yang</forename><surname>Shen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">international conference on machine learning</title>
+		<imprint>
+			<publisher>PMLR</publisher>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="page" from="10871" to="10880" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b90">
+	<analytic>
+		<title level="a" type="main">Selfsupervised graph transformer on large-scale molecular data</title>
+		<author>
+			<persName><forename type="first">Yu</forename><surname>Rong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yatao</forename><surname>Bian</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tingyang</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Weiyang</forename><surname>Xie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ying</forename><surname>Wei</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wenbing</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Junzhou</forename><surname>Huang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Advances in Neural Information Processing Systems</title>
+		<imprint>
+			<biblScope unit="volume">33</biblScope>
+			<biblScope unit="page" from="12559" to="12571" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b91">
+	<monogr>
+		<title level="m" type="main">Self-supervised learning on graphs: Deep insights and new direction</title>
+		<author>
+			<persName><forename type="first">Wei</forename><surname>Jin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tyler</forename><surname>Derr</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Haochen</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yiqi</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Suhang</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zitao</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jiliang</forename><surname>Tang</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2006.10141</idno>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b92">
+	<analytic>
+		<title level="a" type="main">Graph neural networks: A review of methods and applications</title>
+		<author>
+			<persName><forename type="first">Jie</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ganqu</forename><surname>Cui</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shengding</forename><surname>Hu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhengyan</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Cheng</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhiyuan</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lifeng</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Changcheng</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Maosong</forename><surname>Sun</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">AI open</title>
+		<imprint>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="page" from="57" to="81" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b93">
+	<analytic>
+		<title level="a" type="main">A comprehensive survey on graph neural networks</title>
+		<author>
+			<persName><forename type="first">Zonghan</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shirui</forename><surname>Pan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Fengwen</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Guodong</forename><surname>Long</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chengqi</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Philip</forename></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE transactions on neural networks and learning systems</title>
+		<imprint>
+			<biblScope unit="volume">32</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="4" to="24" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b94">
+	<analytic>
+		<title level="a" type="main">Heterogeneous graph attention network</title>
+		<author>
+			<persName><forename type="first">Xiao</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Houye</forename><surname>Ji</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chuan</forename><surname>Shi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bai</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yanfang</forename><surname>Ye</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Peng</forename><surname>Cui</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Philip</forename><forename type="middle">S</forename><surname>Yu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">The world wide web conference</title>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="page" from="2022" to="2032" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b95">
+	<analytic>
+		<title level="a" type="main">Community preserving network embedding</title>
+		<author>
+			<persName><forename type="first">Xiao</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Peng</forename><surname>Cui</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jing</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jian</forename><surname>Pei</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wenwu</forename><surname>Zhu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shiqiang</forename><surname>Yang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the AAAI conference on artificial intelligence</title>
+		<meeting>the AAAI conference on artificial intelligence</meeting>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+			<biblScope unit="volume">31</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b96">
+	<analytic>
+		<title level="a" type="main">Graph contrastive learning automated</title>
+		<author>
+			<persName><forename type="first">Yuning</forename><surname>You</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tianlong</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yang</forename><surname>Shen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhangyang</forename><surname>Wang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Machine Learning</title>
+		<imprint>
+			<publisher>PMLR</publisher>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="page" from="12121" to="12132" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b97">
+	<analytic>
+		<title level="a" type="main">Autogcl: Automated graph contrastive learning via learnable view generators</title>
+		<author>
+			<persName><forename type="first">Yihang</forename><surname>Yin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qingzhong</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Siyu</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Haoyi</forename><surname>Xiong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiang</forename><surname>Zhang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the AAAI Conference on Artificial Intelligence</title>
+		<meeting>the AAAI Conference on Artificial Intelligence</meeting>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page" from="8892" to="8900" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b98">
+	<analytic>
+		<title level="a" type="main">Graph contrastive learning with adaptive augmentation</title>
+		<author>
+			<persName><forename type="first">Yanqiao</forename><surname>Zhu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yichen</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Feng</forename><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qiang</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shu</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Liang</forename><surname>Wang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the Web Conference 2021</title>
+		<meeting>the Web Conference 2021</meeting>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="page" from="2069" to="2080" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b99">
+	<monogr>
+		<title level="m" type="main">Automated self-supervised learning for graphs</title>
+		<author>
+			<persName><forename type="first">Wei</forename><surname>Jin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiaorui</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiangyu</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yao</forename><surname>Ma</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Neil</forename><surname>Shah</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jiliang</forename><surname>Tang</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2106.05470</idno>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b100">
+	<monogr>
+		<title level="m" type="main">Multi-task self-supervised graph neural networks enable stronger task generalization</title>
+		<author>
+			<persName><forename type="first">Mingxuan</forename><surname>Ju</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tong</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qianlong</forename><surname>Wen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wenhao</forename><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Neil</forename><surname>Shah</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yanfang</forename><surname>Ye</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chuxu</forename><surname>Zhang</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2210.02016</idno>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b101">
+	<analytic>
+		<title level="a" type="main">Representation learning: A review and new perspectives</title>
+		<author>
+			<persName><forename type="first">Yoshua</forename><surname>Bengio</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Aaron</forename><surname>Courville</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pascal</forename><surname>Vincent</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE transactions on pattern analysis and machine intelligence</title>
+		<imprint>
+			<biblScope unit="volume">35</biblScope>
+			<biblScope unit="issue">8</biblScope>
+			<biblScope unit="page" from="1798" to="1828" />
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b102">
+	<monogr>
+		<title level="m" type="main">Disentangled representation learning</title>
+		<author>
+			<persName><forename type="first">Xin</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hong</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Si'ao</forename><surname>Tang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zihao</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wenwu</forename><surname>Zhu</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b103">
+	<analytic>
+		<title level="a" type="main">Learning to decompose and disentangle representations for video prediction</title>
+		<author>
+			<persName><forename type="first">Jun-Ting</forename><surname>Hsieh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bingbin</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">De-An</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Li</forename><forename type="middle">F</forename><surname>Fei-Fei</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Juan</forename><forename type="middle">Carlos</forename><surname>Niebles</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Advances in neural information processing systems</title>
+		<imprint>
+			<biblScope unit="volume">31</biblScope>
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b104">
+	<analytic>
+		<title level="a" type="main">Disentangled person image generation</title>
+		<author>
+			<persName><forename type="first">Liqian</forename><surname>Ma</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qianru</forename><surname>Sun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Stamatios</forename><surname>Georgoulis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Luc</forename><surname>Van Gool</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bernt</forename><surname>Schiele</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mario</forename><surname>Fritz</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition</title>
+		<meeting>the IEEE Conference on Computer Vision and Pattern Recognition</meeting>
+		<imprint>
+			<date type="published" when="2018">2018</date>
+			<biblScope unit="page" from="99" to="108" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b105">
+	<analytic>
+		<title level="a" type="main">Infogan: Interpretable representation learning by information maximizing generative adversarial nets</title>
+		<author>
+			<persName><forename type="first">Xi</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yan</forename><surname>Duan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Rein</forename><surname>Houthooft</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">John</forename><surname>Schulman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ilya</forename><surname>Sutskever</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pieter</forename><surname>Abbeel</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Advances in neural information processing systems</title>
+		<imprint>
+			<biblScope unit="volume">29</biblScope>
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b106">
+	<analytic>
+		<title level="a" type="main">Unsupervised learning of disentangled representations from video</title>
+		<author>
+			<persName><surname>Emily L Denton</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Advances in neural information processing systems</title>
+		<imprint>
+			<biblScope unit="volume">30</biblScope>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b107">
+	<analytic>
+		<title level="a" type="main">Disentangled representation learning gan for pose-invariant face recognition</title>
+		<author>
+			<persName><forename type="first">Luan</forename><surname>Tran</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xi</forename><surname>Yin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiaoming</forename><surname>Liu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE conference on computer vision and pattern recognition</title>
+		<meeting>the IEEE conference on computer vision and pattern recognition</meeting>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+			<biblScope unit="page" from="1415" to="1424" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b108">
+	<monogr>
+		<title level="m" type="main">Mixup-augmented temporally debiased video grounding with content-location disentanglement</title>
+		<author>
+			<persName><forename type="first">Xin</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zihao</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hong</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiaohan</forename><surname>Lan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wenwu</forename><surname>Zhu</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b109">
+	<analytic>
+		<title level="a" type="main">Disentangled representation learning for recommendation</title>
+		<author>
+			<persName><forename type="first">Xin</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hong</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yuwei</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jianxin</forename><surname>Ma</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wenwu</forename><surname>Zhu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Transactions on Pattern Analysis and Machine Intelligence</title>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b110">
+	<analytic>
+		<title level="a" type="main">Curriculum disentangled recommendation with noisy multi-feedback</title>
+		<author>
+			<persName><forename type="first">Hong</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yudong</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xin</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ruobing</forename><surname>Xie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Rui</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Feng</forename><surname>Xia</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wenwu</forename><surname>Zhu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Advances in Neural Information Processing Systems</title>
+		<imprint>
+			<biblScope unit="volume">34</biblScope>
+			<biblScope unit="page" from="26924" to="26936" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b111">
+	<analytic>
+		<title level="a" type="main">Multimodal disentangled representation for recommendation</title>
+		<author>
+			<persName><forename type="first">Xin</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hong</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wenwu</forename><surname>Zhu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">2021 IEEE International Conference on Multimedia and Expo (ICME)</title>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="page" from="1" to="6" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b112">
+	<analytic>
+		<title level="a" type="main">Disentangled selfsupervision in sequential recommenders</title>
+		<author>
+			<persName><forename type="first">Jianxin</forename><surname>Ma</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chang</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hongxia</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Peng</forename><surname>Cui</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xin</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wenwu</forename><surname>Zhu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 26th ACM SIGKDD International Conference on Knowledge Discovery &amp; Data Mining</title>
+		<meeting>the 26th ACM SIGKDD International Conference on Knowledge Discovery &amp; Data Mining</meeting>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="page" from="483" to="491" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b113">
+	<analytic>
+		<title level="a" type="main">Learning disentangled representations for recommendation</title>
+		<author>
+			<persName><forename type="first">Jianxin</forename><surname>Ma</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chang</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Peng</forename><surname>Cui</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hongxia</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wenwu</forename><surname>Zhu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Advances in neural information processing systems</title>
+		<imprint>
+			<biblScope unit="volume">32</biblScope>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b114">
+	<analytic>
+		<title level="a" type="main">Intention-aware sequential recommendation with structured intent transition</title>
+		<author>
+			<persName><forename type="first">Haoyang</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xin</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ziwei</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jianxin</forename><surname>Ma</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Peng</forename><surname>Cui</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wenwu</forename><surname>Zhu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Transactions on Knowledge and Data Engineering</title>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b115">
+	<monogr>
+		<title level="m" type="main">Curriculum co-disentangled representation learning across multiple environments for social recommendation</title>
+		<author>
+			<persName><forename type="first">Xin</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zirui</forename><surname>Pan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yuwei</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hong</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chendi</forename><surname>Ge</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wenwu</forename><surname>Zhu</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b116">
+	<analytic>
+		<title level="a" type="main">Adaptive disentangled transformer for sequential recommendation</title>
+		<author>
+			<persName><forename type="first">Yipeng</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xin</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hong</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wenwu</forename><surname>Zhu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 29th ACM SIGKDD Conference on Knowledge Discovery and Data Mining</title>
+		<meeting>the 29th ACM SIGKDD Conference on Knowledge Discovery and Data Mining</meeting>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page" from="3434" to="3445" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b117">
+	<analytic>
+		<title level="a" type="main">Independence promoted graph disentangled networks</title>
+		<author>
+			<persName><forename type="first">Yanbei</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiao</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shu</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhitao</forename><surname>Xiao</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the AAAI Conference on Artificial Intelligence</title>
+		<meeting>the AAAI Conference on Artificial Intelligence</meeting>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="volume">34</biblScope>
+			<biblScope unit="page" from="4916" to="4923" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b118">
+	<analytic>
+		<title level="a" type="main">Outof-distribution generalized dynamic graph neural network for human albumin prediction</title>
+		<author>
+			<persName><forename type="first">Zeyang</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xingwang</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Fei</forename><surname>Teng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ning</forename><surname>Lin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xueling</forename><surname>Zhu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xin</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wenwu</forename><surname>Zhu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">IEEE International Conference on Medical Artificial Intelligence</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b119">
+	<analytic>
+		<title level="a" type="main">Spectral invariant learning for dynamic graphs under distribution shifts</title>
+		<author>
+			<persName><forename type="first">Zeyang</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xin</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ziwei</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhou</forename><surname>Qin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Weigao</forename><surname>Wen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hui</forename><surname>Xue</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Haoyang</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wenwu</forename><surname>Zhu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Advances in Neural Information Processing Systems</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b120">
+	<analytic>
+		<title level="a" type="main">Dynamic graph neural networks under spatio-temporal distribution shift</title>
+		<author>
+			<persName><forename type="first">Zeyang</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xin</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ziwei</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Haoyang</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhou</forename><surname>Qin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wenwu</forename><surname>Zhu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Advances in Neural Information Processing Systems</title>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b121">
+	<analytic>
+		<title level="a" type="main">On the stratification of multi-label data</title>
+		<author>
+			<persName><forename type="first">Konstantinos</forename><surname>Sechidis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Grigorios</forename><surname>Tsoumakas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ioannis</forename><surname>Vlahavas</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Machine Learning and Knowledge Discovery in Databases: European Conference, ECML PKDD 2011</title>
+		<title level="s">Proceedings, Part III</title>
+		<meeting><address><addrLine>Athens, Greece</addrLine></address></meeting>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2011">September 5-9, 2011. 2011</date>
+			<biblScope unit="volume">22</biblScope>
+			<biblScope unit="page" from="145" to="158" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b122">
+	<analytic>
+		<title level="a" type="main">An end-to-end deep learning architecture for graph classification</title>
+		<author>
+			<persName><forename type="first">Muhan</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhicheng</forename><surname>Cui</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Marion</forename><surname>Neumann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yixin</forename><surname>Chen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the AAAI conference on artificial intelligence</title>
+		<meeting>the AAAI conference on artificial intelligence</meeting>
+		<imprint>
+			<date type="published" when="2018">2018</date>
+			<biblScope unit="volume">32</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b123">
+	<monogr>
+		<title level="m" type="main">Gated graph sequence neural networks</title>
+		<author>
+			<persName><forename type="first">Yujia</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Daniel</forename><surname>Tarlow</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Marc</forename><surname>Brockschmidt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Richard</forename><surname>Zemel</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1511.05493</idno>
+		<imprint>
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b124">
+	<analytic>
+		<title level="a" type="main">Batch normalization: Accelerating deep network training by reducing internal covariate shift</title>
+		<author>
+			<persName><forename type="first">Sergey</forename><surname>Ioffe</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Christian</forename><surname>Szegedy</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International conference on machine learning</title>
+		<imprint>
+			<publisher>PMLR</publisher>
+			<date type="published" when="2015">2015</date>
+			<biblScope unit="page" from="448" to="456" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b125">
+	<monogr>
+		<title level="m" type="main">Layer normalization</title>
+		<author>
+			<persName><forename type="first">Jimmy</forename><surname>Lei Ba</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jamie</forename><surname>Ryan Kiros</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Geoffrey</forename><forename type="middle">E</forename><surname>Hinton</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1607.06450</idno>
+		<imprint>
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b126">
+	<monogr>
+		<title level="m" type="main">Adam: A method for stochastic optimization</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Diederik</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jimmy</forename><surname>Kingma</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Ba</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1412.6980</idno>
+		<imprint>
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b127">
+	<analytic>
+		<title level="a" type="main">Pytorch: An imperative style, highperformance deep learning library</title>
+		<author>
+			<persName><forename type="first">Adam</forename><surname>Paszke</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sam</forename><surname>Gross</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Francisco</forename><surname>Massa</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Adam</forename><surname>Lerer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">James</forename><surname>Bradbury</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Gregory</forename><surname>Chanan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Trevor</forename><surname>Killeen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zeming</forename><surname>Lin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Natalia</forename><surname>Gimelshein</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Luca</forename><surname>Antiga</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Advances in neural information processing systems</title>
+		<imprint>
+			<biblScope unit="volume">32</biblScope>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b128">
+	<analytic>
+		<title level="a" type="main">Fast graph representation learning with PyTorch Geometric</title>
+		<author>
+			<persName><forename type="first">Matthias</forename><surname>Fey</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jan</forename><forename type="middle">E</forename><surname>Lenssen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ICLR Workshop on Representation Learning on Graphs and Manifolds</title>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

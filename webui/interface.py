@@ -149,7 +149,23 @@ class RefParserUI:
             
             # 显示PaperId
             if hasattr(paper, 'paperId'):
-                citations_html += f"<p><b>PaperId:</b> {paper.paperId}</p>"
+                citations_html += f"<p><b>Semantic Scholar PaperId:</b> {paper.paperId}</p>"
+
+            if hasattr(paper, 'year'):
+                citations_html += f"<p><b>年份:</b> {paper.year}</p>"
+            
+            if hasattr(paper, 'journal'):
+                journal_name = paper.journal.name if paper.journal else ''
+                citations_html += f"<p><b>出版平台:</b> {journal_name}</p>"
+
+            if hasattr(paper, 'url'):
+                citations_html += f"<p><b>网址:</b> {paper.url}</p>"
+
+            if hasattr(paper, 'authors'):
+                # 从作者列表中提取每个作者的名字，处理可能的空值情况
+                author_names = [author.name for author in paper.authors if author]
+                citations_html += f"<p><b>作者:</b> {', '.join(author_names)}</p>"
+
             
             # 显示DOI（如果存在）
             if hasattr(paper, 'externalIds') and paper.externalIds.get('DOI'):
@@ -220,47 +236,21 @@ class RefParserUI:
             # 生成各部分输出
             paper_info = self._generate_paper_info_html(result['original_paper'])
             citing_papers = self._generate_citations_html(result['citation_results'], result['citing_papers'])
-            
-            # 生成下载链接HTML
-            download_links = "<div class='download-links'>"
-            for paper in result['citing_papers']:
-                safe_doi = paper.doi.replace('/', '_')
-                download_links += f"""
-                <div class='download-item'>
-                    <p><b>Paper:</b> {paper.title}</p>
-                    <a href='./tmp/papers/{safe_doi}.pdf' download>Download PDF</a>
-                    <a href='./tmp/{safe_doi}.grobid.xml' download>Download XML</a>
-                </div>
-                """
-            download_links += "</div>"
-            
-            # 生成引文内容
-            citations = self._generate_citation_statements(result['citing_papers'])
-            
-            return paper_info, citing_papers, download_links, citations
+          
+            return paper_info, citing_papers
             
         except Exception as e:
-            return f"Error: {str(e)}", "", "", ""
+            return f"Error: {str(e)}", "", ""
 
-    def _generate_citation_statements(self, citing_papers):
-        """生成引文内容HTML"""
-        html = "<div class='citation-statements'>"
-        for paper in citing_papers:
-            html += f"<div class='citing-paper'>"
-            html += f"<h3>Citing Paper</h3>"
-            html += f"<p><b>DOI:</b> {paper.doi}</p>"
-            
-            for ctx in paper.citation_contexts:
-                html += f"""
-                <div class='citation-context'>
-                    <p><b>Section:</b> {ctx['section']}</p>
-                    <p><b>Context:</b> {ctx['full_context']}</p>
-                </div>
-                """
-            html += "</div><hr>"
-        html += "</div>"
-        return html
 
+    def process_author_request(self, author_input):
+        """处理作者检索请求"""
+        try:
+            result = self.pipeline.process_author(author_input)
+            return result
+        except Exception as e:
+            return f"Error: {str(e)}", ""
+  
     def create_ui(self):
         """创建两个Tab的WebUI界面"""
         with gr.Blocks() as demo:
@@ -275,9 +265,9 @@ class RefParserUI:
                             pdf_input = gr.File(type="file", label="上传PDF文件")
                             with gr.Row():
                                 with gr.Column():
-                                    view_btn = gr.Button("预览PDF")
+                                    view_btn = gr.Button("预览PDF", variant="primary")
                                 with gr.Column():
-                                    parse_btn = gr.Button("解析PDF")
+                                    parse_btn = gr.Button("解析PDF", variant="primary")
                             pdf_viewer = gr.HTML()
                           
                         # 右侧: 解析结果
@@ -293,31 +283,32 @@ class RefParserUI:
                                     ref_output = gr.HTML()
                 
                 # Tab 2: 论文检索与解析
-                with gr.Tab("检索与解析"):
+                with gr.Tab("文章检索与解析"):
                     with gr.Row():
                         # 左侧: 输入和结果展示区
                         with gr.Column(scale=1):
                             gr.Markdown("### 输入论文标题或上传论文PDF")
                             title_input = gr.Textbox(lines=1, label="论文标题")
                             pdf_upload = gr.File(type="file", label="上传PDF")
-                            with gr.Row():
-                                with gr.Column():
-                                    search_btn = gr.Button("检索", variant="primary")
-                                with gr.Column():
-                                    citation_parse_btn = gr.Button("引文分析", variant="primary")
+                            search_btn = gr.Button("检索与引文分析", variant="primary")
                             
                             with gr.Tabs():
                                 with gr.Tab("论文信息"):
                                     paper_info = gr.HTML()
-                                with gr.Tab("被引用论文"):
-                                    citing_papers = gr.HTML()
-                                with gr.Tab("下载链接"):
-                                    download_links = gr.HTML()
-                        
+                  
                         # 右侧: 引文内容展示区
                         with gr.Column(scale=1):
                             gr.Markdown("### 引文内容")
-                            citation_output = gr.HTML()
+                            citing_papers = gr.HTML()
+
+                with gr.Tab("作者检索与解析"):
+                    with gr.Row():
+                        with gr.Column():
+                            author_input = gr.Textbox(lines=1, label="作者姓名")
+                            search_author_btn = gr.Button("检索与解析", variant="primary")
+                        with gr.Column():
+                            author_info = gr.HTML()
+                            author_papers = gr.HTML()
 
             # 绑定事件处理
             view_btn.click(
@@ -335,10 +326,14 @@ class RefParserUI:
             search_btn.click(
                 fn=self.process_paper_request,
                 inputs=[title_input, pdf_upload],
-                outputs=[paper_info, citing_papers, download_links, citation_output]
+                outputs=[paper_info, citing_papers]
             )
 
-            # citation_parse_btn.click(
+            search_author_btn.click(
+                fn=self.process_author_request,
+                inputs=[author_input],
+                outputs=[author_info, author_papers]
+            )
 
         return demo
 

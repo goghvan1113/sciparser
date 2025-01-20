@@ -280,10 +280,17 @@ class CachedSemanticScholarWrapper:
             
             # 检查标题是否匹配（忽略大小写和空格）
             if self._normalize_title(first_paper.title) == self._normalize_title(title):
-                # 从externalIds中获取DOI和paperId
+                # 从externalIds中获取DOI或构建arXiv DOI
                 doi = None
-                if hasattr(first_paper, 'externalIds') and first_paper.externalIds.get('DOI'):
-                    doi = first_paper.externalIds['DOI']
+                if hasattr(first_paper, 'externalIds'):
+                    # 首先尝试获取DOI
+                    doi = first_paper.externalIds.get('DOI')
+                    
+                    # 如果没有DOI但有arXiv ID，构建arXiv DOI
+                    if not doi and 'ArXiv' in first_paper.externalIds:
+                        arxiv_id = first_paper.externalIds['ArXiv']
+                        if arxiv_id and arxiv_id.strip():
+                            doi = f"10.48550/arXiv.{arxiv_id}"
                 
                 paper_id = first_paper.paperId if hasattr(first_paper, 'paperId') else None
                 
@@ -292,7 +299,7 @@ class CachedSemanticScholarWrapper:
                     self._save_doi_to_cache(title, doi, paper_id)
                     
                 return doi, paper_id
-                    
+                
             if self.use_cache:
                 self._save_doi_to_cache(title, None, None)  # 缓存未找到的结果
             return None, None

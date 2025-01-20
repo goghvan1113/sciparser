@@ -1,0 +1,682 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Twitter Intention Classification Using Bayes Approach for Cricket Test Match Played Between India and South Africa 2015</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Varsha</forename><forename type="middle">D</forename><surname>Jadhav</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution">College of Engineering</orgName>
+								<address>
+									<settlement>Aurangabad</settlement>
+									<country key="IN">India</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><roleName>Dr.</roleName><forename type="first">Sachin</forename><forename type="middle">N</forename><surname>Deshmukh</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution">College of Engineering</orgName>
+								<address>
+									<settlement>Aurangabad</settlement>
+									<country key="IN">India</country>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Twitter Intention Classification Using Bayes Approach for Cricket Test Match Played Between India and South Africa 2015</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<idno type="MD5">D192EEF55E74D1455F0EE6D6A2CE16AD</idno>
+					<idno type="DOI">10.4018/IJRSDA.2017040104</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.2-SNAPSHOT" ident="GROBID" when="2025-01-20T05:10+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<textClass>
+				<keywords>
+					<term>API</term>
+					<term>Bayes</term>
+					<term>Cricket</term>
+					<term>Emotions</term>
+					<term>Intention</term>
+					<term>MAE</term>
+					<term>Polarity</term>
+					<term>Sentiments</term>
+					<term>Tweets</term>
+					<term>Twitter</term>
+				</keywords>
+			</textClass>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Information retrieval and forecasting in real time is becoming the fastest and most efficient way to obtain useful knowledge of what is happening now, allowing organizations to react quickly when problem appears which help to improve their performance. There is enormous amount of data in the form of tweets. It builds data processing system that creates informative data about the cricket test matches. Using twitter data, the authors find the sentiments or polarity of fans posting tweets related to game. Polarity is given as positive, negative and neutral. The authors also analyze the feelings or emotions of people posting tweets. Emotions are given as anger, disgust, fear, joy, sadness, surprise and unknown. Machine learning algorithm (Bayes) using R technology shows the accuracy when trained with emotion data.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>INTRoDUCTIoN</head><p>In the early 188s cricket matches were not time limited. There was unlimited time for the teams to chase a target or to bowl their opponents twice. In the timeless matches, only nine innings were declared. In 1039, the fixed-duration format was universally adopted, and in the present day, test matches are played for five consecutive days with three sessions in a day. A team bowls their opponents twice within the time limit of five days. It is like-wise for batting. We summarize the match-state at the end of each day and use the match-state to forecast the match results. These forecasts can then be used by team captains as strategic guidance.</p><p>Twitter is popular social media where users create messages called tweets. These tweets express polarity and emotions of the people about a particular topic. This is very helpful because it allows feedback to be aggregated without manual interference.</p><p>Intentions can be determined by evaluating a piece of text. Short text messages are challenging to determine the intention. They are usually short in length and are expressed in one sentence or even less. They have misspellings, slang terms, and short form of words. They also include special symbols. Emotions are the facial expressions which are pictorially represented using punctuations and letters. Twitter user use @ symbol to refer to other user on the microblog. This automatically alerts them. Hashtags are usually used to mark the topics to increase the visibility of the topics.</p><p>In this paper we present the Bayes model to predict the intentions of the people who tweet on twitter about a specific topic. The topic which we have chosen is the cricket test match played between India and South Africa from 3 rd December to 7 th December 2015. The tweets were extracted from 3 rd December to 7 th December 2015 at the end of the day. It uses Bayes method twice. Once for determining the polarity and the second time for determining the emotions of the fans. Using polarity intention the match outcomes are predicted. This outcome obtained at the end of the day, serves as strategic guidance to the captains so as to improve the performance of the team.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>BACKGRoUND oF CRICKeT</head><p>Cricket is the popular game similar to other bat and ball games. Each team is made up of eleven players with each team taking turns for batting and fielding. Each team takes turn called an inning. The aim of the batting team is to make runs whereas the aim of the fielding team is to get the ten batsmen out, which is called taking wickets. Currently three varieties of cricket matches are played at international level: test cricket, ODI and twenty20 (T20).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>LITeRATURe SURVey</head><p>To achieve the objective of intention mining the literature survey was done. The literature survey was carried out for cricket match and also for opinion mining. <ref type="bibr" target="#b23">(Yuan, Murukannaiah, Zhang et al., 2014)</ref>, conducted experiments using the mention and mutual-follow graphs. For the mention graphs, the number of "@" references between users can be viewed as the strength of a tie. (Vikrant Hole, Mukta Takalikar, 2013), proposed a system of scheduled subevents for games using twitter data. They also analyzed the feeling of people posting tweets. Sporting events, specifically FIFA World Cup 2015 and IPL 2015 were summarized. SVM, NaïveBayes and Logistic Regression classifier for classifying sentiment of fans were used. Tweets were fetched using Twitter API v 1.1. The system was tested for different matches IPL2015, qualifier 1, eliminator, qualifier 2 and final match and FIFA2015 final match. (S.M. <ref type="bibr">Crowe, Jennifer Middledorp, 1996)</ref>, used logistic regression to analyze data from the test cricket series played in Australia from 1977 to 1994. They considered controversy surrounding leg before wicket (LBW) decisions. They collected data from <ref type="bibr">Frindall(1990a,b)</ref> and from the test match scoreboards published in the Sydney Morning Herald (1992-94) and the Sydney Sun Herald . Logistic regression analysis was used to compare LBW rates for visitors with those for Australia. <ref type="bibr">(Sohail Akhtar and Philip Scarf,2011)</ref>, forecasted match outcomes in a test cricket play, session by session. At the start of the session, match outcome probabilities are forecasted using a series of multinomial logistic regression models. Data was obtained from the ESPNcricinfo website <ref type="bibr">(ESPNcricinfo, 2010)</ref>. The complete dataset (146 matches) relates to all the test matches in the period between November 2005 and March 2010, apart from those matches where the session by session data were not available and in which more than 90 overs were lost to poor weather. International Cricket Council (ICC, 2010) official ratings were used to measure team strength. <ref type="bibr">(Sacheti, A.,Gregory-Smith . I. and Paton, 1998)</ref>, explored the impact of social pressure exerted by crowds on the decision making of officials in sporting contests by using data from Test cricket matches. They focused on area of decision whether a batsman is LBW out or not. Data from 1000 test matches from 1986 to 2012 was used. Negative binomial regression models were estimated to identify the extent of bias towards the home team. (P. E. <ref type="bibr">Allsopp and Stephen R. Clarke, 2004)</ref>, applied multinomial regression techniques to rate the cricket teams and analyze outcomes in test cricket. <ref type="bibr">(Bing Liu., May 2012)</ref> gave in-depth introduction to Opinions and its related concepts such as sentiments, valuations, attitudes, and emotions that are subjects of study of sentiment analysis and opinion mining. (Blessy <ref type="bibr">Selvam, S.Abirami, 2013)</ref>, gave a brief survey on the opinion mining framework. (Zheng Chen, Fan Lin, Huan <ref type="bibr">Liu, Yin Liu, Wei-Ying Ma, Liu Wenyin, 2002)</ref>, surveys probabilistic approaches to modeling information retrieval. In information retrieval (IR), probabilistic modeling is the use of a model that ranks documents in decreasing order of their evaluated probability of relevance to a user's information needs. (E. Horvitz, J. Breese, D. Heckerman, D. Hovel, and K. Rommelse,1998), proposed novel approaches on modeling and inferring user's actions in computer. Modeling and inferring user's intention via data mining. Events from the interface are transformed into time-stamped observations. The observations are input to a Bayesian model and a probability distribution over user needs is inferred. If a query is made available, the posterior probabilities from the events system and the Bayesian term-spotting approach are combined through a weighted multiplication to yield a final posterior distribution over needs. Beyond reasoning about the probability distribution over user problems, the system also infers the likelihood that a user needs assistance at the present moment. This probability is used to control the autonomous display of assistance when the system is running behind the scenes. A user-specified probability threshold is used to control the autonomous assistance. (G. A. <ref type="bibr" target="#b13">Miller, R. Beckwith, C. Fellbaum, D. Gross, and K. Miller, 1990)</ref>, studied software tool Wordnet which represents lexical concepts in various forms. Synonyms, Antonyms, Hyponyms, Meronyms. (Brian D. <ref type="bibr" target="#b5">Davison, 2002)</ref>, examines the accuracy of predicting a user's next action based on analysis of the content of the pages requested recently by the user. The content of recently requested pages is used as a model of the user's interest to rank the links of the current page to determine what to prefetch. <ref type="bibr">(Gautami Tripathi and Naganna S., 2015)</ref>, explored the machine learning classification approaches with different feature selection schemes to obtain sentiment analysis model for the movie review dataset. The dataset used for experimentation was polaritydatasetV2.0. Natural Language Processing and machine learning approaches were used for experimentation. (Svetlana Kiritchenko, Xiaodan Zhu Xiaodan, Saif M. Mohammad,2014), implemented a variety of features based on surface form and lexical categories. Features derived from several sentiment lexicons were included. Experiments showed that the new tweet-specific lexicons are better in sentiment prediction on tweets in both unsupervised and supervised settings. (K. Nirmala Devi1 and V. Murali Bhaskaran2, 2012), quantifies the user attention on any forum with which hotspot forums can be identified. The work is then integrated with K-means clustering and Support Vector Machine (SVM) algorithm. It optimally groups the forums into two clusters, forming hotspot forums and non-hotspot forums within each time window. (M. <ref type="bibr" target="#b7">Govindarajan,(2013)</ref>, proposed a new hybrid classification method based on coupling classification methods using arcing classifier and their performances are analyzed in terms of accuracy. A Classifier ensemble was designed using Naive Bayes (NB), and Genetic Algorithm (GA). A comparative study of the effectiveness of ensemble technique is made for sentiment classification. The ensemble framework is applied to sentiment classification tasks, with the aim of efficiently integrating different feature sets and classification algorithms to synthesize a more accurate classification procedure. The benefits of the proposed approaches are demonstrated by means of movie review that is extensively used in the field of sentiment classification. (G. <ref type="bibr" target="#b15">Parthasarathy and D. C. Tomar, 2015)</ref>, recommended different techniques available for high accuracy extraction of citations for academic papers and improve the performance in citation extraction by integration of two techniques. The aim was to automate the task to determine whether a context is positive or negative. The machine learning techniques like Naïve Bayes, Decision Tree and Support Vector Machines have been discussed. <ref type="bibr">(Pragati Vaidya,2015)</ref>, covers techniques that ability to directly make possible opinion-oriented information-seeking systems and complete workflow of Opinion mining and sentiment analysis in which those techniques can be implemented and also discussed about the application of opinion mining and sentiment analysis and discuss about tools through which are used to track the opinion or polarity from the user generated contents.(Aishwarya Mohan, Manisha.R, Vijayaa.B, Naren.J,2014), analyzed the customer reviews on restaurant domain using sentiment analysis and text mining techniques. They devised Sentiscore algorithm to assign sentiment scores to the aspects with respect to the words used. The aspect that was taken into account was food, cost, ambience and service. A priority-based algorithm forms the rule base for the classifier to predict the polarity of the reviews.. Sentiscore algorithm was utilized to generate the aspect document matrix. Polarity prediction is performed using Naïve Bayes and k-nn classifier and the results were evaluated. (Dr. <ref type="bibr">Raman Chadha, Harsimranjit Kaur, Er. Pravneet kaur, 2015)</ref>, discussed about the techniques and tools for sentiment analysis. The techniques discussed were (1) Supervised Machine Learning Approach which uses two sets that are training set and test set. The training set is used to learn different characteristics of the document and the test set is used to check the validation of the document performance. (2) Case Based Reasoning is used for solving a recent problems that are based on the solutions of similar chronologically problems. It can also be used for classification and regression.</p><p>(3) Unsupervised Learning where there are no explicit target outputs associated with input. Clustering technique is used in unsupervised learning i.e., the training does not specify what we are learn. The tools used in Sentiment Analysis are (1) Python NLTK (Natural Language Toolkit) is high level programming language which works with human language data (text classification). It tells the text which is entered is positive sentiment, negative sentiment, or neutral. Only if the text is not neutral, it determines neutrality first, sentiment polarity second by using hierarchical classification. (2) Review Seer Tool used to automate the work done by aggregation sites. To collect positive sentiments and negative sentiments for assigning a score to the extracted feature terms Naïve Bayesian classifier approach is used. (3) Red Opal is a feature for product-feature scoring from reviews. It enables users to position products quickly based on features. Fully automatic system examines previous customer reviews, identifies the product features and scores each product on each feature. It uses these scores to find which products to show when a user specifies a preferred product feature. (4) Opinion Observer tool is used for analyzing and comparing sentiments on the web or internet using user generated contents. It uses WordNet exploring method to give prior polarity. It shows result in a graph format. (K. M. <ref type="bibr" target="#b18">Sam and C. R. Chatwin, 2013)</ref>, reports on a generalizable system model design that analyzes the unstructured customer reviews inside the posts about electronic products on social networking websites. The posts on social networking websites have been mined and the keywords are extracted from such posts. The extracted keywords and the ontologies of electronic products and emotions form the base for the sentiment analysis model which is used to understand online consumer behavior in the market. In order to improve system accuracy, negating and enhancing terms are considered. Sentiment analysis is demonstrated to be extremely important to system accuracy. <ref type="bibr">(Mahalakshmi R, Suseela S,2015)</ref>, proposed a method of sentiment analysis on twitter by using Hadoop and its ecosystems that will process the large volume of data on a Hadoop and the MapReduce function will execute the sentiment analysis. The MapReduce function is used to classify the twitter sentiment polarity and score. For analysis of social media, data gathered by using TwitterAPI and flume. R language is used for visualizing the result of social sentiment and MongoDB is used to save the twitter status. <ref type="bibr">(Preety, Sunny Dahiya, 2015)</ref>, proposed a sentiment analysis system using modified k means and naïve Bayes algorithm. A method using naïve bayes and modified k means clustering is more accurate than naïve bayes and support vector machine techniques individually. It achieved a better or similar accuracy when compared to more complex models like SVMs, auto encoders, contextual valence shifters, matrix factorization, appraisal groups etc.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>DeFINING INTeNTIoN</head><p>There is no specific definition of intention. Intention is what the people are thinking. It is what is happening into the minds of the people. For the purpose of our research, we define intention to be polarity intention and emotion intention. Polarity intentions are positive, negative and neutral. We define positive intention for match win, negative intentions for match lose and neutral intentions for match draw. Also intention can be defined as feelings or emotions such as anger, disgust, fear, joy, sadness, surprise and unknown. Many tweets contain unknown emotions, which is the limitation of our research.</p><p>Feature Weighting Mechanism: Weights each feature for good recommendation Reduction Mechanisms: Features for optimizing the classification process. The extracted feature reduces the feature vector size to optimize the performance of a classifier. Intention is classified using a classifier for polarity intention such as positive, negative and neutral. Also the intentions are classified as emotion intentions such as anger, disgust, fear, joy, sadness, surprise and unknown.</p><p>The intentions are summarized and recommended.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Bayes Method</head><p>Sentiment classifier is build using Bayes theorem:</p><formula xml:id="formula_0">P s M P s M s P M ( | ) ( ) ( | ) ( ) = •</formula><p>Where:</p><p>s is the sentiment, M is a twitter message.</p><p>We want to prove that sentiment s is true considering new piece of evidence (message). This is a conditional probability, the probability that one proposition is true provided that another proposition is true. We don't need to take conditional probability as a primitive notion; we can define it in terms of absolute probabilities.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>P s M P s and M P M ( | ) ( ) ( ) =</head><p>That is, the probability that s and M are both true divided by the probability that M is true. Using this idea of conditional probability to express the use of Bayes theorem, we say that P(s|M), the probability that s is true given that M is true, is the posterior probability of s. The idea is that P(s|M) represents the probability assigned to s after taking into account the new piece of evidenced (message) M. To calculate this we need, in addition to prior probability P(s), two further conditional probabilities indicating how probable our piece of message is depending on whether our theory is true or not. We represent these as P(s|M) and P(s|~M), where ~M is the negation of M, i.e. the proposition that s is false.</p><p>Likelihood is a tool for summarizing the data's evidence about unknown parameters. The unknown parameter is denoted of distribution. Ɵ Since the probability distribution depends on Ɵ, we can make this dependence explicit by f(x) as f(x; Ɵ) Despite all the complex mathematics, implementing a Bayes classifier is all about counting the number of words, documents and categories. These are combined to calculate the probability of each possible message. The document is then classified according to the highest calculated probability. Although there are some factors to take into consideration when using the Bayes filter, in general it should prove to be a beneficial and easy first step into Machine Learning.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>eVALUATIoN experimental Setup</head><p>There is no large public data set of twitter messages with sentiment, so we collected our own data. Twitter has an Application Programming Interface (API) for accessing tweets by keywords. The Twitter API has a parameter that specifies language in which the tweets should be retrieved. We use the parameter as English. Thus our classifier works for English language only. Data was collected using the twitter API. Using the twitter secret keys and tokens twitter authentication was done. Using searchtwitter command for the specific keywords the tweets were retrieved. The tweets extracted using twitter API are in the text format which are saved in .csv file.</p><p>We collected 39,768 tweets from 3 December 2015 to 7 December 2015. The total numbers of tweets collected for India are 20701 and the total numbers of tweets collected for South Africa are 19067. The keywords used to extract the tweets are, "India 4th test cricket" and "South Africa 4 th test cricket." Table <ref type="table" target="#tab_0">1</ref> shows the number of tweets collected each day for the given keywords.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Feature extraction</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Usernames:</head><p>In order to direct their messages, users often include Twitter usernames by using @ symbol before the username. Removes @ symbol. Usage Links: Very often users include links in their tweets such as <ref type="url" target="http://which">http:// which</ref> is removed. To lower Case: Tweets are posted using both lower and upper case letters. We use preprocessing to convert all the letters to lower case. This process is called case normalization. Special symbols: All the special symbols such as white spaces are removed using preprocessing. Retweets: Retweeting is the process of copying another users tweets and posting it to another users account. This is abbreviated with "RT." We remove all the tweets with RT.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Usage of n-gram and Part of Speech (PoS) Tags</head><p>We explore the usage of n-gram and part of speech (POS) tags.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>n-gram:</head><p>An n-gram is an N-character slice of a longer string. It is any co-occurring set of characters in a string. We used n-grams of several different lengths simultaneously.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Part of Speech (POS):</head><p>We use POS feature because depending on the usage, the same word may have different meanings. E.g. "Out" as a verb is having negative sentiment. Out may be used as a noun to refer that the batsman is out which does not have either positive or negative sentiment. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>NoRMALIZATIoN</head><p>Data should be normalized to bring all the variables into proportion with one another when doing comparison analysis. The point of normalization is to make variables comparable to each other. Normalization means to transform observations x into f(x) such that they look normally distributed.</p><p>It simply means putting different variables on common scale. The numbers of tweets collected for India are 20701 and for South Africa are 19067. As the total number of tweets collected for India and South Africa is different, normalization factor is needed to bring all the variables in proportion for making comparison and predicting the results. All together the total numbers of tweets collected are 39768. To calculate the normalization factor we simply divide the number of tweets collected for each country by the total number of tweets.</p><p>Let the total number of tweets collected be n, n1 be the number of tweets collected by India and n2 be the number of tweets collected by South Africa. The overall normalization factor for India is,</p><formula xml:id="formula_1">n n 1 20701 39768 0 5205 = = .</formula><p>The overall normalization factor for South Africa is,</p><formula xml:id="formula_2">n n 2 19067 39768 0 4794 = = .</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>CLASSIFyING PoLARITy AND eMoTIoNS</head><p>The processed tweets are supplied to Bayes algorithm from the sentiment package of R library. Bayes algorithm is used to classify the tweets twice. Once for polarity and then for emotions. The sentiment package of R is used to analyze unstructured text. The function classify_polarity helps to analyze text and classify the polarity as positive, negative and neutral using bayes classifier. The function is used as classify_polarity(textColumns,algorithm-"bayes",pstrong=0.5,pweak-1.0,prior=1.0)</p><p>The arguments textColumns is a data.frame of text documents listed one per row, algorithm indicates the algorithm to be used, pstrong and pweak is a numeric specifying the probability that is strongly subjective and weakly subjective terms respectively that appears in the given text, prior is a numeric specifying the prior probability. The function returns an object class data.frame. The absolute log likelihood of the document expressing the positive and negative emotion is calculated. The ratio of absolute log likelihood between positive and negative emotion scores is calculated. A score of 1 indicates a neutral poarity, less than 1 indicates a negative polarity, and greater than 1 indicates a positive polarity.</p><p>The classify_emotion function classifies the emotions such as anger, disgust, fear, joy, sadness, surprise, unknown. The function classify_emotion is used as classify_polarity(textColumns, algorithm-"bayes",prior=1.0)</p><p>The arguments textColumns is a data.frame of text documents listed one per row, algorithm is a string which indicates the algorithm be used, prior is a numeric specifying the prior probability to use for the bayes classifier. The function returns an object of class data.frame with seven columns for emotions and one row for each document for the log likelihood. The column anger has the absolute log likelihood of the document expressing angry emotion, disgust has the absolute log likelihood of the document expressing disgust emotion. Similarly for fear, joy, sadness, surprise and unknown. The highest value of the log likelihood of one row on each document represents the respective emotion of the tweet.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Accuracy Measure</head><p>The accuracy measures such as Mean error (ME) Root mean square error (RMSE) Mean absolute error (MAE) Mean Percentage Error (MPE) Mean Absolute Percentage Error (MAPE) are used to measure the accuracy. MAE is simply the mean of the absolute errors. The absolute error is the absolute value of the difference between the forecasted value and the actual value. MAE tells us how big of an error we can expect from the forecast on average. (Cort J. <ref type="bibr">Willmott, Kenji Matsuura, 2005)</ref>, indicated that MAE is the most natural measure of average error magnitude than RMSE.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>ReSULTS AND DISCUSSIoN</head><p>The tweets were classified with the intention of polarity and emotions. The results were observed every day from 3 rd December 2015 to 7 th December 2015. Day-wise Intention polarities for India and South Africa are shown in Table <ref type="table" target="#tab_1">2</ref>. The polarity intentions are shown for each day.</p><p>For India the total numbers of positive tweets are 15811 the total numbers of negative tweets are 2989 and the total numbers of neutral tweets are 1901. For South Africa the total numbers of positive tweets are 14501, the total numbers of negative tweets are 2889 and the total numbers of neutral tweets are 1677. Figure <ref type="figure" target="#fig_0">2</ref> shows Day-wise and Country-wise twitters intention polarity</p><p>The total numbers of tweets collected for India and South Africa are different. So normalization factor needs to be calculated to identify the positive, negative and neutral intentions for both India The normalization factor for negative intention for India is 2989 39768 0 0751 = .</p><p>The normalization factor for neutral intention for India is 1901 39768 0 0478 = .</p><p>The normalization factor for positive intention for South Africa is 14501 39768 0 3646 = .</p><p>The normalization factor for negative intention for South Africa is 2889 39768 0 0726 = .</p><p>The normalization factor for neutral intention for South Africa is 1677 39768 0 0421 = .</p><p>Table <ref type="table" target="#tab_2">3</ref> shows Normalization factor for intention polarities for India and South Africa. Figure <ref type="figure">3</ref> shows the Normalization Factor for intention polarity for India and South Africa. Table <ref type="table">4</ref> Shows the. Day-wise Mean Error and % Accuracy for India and South Africa  <ref type="table" target="#tab_4">5</ref>.</p><p>Figure <ref type="figure" target="#fig_1">4</ref> shows Day-wise and Country-wise twitters intention Emotion for cricket test match</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>CoNCLUSIoN</head><p>The system analyzes sentiments using Bayes approach. The system also analyses various emotions of fans with respect to the team. From Table <ref type="table">4</ref> we can see that the percentage accuracy for India is more on 3 rd , 4 th and 5 th and 6 th of December. On 7 th of December the percentage accuracy for South Africa is more, which make it difficult to predict the results of the cricket test match. Figure <ref type="figure" target="#fig_0">2</ref> shows the intention polarity that is the positive, negative and neutral intentions. It is seen that the number of positive intention for India is more for all the five days, so it is win for India. Also the normalization factor of the intention polarities for India is greater. Among the entire normalization factor for positive polarity for India is highest that is 0.3975. In the first innings India scored 334 runs and South Africa scored 121 runs. In the second innings India scored 267 runs whereas South Africa scored 143 runs. According to The Indian Express dated 8 th December 2015 (The Indian Express, (2015) 8 December),the news was, "Slow and steady South Africa lose breadth, score 143 in 143.1 overs; India wake up in time to win the race." Also the overall normalization factor for India is 0.5205 and the overall normalization factor for South Africa is 0.4794. So our interpretations that win for India is correct.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>FUTURe SCoPe</head><p>Future work would be to identify intentions with respect to sub-events. Also the intention can be obtained session by session. Another area of future work would be to focus on controversial area of decision making by umpires. The method can also be used for predicting the results of other games such as football, basketball, etc. and provide strategic guidance to the captain and the players. The proposed method can also be used in other critical applications such as prediction of results of elections.  </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 2 .</head><label>2</label><figDesc>Figure 2. Day-wise and Country-wise twitters intention polarity for cricket test match 2015</figDesc><graphic coords="10,177.48,91.82,131.04,82.80" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 4 .</head><label>4</label><figDesc>Figure 4. Day-wise and Country-wise twitters intention Emotion for cricket test match 2015</figDesc><graphic coords="12,178.08,298.82,129.84,114.72" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head>Table 1 . Day-wise number of tweets collected for India and South Africa from 3 rd December to 7 th December 2015</head><label>1</label><figDesc></figDesc><table><row><cell>Date</cell><cell>India</cell><cell>South Africa</cell></row><row><cell>3 rd December 2015.</cell><cell>1997</cell><cell>1807</cell></row><row><cell>4 th December 2015.</cell><cell>3536</cell><cell>3244</cell></row><row><cell>5 th December 2015.</cell><cell>4657</cell><cell>4327</cell></row><row><cell>6 th December 2015.</cell><cell>5914</cell><cell>5567</cell></row><row><cell>7 th December 2015.</cell><cell>4597</cell><cell>5567</cell></row><row><cell>Total</cell><cell>20701</cell><cell>19067</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1"><head>Table 2 . Day-wise Intention polarities for India and South Africa</head><label>2</label><figDesc>Altogether the total numbers of tweets collected including both the countries are 39768. The normalization factor for positive intention for India is</figDesc><table><row><cell>Date</cell><cell>Country</cell><cell>Positive</cell><cell>Negative</cell><cell>Neutral</cell></row><row><cell>3 rd Dec</cell><cell>India</cell><cell>1481</cell><cell>317</cell><cell>199</cell></row><row><cell></cell><cell>South Africa</cell><cell>1344</cell><cell>297</cell><cell>166</cell></row><row><cell>4 th Dec</cell><cell>India</cell><cell>2696</cell><cell>511</cell><cell>329</cell></row><row><cell></cell><cell>South Africa</cell><cell>2459</cell><cell>499</cell><cell>286</cell></row><row><cell>5 th Dec</cell><cell>India</cell><cell>3568</cell><cell>633</cell><cell>456</cell></row><row><cell></cell><cell>South Africa</cell><cell>3297</cell><cell>623</cell><cell>407</cell></row><row><cell>6 th Dec</cell><cell>India</cell><cell>4428</cell><cell>877</cell><cell>609</cell></row><row><cell></cell><cell>South Africa</cell><cell>4146</cell><cell>861</cell><cell>560</cell></row><row><cell>7 th Dec</cell><cell>India</cell><cell>3638</cell><cell>651</cell><cell>308</cell></row><row><cell></cell><cell>South Africa</cell><cell>3255</cell><cell>609</cell><cell>258</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2"><head>Table 3 . Normalization factor for Intention polarities for India and South Africa</head><label>3</label><figDesc></figDesc><table><row><cell>Polarity</cell><cell>Normalization Factor</cell><cell></cell></row><row><cell></cell><cell>India</cell><cell>South Africa</cell></row><row><cell>Positive</cell><cell>0.3975</cell><cell>0.3646</cell></row><row><cell>Negative</cell><cell>0.0751</cell><cell>0.0726</cell></row><row><cell>Neutral</cell><cell>0.0478</cell><cell>0.0421</cell></row><row><cell>Figure 3.</cell><cell></cell><cell></cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_3"><head>Normalization Factor for Intention Polarity for India and South Africa Table 4. Day-wise Mean Error and % Accuracy for India and South Africa</head><label></label><figDesc></figDesc><table><row><cell>Date</cell><cell cols="2">Mean Error</cell><cell></cell><cell>% Accuracy</cell></row><row><cell></cell><cell>India</cell><cell>South Africa</cell><cell>India</cell><cell>South Africa</cell></row><row><cell>3 rd December 2015</cell><cell>2.817289</cell><cell>2.872376</cell><cell>97.182711</cell><cell>97.127624</cell></row><row><cell>4 th December 2015</cell><cell>2.979697</cell><cell>2.998616</cell><cell>97.020303</cell><cell>97.01384</cell></row><row><cell>5 th December 2015</cell><cell>3.23095</cell><cell>3.246013</cell><cell>96.76905</cell><cell>96.753987</cell></row><row><cell>6 th December 2015</cell><cell>3.43834</cell><cell>3.489343</cell><cell>96.56166</cell><cell>96.510657</cell></row><row><cell>7 th December 2015</cell><cell>2.341625</cell><cell>2.319436</cell><cell>97.658375</cell><cell>97.680564</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_4"><head>Table 5 . Day-wise Intention Emotions for India and South Africa for Cricket test match 2015</head><label>5</label><figDesc></figDesc><table><row><cell>Date</cell><cell>Country</cell><cell>Anger</cell><cell>Disgust</cell><cell>Fear</cell><cell>Joy</cell><cell>Sadness</cell><cell>Surprise</cell><cell>unknown</cell></row><row><cell>3 rd Dec 2015</cell><cell>India</cell><cell>280</cell><cell>0</cell><cell>14</cell><cell>230</cell><cell>42</cell><cell>73</cell><cell>1358</cell></row><row><cell></cell><cell>South Africa</cell><cell>270</cell><cell>0</cell><cell>14</cell><cell>217</cell><cell>41</cell><cell>57</cell><cell>1208</cell></row><row><cell>4th Dec 2015</cell><cell>India</cell><cell>543</cell><cell>19</cell><cell>37</cell><cell>438</cell><cell>69</cell><cell>106</cell><cell>2324</cell></row><row><cell></cell><cell>South Africa</cell><cell>535</cell><cell>18</cell><cell>37</cell><cell>481</cell><cell>66</cell><cell>92</cell><cell>2015</cell></row><row><cell>5 th Dec 2015</cell><cell>India</cell><cell>828</cell><cell>19</cell><cell>37</cell><cell>542</cell><cell>105</cell><cell>135</cell><cell>2991</cell></row><row><cell></cell><cell>South Africa</cell><cell>817</cell><cell>19</cell><cell>37</cell><cell>533</cell><cell>103</cell><cell>121</cell><cell>2697</cell></row><row><cell>6 th Dec 2015</cell><cell>India</cell><cell>1222</cell><cell>19</cell><cell>67</cell><cell>667</cell><cell>171</cell><cell>150</cell><cell>3618</cell></row><row><cell></cell><cell>South Africa</cell><cell>1211</cell><cell>19</cell><cell>70</cell><cell>661</cell><cell>170</cell><cell>134</cell><cell>3302</cell></row><row><cell>7 th Dec 2015</cell><cell>India</cell><cell>1236</cell><cell>3</cell><cell>24</cell><cell>433</cell><cell>54</cell><cell>130</cell><cell>2717</cell></row><row><cell></cell><cell>South Africa</cell><cell>1223</cell><cell>1</cell><cell>27</cell><cell>409</cell><cell>51</cell><cell>111</cell><cell>2300</cell></row></table></figure>
+		</body>
+		<back>
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>CHARACTeRISTICS oF TweeTS</head><p>Length of Tweets: The maximum length of the twitter message is 140 characters. The average length of the tweet is 14 words or 78 characters. Data Availability: With Twitter API millions of tweets can be collected. It has the parameter that specifies the language to retrieve the tweets in Writing Technique: There are wrong spellings, and slang tweet which are more often used in comparison with other domain. As the length of the message is short, people use misspell and emotions and other characters to express special meanings. Topics: Twitter users can post messages for a wide range of topics. Specific topic can be selected for researches, which focus on specific domain such as predicting match results.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>MeTHoDoLoGy Intention Mining Framework</head><p>Intention mining is not only technically challenging because of the need for natural language processing, but also very useful in practice. Concepts such as sentiments, evaluations, attitudes, and emotions are the subjects of study of intention mining. The framework of intention mining is shown in Figure <ref type="figure">1</ref>.</p><p>For our research the twitter data is the raw material which is preprocessed for feature extraction. The raw data is the tweets extracted for the specific keyword.</p><p>In the preprocessing phase, raw data is taken and is preprocessed for feature extraction. The preprocessing phase has been further divided into number of sub phases as follows:</p><p>Tokenization: Text document has a collection of sentences which is split up into terms or tokens by removing white spaces, commas and other symbols etc. Stopword Removal: removes articles (like, a, an, the). Stemming: decreases related tokens into a single type. E.g.: generalization, generally are represented as general (root word), Case Normalization: English texts published contains both higher and lowercase characters and this process turns the entire document or sentences into lowercase or uppercase.</p><p>After preprocessing, the sentences in the document have been represented as a feature vector.</p><p>The Feature Extraction phase deals with Feature Types: Identifies the type of features used for opinion mining.</p><p>Feature Selection: Used to select good features for opinion classification. </p></div>			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Forecasting test cricket match outcomes in play</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Akhtar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Scarf</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">International Journal of Forecasting</title>
+		<imprint>
+			<biblScope unit="volume">28</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="632" to="643" />
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Rating cricket teams and analysing outcomes in Test cricket</title>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">E</forename><surname>Allsopp</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">R</forename><surname>Clarke</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the Royal Statistical Society (Series A)</title>
+		<imprint>
+			<biblScope unit="volume">167</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="657" to="667" />
+			<date type="published" when="2004">2004</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">A Novel Method of Brain Inspired Sentiment Analysis</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Chadha</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Kaur</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Er</forename><surname>Pravneet Kaur</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">International Journal Of Core Engineering &amp; Management</title>
+		<imprint>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<date type="published" when="2015-05">2015. May</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">User Intention Modeling in Web Applications Using Data Mining</title>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Lin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W.-Y</forename><surname>Ma</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Wenyin</surname></persName>
+		</author>
+		<idno type="DOI">10.1023/A:1020980528899</idno>
+	</analytic>
+	<monogr>
+		<title level="j">World Wide Web: Internet and Web Information Systems</title>
+		<imprint>
+			<biblScope unit="volume">5</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="181" to="191" />
+			<date type="published" when="2002">2002</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">A Comparison of leg Before Wicket Rates Between Australians and Their Visiting Teams for Test Cricket Series Played in Australia, 197794</title>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">M</forename><surname>Crowe</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Middeldorp</surname></persName>
+		</author>
+		<idno type="DOI">10.2307/2988414</idno>
+	</analytic>
+	<monogr>
+		<title level="j">The Statistician</title>
+		<imprint>
+			<biblScope unit="volume">45</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="255" to="262" />
+			<date type="published" when="1996">1996</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Predicting Web Actions from HTML Content</title>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">D</forename><surname>Davison</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the thirteenth ACM conference on Hypertext and hypermedia HYPERTEXT &apos;02</title>
+		<meeting>the thirteenth ACM conference on Hypertext and hypermedia HYPERTEXT &apos;02</meeting>
+		<imprint>
+			<date type="published" when="2002">2002</date>
+			<biblScope unit="page" from="159" to="168" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Sentiment Analysis for Online Forums Hotspot Detection</title>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">N</forename><surname>Devi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><forename type="middle">M</forename><surname>Bhaskaran</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal on Soft Computing</title>
+		<imprint>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<date type="published" when="2012-01">2012, January</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Sentiment Analysis of Movie Reviews using Hybrid Method of Naive Bayes and Genetic Algorithm</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Govindarajan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">International Journal of Advanced Computer Research</title>
+		<imprint>
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="issue">13</biblScope>
+			<biblScope unit="page">139</biblScope>
+			<date type="published" when="2013-12">2013, December</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Real Time Tweet Summarization and Sentiment Analysis of Game Tournament</title>
+		<author>
+			<persName><forename type="first">V</forename><surname>Hole</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Takalikar</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">International Journal of Science and Research</title>
+		<imprint>
+			<biblScope unit="volume">4</biblScope>
+			<biblScope unit="issue">9</biblScope>
+			<biblScope unit="page" from="1774" to="1780" />
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">The Lumiere project: Bayesian user modeling for inferring the goals and needs of software users</title>
+		<author>
+			<persName><forename type="first">E</forename><surname>Horvitz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Breese</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Heckerman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Hovel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Rommelse</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 14th Conference on Uncertainty in Intelligence</title>
+		<meeting>the 14th Conference on Uncertainty in Intelligence</meeting>
+		<imprint>
+			<date type="published" when="1998">1998</date>
+			<biblScope unit="page" from="256" to="265" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Sentiment Analysis of Short Informal Texts</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Kiritchenko</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><forename type="middle">Z</forename><surname>Xiaodan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">M</forename><surname>Mohammad</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Artificial Intelligence Research</title>
+		<imprint>
+			<biblScope unit="volume">50</biblScope>
+			<biblScope unit="page" from="723" to="762" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<monogr>
+		<title level="m" type="main">Sentiment Analysis and Opinion Mining</title>
+		<author>
+			<persName><forename type="first">B</forename><surname>Liu</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2012-05">2012, May</date>
+			<publisher>Morgan &amp; Claypool Publishers</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Big-SoSA: Social Sentiment Analysis and Data Visualization on Big Data</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Mahalakshmi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Suseela</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">International Journal of Advanced Research in Computer and Communication Engineering</title>
+		<imprint>
+			<biblScope unit="volume">4</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<date type="published" when="2015-04">2015, April</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">Introduction to WordNet: An onlinenlexical database</title>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">A</forename><surname>Miller</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Beckwith</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Fellbaum</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Gross</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Miller</surname></persName>
+		</author>
+		<idno type="DOI">10.1093/ijl/3.4.235</idno>
+	</analytic>
+	<monogr>
+		<title level="j">International Journal of Lexicography</title>
+		<imprint>
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="235" to="244" />
+			<date type="published" when="1990">1990</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">An Approach to Perform Aspect level Sentiment Analysis on Customer Reviews using Sentiscore Algorithm and Priority Based Classification</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Mohan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Manisha</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Vijayaa</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Naren</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">International Journal of Computer Science and Information Technologies</title>
+		<imprint>
+			<biblScope unit="volume">5</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="4145" to="4148" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">A Survey of Sentiment Analysis for Journal Citation</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Parthasarathy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">C</forename><surname>Tomar</surname></persName>
+		</author>
+		<idno type="DOI">10.17485/ijst/2015/v8i35/55134</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Indian Journal of Science and Technology</title>
+		<imprint>
+			<biblScope unit="volume">8</biblScope>
+			<biblScope unit="issue">35</biblScope>
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+	<note>December</note>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">Sentiment Analysis Using SVM and Naïve Bayes Algorithm</title>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">D</forename><surname>Preety</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">International Journal of Computer Science and Mobile Computing</title>
+		<imprint>
+			<biblScope unit="volume">4</biblScope>
+			<biblScope unit="issue">9</biblScope>
+			<biblScope unit="page" from="212" to="219" />
+			<date type="published" when="2015-09">2015, September</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">Home bias in officiating: Evidence from international cricket</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Sacheti</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Gregory-Smith</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Paton</surname></persName>
+		</author>
+		<idno type="DOI">10.1111/rssa.12086</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the Royal Statistical Society. Series A</title>
+		<imprint>
+			<biblScope unit="volume">187</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="741" to="755" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+	<note>Statistics in Society)</note>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">December, Ontology-Based Sentiment Analysis Model of Customer Reviews for Electronic Products</title>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">M</forename><surname>Sam</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">R</forename><surname>Chatwin</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">International Journal of e-Education, e-Business</title>
+		<imprint>
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+	<note>Management Learning</note>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">A Survey on Opinion Mining Framework</title>
+		<author>
+			<persName><forename type="first">B</forename><surname>Selvam</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Abirami</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">International Journal of Advanced Research in Computer and Communication Engineering</title>
+		<imprint>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="issue">9</biblScope>
+			<date type="published" when="2013-09">2013, September. 2015. December 8</date>
+		</imprint>
+	</monogr>
+	<note>The Indian Express.</note>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">Feature Selection and Classification Approach for Sentiment Analysis</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Tripathi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Naganna</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Machine Learning and Applications: An International Journal</title>
+		<imprint>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<date type="published" when="2015-06">2015, June</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">Opinion Mining and Sentiment Analysis in Data Mining</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Vaidya</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Scholars Journal of Engineering and Technology (SJET). Sch. J. Eng. Tech</title>
+		<imprint>
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="issue">1B</biblScope>
+			<biblScope unit="page" from="71" to="75" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">Advantages of the mean absolute error (MAE) over the root mean square error (RMSE) in assessing average model Performance</title>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">J</forename><surname>Willmott</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Matsuura</surname></persName>
+		</author>
+		<idno type="DOI">10.3354/cr030079</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Climate Research</title>
+		<imprint>
+			<biblScope unit="volume">30</biblScope>
+			<biblScope unit="page" from="79" to="82" />
+			<date type="published" when="2005">2005</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">Exploiting Sentiment Homophily for Link Prediction</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Yuan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">K</forename><surname>Murukannaiah</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">P</forename><surname>Singh</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">RecSys&apos;14</title>
+		<meeting><address><addrLine>Foster City, Silicon Valley, CA, USA</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2014-10-06">2014. October 6-10, 2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<monogr>
+		<title level="m" type="main">Jadhav is currently working as an Assistant Professor</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Varsha</surname></persName>
+		</author>
+		<imprint>
+			<pubPlace>Aurangabad</pubPlace>
+		</imprint>
+		<respStmt>
+			<orgName>Department of Computer Science and Engineering of P.E.S. College of Engineering Aurangabad, and pursuing a PhD in Computer Engineering from Dr Babasaheb Ambedkar Marathwada University</orgName>
+		</respStmt>
+	</monogr>
+	<note>Her research area is Data mining in Social Networking. She has published research papers in various international conferences and journals</note>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<title level="a" type="main">Deshmukh is currently working as Professor in Department of Computer Science and IT</title>
+		<author>
+			<persName><forename type="first">N</forename><surname>Sachin</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Social Web mining and Intension Mining and recently has</title>
+		<imprint/>
+		<respStmt>
+			<orgName>Dr Babasaheb Ambedkar Marathwada University ; MTech, MSc and MCA) and graduate courses (BE, BTech) University Authorities also have given the responsibility as Director (University Network Information Center), Director (Center for Vocational Education and Training)</orgName>
+		</respStmt>
+	</monogr>
+	<note>Aurangabad and has twenty years of experience teaching for post graduate. His areas of research are Text mining. UGC and AICTE. He has published 40 research papers in various international journals and conferences</note>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

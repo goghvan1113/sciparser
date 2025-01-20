@@ -11,6 +11,7 @@ from retrievers.Publication import Document
 from pdf_parser import Parser
 from grobid_parser import parse
 from app.refparser import ReferenceParser
+from retrievers.arxiv_download import ArxivDownloader
 
 
 class ResearchDocument(Document):
@@ -112,22 +113,59 @@ class ResearchPipeline:
             python_path="/home/gaof23/miniconda3/envs/ca/bin/python"
         )
         
+        arxiv_downloader = ArxivDownloader(download_dir=self.pdf_dir)
+        
         log = ""
         
         # 读取DOI文件获取DOI列表
         with open(doi_file, 'r') as f:
             dois = [line.strip() for line in f if line.strip()]
         
-        # 1. 首先处理有DOI的文献
-        if dois:
-            print(f"\n处理{len(dois)}篇有DOI的文献...")
-            for doi in dois:
-                safe_doi = doi.replace('/', '_').replace('%2F', '_') # %2F是/的url编码
+        # 分离arXiv DOIs和普通DOIs
+        arxiv_dois = []
+        other_dois = []
+        for doi in dois:
+            if doi.startswith('10.48550/arXiv.'):
+                arxiv_dois.append(doi)
+            else:
+                other_dois.append(doi)
+        
+        # 1. 首先处理arXiv论文
+        if arxiv_dois:
+            print(f"\n处理{len(arxiv_dois)}篇arXiv论文...")
+            for doi in arxiv_dois:
+                safe_doi = doi.replace('/', '_').replace('%2F', '_')
                 pdf_path = os.path.join(self.pdf_dir, f"{safe_doi}.pdf")
                 xml_path = os.path.join(self.xml_dir, f"{safe_doi}.grobid.xml")
                 
                 # 检查是否已有缓存
-                if os.path.exists(pdf_path) or os.path.exists(xml_path): # 有xml或者pdf缓存
+                if os.path.exists(pdf_path) or os.path.exists(xml_path):
+                    print(f"文献已存在缓存: {safe_doi}")
+                    log += f"\n文献已存在缓存: {safe_doi}"
+                    continue
+                
+                # 如果没有缓存，使用arXiv下载器下载
+                print(f"下载arXiv论文: {safe_doi}")
+                download_log = arxiv_downloader.download_by_doi(doi)
+                log += f"\n{download_log}"
+        
+        # 2. 然后处理其他DOI论文
+        if other_dois:
+            print(f"\n处理{len(other_dois)}篇非arXiv论文...")
+            # 创建临时DOI文件
+            temp_doi_file = os.path.join(self.doi_dir, "temp_dois.txt")
+            with open(temp_doi_file, 'w') as f:
+                for doi in other_dois:
+                    f.write(f"{doi}\n")
+            
+            # 使用PyPaperBot下载
+            for doi in other_dois:
+                safe_doi = doi.replace('/', '_').replace('%2F', '_')
+                pdf_path = os.path.join(self.pdf_dir, f"{safe_doi}.pdf")
+                xml_path = os.path.join(self.xml_dir, f"{safe_doi}.grobid.xml")
+                
+                # 检查是否已有缓存
+                if os.path.exists(pdf_path) or os.path.exists(xml_path):
                     print(f"文献已存在缓存: {safe_doi}")
                     log += f"\n文献已存在缓存: {safe_doi}"
                     continue
@@ -143,8 +181,12 @@ class ResearchPipeline:
                     new_name = os.path.join(self.pdf_dir, f"{safe_doi}.pdf")
                     os.rename(old_name, new_name)
                     print(f"文件重命名: {safe_doi}")
+            
+            # 删除临时DOI文件
+            if os.path.exists(temp_doi_file):
+                os.remove(temp_doi_file)
         
-        # # 2. 然后处理没有DOI的文献
+        # # 3. 最后处理没有DOI的文献
         # no_doi_titles = [titles[i] for i in no_doi_indices]
         # if no_doi_titles:
         #     print(f"\n处理{len(no_doi_titles)}篇无DOI的文献...")
@@ -171,7 +213,7 @@ class ResearchPipeline:
         #             os.rename(old_name, new_name)
         #             print(f"文件重命名: {safe_title}")
         
-        print("\n下载完成!")
+        # print("\n下载完成!")
         return log
 
     def parse_and_extract_citations(self, original_title: str, citing_dois: list) -> list:
@@ -444,7 +486,7 @@ class CachedGrobidParser:
 def main():
     """测试主函数"""
     # 测试论文标题
-    test_title = "A Survey of Sentiment Analysis for Journal Citation"
+    test_title = "Graph Meets LLMs: Towards Large Graph Models"
     
     try:
         # 初始化pipeline

@@ -1,0 +1,3372 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">A Survey of Graph Meets Large Language Model: Progress and Future Directions</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability  status="unknown">
+					<licence/>
+				</availability>
+				<date type="published" when="2024-04-24">24 Apr 2024</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Yuhan</forename><surname>Li</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution">The Hong Kong University of Science and Technology (</orgName>
+								<address>
+									<settlement>Guangzhou</settlement>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Zhixun</forename><surname>Li</surname></persName>
+							<affiliation key="aff1">
+								<orgName type="institution">The Chinese University of Hong Kong</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Peisong</forename><surname>Wang</surname></persName>
+							<affiliation key="aff2">
+								<orgName type="institution">Tsinghua University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Jia</forename><surname>Li</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution">The Hong Kong University of Science and Technology (</orgName>
+								<address>
+									<settlement>Guangzhou</settlement>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">†</forename><surname>Xiangguo</surname></persName>
+							<affiliation key="aff1">
+								<orgName type="institution">The Chinese University of Hong Kong</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Hong</forename><surname>Cheng</surname></persName>
+							<affiliation key="aff1">
+								<orgName type="institution">The Chinese University of Hong Kong</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Jeffrey</forename><surname>Xu</surname></persName>
+							<affiliation key="aff1">
+								<orgName type="institution">The Chinese University of Hong Kong</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">A Survey of Graph Meets Large Language Model: Progress and Future Directions</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date type="published" when="2024-04-24">24 Apr 2024</date>
+						</imprint>
+					</monogr>
+					<idno type="MD5">5B34DA6E15C840A121B73D34C99C936D</idno>
+					<idno type="arXiv">arXiv:2311.12399v4[cs.LG]</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.2-SNAPSHOT" ident="GROBID" when="2025-01-20T06:47+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<textClass>
+				<keywords>Graph Neural Network Prediction Classification Reasoning Recommendation</keywords>
+			</textClass>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Graph plays a significant role in representing and analyzing complex relationships in real-world applications such as citation networks, social networks, and biological data. Recently, Large Language Models (LLMs), which have achieved tremendous success in various domains, have also been leveraged in graph-related tasks to surpass traditional Graph Neural Networks (GNNs) based methods and yield state-of-the-art performance. In this survey, we first present a comprehensive review and analysis of existing methods that integrate LLMs with graphs. First of all, we propose a new taxonomy, which organizes existing methods into three categories based on the role (i.e., enhancer, predictor, and alignment component) played by LLMs in graph-related tasks. Then we systematically survey the representative methods along the three categories of the taxonomy. Finally, we discuss the remaining limitations of existing studies and highlight promising avenues for future research. The relevant papers are summarized and will be consistently updated at: <ref type="url" target="https://github.com/yhLeeee/Awesome-LLMs-in-Graph-tasks">https://github. com/yhLeeee/Awesome-LLMs-in-Graph-tasks</ref>.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">Introduction</head><p>Graph, or graph theory, serves as a fundamental part of numerous areas in the modern world, particularly in technology, science, and logistics <ref type="bibr" target="#b34">[Ji et al., 2021]</ref>. Graph data represents the structural characteristics between nodes, thus illuminating relationships within the graph's components. Many real-world datasets, such as citation networks <ref type="bibr" target="#b61">[Sen et al., 2008]</ref>, social networks <ref type="bibr" target="#b23">[Hamilton et al., 2017]</ref>, and molecular <ref type="bibr" target="#b84">[Wu et al., 2018]</ref>, are intrinsically represented as graphs. To tackle graph-related tasks, Graph Neural Networks (GNNs) <ref type="bibr" target="#b39">[Kipf and Welling, 2016;</ref><ref type="bibr" target="#b75">Velickovic et al., 2018]</ref> have emerged as one of the most popular choices for processing and analyzing graph data. The main objective of GNNs is to acquire expressive representations at the node, edge, or graph level for different kinds of downstream tasks through recursive message passing and aggregation mechanisms among nodes. In recent years, significant advancements have been made in Large Language Models (LLMs) like Transformers <ref type="bibr" target="#b74">[Vaswani et al., 2017]</ref>, <ref type="bibr">BERT [Kenton and Toutanova, 2019]</ref>, GPT <ref type="bibr" target="#b5">[Brown et al., 2020]</ref>, and their variants. These LLMs can be easily applied to various downstream tasks with little adaptation, demonstrating remarkable performance across various natural language processing tasks, such as sentiment analysis, machine translation, and text classification <ref type="bibr">[Zhao et al., 2023d]</ref>. While their primary focus has been on text sequences, there is a growing interest in enhancing the multi-modal capabilities of LLMs to enable them to handle diverse data types, including graphs <ref type="bibr" target="#b7">[Chai et al., 2023]</ref>, images <ref type="bibr">[Zhang et al., 2023b]</ref>, and videos <ref type="bibr">[Zhang et al., 2023a]</ref>.</p><p>LLMs help graph-related tasks. With the help of LLMs, there has been a notable shift in the way we interact with graphs, particularly those containing nodes associated with text attributes. As shown in Figure <ref type="figure" target="#fig_0">1</ref>, the integration of graphs and LLMs demonstrates success in various downstream tasks across a myriad of graph domains. Integrating LLMs with traditional GNNs can be mutually beneficial and enhance graph learning. While GNNs are proficient at capturing structural information, they primarily rely on semantically constrained embeddings as node features, limiting their ability to express the full complexities of the nodes. Incorporating LLMs, GNNs can be enhanced with stronger node features that effectively capture both structural and contextual aspects. On the other hand, LLMs excel at encoding text but often struggle to capture structural information present in graph data. Combining GNNs with LLMs can leverage the robust textual understanding of LLMs while harnessing GNNs' ability to capture structural relationships, leading to more comprehensive and powerful graph learning. For example, TAPE <ref type="bibr" target="#b26">[He et al., 2023]</ref> leverages semantic knowledge that is relevant to the nodes (i.e., papers) generated by LLMs to improve the quality of initial node embeddings in GNNs. In addition, InstructGLM <ref type="bibr" target="#b91">[Ye et al., 2023]</ref> replaces the predictor from GNNs with LLMs, leveraging the expressive power of natural language through techniques such as flattening graphs and designing instruction prompts. MoleculeSTM <ref type="bibr" target="#b45">[Liu et al., 2022]</ref> aligns GNNs and LLMs into the same vector space to introduce textual knowledge into graphs (i.e., molecules), thereby improving reasoning abilities.</p><p>It is evident that LLMs have a significant influence on graphrelated tasks from different perspectives. To achieve a better systematic overview, as shown in Figure <ref type="figure" target="#fig_1">2</ref>, we follow <ref type="bibr">Chen et al. [2023a]</ref> to organize our first-level taxonomy, categorizing based on the role (i.e., enhancer, predictor, and alignment component) played by LLMs throughout the entire model pipeline. We further refine our taxonomy and introduce more granularity to the initial categories. Motivations. Although LLMs have been increasingly applied in graph-related tasks, this rapidly expanding field still lacks a systematic review. <ref type="bibr">Zhang et al. [2023d]</ref> conducts a forward-looking survey, presenting a perspective paper that discusses the challenges and opportunities associated with the integration of graphs and LLMs. <ref type="bibr">Liu et al. [2023b]</ref> provide another related survey that summarizes existing graph foundation models and offers an overview of pre-training and adaptation strategies. However, both of them have limitations in terms of comprehensive coverage and the absence of a taxonomy specifically focused on how LLMs enhance graphs. In contrast, we concentrate on scenarios where both graph and text modalities coexist and propose a more fine-grained taxonomy to systematically review and summarize the current status of LLMs techniques for graph-related tasks. Contributions. The contributions of this work can be summarized from the following three aspects. (1) A structured taxonomy. A broad overview of the field is presented with a structured taxonomy that categorizes existing works into four categories (Figure <ref type="figure" target="#fig_1">2</ref>). (2) A comprehensive review. Based on the proposed taxonomy, the current research progress of LLMs for graph-related tasks is systematically delineated. (3) Some future directions. We discuss the remaining limitations of existing works and point out possible future directions.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">Preliminary</head><p>In this section, we first introduce the basic concepts of two key areas related to this survey, i.e., GNNs and LLMs. Next, we give a brief introduction to the newly proposed taxonomy.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.1">Graph Neural Networks</head><p>Definitions. Most existing GNNs follow the message-passing paradigm which contains message aggregation and feature update, such as <ref type="bibr">GCN [Kipf and Welling, 2016]</ref> and GAT <ref type="bibr" target="#b75">[Velickovic et al., 2018]</ref>. They generate node representations by iteratively aggregating information of neighbors and updating them with non-linear functions. The forward process can be defined as:</p><formula xml:id="formula_0">h (l) i = U h (l-1) i , M({h (l-1) i , h (l-1) j |v j ∈ N i })</formula><p>where h (l) i is the feature vector of node i in the l-th layer, and N i is a set of neighbor nodes of node i. M denotes the message passing function of aggregating neighbor information, U denotes the update function with central node feature and neighbor node features as input. By stacking multiple layers, GNNs can aggregate messages from higher-order neighbors. Graph pre-training and prompting. While GNNs have achieved some success in graph machine learning, they require expensive annotations and barely generalize to unseen data. To remedy these deficiencies, graph pre-training aims to extract some general knowledge for the graph models to easily deal with different tasks without significant annotation cost. The current mainstream graph pertaining methods can be divided into contrastive and generative approaches. For instance, GraphCL <ref type="bibr" target="#b93">[You et al., 2020]</ref> and GCA <ref type="bibr" target="#b105">[Zhu et al., 2021]</ref> follow a contrastive learning framework and maximize the agreement between two augmented views. <ref type="bibr">Sun et al. [2023b]</ref> extend the contrastive idea to hypergraphs. GraphMAE <ref type="bibr" target="#b28">[Hou et al., 2022]</ref>, S2GAE <ref type="bibr">[Tan et al., 2023a]</ref>, and WGDN <ref type="bibr">[Cheng et al., 2023]</ref> mask the component of the graph and attempt to reconstruct the original data. The typical learning scheme of "pre-training and fine-tuning" is based on the assumption that the pre-training task and downstream tasks share some common intrinsic task space. Instead, in the NLP area, researchers gradually focus on a new paradigm of "pre-training, prompting, and fine-tuning", which aims to reformulate input data to fit the pretext. This idea has also been naturally applied to the graph learning area. GPPT <ref type="bibr" target="#b66">[Sun et al., 2022]</ref> first pre-trains graph model by masked edge prediction, then modify the standalone node into a token pair and reformulate the downstream classification as edge prediction task. Additionally, All in One <ref type="bibr">[Sun et al., 2023a]</ref> proposes a multi-task prompting framework, which unifies the format of graph prompts and language prompts.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.2">Large Language Models</head><p>Definitions. While there is currently no clear definition for LLMs <ref type="bibr" target="#b62">[Shayegani et al., 2023]</ref>, here we provide a specific definition for LLMs mentioned in this survey. Two influential surveys on LLMs <ref type="bibr">[Zhao et al., 2023d;</ref><ref type="bibr" target="#b90">Yang et al., 2023]</ref> distinguish between LLMs and pre-trained language models (PLMs) from the perspectives of model size and training approach. To be specific, LLMs are those huge language models (i.e., billion-level) that undergo pre-training on a significant amount of data, whereas PLMs refer to those early pre-trained models with moderate parameter sizes (i.e., million-level), which can be easily further fine-tuned on task-specific data to achieve better results to downstream tasks. Due to the relatively smaller parameter size of GNNs, incorporating GNNs and LLMs often does not require LLMs with large parameters. Hence, we follow <ref type="bibr">Liu et al. [2023b]</ref> to extend the definition of LLMs in this survey to encompass both LLMs and PLMs as defined in previous surveys. Evolution. LLMs can be divided into two categories based on non-autoregressive and autoregressive language modeling. Non-autoregressive LLMs typically concentrate on natural language understanding and employ a "masked language modeling" pre-training task, while autoregressive LLMs focus more on natural language generation, frequently leveraging the "next token prediction" objective as their foundational task. Classic encoder-only models such as <ref type="bibr">BERT [Kenton and Toutanova, 2019]</ref>, SciBERT <ref type="bibr" target="#b1">[Beltagy et al., 2019]</ref>, and RoBERTa <ref type="bibr" target="#b44">[Liu et al., 2019]</ref> fall under the category of nonautoregressive LLMs. Recently, autoregressive LLMs have witnessed continuous development. Examples include Flan-T5 <ref type="bibr">[Chung et al., 2022]</ref> and ChatGLM <ref type="bibr" target="#b95">[Zeng et al., 2022]</ref>, which are built upon the encoder-decoder structure, as well as GPT-3 <ref type="bibr" target="#b5">[Brown et al., 2020]</ref>, PaLM <ref type="bibr" target="#b14">[Chowdhery et al., 2022]</ref>, Galactica <ref type="bibr" target="#b72">[Taylor et al., 2022]</ref>, and LLaMA <ref type="bibr" target="#b73">[Touvron et al., 2023]</ref>, which are based on decoder-only architectures. Significantly, advancements in architectures and training methodologies of LLMs have given rise to emergent capabilities <ref type="bibr">[Wei et al., 2022a]</ref>, which is the ability to handle complex tasks in few-shot or zero-shot scenarios via some techniques such as in-context learning <ref type="bibr" target="#b57">[Radford et al., 2021;</ref><ref type="bibr" target="#b17">Dong et al., 2022]</ref> and chain-of-thought <ref type="bibr">[Wei et al., 2022b]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.3">Proposed Taxonomy</head><p>We propose a taxonomy (as illustrated in Figure <ref type="figure" target="#fig_1">2</ref>) that organizes representative techniques involving both graph and text modalities into three main categories: (1) LLM as Enhancer, where LLMs are used to enhance the classification performance of GNNs. (2) LLM as Predictor, where LLMs utilize the input graph structure information to make predictions. (3) GNN-LLM Alignment, where LLMs semantically enhance GNNs through alignment techniques. We note that in some models, due to the rarity of LLMs' involvement, it becomes difficult to categorize them into these three main classes. Therefore, we separately organize them into the "Others" category and provide their specific roles in Figure <ref type="figure" target="#fig_1">2</ref>. For example, LLM-GNN <ref type="bibr">[Chen et al., 2023b]</ref> actively selects nodes for ChatGPT to annotate, thereby augmenting the GNN training by utilizing the LLM as an annotator. GPT4GNAS <ref type="bibr">[Wang et al., 2023a]</ref> considers the LLM as an experienced controller in the task of graph neural architecture search. It utilizes <ref type="bibr">GPT-4 [OpenAI, 2023]</ref> to explore the search space and generate novel GNN architectures. Furthermore, ENG <ref type="bibr" target="#b94">[Yu et al., 2023]</ref> empowers the LLM as a sample generator to generate additional training samples with labels to provide sufficient supervision signals for GNNs.</p><p>In the following sections, we present a comprehensive survey along the three main categories of our taxonomy for incorporating LLMs into graph-related tasks, respectively.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">LLM as Enhancer</head><p>GNNs have become powerful tools to analyze graph-structure data. However, the most mainstream benchmark datasets (e.g., Cora <ref type="bibr" target="#b88">[Yang et al., 2016]</ref> and Ogbn-Arxiv <ref type="bibr" target="#b29">[Hu et al., 2020]</ref>) adopt naive methods to encode text information in TAGs using shallow embeddings, such as bag-of-words, skip-gram <ref type="bibr" target="#b51">[Mikolov et al., 2013]</ref>, or TF-IDF <ref type="bibr" target="#b60">[Salton and Buckley, 1988]</ref>. This inevitably constrains the performance of GNNs on TAGs. LLM-as-enhancer approaches correspond to enhancing the quality of node embeddings with the help of powerful LLMs. The derived embeddings are attached to the graph structure to be utilized by any GNNs or directly inputted into downstream classifiers for various tasks. We naturally categorize these approaches into two branches: explanation-based and embedding-based, depending on whether they use LLMs to produce additional textual information.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1">Explanation-based Enhancement</head><p>To enrich the textual attributes, explanation-based enhancement approaches focus on utilizing the strong zero-shot capability of LLMs to capture higher-level information. As shown in Figure <ref type="figure" target="#fig_2">3</ref>(a), generally they prompt LLMs to generate semantically enriched additional information, such as explanations, knowledge entities, and pseudo labels. The typical pipeline is as follows:</p><p>Enhancement:</p><formula xml:id="formula_1">e i = f LLM (t i , p), x i = f LM (e i , t i ), Graph Learning: H = f GNN (X, A),</formula><p>where t i is the original text attributes, p is the designed textual prompts, e i is the additional textual output of LLMs, x i ∈ R D and X ∈ R N ×D denotes the enhanced initial node embedding of node i with the dimension D and embedding matrix, along with adjacency matrix A ∈ R N ×N to obtain node representations H ∈ R N ×d by GNNs, where d is the dimension of representations. For instance, TAPE <ref type="bibr" target="#b26">[He et al., 2023]</ref> is a pioneer work of explanation-based enhancement, which prompts LLMs to generate explanations and pseudo labels to augment textual attributes. After that, relatively small language models are fine-tuned on both original text data and explanations to encode text semantic information as initial node embeddings. <ref type="bibr">Chen et al. [2023a]</ref> explore the potential competence of LLMs in graph learning. They first compare embedding-visible LLMs with shallow embedding methods and then propose KEA to enrich the text attributes. KEA prompts LLMs to generate a list of knowledge entities along with text descriptions and encodes them by fine-tuned PLMs and deep sentence embedding models. LLM4Mol <ref type="bibr">[Qian et al., 2023]</ref> attempts to employ LLMs to assist in molecular property prediction. Specifically, it uses LLMs to generate semantically enriched explanations for the original SMILES and then fine-tunes a small-scale language model to conduct downstream tasks. LLMRec <ref type="bibr" target="#b81">[Wei et al., 2023]</ref> aims to utilize LLMs to figure out data sparsity and data quality issues in the graph recommendation system. It reinforces user-item interaction edges and generates user/item side information by LLMs. Lastly, it employs a lightweight GNN <ref type="bibr" target="#b25">[He et al., 2020]</ref> to encode the augmented recommendation network. Enhancement:</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2">Embedding-based Enhancement</head><formula xml:id="formula_2">x i = f LLM (t i ), Graph Learning: H = f GNN (X, A).</formula><p>This kind of approach requires the use of embedding-visible or open-source LLMs because it needs to access text embeddings straightaway and fine-tune LLMs with structural information. Many of the current advanced LLMs (e.g., GPT4 <ref type="bibr" target="#b53">[OpenAI, 2023]</ref> and PaLM <ref type="bibr" target="#b14">[Chowdhery et al., 2022]</ref>) are closed-source and only provide online services. Strict restrictions prevent researchers from accessing their parameters and output embeddings. This kind of approach mostly adopts a cascading form and utilizes structure information to assist the language model in pre-training or fine-tuning. Typically, GALM <ref type="bibr" target="#b85">[Xie et al., 2023]</ref> pre-trains PLMs and GNN aggregator on a given large graph corpus to capture the information that can maximize utility towards massive applications and then fine-tunes the framework on a specific downstream application to further improve the performance.</p><p>Several works aim to generate node embeddings by incorporating structural information into the fine-tuning phase of LLMs. Representatively, GIANT <ref type="bibr" target="#b12">[Chien et al., 2021]</ref> finetunes the language model by a novel self-supervised learning framework, which employs XR-Transformers to solve extreme multi-label classification over link prediction. SimTeG <ref type="bibr" target="#b18">[Duan et al., 2023]</ref> and TouchUp-G <ref type="bibr" target="#b106">[Zhu et al., 2023]</ref> follow a similar way, they both fine-tune PLMs through link-prediction-like methods to help them perceive structural information. The subtle difference between them is that TouchUp-G uses negative sampling during link prediction, while SimTeG employs parameter-efficient fine-tuning to accelerate the fine-tuning process. G-Prompt <ref type="bibr">[Huang et al., 2023b]</ref> introduces a graph adapter at the end of PLMs to help extract graph-aware node features. Once trained, task-specific prompts are incorporated to produce interpretable node representations for various downstream tasks. WalkLM <ref type="bibr">[Tan et al., 2023b]</ref> is an unsupervised generic graph representation learning method. The first step of it is to generate attributed random walks on the graph and compose roughly meaningful textual sequences by automated textualization program. The second step is to fine-tune an LLM using textual sequences and extract representations from LLM. <ref type="bibr">METERN [Jin et al., 2023b]</ref>  A recent work, OFA <ref type="bibr">[Liu et al., 2023a]</ref>, attempts to propose a general graph learning framework, which can utilize a single graph model to conduct adaptive downstream prediction. It describes all nodes and edges using human-readable texts and encodes them from different domains into the same space by LLMs. Subsequently, the framework is adaptive to perform different tasks by inserting task-specific prompting substructures into the input graph.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.3">Discussions</head><p>LLM-as-enhancer approaches have demonstrated superior performance on TAG, being able to effectively capture both textual and structural information. Moreover, they also exhibit strong flexibility, as GNNs and LLMs are plug-and-play, allowing them to leverage the latest techniques to address the encountered issues. Another advantage of such methods (specifically explanation-based enhancement) is that they pave the way for using closed-source LLMs to assist graph-related tasks. However, despite some papers claiming strong scalability, in fact, LLM-as-enhancer approaches entail significant overhead when dealing with large-scale datasets. Taking explanationbased approaches as an example, they need to query LLMs' APIs for N times for a graph with N nodes, which is indeed a substantial cost.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">LLM as Predictor</head><p>The core idea behind this category is to utilize LLMs to make predictions for a wide range of graph-related tasks, such as classifications and reasonings, within a unified generative paradigm. However, applying LLMs to graph modalities presents unique challenges, primarily because graph data often lacks straightforward transformation into sequential text, as different graphs define structures and features in different ways. In this section, we classify the models broadly into flatten-based and GNN-based predictions, depending on whether they employ GNNs to extract structural features for LLMs.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1">Flatten-based Prediction</head><p>The majority of the existing attempts that utilize LLMs as predictors employ the strategy of flattening the graph into textual descriptions, which facilitates direct processing of graph data by LLMs through text sequences. As shown in Figure <ref type="figure" target="#fig_5">4</ref>(a), flatten-based prediction typically involves two steps: (1) utilizing a flatten function Flat(•) to transform a graph structure into a sequence of nodes or tokens G seq , and (2) a parsing function Parse(•) is then applied to retrieve the predicted label from the output generated by LLMs, as illustrated below:</p><p>Graph Flattening: G seq = Flat(V, E, T , J ),</p><formula xml:id="formula_3">Prediction: Ỹ = Parse(f LLM (G seq , p)),</formula><p>where V, E, T , and J denotes the set of nodes, edges, node text attributes, and edge text attributes, respectively. p indicates the instruction prompt for the current graph task and Ỹ is the predicted label.</p><p>The parsing strategies of models are generally standardized. For example, given that the output of LLMs often involves their reasoning and logic processes, particularly in the chainof-thought (CoT) scenario, several works <ref type="bibr" target="#b21">[Fatemi et al., 2023;</ref><ref type="bibr">Zhao et al., 2023c;</ref><ref type="bibr">Chen et al., 2023a;</ref><ref type="bibr" target="#b22">Guo et al., 2023;</ref><ref type="bibr" target="#b43">Liu and Wu, 2023;</ref><ref type="bibr">Wang et al., 2023b]</ref> utilize regular expressions to extract the predicted label from the output. Some models <ref type="bibr">[Chen et al., 2023a;</ref><ref type="bibr" target="#b21">Fatemi et al., 2023;</ref><ref type="bibr">Wang et al., 2023b;</ref><ref type="bibr" target="#b7">Chai et al., 2023;</ref><ref type="bibr">Huang et al., 2023a]</ref> further set the decoding temperature of the LLM to 0, in order to reduce the variance of LLM's predictions and obtain more reliable results. Another direction is to formulate graph tasks as multi-choice QA problems <ref type="bibr" target="#b59">[Robinson and Wingate, 2022]</ref> where LLMs are instructed to select the correct answer among provided choices.</p><p>For instance, some works <ref type="bibr">[Huang et al., 2023a;</ref><ref type="bibr" target="#b31">Hu et al., 2023;</ref><ref type="bibr" target="#b63">Shi et al., 2023</ref>] constrain LLM's output format via giving choices and appending instructions in prompts in zero-shot setting, such as "Do not give any reasoning or logic for your answer". In addition, some methods, such as GIMLET <ref type="bibr">[Zhao et al., 2023a]</ref> and InstructGLM <ref type="bibr" target="#b91">[Ye et al., 2023]</ref>, fine-tune LLMs to directly output predicted labels, empowering them to provide accurate predictions without the need for additional parsing steps.</p><p>Compared to parsing strategies, flattening strategies can exhibit significant variation. In the following, we organize the methods for flattening based on whether the parameters of LLMs are updated.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>LLM Frozen</head><p>GPT4Graph <ref type="bibr" target="#b22">[Guo et al., 2023]</ref> utilizes graph description languages such as GML <ref type="bibr" target="#b27">[Himsolt, 1997]</ref> and GraphML <ref type="bibr" target="#b3">[Brandes et al., 2013]</ref> to represent graphs. These languages provide standardized syntax and semantics for representing the nodes and edges within a graph. Inspired by linguistic syntax trees <ref type="bibr" target="#b13">[Chiswell and Hodges, 2007]</ref>, GraphText <ref type="bibr">[Zhao et al., 2023c]</ref> leverages graph-syntax trees to convert a graph structure to a sequence of nodes, which is then fed to LLMs for trainingfree graph reasoning. Furthermore, ReLM <ref type="bibr" target="#b63">[Shi et al., 2023]</ref> uses simplified molecular input line entry system (SMILES) strings to provide one-dimensional linearizations of molecular graph structures. Graph data can be also represented through methods like adjacency matrices and adjacency lists. Several methods <ref type="bibr">[Wang et al., 2023b;</ref><ref type="bibr" target="#b21">Fatemi et al., 2023;</ref><ref type="bibr" target="#b43">Liu and Wu, 2023;</ref><ref type="bibr">Zhang et al., 2023c]</ref> directly employ numerically organized node and edge lists to depict the graph data in plain text. GraphTMI <ref type="bibr" target="#b16">[Das et al., 2023]</ref> further explores different modalities such as motif and image to integrate graph data with LLMs.</p><p>Instead, the use of natural narration to express graph structures is also making steady progress. <ref type="bibr">Chen et al. [2023a]</ref> and <ref type="bibr" target="#b31">Hu et al. [2023]</ref> both integrate the structural information of citation networks into the prompts, which is achieved by explicitly representing the edge relationship through the word "cite" and representing the nodes using paper indexes or titles. <ref type="bibr">Huang et al. [2023a]</ref>, on the other hand, does not use the word "cite" to represent edges but instead describes the relationships via enumerating randomly selected k-hop neighbors of the current node. In addition, GPT4Graph <ref type="bibr" target="#b22">[Guo et al., 2023]</ref> and <ref type="bibr">Chen et al. [2023a]</ref> imitate the aggregation behavior of GNNs and summarize the current neighbor's attributes as additional inputs, aiming to provide more structural information. It is worth noting that <ref type="bibr" target="#b21">Fatemi et al. [2023]</ref> investigates various methodologies to represent nodes and edges, examining a total of 11 strategies. For example, they use indexes or alphabet letters to denote nodes and apply arrows or parentheses to signify edges.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>LLM Tuning</head><p>GIMLET <ref type="bibr">[Zhao et al., 2023a]</ref> adopts distance-based position embedding to extend the capability of LLMs to perceive graph structures. When performing positional encoding of the graph, GIMLET defines the relative position of two nodes as the shortest distance between them in the graph, which has been widely utilized in the literature of graph transformers <ref type="bibr" target="#b92">[Ying et al., 2021]</ref>. Similar to <ref type="bibr">Huang et al. [2023a]</ref>, InstructGLM <ref type="bibr" target="#b91">[Ye et al., 2023]</ref> designs a series of scalable prompts based on the maximum hop level. These prompts allow a central paper node to establish direct associations with its neighbors up to any desired hop level by utilizing the described connectivity relationships expressed in natural language.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2">GNN-based Prediction</head><p>GNNs have demonstrated impressive capabilities in understanding graph structures through recursive information exchange and aggregation among nodes. As illustrated in <ref type="bibr">Figure 4(b)</ref>, in contrast to flatten-based prediction, which converts graph data into textual descriptions as inputs to LLMs, GNN-based prediction leverages the advantages of GNNs to incorporate inherent structural characteristics and dependencies present in graph data with LLMs, allowing LLMs to be structure-aware as follows:</p><p>Graph Learning: H = f GNN (X, A),</p><formula xml:id="formula_4">Prediction: Ỹ = Parse(f LLM (H, p)),</formula><p>where X denotes the node embedding matrix, A is the adjacency matrix, and H denotes the structure-aware embeddings associated with the graph. GNN-based prediction also relies on a parser to extract the output from LLMs. However, integrating GNN representations into LLMs often requires tuning, making it easier to standardize the prediction format of LLMs by providing desirable outputs during training.</p><p>Various strategies have been proposed to fuse the structural patterns learned by GNNs and the contextual information captured by LLMs. For instance, GIT-Mol <ref type="bibr">[Liu et al., 2023c]</ref> and MolCA <ref type="bibr">[Liu et al., 2023d]</ref> both implement BLIP-2's Q-Former <ref type="bibr">[Li et al., 2023a]</ref> as the cross-modal projector to map the graph encoder's output to the LLM's input text space. Multiple objectives with different attention masking strategies are employed for effective graph-text interactions. GraphLLM <ref type="bibr" target="#b7">[Chai et al., 2023]</ref> derives the graph-enhanced prefix by applying a linear projection to the graph representation during prefix tuning, allowing the LLM to synergize with the graph transformer to incorporate structural information crucial to graph reasoning. Additionally, both GraphGPT <ref type="bibr" target="#b71">[Tang et al., 2023]</ref> and InstructMol <ref type="bibr" target="#b6">[Cao et al., 2023]</ref> employ a simple linear layer as the lightweight alignment projector to map the encoded graph representation to some graph tokens, while the LLM excels at aligning these tokens with diverse text information. DGTL <ref type="bibr" target="#b56">[Qin et al., 2023]</ref> injects the disentangled graph embeddings directly into each layer of the LLM, highlighting different aspects of the graph's topology and semantics.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.3">Discussions</head><p>Utilizing LLMs directly as predictors shows superiority in processing textual attributes of graphs, especially achieving remarkable zero-shot performance compared with traditional GNNs. The ultimate goal is to develop and refine methods for encoding graph-structured information into a format that LLMs can comprehend and manipulate effectively and efficiently. Flatten-based prediction may have an advantage in terms of effectiveness, while GNN-based prediction tends to be more efficient. In flatten-based prediction, the input length limitation of LLMs restricts each node's access to only its neighbors within a few hops, making it challenging to capture long-range dependencies. Additionally, without the involvement of GNNs, inherent issues of GNNs such as heterophily cannot be addressed. On the other hand, for GNN-based prediction, training an additional GNN module and inserting it into LLMs for joint training is challenging due to the problem of vanishing gradients in the early layers of deep transformers <ref type="bibr">[Zhao et al., 2023a;</ref><ref type="bibr" target="#b56">Qin et al., 2023]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">GNN-LLM Alignment</head><p>Aligning the embedding spaces of GNNs and LLMs is an effective way to integrate the graph modality with the text modality. GNN-LLM alignment ensures that each encoder's unique functionalities are preserved while coordinating their embedding spaces at a specific stage. In this section, we summarize the techniques for aligning GNNs and LLMs, which can be classified as symmetric or asymmetric, depending on whether equal emphasis is placed on both GNNs and LLMs or if one modality is prioritized over the other.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.1">Symmetric</head><p>Symmetric alignment refers to the equal treatment of the graph and text modalities during the alignment process. These approaches ensure that the encoders of both modalities achieve comparable performance in their respective applications.</p><p>A typical symmetric alignment architecture, illustrated in Figure <ref type="figure" target="#fig_6">5</ref>(a), adopts a two-tower style, employing separate encoders to individually encode the graph and text. Notice that during the alignment process, both modalities interact only once. Some methods, like SAFER <ref type="bibr" target="#b8">[Chandra et al., 2020]</ref>, utilize simple concatenation on these separate embeddings. However, this approach falls short in achieving a seamless fusion of structural and textual information, resulting in a loosely coupled integration of the two modalities. Consequently, the majority of two-tower style models utilize contrastive learning techniques to facilitate alignment, akin to CLIP <ref type="bibr" target="#b57">[Radford et al., 2021]</ref> for aligning visual and language modalities. In general, </p><formula xml:id="formula_5">ℓ(g i , t i ) = -log e s(gi,ti)/τ |G| k=1 e s(gi,t k )/τ , L InfoNCE = 1 2|G| |G| i=1 ℓ(g i , t i ) + ℓ(t i , g i ) ,</formula><p>where g represents the representation of a specific graph, while t denotes the representation of the corresponding text of the graph. s(•, •) denotes the score function that assigns high values to the positive pair, and low values to negative pairs. τ is a temperature parameter and |G| denotes the number of graphs in the training dataset. Parameters of both encoders are updated via backpropagation based on the contrastive loss.</p><p>Text2Mol <ref type="bibr" target="#b20">[Edwards et al., 2021]</ref> proposes a cross-modal attention mechanism to achieve early fusion of graph and textual embeddings. Implemented through a transformer decoder, Text2Mol uses the LLM's output as a source sequence and the GNN's output as a target sequence. This setup allows the attention mechanism to learn multimodal association rules. The decoder's output is then utilized for contrastive learning, paired with the processed outputs from the GNN.</p><p>MoMu <ref type="bibr" target="#b65">[Su et al., 2022]</ref>, MoleculeSTM <ref type="bibr" target="#b45">[Liu et al., 2022]</ref>, ConGraT <ref type="bibr" target="#b4">[Brannon et al., 2023]</ref>, and RLMRec <ref type="bibr" target="#b58">[Ren et al., 2023]</ref> share a similar framework, which adopts paired graph embeddings and text embeddings to implement contrastive learning, but there are still differences in detail. Both MoMu and MoleculeSTM gather molecules from PubChem <ref type="bibr" target="#b76">[Wang et al., 2009]</ref>. The former retrieves related texts from published scientific papers, while the latter utilizes the corresponding descriptions of the molecules. ConGraT expands this architecture beyond the molecular domain. It has validated this graphtext paired contrastive learning method on social, knowledge, and citation networks. RLMRec proposes to align the semantic space of LLMs with the representation space of collaborative relational signals (which indicate user-item interactions) in recommendation systems through a contrastive modeling.</p><p>Several studies such as G2P2 <ref type="bibr" target="#b82">[Wen and Fang, 2023]</ref> and GRENADE <ref type="bibr">[Li et al., 2023b]</ref> have further advanced the use of contrastive learning. Specifically, G2P2 enhances the granularity of contrastive learning and introduces prompts during the fine-tuning stage. It employs contrastive learning at three levels during the pre-training stage: node-text, text-text summary, and node-node summary, thereby strengthening the alignment between text and graph representations. Prompts are utilized in downstream tasks, demonstrating strong performance in few-shot and zero-shot text classification and node classification tasks. On the other hand, GRENADE is optimized by integrating graph-centric contrastive learning with dual-level graph-centric knowledge alignment, which includes both nodelevel and neighborhood-level alignment.</p><p>Contrary to previous methods, the iterative alignment approach, depicted in Figure <ref type="figure" target="#fig_6">5</ref>(b), treats both modalities equally but distinguishes itself in the training process by allowing for iterative interaction between the modalities. For example, GLEM <ref type="bibr" target="#b100">[Zhao et al., 2022]</ref> employs the Expectation-Maximization (EM) framework, where one encoder iteratively generates pseudo-labels for the other encoder, allowing them to align their representation spaces.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.2">Asymmetric</head><p>While symmetric alignment aims to give equal emphasis to both modalities, asymmetric alignment focuses on allowing one modality to assist or enhance the other. In current studies, the predominant approach involves leveraging the capabilities of GNNs to process structural information to reinforce LLMs. These studies can be categorized into two types: graph-nested transformer and graph-aware distillation.</p><p>The graph-nested transformer, as exemplified by Graphformer <ref type="bibr" target="#b89">[Yang et al., 2021]</ref> in Figure <ref type="figure" target="#fig_6">5</ref>(c), demonstrates asymmetric alignment through the integration of GNNs into each transformer layer. Within each layer of the LLM, the node embedding is obtained from the first token-level embedding, which corresponds to the [CLS] token. The process involves gathering embeddings from all relevant nodes and applying them to a graph transformer. The output is then concatenated with the input embeddings and passed on to the next layer of the LLM. <ref type="bibr">Patton [Jin et al., 2023a]</ref> extends Graph-Former by proposing two pre-training strategies, i.e., networkcontextualized masked language modeling and masked node prediction, specifically for text-rich graphs. Its strong performance is shown in various downstream tasks, including classification, retrieval, reranking, and link prediction. Additionally, GRAD <ref type="bibr" target="#b50">[Mavromatis et al., 2023]</ref> employs graph-aware distillation for aligning two modalities, depicted in Figure <ref type="figure" target="#fig_6">5(d)</ref>. It utilizes a GNN as a teacher model to generate soft labels for an LLM, facilitating the transfer of aggregated information. Moreover, since the LLMs share parameters, the GNN can benefit from improved textual encodings after the updates to the LLMs' parameters. Through iterative updates, a graph-aware LLM is developed, resulting in enhanced scalability in inference due to the absence of the GNN. Similar to GRAD, THLM <ref type="bibr" target="#b107">[Zou et al., 2023]</ref> employs a heterogeneous GNN to enhance LLMs with multi-order topology learning capabilities. It involves pretraining a LLM alongside an auxiliary GNN through two distinct strategies. The first strategy focuses on predicting whether a node is part of the context graph of a target node. The second strategy utilizes a Masked Language Modeling task, which aids in developing a robust language comprehension by the LLM. After the pretraining process, the auxiliary GNN is discarded and the LLM is fine-tuned for downstream tasks.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.3">Discussions</head><p>To align GNNs and LLMs, symmetric alignments treat each modality equally, with the objective of enhancing GNNs and LLMs simultaneously. This leads to encoders that can effec-tively handle tasks involving both modalities, leveraging their individual encoding strengths to improve modality-specific representations. In addition, asymmetric methods enhance LLMs by inserting graph encoders into transformers or directly using GNNs as teachers. However, alignment techniques face challenges when dealing with data scarcity. In particular, only a few graph datasets (i.e., molecular datasets) contain native graph-text pairs, limiting the applicability of these methods.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6">Future Directions</head><p>Table <ref type="table" target="#tab_0">1</ref> summarizes the models that leverage LLMs to assist graph-related tasks according to the proposed taxonomy. Based on the above review and analysis, we believe that there is still much space for further enhancement in this field. In this section, we discuss the remaining limitations of leveraging LLM's ability to comprehend graph data and list some directions for further exploration in subsequent research. Dealing with non-TAG. Utilizing LLMs to assist learning on text-attributed graphs has already demonstrated excellent performance. However, graph-structured data is ubiquitous in real-world scenarios, and a great deal of it lacks rich textual information. For example, in a traffic network (e.g., PeMS03 <ref type="bibr" target="#b64">[Song et al., 2020]</ref>), each node represents an operational sensor, while in a superpixel graph (e.g., PascalVOC-SP <ref type="bibr" target="#b19">[Dwivedi et al., 2022]</ref>), each node represents a superpixel. These datasets do not have attached text attributes on each node, and it is also challenging describe the semantic meaning of each node using human-understandable language. Although OFA <ref type="bibr">[Liu et al., 2023a]</ref> proposes to describe all nodes and edges using human-understandable texts and embed the texts into the same space by LLMs, it may not be applicable to all domains (e.g., superpixel graph), and its performance may be suboptimal in certain domains and datasets. Exploring how to leverage the powerful generalization capabilities of LLMs to help in constructing graph foundation models is a valuable research direction.</p><p>Dealing with data leakage. Data leakage in LLMs has become a focal point of discussion <ref type="bibr" target="#b0">[Aiyappa et al., 2023]</ref>. Given that LLMs undergo pre-training on extensive text corpora, it's likely that LLMs may have seen and memorized at least part of the test data of the common benchmark datasets, especially for citation networks. This undermines the reliability of current studies that rely on earlier benchmark datasets. In addition, <ref type="bibr">Chen et al. [2023a]</ref> proves that specific prompts could potentially enhance the "activation" of LLMs' corresponding memory, thereby influencing the evaluation. Both Huang et al.</p><p>[2023a] and <ref type="bibr" target="#b26">He et al. [2023]</ref> have tried to avoid the data leakage issue by collecting a new citation dataset, ensuring that the test papers are sampled from time periods post the data cut-off of ChatGPT. However, they still remain limited to the citation domain and the impact of graph structures in their datasets is not significant. Hence, it's crucial to reconsider the methods employed to accurately evaluate the performance of LLMs on graph-related tasks. A fair, systematic, and comprehensive benchmark is also needed.</p><p>Improving transferability. Transferability has always been a challenging problem in the graph domain <ref type="bibr" target="#b35">[Jiang et al., 2022]</ref>. The transferability of learned knowledge from one dataset to another, or from one domain to another, is not straightforward due to the unique characteristics and structures of individual graphs. Graphs can vary significantly in terms of size, connectivity, node types, edge types, and overall topology, making it difficult to directly transfer knowledge between them. While LLMs have demonstrated promising zero/few-shot abilities in language tasks due to their extensive pre-training on vast amounts of corpora, the exploration of utilizing the knowledge embedded within LLMs to enhance the transferability of graph-related tasks has been relatively limited. OFA <ref type="bibr">[Liu et al., 2023a]</ref> attempts a unified way to perform cross-domain on graphs by describing all nodes and edges as human-readable texts and embedding the texts from different domains into the same embedding space with a single LLM. The topic of improving transferability is still worth investigating.</p><p>Improving explainability. Explainability, also known as interpretability, denotes the ability to explain or present the behavior of models in human-understandable terms <ref type="bibr">[Zhao et al., 2023b]</ref>. LLMs exhibit improved explainability compared to GNNs when handling graph-related tasks, primarily due to the reasoning and explaining ability of LLMs to produce user-friendly explanations for graph reasoning, including generating additional explanations as enhancers discussed in Section 3 and offering reasoning processes as predictors dis-cussed in Section 4. Several studies have examined explaining techniques within the prompting paradigm, such as in-context learning <ref type="bibr" target="#b57">[Radford et al., 2021]</ref> and chain-of-thought <ref type="bibr">[Wei et al., 2022b]</ref>, which involve feeding a sequence of demonstrations and prompts to the LLM to steer its generation in a particular direction and have it explain its reasoning. Further explorations should be conducted to enhance explainability.</p><p>Improving efficiency. While LLMs have demonstrated their effectiveness in learning on graphs, they may face inefficiencies in terms of time and space, particularly compared to dedicated graph learning models such as GNNs that inherently process graph structures. This is especially obvious when LLMs rely on sequential graph descriptions for predictions discussed in Section 4. For example, while accessing LLMs through APIs (i.e., ChatGPT and GPT-4), the billing model incurs high costs for processing large-scale graphs. Additionally, both training and inference for locally deployed open-source LLMs require significant time consumption and substantial hardware resources. Existing studies <ref type="bibr" target="#b18">[Duan et al., 2023;</ref><ref type="bibr">Liu et al., 2023c;</ref><ref type="bibr" target="#b91">Ye et al., 2023;</ref><ref type="bibr" target="#b7">Chai et al., 2023;</ref><ref type="bibr">Liu et al., 2023d;</ref><ref type="bibr" target="#b71">Tang et al., 2023]</ref> have tried to enable LLMs' efficient adaption via adopting parameter-efficient fine-tuning strategies, such as LoRA <ref type="bibr" target="#b30">[Hu et al., 2021]</ref> and prefix tuning <ref type="bibr" target="#b40">[Li and Liang, 2021]</ref>. We believe that more efficient methods may unlock more power of applying LLMs on graph-related tasks with limited computational resources.</p><p>Analysis and improvement of expressive ability. Despite the recent achievements of LLMs in graph-related tasks, their theoretical expressive power remains largely unexplored. It is widely acknowledged that standard message-passing neural networks are as expressive as the 1-Weisfeiler-Lehman (WL) test, meaning that they fail to distinguish non-isomorphic graphs under 1-hop aggregation <ref type="bibr" target="#b86">[Xu et al., 2018]</ref>. Therefore, two fundamental questions arise: How effectively do LLMs understand graph structures? Can their expressive ability surpass those of GNNs or the WL-test? Besides, permutation equivariance is an intriguing property of typical GNNs, which is significant in geometric graph learning <ref type="bibr" target="#b24">[Han et al., 2022]</ref>. Exploring how to endow LLMs with this property is also an interesting direction.</p><p>LLMs as agent. In the current integration of graphs with LLMs, LLMs often play the role of enhancers, predictors, and alignment components. However, in more complex scenarios, such applications may not fully unlock the potential of LLMs. Recent research has explored new roles for LLMs as agents, such as generative agents <ref type="bibr" target="#b54">[Park et al., 2023]</ref> and domainspecific agents <ref type="bibr" target="#b2">[Bran et al., 2023]</ref>. In an LLM-powered agent system, LLMs function as the agent's brain, supported by essential components like planning, memory, and tool using <ref type="bibr" target="#b83">[Weng, 2023]</ref>. In complex graph-related scenarios, such as recommendation systems and knowledge discovery, treating LLMs as agents to first decompose tasks into multiple subtasks, and then identifying the most suitable tools (e.g., GNNs) for each subtask may potentially yield enhanced performance. Furthermore, employing LLMs as agents holds promise for constructing a powerful and highly generalizable solver for graph-related tasks.</p><p>The application of LLMs to graph-related tasks has emerged as a prominent area of research in recent years. In this survey, we aim to provide an overview of existing strategies for adapting LLMs to graphs. Firstly, we introduce a novel taxonomy that categorizes techniques involving both graph and text modalities into three categories based on the different roles played by LLMs, i.e., enhancer, predictor, and alignment component. Secondly, we systematically review the representative studies according to the taxonomy. Finally, we discuss some limitations and highlight several future research directions. Through this comprehensive review, we aspire to shed light on the advancements and challenges in the field of graph learning with LLMs, thereby encouraging further enhancements in this domain.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 :</head><label>1</label><figDesc>Figure 1: Across a myriad of graph domains, the integration of graphs and LLMs demonstrates success in various downstream tasks.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 2 :</head><label>2</label><figDesc>Figure 2: A taxonomy of models for solving graph tasks with the help of large language models (LLMs) with representative examples.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 3 :</head><label>3</label><figDesc>Figure 3: The illustration of LLM-as-enhancer approaches: a) explanation-based enhancement, which uses LLMs to generate explanations of text attributes to enhance text embeddings; b) Embedding-based enhancement, which directly obtains text embeddings by LLMs as initial node embeddings.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head></head><label></label><figDesc>Refer to Figure 3(b), embedding-based enhancement approaches directly utilize LLMs to output text embeddings as initial node embeddings for GNN training:</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head></head><label></label><figDesc>introduces relation prior tokens to capture the relation-specific signals and uses one language encoder to model the shared knowledge across relations. LEADING [Xue et al., 2023] effectively finetunes LLMs and transfers risk knowledge in LLM to downstream GNN model with less computation cost and memory overhead.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Figure 4 :</head><label>4</label><figDesc>Figure 4: The illustration of LLM-as-predictor approaches: a) Flatten-based prediction, which incorporates graph structure with LLMs via different flattening strategies; b) GNN-based prediction, utilizing GNNs to capture structural information for LLMs.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>Figure 5 :</head><label>5</label><figDesc>Figure 5: The illustration of GNN-LLM-Alignment approaches: a) Contrastive, symmetric alignment which applies concatenation or contrastive learning to graph embeddings and text embeddings; b) Iterative, belongs to symmetric alignment, aiming to implement iterative interactions on embeddings of two modalities; c) Graph-nested, a symmetric alignment which interweaves GNNs with Transformers and d) Distillation, belongs to asymmetric alignment, which uses GNN as a teacher to train language models to be graph-aware.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head>Table 1 :</head><label>1</label><figDesc>A summary of models that leverage LLMs to assist graph-related tasks in literature, ordered by their release time. Fine-tuning denotes whether it is necessary to fine-tune the parameters of LLMs, and ♡ indicates that models employ parameter-efficient fine-tuning (PEFT) strategies, such as LoRA and prefix tuning. Prompting indicates the use of text-formatted prompts in LLMs, done manually or automatically. Acronyms in Task: Node refers to node-level tasks; Link refers to link-level tasks; Graph refers to graph-level tasks; Reasoning refers to Graph Reasoning; Retrieval refers to Graph-Text Retrieval; Captioning refers to Graph Captioning.</figDesc><table><row><cell></cell><cell>Model</cell><cell>GNN</cell><cell>LLM</cell><cell>Predictor</cell><cell cols="3">Fine-tuning Prompting Domain</cell><cell>Task</cell><cell>Code</cell></row><row><cell></cell><cell>GIANT [Chien et al., 2021]</cell><cell>SAGE, RevGAT, etc.</cell><cell>BERT</cell><cell>GNN</cell><cell>✗</cell><cell>✗</cell><cell>Citation, Co-purchase</cell><cell>Node</cell><cell>Link</cell></row><row><cell></cell><cell>GALM et al., 2023]</cell><cell>RGCN, RGAT</cell><cell>BERT</cell><cell>GNN</cell><cell>✓</cell><cell>✗</cell><cell>E-Commerce, Recommendation</cell><cell>Node, Link</cell><cell>-</cell></row><row><cell></cell><cell>TAPE [He et al., 2023]</cell><cell>RevGAT</cell><cell>ChatGPT</cell><cell>GNN</cell><cell>✗</cell><cell>✓</cell><cell>Citation</cell><cell>Node</cell><cell>Link</cell></row><row><cell>LLM as Enhancer</cell><cell>Chen et al. [Chen et al., 2023a] LLM4Mol [Qian et al., 2023] SimTeG [Duan et al., 2023] G-Prompt [Huang et al., 2023b] TouchUp-G [Zhu et al., 2023] OFA [Liu et al., 2023a] LLMRec [Wei et al., 2023]</cell><cell>GCN, GAT -SAGE, RevGAT, SEAL SAGE, RevGAT SAGE, MB-GCN, etc. R-GCN LightGCN</cell><cell>ChatGPT ChatGPT allMiniLM-L6-v2, etc. RoBERTa-Large BERT Sentence-BERT ChatGPT</cell><cell>GNN LM GNN GNN GNN GNN GNN</cell><cell>✗ ✗ ✓ ♡ ✓ ✓ ✗ ✗</cell><cell>✓ ✗ ✗ ✓ ✗ ✓ ✓</cell><cell cols="2">Citation, Co-purchase Molecular Citation, Co-purchase Citation, Social Citation, Co-purchase, Recommendation Citation, Web link, Knowledge, Molecular Node, Link, Graph Node Graph Node, Link Node Node, Link Recommendation Recommendation</cell><cell>-Link Link --Link Link</cell></row><row><cell></cell><cell>WalkLM [Tan et al., 2023b]</cell><cell>-</cell><cell>DistilRoBERTa</cell><cell>MLP</cell><cell>✓</cell><cell>✗</cell><cell>Knowledge</cell><cell>Node, Link</cell><cell>Link</cell></row><row><cell></cell><cell>METERN [Jin et al., 2023b]</cell><cell>-</cell><cell>BERT</cell><cell>LM</cell><cell>✓</cell><cell>✗</cell><cell>Citation, E-Commerce</cell><cell>Node</cell><cell>-</cell></row><row><cell></cell><cell>LEADING [Xue et al., 2023]</cell><cell>GCN, GAT</cell><cell>BERT</cell><cell>GNN</cell><cell>✓</cell><cell>✗</cell><cell>Citation</cell><cell>Node</cell><cell>-</cell></row><row><cell></cell><cell>NLGraph [Wang et al., 2023b]</cell><cell>-</cell><cell>Text-davinci-003</cell><cell>LLM</cell><cell>✗</cell><cell>✓</cell><cell>-</cell><cell>Reasoning</cell><cell>Link</cell></row><row><cell></cell><cell>GPT4Graph [Guo et al., 2023]</cell><cell>-</cell><cell>Text-davinci-003</cell><cell>LLM</cell><cell>✗</cell><cell>✓</cell><cell>-</cell><cell>Reasoning, Node, Graph</cell><cell>Link</cell></row><row><cell></cell><cell>GIMLET [Zhao et al., 2023a]</cell><cell>-</cell><cell>T5</cell><cell>LLM</cell><cell>✓/✗</cell><cell>✓</cell><cell>Molecular</cell><cell>Graph</cell><cell>Link</cell></row><row><cell></cell><cell>Chen et al. [Chen et al., 2023a]</cell><cell>-</cell><cell>ChatGPT</cell><cell>LLM</cell><cell>✗</cell><cell>✓</cell><cell>Citation</cell><cell>Node</cell><cell>Link</cell></row><row><cell></cell><cell>GIT-Mol [Liu et al., 2023c]</cell><cell>GIN</cell><cell>MolT5</cell><cell>LLM</cell><cell>✓ ♡</cell><cell>✓</cell><cell>Molecular</cell><cell>Graph, Captioning</cell><cell>-</cell></row><row><cell></cell><cell>InstructGLM [Ye et al., 2023]</cell><cell>-</cell><cell>FLAN-T5/LLaMA-v1</cell><cell>LLM</cell><cell>✓ ♡</cell><cell>✓</cell><cell>Citation</cell><cell>Node</cell><cell>Link</cell></row><row><cell>LLM as Predictor</cell><cell cols="2">Liu et al. [Liu and Wu, 2023] Huang et al. [Huang et al., 2023a] --GraphText [Zhao et al., 2023c] -Fatemi et al. [Fatemi et al., 2023] -GraphLLM [Chai et al., 2023] Graph Transformer Hu et al. [Hu et al., 2023] -MolCA [Liu et al., 2023d] GINE</cell><cell>GPT-4, etc. ChatGPT ChatGPT/GPT-4 PaLM/PaLM 2 LLaMA-v2 ChatGPT/GPT-4 Galactica/MolT5</cell><cell>LLM LLM LLM LLM LLM LLM LLM</cell><cell>✗ ✗ ✗ ✗ ✓ ♡ ✗ ✓ ♡</cell><cell>✓ ✓ ✓ ✓ ✓ ✓ ✓</cell><cell>-Citation, Co-purchase Citation, Web link --Citation, Knowledge, Social Molecular</cell><cell>Reasoning Node Node Reasoning Reasoning Node, Link, Graph Graph, Retrieval, Captioning</cell><cell>Link Link --Link -Link</cell></row><row><cell></cell><cell>GraphGPT [Tang et al., 2023]</cell><cell>Graph Transformer</cell><cell>Vicuna</cell><cell>LLM</cell><cell>✓ ♡</cell><cell>✓</cell><cell>Citation</cell><cell>Node</cell><cell>Link</cell></row><row><cell></cell><cell>ReLM [Shi et al., 2023]</cell><cell>TAG, GCN</cell><cell>Vicuna/ChatGPT</cell><cell>LLM</cell><cell>✗</cell><cell>✓</cell><cell>Molecular</cell><cell>Reaction Prediction</cell><cell>Link</cell></row><row><cell></cell><cell>LLM4DyG [Zhang et al., 2023c]</cell><cell>-</cell><cell>Vicuna/LLaMA-v2/ChatGPT</cell><cell>LLM</cell><cell>✗</cell><cell>✓</cell><cell>-</cell><cell>Reasoning</cell><cell>-</cell></row><row><cell></cell><cell>DGTL [Qin et al., 2023]</cell><cell>Disentangled GNN</cell><cell>LLaMA-v2</cell><cell>LLM</cell><cell>✓</cell><cell>✓</cell><cell>Citation, E-Commerce</cell><cell>Node</cell><cell>-</cell></row><row><cell></cell><cell>GraphTMI [Das et al., 2023]</cell><cell>-</cell><cell>GPT-4/GPT-4V</cell><cell>LLM</cell><cell>✗</cell><cell>✓</cell><cell>Citation</cell><cell>Node</cell><cell>-</cell></row><row><cell></cell><cell>InstructMol [Cao et al., 2023]</cell><cell>GIN</cell><cell>Vicuna</cell><cell>LLM</cell><cell>✓ ♡</cell><cell>✓</cell><cell>Molecular</cell><cell>Graph, Captioning</cell><cell>Link</cell></row><row><cell></cell><cell>SAFER[Chandra et al., 2020]</cell><cell>GCN, GAT, etc.</cell><cell>RoBERTa</cell><cell>Linear</cell><cell>✓</cell><cell>✗</cell><cell>News</cell><cell>Node</cell><cell>Link</cell></row><row><cell></cell><cell cols="2">GraphFormers [Yang et al., 2021] Graph Transformer</cell><cell>UniLM</cell><cell>LLM</cell><cell>✓</cell><cell>✗</cell><cell>Citation, E-Commerce, Knowledge</cell><cell>Link</cell><cell>Link</cell></row><row><cell>GNN-LLM Alignment</cell><cell>Text2Mol[Edwards et al., 2021] MoMu [Su et al., 2022] MoleculeSTM [Liu et al., 2022] GLEM [Zhao et al., 2022] GRAD [Mavromatis et al., 2023] G2P2 [Wen and Fang, 2023] Patton [Jin et al., 2023a] ConGraT [Brannon et al., 2023] THLM [Zou et al., 2023]</cell><cell>GCN GIN GIN SAGE, RevGAT, etc. SAGE GCN Graph Transformer GAT R-HGNN</cell><cell>SciBERT BERT BERT DeBERTa SciBERT/DistilBERT Transformer BERT/SciBERT all-mpnet-base-v2/DistilGPT2 BERT</cell><cell>GNN/LLM GNN/LLM GNN/LLM GNN/LLM LLM GNN/LLM Linear/LLM GNN/LLM LLM</cell><cell>✓ ✓ ✓ ✓ ✓ ✓ ✓ ✓ ✓</cell><cell>✗ ✗ ✗ ✗ ✗ ✓ ✗ ✗ ✗</cell><cell>Molecular Molecular Molecular Citation, Co-purchase Citation, Co-purchase Citation, Recommendation Citation, E-Commerce Citation, Knowledge, Social Academic, Recommendation, Patent</cell><cell cols="2">Retrieval Graph, Retrieval Graph, Retrieval Node Node Node Node, Link, Retrieval, Reranking Link Link Link Link Link Link Link Node, Link Link Node, Link Link</cell></row><row><cell></cell><cell>GRENADE [Li et al., 2023b]</cell><cell cols="2">SAGE, RevGAT-KD, etc. BERT</cell><cell>GNN/MLP</cell><cell>✓</cell><cell>✗</cell><cell>Citation, Co-purchase</cell><cell>Node, Link</cell><cell>Link</cell></row><row><cell></cell><cell>RLMRec [Ren et al., 2023]</cell><cell>GCCF, LightGCN, etc.</cell><cell cols="2">ChatGPT, text-embedding-ada-002 GNN/LLM</cell><cell>✓</cell><cell>✗</cell><cell>Recommendation</cell><cell>Node</cell><cell>Link</cell></row><row><cell>Others</cell><cell cols="2">LLM-GNN [Chen et al., 2023b] GPT4GNAS [Wang et al., 2023a] GCN, GIN, etc. GCN, SAGE ENG [Yu et al., 2023] GCN, GAT</cell><cell>ChatGPT GPT-4 ChatGPT</cell><cell>GNN GNN GNN</cell><cell>✗ ✗ ✗</cell><cell>✓ ✓ ✓</cell><cell>Citation, Co-purchase Citation Citation</cell><cell>Node Node Node</cell><cell>Link --</cell></row></table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<author>
+			<persName><forename type="first">Rachith</forename><surname>Aiyappa</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jisun</forename><surname>An</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Haewoon</forename><surname>Kwak</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yong-Yeol</forename><surname>Ahn</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2303.12767</idno>
+		<title level="m">Can we trust the evaluation on chatgpt?</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<title level="m" type="main">Scibert: A pretrained language model for scientific text</title>
+		<author>
+			<persName><forename type="first">Iz</forename><surname>Beltagy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kyle</forename><surname>Lo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Arman</forename><surname>Cohan</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1903.10676</idno>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<title level="m" type="main">Chemcrow: Augmenting large-language models with chemistry tools</title>
+		<author>
+			<persName><forename type="first">Sam</forename><surname>Andres M Bran</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andrew</forename><forename type="middle">D</forename><surname>Cox</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Philippe</forename><surname>White</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Schwaller</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2304.05376</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+		<title level="m" type="main">Graph markup language (graphml)</title>
+		<author>
+			<persName><forename type="first">Ulrik</forename><surname>Brandes</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Markus</forename><surname>Eiglsperger</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jürgen</forename><surname>Lerner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Christian</forename><surname>Pich</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+		<title level="m" type="main">Congrat: Selfsupervised contrastive pretraining for joint graph and text embeddings</title>
+		<author>
+			<persName><forename type="first">William</forename><surname>Brannon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Suyash</forename><surname>Fulay</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hang</forename><surname>Jiang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wonjune</forename><surname>Kang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Brandon</forename><surname>Roy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jad</forename><surname>Kabbara</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Deb</forename><surname>Roy</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2305.14321</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Language models are few-shot learners</title>
+		<author>
+			<persName><forename type="first">Tom</forename><surname>Brown</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Benjamin</forename><surname>Mann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Nick</forename><surname>Ryder</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Melanie</forename><surname>Subbiah</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jared</forename><forename type="middle">D</forename><surname>Kaplan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Prafulla</forename><surname>Dhariwal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Arvind</forename><surname>Neelakantan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pranav</forename><surname>Shyam</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Girish</forename><surname>Sastry</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Amanda</forename><surname>Askell</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">NeurIPS</title>
+		<imprint>
+			<biblScope unit="volume">33</biblScope>
+			<biblScope unit="page" from="1877" to="1901" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<monogr>
+		<author>
+			<persName><forename type="first">He</forename><surname>Cao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zijing</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xingyu</forename><surname>Lu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yuan</forename><surname>Yao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yu</forename><surname>Li</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2311.16208</idno>
+		<title level="m">Instructmol: Multi-modal integration for building a versatile and reliable molecular assistant in drug discovery</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<monogr>
+		<title level="m" type="main">Graphllm: Boosting graph reasoning ability of large language model</title>
+		<author>
+			<persName><forename type="first">Ziwei</forename><surname>Chai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tianjie</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Liang</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kaiqiao</forename><surname>Han</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiaohai</forename><surname>Hu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xuanwen</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yang</forename><surname>Yang</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2310.05845</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<monogr>
+		<title level="m" type="main">Graph-based modeling of online communities for fake news detection</title>
+		<author>
+			<persName><forename type="first">Shantanu</forename><surname>Chandra</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pushkar</forename><surname>Mishra</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Helen</forename><surname>Yannakoudakis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Madhav</forename><surname>Nimishakavi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Marzieh</forename><surname>Saeidi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ekaterina</forename><surname>Shutova</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2008.06274</idno>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<monogr>
+		<title level="m" type="main">Exploring the potential of large language models (llms) in learning on graphs</title>
+		<author>
+			<persName><forename type="first">Zhikai</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Haitao</forename><surname>Mao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hang</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wei</forename><surname>Jin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hongzhi</forename><surname>Wen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiaochi</forename><surname>Wei</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shuaiqiang</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dawei</forename><surname>Yin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wenqi</forename><surname>Fan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hui</forename><surname>Liu</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2307.03393</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<monogr>
+		<author>
+			<persName><forename type="first">Zhikai</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Haitao</forename><surname>Mao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hongzhi</forename><surname>Wen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Haoyu</forename><surname>Han</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wei</forename><surname>Jin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Haiyang</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hui</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jiliang</forename><surname>Tang</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2310.04668</idno>
+		<title level="m">Label-free node classification on graphs with large language models (llms)</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Wiener graph deconvolutional network improves graph selfsupervised learning</title>
+		<author>
+			<persName><forename type="first">Jiashun</forename><surname>Cheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Man</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jia</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Fugee</forename><surname>Tsung</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">AAAI</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page" from="7131" to="7139" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<monogr>
+		<author>
+			<persName><forename type="first">Eli</forename><surname>Chien</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wei-Cheng</forename><surname>Chang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Cho-Jui</forename><surname>Hsieh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hsiang-Fu</forename><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jiong</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Olgica</forename><surname>Milenkovic</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Inderjit S</forename><surname>Dhillon</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2111.00064</idno>
+		<title level="m">Node feature extraction by self-supervised multi-scale neighborhood prediction</title>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<monogr>
+		<title level="m" type="main">Mathematical logic</title>
+		<author>
+			<persName><forename type="first">Ian</forename><surname>Chiswell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wilfrid</forename><surname>Hodges</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2007">2007</date>
+			<publisher>OUP Oxford</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<monogr>
+		<title level="m" type="main">Palm: Scaling language modeling with pathways</title>
+		<author>
+			<persName><forename type="first">Aakanksha</forename><surname>Chowdhery</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sharan</forename><surname>Narang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jacob</forename><surname>Devlin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Maarten</forename><surname>Bosma</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Gaurav</forename><surname>Mishra</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Adam</forename><surname>Roberts</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Paul</forename><surname>Barham</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hyung</forename><forename type="middle">Won</forename><surname>Chung</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Charles</forename><surname>Sutton</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sebastian</forename><surname>Gehrmann</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2204.02311</idno>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<monogr>
+		<title level="m" type="main">Scaling instruction-finetuned language models</title>
+		<author>
+			<persName><forename type="first">Chung</forename><surname>Hyung Won</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Le</forename><surname>Hou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shayne</forename><surname>Longpre</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Barret</forename><surname>Zoph</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yi</forename><surname>Tay</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">William</forename><surname>Fedus</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yunxuan</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xuezhi</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mostafa</forename><surname>Dehghani</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Siddhartha</forename><surname>Brahma</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2210.11416</idno>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<monogr>
+		<title level="m" type="main">Which modality should i use-text, motif, or image?: Understanding graphs with large language models</title>
+		<author>
+			<persName><forename type="first">Debarati</forename><surname>Das</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ishaan</forename><surname>Gupta</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jaideep</forename><surname>Srivastava</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dongyeop</forename><surname>Kang</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2311.09862</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<monogr>
+		<author>
+			<persName><forename type="first">Qingxiu</forename><surname>Dong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lei</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Damai</forename><surname>Dai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ce</forename><surname>Zheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhiyong</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Baobao</forename><surname>Chang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xu</forename><surname>Sun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jingjing</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhifang</forename><surname>Sui</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2301.00234</idno>
+		<title level="m">A survey for in-context learning</title>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<monogr>
+		<title level="m" type="main">Simteg: A frustratingly simple approach improves textual graph learning</title>
+		<author>
+			<persName><forename type="first">Qian</forename><surname>Keyu Duan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tat-Seng</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shuicheng</forename><surname>Chua</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wei</forename><forename type="middle">Tsang</forename><surname>Yan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qizhe</forename><surname>Ooi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Junxian</forename><surname>Xie</surname></persName>
+		</author>
+		<author>
+			<persName><surname>He</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2308.02565</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">Long range graph benchmark</title>
+		<author>
+			<persName><forename type="first">Vijay</forename><surname>Prakash Dwivedi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ladislav</forename><surname>Rampášek</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Michael</forename><surname>Galkin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ali</forename><surname>Parviz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Guy</forename><surname>Wolf</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Anh</forename><forename type="middle">Tuan</forename><surname>Luu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dominique</forename><surname>Beaini</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">NeurIPS</title>
+		<imprint>
+			<biblScope unit="volume">35</biblScope>
+			<biblScope unit="page" from="22326" to="22340" />
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">Text2mol: Cross-modal molecule retrieval with natural language queries</title>
+		<author>
+			<persName><forename type="first">Carl</forename><surname>Edwards</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chengxiang</forename><surname>Zhai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Heng</forename><surname>Ji</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">EMNLP</title>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="page" from="595" to="607" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<monogr>
+		<title level="m" type="main">Talk like a graph: Encoding graphs for large language models</title>
+		<author>
+			<persName><forename type="first">Bahare</forename><surname>Fatemi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jonathan</forename><surname>Halcrow</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bryan</forename><surname>Perozzi</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2310.04560</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<monogr>
+		<title level="m" type="main">Gpt4graph: Can large language models understand graph structured data? an empirical evaluation and benchmarking</title>
+		<author>
+			<persName><forename type="first">Jiayan</forename><surname>Guo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lun</forename><surname>Du</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hengyu</forename><surname>Liu</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2305.15066</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">Inductive representation learning on large graphs</title>
+		<author>
+			<persName><forename type="first">Will</forename><surname>Hamilton</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhitao</forename><surname>Ying</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jure</forename><surname>Leskovec</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">NeurIPS</title>
+		<imprint>
+			<biblScope unit="volume">30</biblScope>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<monogr>
+		<title level="m" type="main">Geometrically equivariant graph neural networks: A survey</title>
+		<author>
+			<persName><forename type="first">Jiaqi</forename><surname>Han</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yu</forename><surname>Rong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tingyang</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wenbing</forename><surname>Huang</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2202.07230</idno>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<title level="a" type="main">Lightgcn: Simplifying and powering graph convolution network for recommendation</title>
+		<author>
+			<persName><forename type="first">Xiangnan</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kuan</forename><surname>Deng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiang</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yan</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yongdong</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Meng</forename><surname>Wang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">SIGIR</title>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<monogr>
+		<author>
+			<persName><forename type="first">Xiaoxin</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xavier</forename><surname>Bresson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Thomas</forename><surname>Laurent</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bryan</forename><surname>Hooi</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2305.19523</idno>
+		<title level="m">Explanations as features: Llm-based features for text-attributed graphs</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<monogr>
+		<title level="m" type="main">Gml: Graph modelling language</title>
+		<author>
+			<persName><forename type="first">Michael</forename><surname>Himsolt</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1997">1997</date>
+		</imprint>
+		<respStmt>
+			<orgName>University of Passau</orgName>
+		</respStmt>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<analytic>
+		<title level="a" type="main">Graphmae: Selfsupervised masked graph autoencoders</title>
+		<author>
+			<persName><forename type="first">Zhenyu</forename><surname>Hou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiao</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yukuo</forename><surname>Cen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yuxiao</forename><surname>Dong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hongxia</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chunjie</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jie</forename><surname>Tang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">SIGKDD</title>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page" from="594" to="604" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<analytic>
+		<title level="a" type="main">Open graph benchmark: Datasets for machine learning on graphs</title>
+		<author>
+			<persName><forename type="first">Weihua</forename><surname>Hu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Matthias</forename><surname>Fey</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Marinka</forename><surname>Zitnik</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yuxiao</forename><surname>Dong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hongyu</forename><surname>Ren</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bowen</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Michele</forename><surname>Catasta</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jure</forename><surname>Leskovec</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">NeurIPS</title>
+		<imprint>
+			<biblScope unit="volume">33</biblScope>
+			<biblScope unit="page" from="22118" to="22133" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<analytic>
+		<title level="a" type="main">Low-rank adaptation of large language models</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Edward</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Phillip</forename><surname>Hu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zeyuan</forename><surname>Wallis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yuanzhi</forename><surname>Allen-Zhu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shean</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lu</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Weizhu</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Chen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ICLR</title>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<monogr>
+		<title level="m" type="main">Beyond text: A deep dive into large language models&apos; ability on understanding graph data</title>
+		<author>
+			<persName><forename type="first">Yuntong</forename><surname>Hu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zheng</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Liang</forename><surname>Zhao</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2310.04944</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<monogr>
+		<author>
+			<persName><forename type="first">Jin</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xingjian</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qiaozhu</forename><surname>Mei</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jiaqi</forename><surname>Ma</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2309.16595</idno>
+		<title level="m">Can llms effectively leverage graph structural information: when and why</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<monogr>
+		<title level="m" type="main">Promptbased node feature extractor for few-shot learning on textattributed graphs</title>
+		<author>
+			<persName><forename type="first">Xuanwen</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kaiqiao</forename><surname>Han</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dezheng</forename><surname>Bao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Quanjin</forename><surname>Tao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhisheng</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yang</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qi</forename><surname>Zhu</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2309.02848</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<analytic>
+		<title level="a" type="main">A survey on knowledge graphs: Representation, acquisition, and applications</title>
+		<author>
+			<persName><forename type="first">Shaoxiong</forename><surname>Ji</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shirui</forename><surname>Pan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Erik</forename><surname>Cambria</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pekka</forename><surname>Marttinen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Philip</forename></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">TNNLS</title>
+		<imprint>
+			<biblScope unit="volume">33</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="494" to="514" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<monogr>
+		<title level="m" type="main">Transferability in deep learning: A survey</title>
+		<author>
+			<persName><forename type="first">Junguang</forename><surname>Jiang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yang</forename><surname>Shu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jianmin</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mingsheng</forename><surname>Long</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2201.05867</idno>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b36">
+	<monogr>
+		<title level="m" type="main">Patton: Language model pretraining on text-rich networks</title>
+		<author>
+			<persName><forename type="first">Jin</forename><surname>Bowen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wentao</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yu</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yu</forename><surname>Meng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xinyang</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qi</forename><surname>Zhu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jiawei</forename><surname>Han</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2305.12268</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b37">
+	<monogr>
+		<title level="m" type="main">Learning multiplex embeddings on textrich networks with one text encoder</title>
+		<author>
+			<persName><forename type="first">Jin</forename><surname>Bowen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wentao</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yu</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yu</forename><surname>Meng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Han</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jiawei</forename><surname>Han</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2310.06684</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b38">
+	<analytic>
+		<title level="a" type="main">Bert: Pre-training of deep bidirectional transformers for language understanding</title>
+		<author>
+			<persName><forename type="first">Jacob</forename><surname>Devlin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ming-Wei</forename><surname>Chang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kenton</forename></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lee</forename><surname>Kristina</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Toutanova</forename></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of NAACL-HLT</title>
+		<meeting>NAACL-HLT</meeting>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="page" from="4171" to="4186" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b39">
+	<analytic>
+		<title level="a" type="main">Semi-supervised classification with graph convolutional networks</title>
+		<author>
+			<persName><forename type="first">N</forename><surname>Thomas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Max</forename><surname>Kipf</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Welling</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ICLR</title>
+		<imprint>
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b40">
+	<analytic>
+		<title level="a" type="main">Prefix-tuning: Optimizing continuous prompts for generation</title>
+		<author>
+			<persName><forename type="first">Lisa</forename><surname>Xiang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Percy</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Liang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ACL</title>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="page" from="4582" to="4597" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b41">
+	<monogr>
+		<title level="m" type="main">Blip-2: Bootstrapping language-image pre-training with frozen image encoders and large language models</title>
+		<author>
+			<persName><forename type="first">Junnan</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dongxu</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Silvio</forename><surname>Savarese</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Steven</forename><surname>Hoi</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2301.12597</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b42">
+	<monogr>
+		<title level="m" type="main">Grenade: Graphcentric language model for self-supervised representation learning on text-attributed graphs</title>
+		<author>
+			<persName><forename type="first">Yichuan</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kaize</forename><surname>Ding</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kyumin</forename><surname>Lee</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2310.15109</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b43">
+	<monogr>
+		<title level="m" type="main">Evaluating large language models on graphs: Performance insights and comparative analysis</title>
+		<author>
+			<persName><forename type="first">Chang</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bo</forename><surname>Wu</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2308.11224</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b44">
+	<monogr>
+		<title level="m" type="main">Roberta: A robustly optimized bert pretraining approach</title>
+		<author>
+			<persName><forename type="first">Yinhan</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Myle</forename><surname>Ott</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Naman</forename><surname>Goyal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jingfei</forename><surname>Du</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mandar</forename><surname>Joshi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Danqi</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Omer</forename><surname>Levy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mike</forename><surname>Lewis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Luke</forename><surname>Zettlemoyer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Veselin</forename><surname>Stoyanov</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1907.11692</idno>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b45">
+	<monogr>
+		<title level="m" type="main">Multi-modal molecule structure-text model for text-based retrieval and editing</title>
+		<author>
+			<persName><forename type="first">Shengchao</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Weili</forename><surname>Nie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chengpeng</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jiarui</forename><surname>Lu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhuoran</forename><surname>Qiao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ling</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jian</forename><surname>Tang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chaowei</forename><surname>Xiao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Anima</forename><surname>Anandkumar</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2212.10789</idno>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b46">
+	<monogr>
+		<title level="m" type="main">One for all: Towards training one graph model for all classification tasks</title>
+		<author>
+			<persName><forename type="first">Hao</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jiarui</forename><surname>Feng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lecheng</forename><surname>Kong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ningyue</forename><surname>Liang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dacheng</forename><surname>Tao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yixin</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Muhan</forename><surname>Zhang</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2310.00149</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b47">
+	<monogr>
+		<title level="m" type="main">Towards graph foundation models: A survey and beyond</title>
+		<author>
+			<persName><forename type="first">Jiawei</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Cheng</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhiyuan</forename><surname>Lu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Junze</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yibo</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mengmei</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ting</forename><surname>Bai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yuan</forename><surname>Fang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lichao</forename><surname>Sun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Philip</forename><forename type="middle">S</forename><surname>Yu</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2310.11829</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b48">
+	<monogr>
+		<title level="m" type="main">Git-mol: A multimodal large language model for molecular science with graph, image</title>
+		<author>
+			<persName><forename type="first">Pengfei</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yiming</forename><surname>Ren</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhixiang</forename><surname>Ren</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2308.06911</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b49">
+	<monogr>
+		<title level="m" type="main">Molca: Molecular graph-language modeling with crossmodal projector and uni-modal adapter</title>
+		<author>
+			<persName><forename type="first">Zhiyuan</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sihang</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yanchen</forename><surname>Luo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hao</forename><surname>Fei</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yixin</forename><surname>Cao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kenji</forename><surname>Kawaguchi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiang</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tat-Seng</forename><surname>Chua</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2310.12798</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b50">
+	<monogr>
+		<title level="m" type="main">Train your own gnn teacher: Graph-aware distillation on textual graphs</title>
+		<author>
+			<persName><forename type="first">Costas</forename><surname>Mavromatis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Vassilis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shen</forename><surname>Ioannidis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Da</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Soji</forename><surname>Zheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jun</forename><surname>Adeshina</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Han</forename><surname>Ma</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Christos</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">George</forename><surname>Faloutsos</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Karypis</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2304.10668</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b51">
+	<analytic>
+		<title level="a" type="main">Distributed representations of words and phrases and their compositionality</title>
+		<author>
+			<persName><forename type="first">Tomas</forename><surname>Mikolov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ilya</forename><surname>Sutskever</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kai</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Greg</forename><forename type="middle">S</forename><surname>Corrado</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jeff</forename><surname>Dean</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">NeurIPS</title>
+		<imprint>
+			<biblScope unit="volume">26</biblScope>
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b52">
+	<monogr>
+		<title level="m" type="main">Representation learning with contrastive predictive coding</title>
+		<author>
+			<persName><forename type="first">Aaron</forename><surname>Van Den Oord</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yazhe</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Oriol</forename><surname>Vinyals</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1807.03748</idno>
+		<imprint>
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b53">
+	<monogr>
+		<title/>
+		<author>
+			<persName><surname>Openai</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">Gpt-4 technical report</note>
+</biblStruct>
+
+<biblStruct xml:id="b54">
+	<monogr>
+		<title level="m" type="main">Generative agents: Interactive simulacra of human behavior</title>
+		<author>
+			<persName><forename type="first">Sung</forename><surname>Joon</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Park</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C O'</forename><surname>Joseph</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Carrie</forename><forename type="middle">J</forename><surname>Brien</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Meredith</forename><forename type="middle">Ringel</forename><surname>Cai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Percy</forename><surname>Morris</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Michael</forename><forename type="middle">S</forename><surname>Liang</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Bernstein</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2304.03442</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b55">
+	<monogr>
+		<author>
+			<persName><forename type="first">Chen</forename><surname>Qian</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Huayi</forename><surname>Tang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhirui</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hong</forename><surname>Liang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yong</forename><surname>Liu</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2307.07443</idno>
+		<title level="m">Can large language models empower molecular property prediction?</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b56">
+	<monogr>
+		<title level="m" type="main">Disentangled representation learning with large language models for text-attributed graphs</title>
+		<author>
+			<persName><forename type="first">Yijian</forename><surname>Qin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xin</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wenwu</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Zhu</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2310.18152</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b57">
+	<analytic>
+		<title level="a" type="main">Learning transferable visual models from natural language supervision</title>
+		<author>
+			<persName><forename type="first">Alec</forename><surname>Radford</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jong</forename><forename type="middle">Wook</forename><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chris</forename><surname>Hallacy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Aditya</forename><surname>Ramesh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Gabriel</forename><surname>Goh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sandhini</forename><surname>Agarwal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Girish</forename><surname>Sastry</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Amanda</forename><surname>Askell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pamela</forename><surname>Mishkin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jack</forename><surname>Clark</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ICLR</title>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="page" from="8748" to="8763" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b58">
+	<monogr>
+		<title level="m" type="main">Representation learning with large language models for recommendation</title>
+		<author>
+			<persName><forename type="first">Xubin</forename><surname>Ren</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wei</forename><surname>Wei</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lianghao</forename><surname>Xia</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lixin</forename><surname>Su</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Suqi</forename><surname>Cheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Junfeng</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dawei</forename><surname>Yin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chao</forename><surname>Huang</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2310.15950</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b59">
+	<analytic>
+		<title level="a" type="main">Leveraging large language models for multiple choice question answering</title>
+		<author>
+			<persName><forename type="first">Joshua</forename><surname>Robinson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">David</forename><surname>Wingate</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ICLR</title>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b60">
+	<analytic>
+		<title level="a" type="main">Term-weighting approaches in automatic text retrieval</title>
+		<author>
+			<persName><forename type="first">Gerard</forename><surname>Salton</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Christopher</forename><surname>Buckley</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IPM</title>
+		<imprint>
+			<biblScope unit="volume">24</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="513" to="523" />
+			<date type="published" when="1988">1988</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b61">
+	<analytic>
+		<title level="a" type="main">Collective classification in network data</title>
+		<author>
+			<persName><forename type="first">Prithviraj</forename><surname>Sen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Galileo</forename><surname>Namata</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mustafa</forename><surname>Bilgic</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lise</forename><surname>Getoor</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Brian</forename><surname>Galligher</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tina</forename><surname>Eliassi-Rad</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">AI magazine</title>
+		<imprint>
+			<biblScope unit="volume">29</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="93" to="93" />
+			<date type="published" when="2008">2008</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b62">
+	<monogr>
+		<title level="m" type="main">Survey of vulnerabilities in large language models revealed by adversarial attacks</title>
+		<author>
+			<persName><forename type="first">Erfan</forename><surname>Shayegani</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Md</forename><surname>Abdullah Al Mamun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yu</forename><surname>Fu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pedram</forename><surname>Zaree</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yue</forename><surname>Dong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Nael</forename><surname>Abu-Ghazaleh</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2310.10844</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b63">
+	<monogr>
+		<title level="m" type="main">Relm: Leveraging language models for enhanced chemical reaction prediction</title>
+		<author>
+			<persName><forename type="first">Yaorui</forename><surname>Shi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">An</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Enzhi</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhiyuan</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiang</forename><surname>Wang</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2310.13590</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b64">
+	<analytic>
+		<title level="a" type="main">Spatial-temporal synchronous graph convolutional networks: A new framework for spatial-temporal network data forecasting</title>
+		<author>
+			<persName><forename type="first">Chao</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Youfang</forename><surname>Lin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shengnan</forename><surname>Guo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Huaiyu</forename><surname>Wan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">AAAI</title>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="page" from="914" to="921" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b65">
+	<monogr>
+		<title level="m" type="main">A molecular multimodal foundation model associating molecule graphs with natural language</title>
+		<author>
+			<persName><forename type="first">Bing</forename><surname>Su</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dazhao</forename><surname>Du</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhao</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yujie</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jiangmeng</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Anyi</forename><surname>Rao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hao</forename><surname>Sun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhiwu</forename><surname>Lu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ji-Rong</forename><surname>Wen</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2209.05481</idno>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b66">
+	<analytic>
+		<title level="a" type="main">Gppt: Graph pre-training and prompt tuning to generalize graph neural networks</title>
+		<author>
+			<persName><forename type="first">Mingchen</forename><surname>Sun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kaixiong</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xin</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ying</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xin</forename><surname>Wang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">SIGKDD</title>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page" from="1717" to="1727" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b67">
+	<analytic>
+		<title level="a" type="main">All in one: Multi-task prompting for graph neural networks</title>
+		<author>
+			<persName><forename type="first">Xiangguo</forename><surname>Sun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hong</forename><surname>Cheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jia</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bo</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jihong</forename><surname>Guan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">SIGKDD</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page" from="2120" to="2131" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b68">
+	<analytic>
+		<title level="a" type="main">Self-supervised hypergraph representation learning for sociological analysis</title>
+		<author>
+			<persName><forename type="first">Xiangguo</forename><surname>Sun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hong</forename><surname>Cheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bo</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jia</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hongyang</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Guandong</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hongzhi</forename><surname>Yin</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">TKDE</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b69">
+	<analytic>
+		<title level="a" type="main">S2gae: Self-supervised graph autoencoders are generalizable learners with graph masking</title>
+		<author>
+			<persName><forename type="first">Qiaoyu</forename><surname>Tan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ninghao</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiao</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Soo-Hyun</forename><surname>Choi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Li</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Rui</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xia</forename><surname>Hu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">WSDM</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page" from="787" to="795" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b70">
+	<analytic>
+		<title level="a" type="main">Walklm: A uniform language model fine-tuning framework for attributed graph embedding</title>
+		<author>
+			<persName><forename type="first">Yanchao</forename><surname>Tan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zihao</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hang</forename><surname>Lv</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Weiming</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Carl</forename><surname>Yang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">NeurIPS</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b71">
+	<monogr>
+		<title level="m" type="main">Graphgpt: Graph instruction tuning for large language models</title>
+		<author>
+			<persName><forename type="first">Jiabin</forename><surname>Tang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yuhao</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wei</forename><surname>Wei</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lei</forename><surname>Shi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lixin</forename><surname>Su</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Suqi</forename><surname>Cheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dawei</forename><surname>Yin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chao</forename><surname>Huang</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2310.13023</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b72">
+	<monogr>
+		<title level="m" type="main">Galactica: A large language model for science</title>
+		<author>
+			<persName><forename type="first">Ross</forename><surname>Taylor</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Marcin</forename><surname>Kardas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Guillem</forename><surname>Cucurull</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Thomas</forename><surname>Scialom</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Anthony</forename><surname>Hartshorn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Elvis</forename><surname>Saravia</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andrew</forename><surname>Poulton</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Viktor</forename><surname>Kerkez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Robert</forename><surname>Stojnic</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2211.09085</idno>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b73">
+	<monogr>
+		<title level="m" type="main">Llama: Open and efficient foundation language models</title>
+		<author>
+			<persName><forename type="first">Hugo</forename><surname>Touvron</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Thibaut</forename><surname>Lavril</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Gautier</forename><surname>Izacard</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xavier</forename><surname>Martinet</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Marie-Anne</forename><surname>Lachaux</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Timothée</forename><surname>Lacroix</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Baptiste</forename><surname>Rozière</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Naman</forename><surname>Goyal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Eric</forename><surname>Hambro</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Faisal</forename><surname>Azhar</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2302.13971</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b74">
+	<analytic>
+		<title level="a" type="main">Attention is all you need</title>
+		<author>
+			<persName><forename type="first">Ashish</forename><surname>Vaswani</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Noam</forename><surname>Shazeer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Niki</forename><surname>Parmar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jakob</forename><surname>Uszkoreit</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Llion</forename><surname>Jones</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Aidan</forename><forename type="middle">N</forename><surname>Gomez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Łukasz</forename><surname>Kaiser</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Illia</forename><surname>Polosukhin</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">NeurIPS</title>
+		<imprint>
+			<biblScope unit="volume">30</biblScope>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b75">
+	<analytic>
+		<title level="a" type="main">Graph attention networks</title>
+		<author>
+			<persName><forename type="first">Petar</forename><surname>Velickovic</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Guillem</forename><surname>Cucurull</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Arantxa</forename><surname>Casanova</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Adriana</forename><surname>Romero</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pietro</forename><surname>Lio</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yoshua</forename><surname>Bengio</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">stat</title>
+		<imprint>
+			<biblScope unit="volume">1050</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b76">
+	<analytic>
+		<title level="a" type="main">Pubchem: a public information system for analyzing bioactivities of small molecules</title>
+		<author>
+			<persName><forename type="first">Yanli</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jewen</forename><surname>Xiao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">O</forename><surname>Tugba</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jian</forename><surname>Suzek</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jiyao</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Stephen</forename><forename type="middle">H</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Bryant</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nucleic acids research</title>
+		<imprint>
+			<biblScope unit="volume">37</biblScope>
+			<biblScope unit="issue">suppl 2</biblScope>
+			<biblScope unit="page" from="623" to="W633" />
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b77">
+	<monogr>
+		<title level="m" type="main">Graph neural architecture search with gpt-4</title>
+		<author>
+			<persName><forename type="first">Haishuai</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yang</forename><surname>Gao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xin</forename><surname>Zheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Peng</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hongyang</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jiajun</forename><surname>Bu</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2310.01436</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b78">
+	<monogr>
+		<title level="m" type="main">Can language models solve graph problems in natural language?</title>
+		<author>
+			<persName><forename type="first">Heng</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shangbin</forename><surname>Feng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tianxing</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhaoxuan</forename><surname>Tan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiaochuang</forename><surname>Han</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yulia</forename><surname>Tsvetkov</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2305.10037</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b79">
+	<analytic>
+		<title level="a" type="main">Emergent abilities of large language models</title>
+		<author>
+			<persName><forename type="first">Jason</forename><surname>Wei</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yi</forename><surname>Tay</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Rishi</forename><surname>Bommasani</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Colin</forename><surname>Raffel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Barret</forename><surname>Zoph</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sebastian</forename><surname>Borgeaud</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dani</forename><surname>Yogatama</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Maarten</forename><surname>Bosma</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Denny</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Donald</forename><surname>Metzler</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">TMLR</title>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b80">
+	<analytic>
+		<title level="a" type="main">Chainof-thought prompting elicits reasoning in large language models</title>
+		<author>
+			<persName><forename type="first">Jason</forename><surname>Wei</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xuezhi</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dale</forename><surname>Schuurmans</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Maarten</forename><surname>Bosma</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Fei</forename><surname>Xia</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ed</forename><surname>Chi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Quoc</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Denny</forename><surname>Le</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Zhou</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">NeurIPS</title>
+		<imprint>
+			<biblScope unit="volume">35</biblScope>
+			<biblScope unit="page" from="24824" to="24837" />
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b81">
+	<monogr>
+		<title level="m" type="main">Llmrec: Large language models with graph augmentation for recommendation</title>
+		<author>
+			<persName><forename type="first">Wei</forename><surname>Wei</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xubin</forename><surname>Ren</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jiabin</forename><surname>Tang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qinyong</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lixin</forename><surname>Su</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Suqi</forename><surname>Cheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Junfeng</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dawei</forename><surname>Yin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chao</forename><surname>Huang</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2311.00423</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b82">
+	<monogr>
+		<author>
+			<persName><forename type="first">Zhihao</forename><surname>Wen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yuan</forename><surname>Fang</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2307.10230</idno>
+		<title level="m">Prompt tuning on graphaugmented low-resource text classification</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b83">
+	<monogr>
+		<title level="m" type="main">Llm-powered autonomous agents. lilianweng</title>
+		<author>
+			<persName><forename type="first">Lilian</forename><surname>Weng</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2023-06">Jun 2023</date>
+		</imprint>
+	</monogr>
+	<note>github.io</note>
+</biblStruct>
+
+<biblStruct xml:id="b84">
+	<analytic>
+		<title level="a" type="main">Moleculenet: a benchmark for molecular machine learning</title>
+		<author>
+			<persName><forename type="first">Bharath</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Evan</forename><forename type="middle">N</forename><surname>Ramsundar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Joseph</forename><surname>Feinberg</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Caleb</forename><surname>Gomes</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Geniesse</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Aneesh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Karl</forename><surname>Pappu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Vijay</forename><surname>Leswing</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Pande</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Chemical science</title>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="513" to="530" />
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b85">
+	<monogr>
+		<title level="m" type="main">Graph-aware language model pre-training on a large graph corpus can help multiple graph applications</title>
+		<author>
+			<persName><forename type="first">Han</forename><surname>Xie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Da</forename><surname>Zheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jun</forename><surname>Ma</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Houyu</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Vassilis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiang</forename><surname>Ioannidis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qing</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sheng</forename><surname>Ping</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Carl</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yi</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Xu</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2306.02592</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b86">
+	<monogr>
+		<title level="m" type="main">How powerful are graph neural networks?</title>
+		<author>
+			<persName><forename type="first">Keyulu</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Weihua</forename><surname>Hu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jure</forename><surname>Leskovec</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Stefanie</forename><surname>Jegelka</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1810.00826</idno>
+		<imprint>
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b87">
+	<monogr>
+		<title level="m" type="main">Efficient large language models fine-tuning on graphs</title>
+		<author>
+			<persName><forename type="first">Rui</forename><surname>Xue</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xipeng</forename><surname>Shen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ruozhou</forename><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiaorui</forename><surname>Liu</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2312.04737</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b88">
+	<analytic>
+		<title level="a" type="main">Revisiting semi-supervised learning with graph embeddings</title>
+		<author>
+			<persName><forename type="first">Zhilin</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">William</forename><surname>Cohen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ruslan</forename><surname>Salakhudinov</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ICLR</title>
+		<imprint>
+			<date type="published" when="2016">2016</date>
+			<biblScope unit="page" from="40" to="48" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b89">
+	<analytic>
+		<title level="a" type="main">Graphformers: Gnn-nested transformers for representation learning on textual graph</title>
+		<author>
+			<persName><forename type="first">Junhan</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zheng</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shitao</forename><surname>Xiao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chaozhuo</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Defu</forename><surname>Lian</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sanjay</forename><surname>Agrawal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Amit</forename><surname>Singh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Guangzhong</forename><surname>Sun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xing</forename><surname>Xie</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">NeurIPS</title>
+		<imprint>
+			<biblScope unit="volume">34</biblScope>
+			<biblScope unit="page" from="28798" to="28810" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b90">
+	<monogr>
+		<author>
+			<persName><forename type="first">Jingfeng</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hongye</forename><surname>Jin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ruixiang</forename><surname>Tang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiaotian</forename><surname>Han</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qizhang</forename><surname>Feng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Haoming</forename><surname>Jiang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bing</forename><surname>Yin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xia</forename><surname>Hu</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2304.13712</idno>
+		<title level="m">Harnessing the power of llms in practice: A survey on chatgpt and beyond</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b91">
+	<monogr>
+		<author>
+			<persName><forename type="first">Ruosong</forename><surname>Ye</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Caiqi</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Runhui</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shuyuan</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yongfeng</forename><surname>Zhang</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2308.07134</idno>
+		<title level="m">Natural language is all a graph needs</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b92">
+	<monogr>
+		<title level="m" type="main">Do transformers really perform badly for graph representation? NeurIPS</title>
+		<author>
+			<persName><forename type="first">Chengxuan</forename><surname>Ying</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tianle</forename><surname>Cai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shengjie</forename><surname>Luo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shuxin</forename><surname>Zheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Guolin</forename><surname>Ke</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Di</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yanming</forename><surname>Shen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tie-Yan</forename><surname>Liu</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="page" from="28877" to="28888" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b93">
+	<analytic>
+		<title level="a" type="main">Graph contrastive learning with augmentations</title>
+		<author>
+			<persName><forename type="first">Yuning</forename><surname>You</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tianlong</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yongduo</forename><surname>Sui</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ting</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhangyang</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yang</forename><surname>Shen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">NeurIPS</title>
+		<imprint>
+			<biblScope unit="page" from="5812" to="5823" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b94">
+	<monogr>
+		<author>
+			<persName><forename type="first">Jianxiang</forename><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yuxiang</forename><surname>Ren</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chenghua</forename><surname>Gong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jiaqi</forename><surname>Tan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiang</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xuecang</forename><surname>Zhang</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2310.09872</idno>
+		<title level="m">Empower text-attributed graphs learning with large language models (llms)</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b95">
+	<monogr>
+		<author>
+			<persName><forename type="first">Aohan</forename><surname>Zeng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiao</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhengxiao</forename><surname>Du</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zihan</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hanyu</forename><surname>Lai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ming</forename><surname>Ding</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhuoyi</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yifan</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wendi</forename><surname>Zheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiao</forename><surname>Xia</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2210.02414</idno>
+		<title level="m">Glm-130b: An open bilingual pre-trained model</title>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b96">
+	<monogr>
+		<title level="m" type="main">Video-llama: An instruction-tuned audio-visual language model for video understanding</title>
+		<author>
+			<persName><forename type="first">Hang</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xin</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lidong</forename><surname>Bing</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2306.02858</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b97">
+	<monogr>
+		<title level="m" type="main">Llamaadapter: Efficient fine-tuning of language models with zeroinit attention</title>
+		<author>
+			<persName><forename type="first">Renrui</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jiaming</forename><surname>Han</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Aojun</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiangfei</forename><surname>Hu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shilin</forename><surname>Yan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pan</forename><surname>Lu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hongsheng</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Peng</forename><surname>Gao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yu</forename><surname>Qiao</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2303.16199</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b98">
+	<monogr>
+		<title level="m" type="main">Llm4dyg: Can large language models solve problems on dynamic graphs</title>
+		<author>
+			<persName><forename type="first">Zeyang</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xin</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ziwei</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Haoyang</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yijian</forename><surname>Qin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Simin</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wenwu</forename><surname>Zhu</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2310.17110</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b99">
+	<monogr>
+		<author>
+			<persName><forename type="first">Ziwei</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Haoyang</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zeyang</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yijian</forename><surname>Qin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xin</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wenwu</forename><surname>Zhu</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2308.14522</idno>
+		<title level="m">Large graph models: A perspective</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b100">
+	<monogr>
+		<title level="m" type="main">Learning on large-scale textattributed graphs via variational inference</title>
+		<author>
+			<persName><forename type="first">Jianan</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Meng</forename><surname>Qu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chaozhuo</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hao</forename><surname>Yan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qian</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Rui</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xing</forename><surname>Xie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jian</forename><surname>Tang</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2210.14709</idno>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b101">
+	<monogr>
+		<title level="m" type="main">Gimlet: A unified graph-text model for instruction-based molecule zero-shot learning</title>
+		<author>
+			<persName><forename type="first">Haiteng</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shengchao</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chang</forename><surname>Ma</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hannan</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jie</forename><surname>Fu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhi-Hong</forename><surname>Deng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lingpeng</forename><surname>Kong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qi</forename><surname>Liu</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2306.13089</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b102">
+	<monogr>
+		<title level="m" type="main">Explainability for large language models: A survey</title>
+		<author>
+			<persName><forename type="first">Haiyan</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hanjie</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Fan</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ninghao</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Huiqi</forename><surname>Deng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hengyi</forename><surname>Cai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shuaiqiang</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dawei</forename><surname>Yin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mengnan</forename><surname>Du</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2309.01029</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b103">
+	<monogr>
+		<title level="m" type="main">Graphtext: Graph reasoning in text space</title>
+		<author>
+			<persName><forename type="first">Jianan</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Le</forename><surname>Zhuo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yikang</forename><surname>Shen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Meng</forename><surname>Qu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kai</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Michael</forename><surname>Bronstein</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhaocheng</forename><surname>Zhu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jian</forename><surname>Tang</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2310.01089</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b104">
+	<monogr>
+		<author>
+			<persName><forename type="first">Kun</forename><surname>Wayne Xin Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Junyi</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tianyi</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiaolei</forename><surname>Tang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yupeng</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yingqian</forename><surname>Hou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Beichen</forename><surname>Min</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Junjie</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zican</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Dong</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2303.18223</idno>
+		<title level="m">A survey of large language models</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b105">
+	<analytic>
+		<title level="a" type="main">Graph contrastive learning with adaptive augmentation</title>
+		<author>
+			<persName><forename type="first">Yanqiao</forename><surname>Zhu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yichen</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Feng</forename><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qiang</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shu</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Liang</forename><surname>Wang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">WWW</title>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="page" from="2069" to="2080" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b106">
+	<monogr>
+		<author>
+			<persName><forename type="first">Jing</forename><surname>Zhu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiang</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Vassilis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Danai</forename><surname>Ioannidis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Christos</forename><surname>Koutra</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Faloutsos</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2309.13885</idno>
+		<title level="m">Touchup-g: Improving feature representation through graph-centric finetuning</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b107">
+	<monogr>
+		<title level="m" type="main">Pretraining language models with text-attributed heterogeneous graphs</title>
+		<author>
+			<persName><forename type="first">Tao</forename><surname>Zou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Le</forename><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yifei</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Leilei</forename><surname>Sun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bowen</forename><surname>Du</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2310.12580</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

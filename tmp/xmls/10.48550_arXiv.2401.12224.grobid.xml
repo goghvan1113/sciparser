@@ -1,0 +1,2010 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">LLM4EDA: Emerging Progress in Large Language Models for Electronic Design Automation</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability  status="unknown">
+					<licence/>
+				</availability>
+				<date type="published" when="2023-12-28">28 Dec 2023</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Ruizhe</forename><surname>Zhong</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Dept. of Computer Science and Engineering &amp; MoE Key Lab of AI</orgName>
+								<orgName type="institution">Shanghai Jiao Tong University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Xingbo</forename><surname>Du</surname></persName>
+							<email>duxingbo@sjtu.edu.cn</email>
+							<affiliation key="aff0">
+								<orgName type="department">Dept. of Computer Science and Engineering &amp; MoE Key Lab of AI</orgName>
+								<orgName type="institution">Shanghai Jiao Tong University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Shixiong</forename><surname>Kai</surname></persName>
+							<affiliation key="aff1">
+								<orgName type="institution">Huawei Noah&apos;s Ark Lab</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Zhentao</forename><surname>Tang</surname></persName>
+							<affiliation key="aff1">
+								<orgName type="institution">Huawei Noah&apos;s Ark Lab</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Siyuan</forename><surname>Xu</surname></persName>
+							<email>xusiyuan520@huawei.comzhenhuiling2</email>
+							<affiliation key="aff1">
+								<orgName type="institution">Huawei Noah&apos;s Ark Lab</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Hui-Ling</forename><surname>Zhen</surname></persName>
+						</author>
+						<author>
+							<persName><forename type="first">Jianye</forename><surname>Hao</surname></persName>
+							<affiliation key="aff1">
+								<orgName type="institution">Huawei Noah&apos;s Ark Lab</orgName>
+							</affiliation>
+							<affiliation key="aff2">
+								<orgName type="department">College of Intelligence and Computing</orgName>
+								<orgName type="institution">Tianjin University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Qiang</forename><surname>Xu</surname></persName>
+							<affiliation key="aff3">
+								<orgName type="department">Department of Computer Science and Engineering</orgName>
+								<orgName type="institution">The Chinese University of Hong Kong</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Mingxuan</forename><surname>Yuan</surname></persName>
+							<email>yuan.mingxuan@huawei.com</email>
+							<affiliation key="aff1">
+								<orgName type="institution">Huawei Noah&apos;s Ark Lab</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Junchi</forename><surname>Yan</surname></persName>
+							<email>yanjunchi@sjtu.edu.cn</email>
+							<affiliation key="aff0">
+								<orgName type="department">Dept. of Computer Science and Engineering &amp; MoE Key Lab of AI</orgName>
+								<orgName type="institution">Shanghai Jiao Tong University</orgName>
+							</affiliation>
+							<affiliation key="aff1">
+								<orgName type="institution">Huawei Noah&apos;s Ark Lab</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">LLM4EDA: Emerging Progress in Large Language Models for Electronic Design Automation</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date type="published" when="2023-12-28">28 Dec 2023</date>
+						</imprint>
+					</monogr>
+					<idno type="MD5">4618011EBD60031ED46B94BD21D3245A</idno>
+					<idno type="arXiv">arXiv:2401.12224v1[cs.AR]</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.2-SNAPSHOT" ident="GROBID" when="2025-01-20T06:46+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Driven by Moore's Law, the complexity and scale of modern chip design are increasing rapidly. Electronic Design Automation (EDA) has been widely applied to address the challenges encountered in the full chip design process. However, the evolution of very large-scale integrated circuits has made chip design timeconsuming and resource-intensive, requiring substantial prior expert knowledge. Additionally, intermediate human control activities are crucial for seeking optimal solutions. In system design stage, circuits are usually represented with Hardware Description Language (HDL) as a textual format. Recently, Large Language Models (LLMs) have demonstrated their capability in context understanding, logic reasoning and answer generation. Since circuit can be represented with HDL in a textual format, it is reasonable to question whether LLMs can be leveraged in the EDA field to achieve fully automated chip design and generate circuits with improved power, performance, and area (PPA). In this paper, we present a systematic study on the application of LLMs in the EDA field, categorizing it into the following cases: 1) assistant chatbot, 2) HDL and script generation, and 3) HDL verification and analysis. Additionally, we highlight the future research direction, focusing on applying LLMs in logic synthesis, physical design, multimodal feature extraction and alignment of circuits. We collect</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">Introduction</head><p>Over the past few decades, Electronic Design Automation (EDA) algorithms and tools have made significant strides, yielding substantial improvements in chip design productivity. At the same time, driven by Moore's Law, circuit sizes have exponentially increased, presenting new challenges for chip engineers in achieving Very Large-Scale Integration (VLSI) with billions of transistors. In addition to the scale, it has become increasingly challenging to satisfy the demands of Power, Performance, and Area (PPA), specifications, and other constraints, especially throughout the entire and long EDA design flow. During this long design flow, the involvement of numerous intermediate processes necessitates time-and cost-intensive human intervention, often requiring iterative interactions with natural language or programming language interfaces. These processes generate abundant and various outputs and logs rich in textual information, demanding engineers' understanding, processing, and decision-making for following guidance and commands. Consequently, the complete design flow remains far from being fully automated. Simultaneously, chip design also imposes high demands on engineers, and it typically takes several years to cultivate an experienced engineering professional in this field. How to achieve full automation of the circuit design process and reduce reliance on experienced circuit design engineers has become a key focus of research.</p><p>Deep learning, an ever-advancing technology, has found widespread application across diverse domains and scenarios, including classification, detection, forecasting, and generation. Notably, it exhibits great potential in generating high-quality solutions for many NP-complete (NPC) problems, which commonly arise in the EDA field. Traditional methods encounter challenges in effectively addressing these problems due to their demanding computational resources and time requirements, particularly in the realm of VLSI. Unlike traditional approaches that tackle each problem independently without the accumulation of knowledge, deep learning methods excel at extracting high-level features and representations shared among similar or related cases. Leveraging these features allows for their reuse and application throughout the problem-solving process, resulting in enhanced speed and improved solution quality. Consequently, the integration of deep learning techniques to aid and accelerate the resolution of EDA problems represents a highly promising direction of research.</p><p>At present, deep learning has found extensive applications through flow of chip design, including logic synthesis <ref type="bibr" target="#b18">[Hosny et al., 2020</ref><ref type="bibr">, Yuan et al., 2023]</ref>, floorplanning <ref type="bibr" target="#b1">[Amini et al., 2022]</ref>, placement <ref type="bibr" target="#b26">[Lin et al., 2019</ref><ref type="bibr" target="#b34">, Mirhoseini et al., 2021</ref><ref type="bibr" target="#b6">, Cheng and Yan, 2021</ref><ref type="bibr" target="#b7">, Cheng et al., 2022</ref><ref type="bibr" target="#b21">, Lai et al., 2022]</ref>, clock tree synthesis <ref type="bibr" target="#b31">[Lu et al., 2021</ref><ref type="bibr">, Liang et al., 2023]</ref> routing <ref type="bibr" target="#b7">[Cheng et al., 2022</ref><ref type="bibr">, Du et al., 2023a]</ref> and PPA prediction <ref type="bibr" target="#b15">[Guo et al., 2022</ref><ref type="bibr" target="#b4">, Chai et al., 2023</ref><ref type="bibr" target="#b60">, Zhong et al., 2024]</ref>. Simultaneously, many works focus on general representation learning of circuits <ref type="bibr">[Li et al., 2022a</ref><ref type="bibr">, Shi et al., 2023</ref><ref type="bibr">, Wang et al., 2022]</ref>. It embeds both functionality and structural information of a circuit as vectors, and these representations can be further utilized in various downstream tasks rather than learning a specific model for each task from scratch. To support the demand of neural network training for massive training data and achieve stronger generalization in EDA, open-sourced datasets such as Circuit <ref type="bibr" target="#b4">[Chai et al., 2023]</ref> and Circuit 2.0 <ref type="bibr">[Anonymous, 2024]</ref> have been made available to the research community. These datasets offer cross-stage and cross-design samples, facilitating comprehensive exploration of advancements in Artificial Intelligence for Electronic Design Automation (AI4EDA). We have collected papers and maintained real-time updates about AI4EDA<ref type="foot" target="#foot_0">foot_0</ref> .</p><p>Recently, Large Language Models (LLMs) demonstrated capability in various aspects, including context understand, Question and Answer (Q&amp;A) and logic reasoning. Both commercial <ref type="bibr">(ChatGPT, Bard, etc.)</ref> and open-source (LLaMA2 <ref type="bibr" target="#b51">[Touvron et al., 2023]</ref>) schemes have achieved significant advancement in this field. Since circuits can be depicted in programming language, Hardware Description Language (HDL), specifications and many intermediate outputs through EDA flow are also represented in text format. It is natural to ask whether LLMs can be leveraged for EDA to assist engineers in chip design.</p><p>In this survey, we conduct a comprehensive and detailed investigation on the progress and application in Large Language Models for Electronic Design Automation (LLM4EDA). As shown in Fig. <ref type="figure" target="#fig_0">1</ref>, we categorize current application and exploration of LLMs in EDA into the following three directions:</p><p>• Assistant Chatbot. Users can interact with LLMs for knowledge acquisition and Q&amp;A, without spending time in waiting or actively searching for answers. We present some notable works which aim to provide user-friendly and easy-interactively assistant chatbot and bring us new interaction paradigm with EDA software.</p><p>• HDL and Script Generation. Given language format specification and requirements, LLMs will generate RTL codes and EDA controlling scripts. This automated process streamlines the development of circuit designs by reducing the manual effort traditionally involved in writing codes and scripts, thereby enhancing efficiency and productivity in the chip design. Besides, how to evaluate the quality of generated codes remains an open research focus, where syntax correctness and functionality equivalence are key factors. In EDA field there exist more metrics to consider, such as Power, Performance and Area (PPA) and security issues. Therefore, new evaluation framework considering various aspects are also essential. • HDL Verification and Analysis. We also investigate LLMs' wide application in code analysis, such as bug detecting &amp; fixing, code summarization and security checking. Besides, LLMs have also demonstrated strong ability for verification, e.g. Assertion Based Verification.</p><p>Apart from the aforementioned advancements, other key processes in EDA flow also exhibit promising potential when viewed from an LLM perspective. Specifically, we provide following overviews:</p><p>• Logic Sythesis. LLM holds the potential to generate an optimization sequence, along with the corresponding arguments in logic synthesis, when Hardware Description Language (HDL) and prompts are considered as inputs. • Physical Design. The complexity of Placement and Routing (P&amp;R) currently makes it challenging to directly apply LLMs. However, employing strategies such as graph partitioning and clustering can reduce the scale of the problem and accelerate the solving process, thereby making the use of LLMs feasible. LLMs could also be used to optimize modules or act as a reward system for reinforcement learning agents.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">Preliminaries</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.1">Large Language Models</head><p>Large Language Models (LLMs) <ref type="bibr" target="#b36">[OpenAI, 2023b</ref><ref type="bibr" target="#b51">, Touvron et al., 2023]</ref> are a type of artificial intelligence models characterized by their vast number of parameters. These models are trained on substantial amounts of text data over extended GPU time. The pioneer in this field is the GPT series <ref type="bibr" target="#b3">[Brown et al., 2020</ref><ref type="bibr" target="#b39">, Ouyang et al., 2022</ref><ref type="bibr" target="#b36">, OpenAI, 2023b]</ref> from OpenAI, where GPT-3 <ref type="bibr" target="#b3">[Brown et al., 2020]</ref> is an autoregressive language model with 175 billion parameters, significantly outperforming other contemporary models in terms of scale. On this basis, GPT-3.5 <ref type="bibr">[Ouyang et al.</ref>, 2022] focuses on the fine-tuning GPT-3, particularly incorporating the reinforcement learning from human feedback (RLHF) <ref type="bibr" target="#b8">[Christiano et al., 2017</ref><ref type="bibr" target="#b46">, Stiennon et al., 2020]</ref> to enhance alignment with human preferences. While these models demonstrate impressive performance, the official surge in LLMs can be attributed to the advent of ChatGPT<ref type="foot" target="#foot_1">foot_1</ref> , which adapts GPT-3.5 to dialogue, achieving remarkable results and applications. In response to the widespread interest in ChatGPT, OpenAI developed <ref type="bibr">GPT-4 [OpenAI, 2023b]</ref>, a more capable LLM than ChatGPT, that supports multi-modal, longer, and more logical input/output.</p><p>The success of the GPT series has spurred the development of various other LLMs, such as LLaMA <ref type="bibr" target="#b51">[Touvron et al., 2023]</ref> and Gemini<ref type="foot" target="#foot_2">foot_2</ref> by different corporations and institutes. Empowered by extensive data, a large number of parameters, and prolonged training time, LLMs can generate human-like text given certain inputs. They are not only capable of performing tasks like translation, character simulation, and generating creative content like poems and stories, but also answering questions and handling high-difficulty tasks such as generating executable code and scripts.</p><p>The potential of LLMs is vast and far from being fully realized.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.2">Design Flow of Electronic Design Automation</head><p>The process of chip design is intricate and multifaceted, typically segmented into several distinct stages <ref type="bibr">[Anonymous, 2024]</ref>. As shown in Fig. <ref type="figure" target="#fig_1">2</ref>, these stages encompass abstract design, EDA flow, and physical manufacturing. The EDA flow itself can be further subdivided into logic synthesis, physical design, verification, and analysis, each of which plays a crucial role in the successful creation of a chip. We also envision that a large circuit model, regarded as an EDA-guided LLM, could union different stages and output a general solution in the EDA flow. Specifically, our approach utilizes a data-driven large model, where both text and multi-modal information are integrated into a latent space. The text data encompasses specification documents, HLS codes, and RTL scripts, while the multi-modal information comprises netlists, graphs, and images. The large circuit model is trained either from scratch or by fine-tuning an existing Language Large Model (LLM) using these data.</p><p>Once trained, this model can enhance the capabilities of existing EDA tools and facilitate various downstream applications. The ideal workflow, based on the large circuit model, is depicted in Fig. <ref type="figure" target="#fig_2">3</ref>. However, it's important to note that achieving our ultimate goal is still a considerable journey ahead.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">Application of LLM4EDA</head><p>According to the mainstream research interests, we synthesize recent literature into four aspects, including 1) assistant chatbot; 2) HDL and script generation; 3) evaluation of generated code, and 4) code verification and analysis. Related papers are listed in Fig. <ref type="figure" target="#fig_3">4</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1">Assistant Chatbot</head><p>The full chip design flow necessitates extensive prior expert knowledge, which requires years of research and accumulation. To assist engineers in obtaining answers to their questions related to architecture, design, tools, and verification, an engineering assistant chatbot can effectively meet their needs. Although current LLMs are pre-trained on various types of text and serve as general chatbots, they may lack profound and accurate understanding in specific domains like the EDA field. Therefore, developing an engineering assistant chatbot that incorporates knowledge extracted from internal design documents, code, and recorded data pertaining to designs and technical communications could substantially enhance design productivity.</p><p>It is widely acknowledged that LLMs may generate inaccurate answers, giving the impression of correctness while often leading to a high level of misunderstanding. This phenomenon is commonly referred to as hallucination <ref type="bibr" target="#b19">[Ji et al., 2023]</ref>. While the exact causes of hallucination are not yet fully comprehended, it is imperative to address this issue, particularly in engineering, with a specific emphasis on the EDA field. The accuracy of these generated answers holds significant importance in engineering, underscoring the need to mitigate the occurrence of hallucination.</p><p>A representative work is ChipNeMo <ref type="bibr">[Liu et al., 2023a]</ref>. They propose to leverage retrieval augmented generation (RAG) <ref type="bibr" target="#b22">[Lewis et al., 2020]</ref> method to mitigate hallucination. Also, they find that finetuning an off-the-shelf unsupervised pre-trained dense retrieval model with a modest amount of domain specific training data significantly improves retrieval accuracy. They utilize these techniques to fine-tune a pre-trained LLM to construct a chip-design-specific assistant chatbot. As a consequence, engineers can focus more on brainstorming, designing, and writing codes, instead of waiting answers or searching knowledge they lack. RapidGPT <ref type="bibr" target="#b42">[PrimisAI, 2023]</ref> is another notable work and it is the industry's first AI-based pair-designer tailored for FPGA engineers. Serving as an intelligent code assistant, RapidGPT leverages AI algorithms to provide accurate and context-aware code suggestions, allowing FPGA engineers to write Verilog code more efficiently. RapidGPT also provides conversational capabilities to the next level by offering a chat panel, allowing users to easily communicate with the tool. This chat panel can be used to write or improve HDL code in a conversational manner.</p><p>From the perspective of interacting with LLMs, Smarton-AI <ref type="bibr" target="#b16">[Han et al., 2023]</ref> propose a new interaction paradigm for leveraging LLMs in complex software, including main-sub GPTs and a Q&amp;A GPT. The main GPT identifies most relevant tasks according to user input in natural language format. All sub-GPTs form a Mixture of Experts (MoE) <ref type="bibr" target="#b32">[Masoudnia and Ebrahimpour, 2014]</ref> system. Each sub-GPT is dedicated to a identified task from main-GPT and generates learning documents for this task. The Q&amp;A GPT is responsible for processing the generated learning documents produced by the sub-GPTs. It serves as an assistant chatbot, leveraging the input derived from these documents to facilitate user interactions and provide relevant information in a question-and-answer format.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2">HDL Generation &amp; Evaluation</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2.1">HDL Generation</head><p>Modern chip design often originates from the specifications given by human natural language and then turns to translations into Hardware Description Languages (HDLs) such as Verilog. These translations typically require highly-skilled hardware engineers and suffer from man-made errors and loads of labors. Automating the hardware design could effectively reduce human errors and accelerate the process of design translations. Equipped with LLMs which are empirically proved to</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>LLM4EDA Assistant Chatbot</head><p>ChipNeMo <ref type="bibr">[Liu et al., 2023a]</ref> Smarton-AI <ref type="bibr" target="#b16">[Han et al., 2023]</ref> RapidGPT <ref type="bibr" target="#b42">[PrimisAI, 2023]</ref> </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>HDL Generation</head><p>ChatEDA <ref type="bibr" target="#b17">[He et al., 2023]</ref> ChipGPT <ref type="bibr" target="#b5">[Chang et al., 2023]</ref> VerilogEval <ref type="bibr">[Liu et al., 2023b]</ref> GPT4AIGChip <ref type="bibr" target="#b13">[Fu et al., 2023]</ref> Chip-Chat <ref type="bibr" target="#b2">[Blocklove et al., 2023]</ref> AutoChip <ref type="bibr">[Thakur et al., 2023c]</ref> RTLLM <ref type="bibr" target="#b30">[Lu et al., 2023]</ref> Thakur et al. <ref type="bibr">[2023a]</ref> VeriGen <ref type="bibr">[Thakur et al., 2023b]</ref> RapidGPT <ref type="bibr" target="#b42">[PrimisAI, 2023]</ref> Code Verification &amp; Analysis</p><p>ChipNeMo <ref type="bibr">[Liu et al., 2023a]</ref> RTLFixer <ref type="bibr" target="#b52">[Tsai et al., 2023]</ref> AutoSVA be effective to generate high-quality contexts, it is natural to apply LLMs to language translations and other related script generation.</p><p>Recent works of LLMs for HDL and script generation mainly emphasize on two aspects: 1) which flow to work on, and 2) what the goal is.</p><p>Among the works, ChatEDA <ref type="bibr" target="#b17">[He et al., 2023]</ref> endeavors to automate the flow from Register-Transfer Level (RTL) to Graphic Data System Version II (GDSII), which splits the flow stream into task planning, script generation, and task execution due to the complexity of the whole flow. Specifically, ChatEDA treats the natural language as input and then generates effective codes for task execution with EDA tools. Similar flow splitting can also been observed in ChipGPT <ref type="bibr" target="#b5">[Chang et al., 2023</ref>] that reports a four-stage logic design framework, including generating prompts, producing initial Verilog programs, correcting and optimizing these programs, and selecting the optimal design according to the target metrics. GPT4AIGChip <ref type="bibr" target="#b13">[Fu et al., 2023]</ref> constructs a framework that intends to democratize AI accelerator design. By investigating the weaknesses of current LLMs, especially the inability to handle lengthy codes, GPT4AIGChip also decouples various hardware modules and functionalities of the AI accelerator design to enable the LLM-driven design automation. Chip-Chat <ref type="bibr" target="#b2">[Blocklove et al., 2023]</ref> targets the case for the novel 8-bit accumulator-based microprocessor architecture and partitions the task into generating Verilog code and producing most of the processor's specification.</p><p>To enable the generated code to be more functionally accurate, AutoChip <ref type="bibr">[Thakur et al., 2023c]</ref> focuses more on the context from compilation errors and dubugging contents when incorporating the interactions from LLMs into the output of the Verilog simulations. Unlike AutoChip <ref type="bibr">[Thakur et al., 2023c]</ref> and most other LLM-baesd approaches that targets the design correctness, RTLLM <ref type="bibr" target="#b30">[Lu et al., 2023]</ref>, as an instruction for generating design RTL, concerns more about the design qualities, which is fairer in practice. In addition to the metric-based goals, Chip-Chat <ref type="bibr" target="#b2">[Blocklove et al., 2023]</ref> seeks a von Neumann type design with 32 bytes of memory considering the space restriction. For the security issues and vulnerabilities in hardware design, <ref type="bibr" target="#b35">Nair et al. [2023]</ref> constructs robust prompt for ChatGPT to generate design resistant Common Vulnerability Enumerations (CWEs).</p><p>VerilogEval <ref type="bibr">[Liu et al., 2023b]</ref> constructed a synthetic supervised fine-tuning dataset by leveraging GPT-3.5 <ref type="bibr" target="#b39">[Ouyang et al., 2022]</ref> to generate problem descriptions paired with Verilog code. RTL-Coder <ref type="bibr">[Liu et al., 2023c]</ref> follows this synthetic method, and proposes a new LLM fine-tuning algorithm leveraging quality score feedback. Furthermore, they also quantize LLM to 4-bit with a total size of 4GB, enabling it to function on a single laptop with only slight performance degradation.</p><p>Simultaneously, many works focus on prompt engineering and feedback, directly utilizing existed general LLMs without further fine-tuning. ChipGPT <ref type="bibr" target="#b5">[Chang et al., 2023]</ref> uses template-based prompts, providing details and purpose of original specification. It also contains an output manager to provide LLM with PPA or other human-specified targets as feedback. <ref type="bibr">Du et al. [2023b]</ref> proposes to utilize In-Context Learning and Chain-of-Thought prompting techniques in complex FPGA design to tackle challenges, including sub-task scheduling and multi-step thinking problems. Chip-Chat <ref type="bibr" target="#b2">[Blocklove et al., 2023]</ref> proposes the conversation flow technique, breaking large design into sub-tasks and giving output from previous sub-task to LLM as base specification and feedback.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2.2">HDL Evaluation</head><p>Once the LLMs have been developed for code generation, it becomes essential to evaluate their quality. This evaluation process involves checking for both syntax correctness and functionality correctness. Syntax correctness ensures that the generated code follows the proper programming language syntax rules, while functionality correctness ensures that the code performs the intended tasks accurately.</p><p>In addition to these checks, when dealing with codes in the EDA field, it is crucial to conduct further testing to evaluate their final power, performance, and area (PPA) characteristics. This testing process typically takes place after the completion of the entire design flow. They are utilized to verify whether the final circuit design meets the specified requirements and corresponding constraints, such as area utilization and timing constraints.</p><p>Take RTLLM <ref type="bibr" target="#b30">[Lu et al., 2023]</ref> as instance: it provides an public benchmark to evaluate the generated codes from following three perspectives:</p><p>1. Syntax goal. It means that the generated RTL design should as least be correct, which can be verified by checking whether the design can correctly synthesized into netlist. Designs generated from GPT-3.5 for SFT data, containing description and corresponding code. MinHash algorithm with Jaccard similarity is also performed to realize approximate deduplication.</p><p>RTLCoder <ref type="bibr">[Liu et al., 2023c]</ref> ✓ 10,000 designs Generated from GPT-3.5, each sample consists of an description and corresponding RTL code. Conditional log probability based quality score is also incorporated for fine-tuning.</p><p>NSPG <ref type="bibr" target="#b33">[Meng et al., 2023]</ref> ✓ 20,000 sentences Documentation collected from OpenTitan, RISC-V, Open-RISC, MIPS, OpenSPARC. This dataset is further augmented with Random Deletion, Random Swap, Synonym Replacement and Random Insertion.</p><p>2. Functionality goal. It means the functionality of generated RTL should be exactly the same as user's expectation. This goal can be checked with a comprehensive testbench. 3. Design quality goal. If the generated RTL pass both above-mentioned unit tests, we need to further check its design quality, e.g. PPA. It can be verified by checking the PPA values after the synthesis and layout of RTL.</p><p>Based on above-mentioned unit tests, VerilogEval <ref type="bibr">[Liu et al., 2023b]</ref> proposes to use pass@k metric to further reflect the correctness of generated RTL codes:</p><formula xml:id="formula_0">pass@k = E problems 1 - n-c k n k ,<label>(1)</label></formula><p>where we generate n ≥ k samples per task in which c ≤ n samples pass the unit test.</p><p>Some prior works, including AutoChip <ref type="bibr">[Thakur et al., 2023c]</ref>, ChipGPT <ref type="bibr" target="#b5">[Chang et al., 2023]</ref>, <ref type="bibr">Thakur et al. [2023a]</ref>, categorize the problem set into kinds of difficulty: e.g. easy, intermediate and hard. Under different difficulty settings, they evaluate the generated RTL codes with syntax goal and functionality goal, design quality goal.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.3">HDL Verification and Analysis</head><p>Another promising application of LLMs for EDA is to leverage LLMs to understand, analyse and summarize the input RTL codes. Different from Sec. 3.2.2 evaluating the generated codes through external tools, LLMs take input as RTL codes and user-specified queries, and provide responses to the user based on this input. This approach allows users to directly interact with the LLMs, reaching out to the analysis of input codes.</p><p>To assist engineers in bug summarization and analysis, ChipNeMo <ref type="bibr">[Liu et al., 2023a</ref>] constructs a domain-specific SFT dataset based on NVIDIA's internal bug database, NVBugs. Considering bug descriptions could be too large for context windows, they replace long path names with short alias, and split the summarization tasks into an incremental task.</p><p>Besides bug summarization and analysis, RTLFixer <ref type="bibr" target="#b52">[Tsai et al., 2023]</ref> proposes a paradigm for fixing erroneous Verilog codes directly. Formulating an input prompt and followed by utilizing Retrieval Augmented Generation (RAG) and ReAct prompting mechanism <ref type="bibr" target="#b21">[Yao et al., 2022]</ref>, the agent revises the erroneous Verilog codes. If syntax errors persist, error logs from the compiler as well as retrieved human guidance from the database are provided as feedback.</p><p>LLMs also demonstrate the capability in assertion checking, which is effective at finding intricate RTL bugs and security issues. It is a popular verification technique, where the specification of design under test in coded into assertions or properties in hardware description language. Each assertion will focus on verifying individual functionality and logic. Besides, it is also able to detect security vulnerabilities to defense attacks. Orenes-Vera et al. <ref type="bibr">[2023]</ref> proposes an iterative methodology based on formal property verification to generate SystemVerilog Assertions (SVA) from a given RTL module. They also integrate this assertion generation flow in open-source framework, AutoSVA <ref type="bibr" target="#b37">[Orenes-Vera et al., 2021]</ref>. <ref type="bibr" target="#b20">Kande et al. [2023]</ref> realizes SVA with a similar flow, including prompt construction, LLMs-based assertions generation and simulation. They also lexical tools to automatically fix minor mistakes based on qualitative analysis about 'common pitfalls' made by LLMs.</p><p>Considering the security problems in hardware designs, NSPG <ref type="bibr" target="#b33">[Meng et al., 2023]</ref> proposes a framework to identify essential properties from Intellectual Property (IP) cores documentations. They fine-tune a pre-trained LLM and a sequence classification model on datasets consisting of hardware documentations, where the latter is responsible to identify whether a sentence in documentation is a property or not, which contains essential information of operator behaviour and security. DIVAS <ref type="bibr" target="#b40">[Paria et al., 2023]</ref> proposes a LLM-based end-to-end framework for identify the CWEs for a given Systemon-Chip (SoC) specification and employs a novel LLM-based technique to determine the relevant CWEs, which are finally converted into SystemVerilog Assertions using LLMs for verification. <ref type="bibr" target="#b0">[Ahmad et al., 2023]</ref> utilizes a detector tool to extract or directly get the location and CWE type of bug. These bug information, codes before the bug and buggy code in comments are combined as LLM prompt, assisting LLM to fix this hardware bug.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">Datasets of LLM4EDA</head><p>Fine-tuning general-purpose LLMs with extensive and accurate domain-specific data would yield better performance. Some works have evolved in constructing corresponding datasets through collecting existed data, including public design source codes, documentation, internal error logs, and bug summaries. Simultaneously, other works generate synthesis dataset by querying existed general LLMs for circuits or design instructions. In Table <ref type="table" target="#tab_0">1</ref>, we present some representative works that have explored the fine-tuning of LLMs utilizing domain-specific datasets.</p><p>5 Backbones for LLM4EDA</p><p>We demonstrate the tasks, backbone and fine-tuning techniques for LLMs applied in EDA in Table <ref type="table" target="#tab_1">2</ref>. Due to limitations in computational resources and available datasets, current efforts are primarily focused on utilizing APIs of existing LLMs. For domain specific data, they either collect existed RTL codes <ref type="bibr">[Liu et al., 2023a</ref><ref type="bibr" target="#b13">, Fu et al., 2023</ref><ref type="bibr">, Thakur et al., 2023b</ref><ref type="bibr" target="#b9">, Dehaerne et al., 2023</ref><ref type="bibr" target="#b33">, Meng et al., 2023]</ref>, or generate synthesis designs from pre-trained general LLMs <ref type="bibr">[Liu et al., 2023c,b]</ref>.</p><p>6 Outlook</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.1">LLM in Logic Synthesis</head><p>Logic synthesis transforms a high-level description of a design, e.g. Verilog, into an optimized gatelevel representation. It mainly consists of three steps, namely pre-mapping optimization, technology mapping, and post-mapping optimization. Extensive tuning of the synthesis optimization flow is required, including which optimizations to use, their corresponding arguments and the order of invocation. This process can be treated as a sequential decision making problem in parameterized  <ref type="bibr">[Liu et al., 2023a]</ref> ✓ ✓ ✓ LLaMA2 13 B SFT ChatEDA <ref type="bibr" target="#b17">[He et al., 2023]</ref> ✓ LLaMA2 70 B QLoRA</p><p>ChipGPT <ref type="bibr" target="#b5">[Chang et al., 2023</ref>] ✓ GPT-3.5 DIVAS <ref type="bibr" target="#b40">[Paria et al., 2023]</ref> ✓ GPT-3.5 <ref type="bibr" target="#b44">Schäfer et al. [2023]</ref> ✓ GPT-3.5 <ref type="bibr" target="#b35">Nair et al. [2023]</ref> ✓ GPT-3.5 <ref type="bibr">Du et al. [2023b]</ref> ✓ ✓ GPT-3.5 <ref type="bibr" target="#b20">Kande et al. [2023]</ref> ✓ GPT-3.5 RTLFixer <ref type="bibr" target="#b52">[Tsai et al., 2023]</ref> ✓ GPT-3.5 RTLLM <ref type="bibr" target="#b30">[Lu et al., 2023]</ref> ✓ GPT-4 GPT4AIGChip <ref type="bibr" target="#b13">[Fu et al., 2023]</ref> ✓ GPT-4 AutoChip <ref type="bibr">[Thakur et al., 2023c]</ref> ✓ GPT-4 Chip-Chat <ref type="bibr" target="#b2">[Blocklove et al., 2023]</ref> ✓ GPT-4 VeriGen <ref type="bibr">[Thakur et al., 2023b]</ref> ✓ GPT-4 Orenes-Vera et al. <ref type="bibr">[2023]</ref> ✓ GPT-4 action space <ref type="bibr" target="#b12">[Fan et al., 2019]</ref>. Efficient design space exploration is challenging due to the exponential number of possible optimization permutations. Therefore, it heavily relies on experienced engineers.</p><p>Current works utilize heuristics <ref type="bibr">[Li et al., 2022b]</ref>, Bayesian Optimization (BO) <ref type="bibr" target="#b14">[Grosnit et al., 2022]</ref> Reinforcement Learning (RL) <ref type="bibr" target="#b18">[Hosny et al., 2020</ref><ref type="bibr">, Yuan et al., 2023]</ref> to search the well-performed optimization sequence. With respect to LLM, taking HDL of design and appropriate prompts as input (e.g., containing target PPA), LLM can generate the sequence of optimization along with their respective arguments. Furthermore, final or estimated PPA can serve as the feedback for LLM, enabling iteratively enhancement of the Quality of Results (QoR).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.2">LLM in Physical Design</head><p>In physical design, placement algorithm determines location for each module, including macro module and standard cell. It aims to minimize wirelength cost subjecting to density constraints. After placement, the (wire) routing step adds wires needed to properly connect the placed components while obeying all design rules. The main objective is to connect all the required connections and on this basis, reduce the routing wirelength and overflow. Placement and Routing (P&amp;R) consumes major part of time and computational resources during physical design, and has a significant impact on final PPA.</p><p>The utilization of LLMs in Placement and Routing (P&amp;R) remains relatively unexplored due to the inherent challenges posed by large-scale problems. Contemporary designs typically comprise millions of cells and nets <ref type="bibr" target="#b26">[Lin et al., 2019]</ref>, making it impractical for LLMs to directly address the location and wire assignment of each component. Employing graph partitioning and clustering algorithms provides feasible approaches to reduce the problem's scale. While these methods may result in a loss of fine-grained details and potential constraint violations, the resulting 'coarse' layouts can serve as initial solutions for traditional P&amp;R algorithms, thereby expediting the solving process.</p><p>An alternative strategy could involve optimizing the modules, which are few in number but subject to numerous complex constraints. In this scenario, LLMs could serve dual purposes: they could be employed to generate the optimal outcome, or they could act as a black-box reward system, providing feedback to the reinforcement learning agent.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.3">Feature Extraction and Alignment</head><p>Currently, circuits are typically expressed using hardware description languages, representing them in a textual format. Once the synthesis process is completed, the circuit is transformed into an equivalent netlist, commonly represented as a directed acyclic graph (DAG). Subsequently, placement and routing operations are performed to generate a layout, establishing the physical positions and interconnections of components.</p><p>These representations stem from the same underlying entity and correspond to language-based, graph-based, and image-based representations, respectively. However, extraction and alignment of these multi-modal contents has not been thoroughly investigated to date. Large Graph Models <ref type="bibr" target="#b59">[Zhang et al., 2023</ref><ref type="bibr" target="#b47">, Tang et al., 2023]</ref> and Large Vision Models <ref type="bibr">[Wang et al., 2023a</ref><ref type="bibr">, OpenAI, 2023a]</ref> have demonstrate strong potential to extract informative feature and representation from netlist layout respectively. We could also build a large-scale multi-modal pre-trained model <ref type="bibr">[Wang et al., 2023b]</ref> to realize alignment of there features from different modalities. Techniques such as contrastive learning, e.g. CLIP (Contrastive Language-Image Pretraining) <ref type="bibr" target="#b43">[Radford et al., 2021]</ref>, or methods involving masking and reconstructing some modalities from others, can be employed to achieve content alignment.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.4">Long Chain Feedback for PPA</head><p>With the assistance of LLMs, our aim is to improve the PPA in chip design. However, there is still a significant gap in predicting and optimizing PPA at the system design stage due to the necessity of numerous intermediate processes such as synthesis, placement, and routing. This lengthy feedback chain poses challenges in optimizing PPA from the initial stages. We believe this problem could be addressed from following perspectives:</p><p>1. Domain specific datasets with PPA. Domain-specific datasets incorporating PPA metrics have garnered attention. Existing datasets utilized for fine-tuning general pre-trained LLMs typically include source codes and corresponding descriptions. However, they lack awareness of PPA considerations <ref type="bibr" target="#b5">[Chang et al., 2023]</ref>. By augmenting these datasets with final PPA metrics, they can serve as more accurate design specifications or targets, as well as providing supervised labels. This augmentation would bridge the gap between RTL designs and their corresponding final PPA, enhancing the effectiveness and applicability of the datasets for fune-tuning PPA-aware LLMs. 2. Utilize PPA as feedback. For a human engineer, PPA is an essential feedback serving as guidance in the iterative and repetitive design process. Similarly, during the interaction with LLMs, we can either 1) evaluate the final PPA with high accuracy through external verification tools or 2) predict PPA with enhanced computational speed, e.g. with neural network based methods <ref type="bibr" target="#b15">[Guo et al., 2022</ref><ref type="bibr">, Yang et al., 2022</ref><ref type="bibr" target="#b60">, Zhong et al., 2024]</ref>. These PPA could serve as feedback for LLMs, guiding them to generate or refine designs with improved quality. 3. Prompt engineering and task planning. Prompt matters in interacting with LLMs especially for querying in EDA field <ref type="bibr" target="#b5">[Chang et al., 2023</ref><ref type="bibr" target="#b17">, He et al., 2023</ref><ref type="bibr" target="#b41">, Pearce et al., 2020]</ref>. We could construct more informative prompts by specifying PPA targets, incorporating cost constraints, and integrating design rules, facilitating LLMs to better understand and realize our purposes. To make full use of the context window, it is beneficial to break down large design through task planning into sub-tasks, where each has its own interface communicating with others. Additionally, the output generated from previous tasks could serve as a fundamental specification and guidance for subsequent sub-tasking processing, thus facilitating a coherent and efficient design workflow.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="7">Conclusion</head><p>This paper presents a comprehensive survey on the integration of Language Models (LLMs) in the Electronic Design Automation (EDA) field. The survey encompasses a range of applications of LLMs in EDA, namely: 1) assistant chatbot, 2) generation of HDL code and EDA flow scripts, 3) verification and analysis of HDL code. Additionally, we highlight the future research direction, focusing on applying LLMs in logic synthesis and physical design, addressing long feedback of PPA, multi-modal feature extraction and alignment of circuits. We firmly anticipate the eventual realization of large-scale multi-modal pre-trained models, for but not only for EDA.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 :</head><label>1</label><figDesc>Figure 1: Three categories in terms of progress and application in Large Language Models for Electronic Design Automation (LLM4EDA).</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 2 :</head><label>2</label><figDesc>Figure 2: The typical flow of digital chip design.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 3 :</head><label>3</label><figDesc>Figure 3: The flow driven by large circuit model.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 4 :</head><label>4</label><figDesc>Figure 4: Research Tree of Large Language Models for Electronic Design Automation.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head>Table 1 :</head><label>1</label><figDesc>Different datasets for fine-tuning towards LLM4EDA. Chat: assistant chatbot. Gen.: HDL and script generation. V&amp;A: HDL verification and analysis.</figDesc><table><row><cell>Dataset</cell><cell cols="3">Task Chat Gen. V&amp;A</cell><cell>Size</cell><cell>Description</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>Data from NVBugs (NVIDIA's internal bug database),</cell></row><row><cell>ChipNeMo [Liu et al., 2023a]</cell><cell>✓</cell><cell>✓</cell><cell>✓</cell><cell>24.1 B tokens</cell><cell>bug summary, design source, documentation, verification. LLaMA2 tokenizer is adapted and approximately 9K new</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>tokens are added to improve tokenization efficiency.</cell></row><row><cell>ChatEDA [He et al., 2023]</cell><cell></cell><cell>✓</cell><cell></cell><cell>1,500 instructions</cell><cell>Instruction tuning: Query GPT-4 to generate and collect instructions. The core controller, AutoMage is further fine-tuned on these instructions.</cell></row><row><cell>GPT4AIGChip [Fu et al., 2023]</cell><cell></cell><cell>✓</cell><cell></cell><cell>7,000 snippets</cell><cell>Open-source HLS code snippets from GitHub and cus-tomized HLS templates with implementation instructions to fine-tune LLMs.</cell></row><row><cell>VeriGen [Thakur et al., 2023b]</cell><cell></cell><cell>✓</cell><cell></cell><cell>400 MB</cell><cell>From Verilog textbooks and open-source GitHub repos-itories. Training samples are further generated through overlapped sliding windows on module blocks.</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>Verilog and SystemVerilog from GitHub open-source</cell></row><row><cell>Dehaerne et al. [2023]</cell><cell></cell><cell>✓</cell><cell></cell><cell>100,000 files</cell><cell>repositories. The dataset consists of two unlabeled subsets, file-level data and snippet-level data, and a labeled subset</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>of snippet definition and body pairs</cell></row><row><cell>VerilogEval [Liu et al., 2023b]</cell><cell></cell><cell>✓</cell><cell></cell><cell>8,502 samples</cell><cell></cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1"><head>Table 2 :</head><label>2</label><figDesc>Type and size of corresponding LLMs selected in each method. Chat: assistant chatbot. Gen.: HDL and script generation. V&amp;A: HDL verification and analysis.</figDesc><table><row><cell>Method</cell><cell>Task Chat Gen. V&amp;A</cell><cell>Type</cell><cell>Size</cell><cell>Fine-tune</cell></row><row><cell>RTLCoder [Liu et al., 2023c]</cell><cell>✓</cell><cell>Zephyr</cell><cell cols="2">7 B Quality Score</cell></row><row><cell>VerilogEval [Liu et al., 2023b]</cell><cell>✓</cell><cell cols="2">CodeGen 16 B</cell><cell>SFT</cell></row><row><cell>Ahmad et al. [2023]</cell><cell>✓</cell><cell cols="2">CodeGen 16 B</cell><cell></cell></row><row><cell>Thakur et al. [2023a]</cell><cell>✓</cell><cell cols="2">CodeGen 16 B</cell><cell>AI21 Studio</cell></row><row><cell>ChipNeMo</cell><cell></cell><cell></cell><cell></cell><cell></cell></row></table></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="1" xml:id="foot_0"><p>https://github.com/Thinklab-SJTU/awesome-ai4eda</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="2" xml:id="foot_1"><p>https://openai.com/blog/chatgpt/</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="3" xml:id="foot_2"><p>https://deepmind.google/technologies/gemini/</p></note>
+		</body>
+		<back>
+
+			<div type="availability">
+<div xmlns="http://www.tei-c.org/ns/1.0"><p><ref type="url" target="https://github.com/">https://github.com/</ref></p></div>
+			</div>
+
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">Fixing hardware security bugs with large language models</title>
+		<author>
+			<persName><forename type="first">Baleegh</forename><surname>Ahmad</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shailja</forename><surname>Thakur</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Benjamin</forename><surname>Tan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ramesh</forename><surname>Karri</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hammond</forename><surname>Pearce</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2302.01215</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">An advanced dataset for promoting machine learning innovations in realistic chip design environment</title>
+		<author>
+			<persName><forename type="first">Mohammad</forename><surname>Amini</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhanguang</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Surya</forename><surname>Penmetsa</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yingxue</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jianye</forename><surname>Hao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wulong</forename><surname>Liu</surname></persName>
+		</author>
+		<ptr target="https://openreview.net/forum?id=nMFSUjxMIl.UnderReview" />
+	</analytic>
+	<monogr>
+		<title level="m">SIGKDD</title>
+		<imprint>
+			<date type="published" when="2022">2022. 2024</date>
+		</imprint>
+	</monogr>
+	<note>Generalizable floorplanner through corner block list representation and hypergraph embedding. Submitted to The 12th ICLR</note>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<author>
+			<persName><forename type="first">Jason</forename><surname>Blocklove</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Siddharth</forename><surname>Garg</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ramesh</forename><surname>Karri</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hammond</forename><surname>Pearce</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2305.13243</idno>
+		<title level="m">Chip-chat: Challenges and opportunities in conversational hardware design</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+		<title level="m" type="main">Language models are few-shot learners</title>
+		<author>
+			<persName><forename type="first">Tom</forename><surname>Brown</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Benjamin</forename><surname>Mann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Nick</forename><surname>Ryder</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Melanie</forename><surname>Subbiah</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jared</forename><forename type="middle">D</forename><surname>Kaplan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Prafulla</forename><surname>Dhariwal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Arvind</forename><surname>Neelakantan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pranav</forename><surname>Shyam</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Girish</forename><surname>Sastry</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Amanda</forename><surname>Askell</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+			<publisher>NeurIPS</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Circuitnet: An open-source dataset for machine learning in vlsi cad applications with improved domain-specific evaluation metric and learning strategies</title>
+		<author>
+			<persName><forename type="first">Zhuomin</forename><surname>Chai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yuxiang</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wei</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yibo</forename><surname>Lin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Runsheng</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ru</forename><surname>Huang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">TCAD</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<monogr>
+		<title level="m" type="main">Chipgpt: How far are we from natural language hardware design</title>
+		<author>
+			<persName><forename type="first">Kaiyan</forename><surname>Chang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ying</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Haimeng</forename><surname>Ren</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mengdi</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shengwen</forename><surname>Liang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yinhe</forename><surname>Han</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Huawei</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiaowei</forename><surname>Li</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2305.14019</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">On joint learning for solving placement and routing in chip design</title>
+		<author>
+			<persName><forename type="first">Ruoyu</forename><surname>Cheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Junchi</forename><surname>Yan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">NeurIPS</title>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">The policy-gradient placement and generative routing neural networks for chip design</title>
+		<author>
+			<persName><forename type="first">Ruoyu</forename><surname>Cheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xianglong</forename><surname>Lyu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yang</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Junjie</forename><surname>Ye</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jianye</forename><surname>Hao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Junchi</forename><surname>Yan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">NeurIPS</title>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Deep reinforcement learning from human preferences</title>
+		<author>
+			<persName><forename type="first">Jan</forename><surname>Paul F Christiano</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tom</forename><surname>Leike</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Miljan</forename><surname>Brown</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shane</forename><surname>Martic</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dario</forename><surname>Legg</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Amodei</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">NeurIPS</title>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<monogr>
+		<title level="m" type="main">A deep learning framework for verilog autocompletion towards design and verification automation</title>
+		<author>
+			<persName><forename type="first">Enrique</forename><surname>Dehaerne</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bappaditya</forename><surname>Dey</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sandip</forename><surname>Halder</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Stefan</forename><forename type="middle">De</forename><surname>Gendt</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2304.13840</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Hubrouter: Learning global routing via hub generation and pin-hub connection</title>
+		<author>
+			<persName><forename type="first">Xingbo</forename><surname>Du</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chonghua</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ruizhe</forename><surname>Zhong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Junchi</forename><surname>Yan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">NeurIPS</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<monogr>
+		<title level="m" type="main">The power of large language models for wireless communication system development: A case study on fpga platforms</title>
+		<author>
+			<persName><forename type="first">Yuyang</forename><surname>Du</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chang</forename><surname>Soung</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kexin</forename><surname>Liew</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yulin</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Shao</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2307.07319</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Hybrid actor-critic reinforcement learning in parameterized action space</title>
+		<author>
+			<persName><forename type="first">Rui</forename><surname>Zhou Fan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Weinan</forename><surname>Su</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yong</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Yu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">IJCAI</title>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">Gpt4aigchip: Towards next-generation ai accelerator design automation via large language models</title>
+		<author>
+			<persName><forename type="first">Yonggan</forename><surname>Fu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yongan</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhongzhi</forename><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sixu</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhifan</forename><surname>Ye</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chaojian</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Cheng</forename><surname>Wan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yingyan</forename><surname>Celine</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lin</forename></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ICCAD</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">Boils: Bayesian optimisation for logic synthesis</title>
+		<author>
+			<persName><forename type="first">Antoine</forename><surname>Grosnit</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Cedric</forename><surname>Malherbe</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Rasul</forename><surname>Tutunov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xingchen</forename><surname>Wan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jun</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Haitham</forename><surname>Bou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ammar</forename></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">DATE. IEEE</title>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">A timing engine inspired graph neural network model for pre-routing slack prediction</title>
+		<author>
+			<persName><forename type="first">Zizheng</forename><surname>Guo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mingjie</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jiaqi</forename><surname>Gu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shuhan</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">David</forename><forename type="middle">Z</forename><surname>Pan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yibo</forename><surname>Lin</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">DAC</title>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<monogr>
+		<title level="m" type="main">New interaction paradigm for complex eda software leveraging gpt</title>
+		<author>
+			<persName><forename type="first">Boyu</forename><surname>Han</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xinyu</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yifan</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Junyu</forename><surname>Yan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yidong</forename><surname>Tian</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2307.14740</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">Chateda: A large language model powered autonomous agent for eda</title>
+		<author>
+			<persName><forename type="first">Zhuolun</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Haoyuan</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xinyun</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xufeng</forename><surname>Yao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Su</forename><surname>Zheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Haisheng</forename><surname>Zheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bei</forename><surname>Yu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">MLCAD</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<monogr>
+		<title level="m" type="main">Drills: Deep reinforcement learning for logic synthesis</title>
+		<author>
+			<persName><forename type="first">Abdelrahman</forename><surname>Hosny</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Soheil</forename><surname>Hashemi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mohamed</forename><surname>Shalan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sherief</forename><surname>Reda</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">ASP-DAC</note>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">Survey of hallucination in natural language generation</title>
+		<author>
+			<persName><forename type="first">Ziwei</forename><surname>Ji</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Nayeon</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Rita</forename><surname>Frieske</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tiezheng</forename><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dan</forename><surname>Su</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yan</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Etsuko</forename><surname>Ishii</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ye</forename></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jin</forename><surname>Bang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andrea</forename><surname>Madotto</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pascale</forename><surname>Fung</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">ACM Computing Surveys</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<monogr>
+		<title level="m" type="main">Llm-assisted generation of hardware assertions</title>
+		<author>
+			<persName><forename type="first">Rahul</forename><surname>Kande</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hammond</forename><surname>Pearce</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Benjamin</forename><surname>Tan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Brendan</forename><surname>Dolan-Gavitt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shailja</forename><surname>Thakur</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ramesh</forename><surname>Karri</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jeyavijayan</forename><surname>Rajendran</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2306.14027</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">Maskplace: Fast chip placement via reinforced visual representation learning</title>
+		<author>
+			<persName><forename type="first">Yao</forename><surname>Lai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yao</forename><surname>Mu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ping</forename><surname>Luo</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">NeurIPS</title>
+		<imprint>
+			<biblScope unit="volume">35</biblScope>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">Retrieval-augmented generation for knowledge-intensive nlp tasks</title>
+		<author>
+			<persName><forename type="first">Patrick</forename><surname>Lewis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ethan</forename><surname>Perez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Aleksandra</forename><surname>Piktus</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Fabio</forename><surname>Petroni</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Vladimir</forename><surname>Karpukhin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Naman</forename><surname>Goyal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Heinrich</forename><surname>Küttler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mike</forename><surname>Lewis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wen-Tau</forename><surname>Yih</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tim</forename><surname>Rocktäschel</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">NeurIPS</title>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">Deepgate: Learning neural representations of logic gates</title>
+		<author>
+			<persName><forename type="first">Min</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sadaf</forename><surname>Khan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhengyuan</forename><surname>Shi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Naixing</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Huang</forename><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qiang</forename><surname>Xu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">DAC</title>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<analytic>
+		<title level="a" type="main">Himap: A heuristic and iterative logic synthesis approach</title>
+		<author>
+			<persName><forename type="first">Xing</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lei</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Fan</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mingxuan</forename><surname>Yuan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hongli</forename><surname>Yan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yupeng</forename><surname>Wan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">DAC</title>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<monogr>
+		<title level="m" type="main">Bufformer: A generative ml framework for scalable buffering</title>
+		<author>
+			<persName><forename type="first">Rongjian</forename><surname>Liang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Siddhartha</forename><surname>Nath</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Anand</forename><surname>Rajaram</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jiang</forename><surname>Hu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Haoxing</forename><surname>Ren</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">ASP-DAC</note>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<analytic>
+		<title level="a" type="main">Dreamplace: Deep learning toolkit-enabled gpu acceleration for modern vlsi placement</title>
+		<author>
+			<persName><forename type="first">Yibo</forename><surname>Lin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shounak</forename><surname>Dhar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wuxi</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Haoxing</forename><surname>Ren</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Brucek</forename><surname>Khailany</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">David</forename><forename type="middle">Z</forename><surname>Pan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">DAC</title>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<monogr>
+		<author>
+			<persName><forename type="first">Mingjie</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Teodor-Dumitru</forename><surname>Ene</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Robert</forename><surname>Kirby</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chris</forename><surname>Cheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Nathaniel</forename><surname>Pinckney</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Rongjian</forename><surname>Liang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jonah</forename><surname>Alben</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Himyanshu</forename><surname>Anand</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sanmitra</forename><surname>Banerjee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ismet</forename><surname>Bayraktaroglu</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2311.00176</idno>
+		<title level="m">Chipnemo: Domain-adapted llms for chip design</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<analytic>
+		<title level="a" type="main">Verilogeval: Evaluating large language models for verilog code generation</title>
+		<author>
+			<persName><forename type="first">Mingjie</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Nathaniel</forename><surname>Pinckney</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Brucek</forename><surname>Khailany</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Haoxing</forename><surname>Ren</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ICCAD</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<monogr>
+		<author>
+			<persName><forename type="first">Shang</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wenji</forename><surname>Fang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yao</forename><surname>Lu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qijun</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hongce</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhiyao</forename><surname>Xie</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2312.08617</idno>
+		<title level="m">Rtlcoder: Outperforming gpt-3.5 in design rtl generation with our open-source dataset and lightweight solution</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<monogr>
+		<title level="m" type="main">Rtllm: An open-source benchmark for design rtl generation with large language model</title>
+		<author>
+			<persName><forename type="first">Yao</forename><surname>Lu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shang</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qijun</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhiyao</forename><surname>Xie</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2308.05345</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<analytic>
+		<title level="a" type="main">A clock tree prediction and optimization framework using generative adversarial learning</title>
+		<author>
+			<persName><forename type="first">Yi-Chen</forename><surname>Lu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jeehyun</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Anthony</forename><surname>Agnesina</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kambiz</forename><surname>Samadi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sung</forename><forename type="middle">Kyu</forename><surname>Lim</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">TCAD</title>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<analytic>
+		<title level="a" type="main">Mixture of experts: a literature survey</title>
+		<author>
+			<persName><forename type="first">Saeed</forename><surname>Masoudnia</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Reza</forename><surname>Ebrahimpour</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Artificial Intelligence Review</title>
+		<imprint>
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<monogr>
+		<title level="m" type="main">Unlocking hardware security assurance: The potential of llms</title>
+		<author>
+			<persName><forename type="first">Xingyu</forename><surname>Meng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Amisha</forename><surname>Srivastava</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ayush</forename><surname>Arunachalam</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Avik</forename><surname>Ray</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pedro</forename><forename type="middle">Henrique</forename><surname>Silva</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Rafail</forename><surname>Psiakis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yiorgos</forename><surname>Makris</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kanad</forename><surname>Basu</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2308.11042</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<analytic>
+		<title level="a" type="main">A graph placement methodology for fast chip design</title>
+		<author>
+			<persName><forename type="first">Azalia</forename><surname>Mirhoseini</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Anna</forename><surname>Goldie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mustafa</forename><surname>Yazgan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Joe</forename><forename type="middle">Wenjie</forename><surname>Jiang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ebrahim</forename><surname>Songhori</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shen</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Young-Joon</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Eric</forename><surname>Johnson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Omkar</forename><surname>Pathak</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Azade</forename><surname>Nazi</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nature</title>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<analytic>
+		<title level="a" type="main">Generating secure hardware using chatgpt resistant to cwes</title>
+		<author>
+			<persName><forename type="first">Madhav</forename><surname>Nair</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Rajat</forename><surname>Sadhukhan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Debdeep</forename><surname>Mukhopadhyay</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Cryptology ePrint Archive</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b36">
+	<monogr>
+		<author>
+			<persName><surname>Openai</surname></persName>
+		</author>
+		<ptr target="https://platform.openai.com/docs/guides/vision,2023a.OpenAI" />
+		<title level="m">Gpt-vision</title>
+		<imprint>
+			<date type="published" when="2023">2023b</date>
+		</imprint>
+	</monogr>
+	<note>Gpt-4 technical report</note>
+</biblStruct>
+
+<biblStruct xml:id="b37">
+	<analytic>
+		<title level="a" type="main">Autosva: Democratizing formal verification of rtl module interactions</title>
+		<author>
+			<persName><forename type="first">Marcelo</forename><surname>Orenes-Vera</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Aninda</forename><surname>Manocha</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">David</forename><surname>Wentzlaff</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Margaret</forename><surname>Martonosi</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">DAC</title>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b38">
+	<monogr>
+		<title level="m" type="main">Using llms to facilitate formal verification of rtl</title>
+		<author>
+			<persName><forename type="first">Marcelo</forename><surname>Orenes-Vera</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Margaret</forename><surname>Martonosi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">David</forename><surname>Wentzlaff</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv e-prints</note>
+</biblStruct>
+
+<biblStruct xml:id="b39">
+	<analytic>
+		<title level="a" type="main">Training language models to follow instructions with human feedback</title>
+		<author>
+			<persName><forename type="first">Long</forename><surname>Ouyang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jeffrey</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xu</forename><surname>Jiang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Diogo</forename><surname>Almeida</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Carroll</forename><surname>Wainwright</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pamela</forename><surname>Mishkin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chong</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sandhini</forename><surname>Agarwal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Katarina</forename><surname>Slama</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alex</forename><surname>Ray</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">John</forename><surname>Schulman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jacob</forename><surname>Hilton</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Fraser</forename><surname>Kelton</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Luke</forename><surname>Miller</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Maddie</forename><surname>Simens</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Amanda</forename><surname>Askell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Peter</forename><surname>Welinder</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jan</forename><surname>Paul F Christiano</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ryan</forename><surname>Leike</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Lowe</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">NeurIPS</title>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b40">
+	<monogr>
+		<author>
+			<persName><forename type="first">Sudipta</forename><surname>Paria</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Aritra</forename><surname>Dasgupta</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Swarup</forename><surname>Bhunia</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2308.06932</idno>
+		<title level="m">Divas: An llm-based end-to-end framework for soc security analysis and policy-based protection</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b41">
+	<analytic>
+		<title level="a" type="main">Dave: Deriving automatically verilog from english</title>
+		<author>
+			<persName><forename type="first">Hammond</forename><surname>Pearce</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Benjamin</forename><surname>Tan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ramesh</forename><surname>Karri</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">MLCAD</title>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b42">
+	<monogr>
+		<author>
+			<persName><surname>Primisai</surname></persName>
+		</author>
+		<ptr target="https://primis.ai/" />
+		<title level="m">Rapidgpt: Your ultimate hdl pair-designer</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b43">
+	<analytic>
+		<title level="a" type="main">Learning transferable visual models from natural language supervision</title>
+		<author>
+			<persName><forename type="first">Alec</forename><surname>Radford</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jong</forename><forename type="middle">Wook</forename><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chris</forename><surname>Hallacy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Aditya</forename><surname>Ramesh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Gabriel</forename><surname>Goh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sandhini</forename><surname>Agarwal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Girish</forename><surname>Sastry</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Amanda</forename><surname>Askell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pamela</forename><surname>Mishkin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jack</forename><surname>Clark</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ICML</title>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b44">
+	<analytic>
+		<title level="a" type="main">An empirical evaluation of using large language models for automated unit test generation</title>
+		<author>
+			<persName><forename type="first">Max</forename><surname>Schäfer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sarah</forename><surname>Nadi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Aryaz</forename><surname>Eghbali</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Frank</forename><surname>Tip</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Transactions on Software Engineering</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b45">
+	<monogr>
+		<title level="m" type="main">Deepgate2: Functionality-aware circuit representation learning</title>
+		<author>
+			<persName><forename type="first">Zhengyuan</forename><surname>Shi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hongyang</forename><surname>Pan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sadaf</forename><surname>Khan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Min</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yi</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Junhua</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hui-Ling</forename><surname>Zhen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mingxuan</forename><surname>Yuan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhufei</forename><surname>Chu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qiang</forename><surname>Xu</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2305.16373</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b46">
+	<analytic>
+		<title level="a" type="main">Learning to summarize with human feedback</title>
+		<author>
+			<persName><forename type="first">Nisan</forename><surname>Stiennon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Long</forename><surname>Ouyang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jeffrey</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Daniel</forename><surname>Ziegler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ryan</forename><surname>Lowe</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chelsea</forename><surname>Voss</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alec</forename><surname>Radford</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dario</forename><surname>Amodei</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Paul</forename><forename type="middle">F</forename><surname>Christiano</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">NeurIPS</title>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b47">
+	<monogr>
+		<title level="m" type="main">Graphgpt: Graph instruction tuning for large language models</title>
+		<author>
+			<persName><forename type="first">Jiabin</forename><surname>Tang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yuhao</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wei</forename><surname>Wei</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lei</forename><surname>Shi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lixin</forename><surname>Su</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Suqi</forename><surname>Cheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dawei</forename><surname>Yin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chao</forename><surname>Huang</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2310.13023</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b48">
+	<analytic>
+		<title level="a" type="main">Benchmarking large language models for automated verilog rtl code generation</title>
+		<author>
+			<persName><forename type="first">Shailja</forename><surname>Thakur</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Baleegh</forename><surname>Ahmad</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhenxing</forename><surname>Fan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hammond</forename><surname>Pearce</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Benjamin</forename><surname>Tan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ramesh</forename><surname>Karri</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Brendan</forename><surname>Dolan-Gavitt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Siddharth</forename><surname>Garg</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">DATE</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b49">
+	<monogr>
+		<title level="m" type="main">Verigen: A large language model for verilog code generation</title>
+		<author>
+			<persName><forename type="first">Shailja</forename><surname>Thakur</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Baleegh</forename><surname>Ahmad</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hammond</forename><surname>Pearce</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Benjamin</forename><surname>Tan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Brendan</forename><surname>Dolan-Gavitt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ramesh</forename><surname>Karri</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Siddharth</forename><surname>Garg</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2308.00708</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b50">
+	<monogr>
+		<title level="m" type="main">Autochip: Automating hdl generation using llm feedback</title>
+		<author>
+			<persName><forename type="first">Shailja</forename><surname>Thakur</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jason</forename><surname>Blocklove</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hammond</forename><surname>Pearce</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Benjamin</forename><surname>Tan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Siddharth</forename><surname>Garg</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ramesh</forename><surname>Karri</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2311.04887</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b51">
+	<monogr>
+		<title level="m" type="main">Llama: Open and efficient foundation language models</title>
+		<author>
+			<persName><forename type="first">Hugo</forename><surname>Touvron</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Thibaut</forename><surname>Lavril</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Gautier</forename><surname>Izacard</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xavier</forename><surname>Martinet</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Marie-Anne</forename><surname>Lachaux</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Timothée</forename><surname>Lacroix</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Baptiste</forename><surname>Rozière</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Naman</forename><surname>Goyal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Eric</forename><surname>Hambro</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Faisal</forename><surname>Azhar</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2302.13971</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b52">
+	<monogr>
+		<title level="m" type="main">Rtlfixer: Automatically fixing rtl syntax errors with large language models</title>
+		<author>
+			<persName><forename type="first">Yunda</forename><surname>Tsai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mingjie</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Haoxing</forename><surname>Ren</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2311.16543</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b53">
+	<analytic>
+		<title level="a" type="main">Review of large vision models and visual prompt engineering</title>
+		<author>
+			<persName><forename type="first">Jiaqi</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhengliang</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lin</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zihao</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chong</forename><surname>Ma</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sigang</forename><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Haixing</forename><surname>Dai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qiushi</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yiheng</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Songyao</forename><surname>Zhang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Meta-Radiology</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b54">
+	<analytic>
+		<title level="a" type="main">Large-scale multi-modal pre-trained models: A comprehensive survey</title>
+		<author>
+			<persName><forename type="first">Xiao</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Guangyao</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Guangwu</forename><surname>Qian</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pengcheng</forename><surname>Gao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiao-Yong</forename><surname>Wei</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yaowei</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yonghong</forename><surname>Tian</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wen</forename><surname>Gao</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Machine Intelligence Research</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b55">
+	<analytic>
+		<title level="a" type="main">Functionality matters in netlist representation learning</title>
+		<author>
+			<persName><forename type="first">Ziyi</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chen</forename><surname>Bai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhuolun</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Guangliang</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qiang</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tsung-Yi</forename><surname>Ho</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bei</forename><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yu</forename><surname>Huang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">DAC</title>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b56">
+	<monogr>
+		<title level="m" type="main">Versatile multi-stage graph neural network for circuit representation</title>
+		<author>
+			<persName><forename type="first">Zhihao</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dong</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yingxueff</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhanguang</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Guojie</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jianye</forename><surname>Hao</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+			<publisher>NeurIPS</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b57">
+	<monogr>
+		<title level="m" type="main">React: Synergizing reasoning and acting in language models</title>
+		<author>
+			<persName><forename type="first">Shunyu</forename><surname>Yao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jeffrey</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dian</forename><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Nan</forename><surname>Du</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Izhak</forename><surname>Shafran</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Karthik</forename><surname>Narasimhan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yuan</forename><surname>Cao</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2210.03629</idno>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b58">
+	<analytic>
+		<title level="a" type="main">Easyso: Exploration-enhanced reinforcement learning for logic synthesis sequence optimization and a comprehensive rl environment</title>
+		<author>
+			<persName><forename type="first">Jianyong</forename><surname>Yuan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Peiyu</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Junjie</forename><surname>Ye</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mingxuan</forename><surname>Yuan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jianye</forename><surname>Hao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Junchi</forename><surname>Yan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ICCAD</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b59">
+	<monogr>
+		<author>
+			<persName><forename type="first">Ziwei</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Haoyang</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zeyang</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yijian</forename><surname>Qin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xin</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wenwu</forename><surname>Zhu</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2308.14522</idno>
+		<title level="m">Large graph models: A perspective</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b60">
+	<analytic>
+		<title level="a" type="main">Preroutgnn for timing prediction with order preserving partition: Global circuit pre-training, local delay learning and attentional cell modeling</title>
+		<author>
+			<persName><forename type="first">Ruizhe</forename><surname>Zhong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Junjie</forename><surname>Ye</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhentao</forename><surname>Tang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shixiong</forename><surname>Kai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mingxuan</forename><surname>Yuan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jianye</forename><surname>Hao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Junchi</forename><surname>Yan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">AAAI</title>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

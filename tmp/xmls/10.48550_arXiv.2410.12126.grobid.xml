@@ -1,0 +1,2511 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Parametric Graph Representations in the Era of Foundation Models: A Survey and Position</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability  status="unknown">
+					<licence/>
+				</availability>
+				<date type="published" when="2024-10-16">16 Oct 2024</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Dongqi</forename><surname>Fu</surname></persName>
+							<email>dongqif2@illinois.edu</email>
+							<affiliation key="aff0">
+								<orgName type="institution">University of Illinois Urbana-Champaign</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Liri</forename><surname>Fang</surname></persName>
+							<email>lirif2@illinois.edu</email>
+							<affiliation key="aff0">
+								<orgName type="institution">University of Illinois Urbana-Champaign</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Zihao</forename><surname>Li</surname></persName>
+							<email>zihaoli5@illinois.edu</email>
+							<affiliation key="aff0">
+								<orgName type="institution">University of Illinois Urbana-Champaign</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Hanghang</forename><surname>Tong</surname></persName>
+							<email>htong@illinois.edu</email>
+							<affiliation key="aff0">
+								<orgName type="institution">University of Illinois Urbana-Champaign</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Vetle</forename><forename type="middle">I</forename><surname>Torvik</surname></persName>
+							<email>vtorvik@illinois.edu</email>
+							<affiliation key="aff0">
+								<orgName type="institution">University of Illinois Urbana-Champaign</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Jingrui</forename><surname>He</surname></persName>
+							<email>jingrui@illinois.edu</email>
+							<affiliation key="aff0">
+								<orgName type="institution">University of Illinois Urbana-Champaign</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Parametric Graph Representations in the Era of Foundation Models: A Survey and Position</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date type="published" when="2024-10-16">16 Oct 2024</date>
+						</imprint>
+					</monogr>
+					<idno type="MD5">2D350164D247ABAD7AE7C22ADC76C776</idno>
+					<idno type="arXiv">arXiv:2410.12126v1[cs.AI]</idno>
+					<note type="submission">Preprint. Preliminary work.</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.2-SNAPSHOT" ident="GROBID" when="2025-01-20T06:45+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>A Toy Example of Illustrating Graph Laws in the Real World: Different types of graphs follow some shared properties that can be used to parameterize their structure. The left figure depicts a social network, and the right figure represents flight routes between several major cities after COVID-19, where flights gradually recover to their pre-pandemic state. Both graphs exhibit two key properties: (1) Global Shrinking Law: As the graph evolves, the diameter decreases, indicating a more connected structure. (2) Local Triangle Closure Law: New links are more likely to close triangles. These behaviors are indicative of typical graph dynamics seen in social networks, transport systems, and other domains of graphs. These graph laws have the potential to be quantified and serve as fundamental principles for developing graph foundation models.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">Introduction</head><p>In the era of big data and AI, graphs are popular data structures for modeling the complex relationships between entities. Also, graph-based research (e.g., graph mining and graph representation learning) provides the foundation for many real-world applications, such as recommender system <ref type="bibr" target="#b22">[22,</ref><ref type="bibr">46,</ref><ref type="bibr" target="#b49">49,</ref><ref type="bibr" target="#b51">51]</ref>, social network analysis <ref type="bibr">[23,</ref><ref type="bibr" target="#b35">35]</ref>, information retrieval <ref type="bibr">[32,</ref><ref type="bibr">36,</ref><ref type="bibr" target="#b4">45]</ref>, anomaly detection <ref type="bibr" target="#b16">[17,</ref><ref type="bibr">63,</ref><ref type="bibr">64]</ref>, natural language processing <ref type="bibr" target="#b6">[7,</ref><ref type="bibr">50,</ref><ref type="bibr">65]</ref>, computer vision <ref type="bibr">[8,</ref><ref type="bibr" target="#b27">27]</ref>, AI4Science <ref type="bibr" target="#b14">[15,</ref><ref type="bibr">18,</ref><ref type="bibr">59</ref>], etc. To model those real-world tasks within graphs, graph representations are indispensable middleware that provides the basis for specific and complex task-oriented computations. To be specific, graph representations can be decomposed into three aspects, (1) graph embedding (i.e., vector representation), (2) graph law (i.e., parametric representation), and (3) graph visualization (i.e., visual representation). First of all, graph representations can be in the form of embedding matrices, i.e., the graph topological information and attributes are encoded into matrices, which has been widely discussed and studied in the research community and usually can be referred to as graph representation learning. <ref type="bibr">[20]</ref>. Then, graphs can be also represented by plotting directly for a better human-understandable illustration. For example, one interesting research topic is how to plot the graph topological structures into the 2D space with less structure distortion. More interesting works can be referred to <ref type="bibr" target="#b15">[16]</ref>. Last but not least, graphs can also be represented by a few key parameters such as Erdős-Rényi random graph G(n, p) <ref type="bibr" target="#b11">[12]</ref>, where n stands for the number of nodes in the graph, and p stands for the independent edge connection probability in the graph. As shown in Figure <ref type="figure" target="#fig_0">2</ref>, these three representations can have overlapping to mutually contribute to each other <ref type="bibr" target="#b15">[16]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.1">Motivation of this Paper</head><p>In the modern graph deep learning community, graph embedding (also referred to as graph representation learning) has attracted unprecedented research attention varying from unsupervised (e.g., Node2Vec <ref type="bibr" target="#b18">[19]</ref>) to semi-supervised (e.g., GCN <ref type="bibr">[28]</ref>), and also the novel neural architecture from transformer (e.g., GraphTransformer <ref type="bibr" target="#b12">[13]</ref>). However, the graph law (also referred to as graph parametric representation) has great research potential, yet the corresponding research stays in a not fully exploited stage.</p><p>At the beginning, we would point out "What is Graph Law or Graph Parametric Representation?". In general, it is referred to as finding some key parameters and their relations to describe the given graph, which description is expected to preserve the entire or part of the property of the given graph. According to the previous research <ref type="bibr">[33? , 34]</ref>, the rigorous graph law (or graph parametric representation) relies two fundamental steps. The first step is to decide which parameters we use to describe the graph, e.g., the node degree. The second step is to observe the graph in a statistical manner and then determine the value of parameters, the distribution of parameters, the relation among parameters, etc. For example, the relation between the possibility of a newly-arrived node connecting to an old node (parameter 1) and the degree of that old node (parameter 2) is studied by maximum likelihood estimation (MLE) based on the observed real-world graph data <ref type="bibr">[34]</ref>.</p><p>Then, we discuss why studying the graph parametric representation is important in the graph research community nowadays with the following two concrete examples. • Foundation of Graph Foundation Models. Similar to building the foundation models in other modalities <ref type="bibr" target="#b2">[3,</ref><ref type="bibr" target="#b61">61,</ref><ref type="bibr">62]</ref>, Graph data integration is the base to support various graph AI developments by aggregating different domain graph data for extracting non-trivial, abundant, and useful knowledge. But its realization is very challenging, for example, unlike the independent and identically distributed (IID) data, the distribution of graph data from different domains can be quite different and not easy to be jointly leveraged, e.g., the graph size, the attribute dimension, and the attribute meaning of different domain graphs place a barrier for distilling a consensus intelligence <ref type="bibr" target="#b44">[44]</ref>. Graph law acts like a potential trigger to break the inconsistency of different domains, such that different graphs can be described under the same statistical language. With a suite of powerful graph laws, the cross-domain graph (or subgraph) representation complexities can be reduced to several shareable parameters, akin to Erdős-Rényi graphs but accounting for heterogeneity and temporality, such that the large-scale foundation model training among various graph data can become promising.</p><p>• Bring Graphs to Foundation Models. Whether the input graph statistical property gets well preserved during the representation learning process has become an increasingly interesting research question recently, and some preliminary theoretical studies <ref type="bibr" target="#b48">[48]</ref> will be discussed in the following part of this paper. Further, take the concrete application scenarios as examples, in the climate domain, modeling the geolocation as graphs [31], graph neural networks (GNNs) have been deployed for the weather forecasting and obtain the outperformance. Although understood by machines, a follow-up question gets raised as to whether this GNN-encoded knowledge obeys the physical law or equation of climate, i.e., does the machine understand the climate as humans do? Thus, a possible solution is to find a way to model the graph law in terms of physical rules, try to encode the law along with the neural representation learning process, and see the decision variance to verify the hypothesis. In addition to natural science, graph law also has the potential to bring human activities into the neural representation learning process and boost task performance. For example, one recent study <ref type="bibr" target="#b25">[25]</ref> shows that adding extra local topology information into the prompt can help large language models (LLMs) achieve textual node classification tasks with high accuracy. More discussion on graph laws and LLMs like <ref type="bibr" target="#b20">[21,</ref><ref type="bibr" target="#b53">53]</ref> can be found in Section 6.6.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.2">Organization of this Paper</head><p>Graph law is the study of investigating the statistical properties of graphs. In this survey, we introduce the graph laws studies in the macroscopic view and microscopic view, plus multiple angles like low-order and high-order connections, static and dynamic graphs, as shown in Table <ref type="table" target="#tab_0">1</ref> and Figure <ref type="figure" target="#fig_1">3</ref>.</p><p>• Macroscopic and Microscopic Views. The macroscopic graph laws describe the graph properties in a global view, like how the total degree (or eigenvalues) distribution of the entire graph looks like <ref type="bibr" target="#b33">[33]</ref>; while the microscopic laws try to focus on the individual behavior and investigate their behaviors as part in the entire graph <ref type="bibr">[34]</ref>.</p><p>• Low-Order and High-Order Connections. Most graph laws are based on the node-level connections (i.e., low-order connections), while some graph law investigations are based on the group activities (high-order connections), i.e., motif in <ref type="bibr" target="#b40">[40,</ref><ref type="bibr" target="#b57">57]</ref>, hyperedge in <ref type="bibr" target="#b9">[10,</ref><ref type="bibr">29]</ref>, and simplex in [6, 9].</p><p>• Static and Dynamic Graphs. Compared with static graphs, dynamic graphs allow the graph components like topology structure and node attributes to evolve over time. Correspondingly, some graph laws study how the graph parameters change over time and their temporal relations. Note that, in some graph research, the dynamics are created by the algorithms, like adding virtual nodes to preserve graph representations <ref type="bibr" target="#b0">[1,</ref><ref type="bibr">37]</ref>; this kind of research is beyond the discussion of this paper, and we focus on the graph law with natural time.</p><p>Moreover, in Section 4, we introduce different observation spaces and newly proposed parameters, before the corresponding laws are discovered.</p><p>Furthermore, in Section 5, we survey different real-world applications that would benefit from the guidance of graph laws, such as graph generation, link prediction, and natural language processing.</p><p>Finally, in Section 6, we conclude the survey with current challenges and 6 future directions for graph law research.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">Macroscopic Graph Laws</head><p>In this section, we introduce the graph laws from the macroscope and microscope. In detail, we will introduce what is the intuition of researchers proposing or using graph statistical properties as parameters and how they fit the value of parameters against real-world observations.</p><p>Several classical theories model the growth of graphs, for example, Barabasi-Albert model [4, 5] assumes that the graphs follow the uniform growth pattern in terms of the number of nodes, and the Bass model <ref type="bibr" target="#b38">[38]</ref> and the Susceptible-Infected model [2] follow the Sigmoid growth (more random graph models can be founded in <ref type="bibr" target="#b11">[12]</ref>). However, these pre-defined graph growths have been tested that they could not handle the complex real-world network growth patterns very well <ref type="bibr" target="#b30">[30,</ref><ref type="bibr" target="#b56">56]</ref>. To this end, researchers begin to fit the graph growth on real-world networks directly, to discover graph laws.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.1">Low-Order Macroscopic Laws</head><p>Based on fitting nine real-world temporal graphs from four different domains, the authors in <ref type="bibr" target="#b33">[33]</ref> found two temporal graph laws, called (1) Densification Laws and (2) Shrinking Diameters, respectively. First, the densification law states as follows. e(t) ∝ n(t) α (1) where e(t) denotes the number of edges at time t, n(t) denotes the number of nodes at time t, α ∈ [1, 2] is an exponent representing the density degree. The second law, shrinking diameters, states that the effective diameter is decreasing as the network grows, in most cases. Here, the diameter means the node-pair shortest distance, and the effective diameter of the graph means the minimum distance d such that approximately 90% of all connected pairs are reachable by a path of length at most d. Later, in <ref type="bibr" target="#b56">[56]</ref>, the densification law gets in-depth confirmed on four different real social networks, the research shows that the number of nodes and number of edges both grown exponentially with time, i.e., following the power-law distribution.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.2">High-Order Macroscopic Laws</head><p>Above discoveries are based on the node-level connections (i.e., low-order connections), then several researchers start the investigation based on the group activities, for example, motifs <ref type="bibr" target="#b40">[40]</ref>, simplices [6] and hyperedges <ref type="bibr" target="#b9">[10,</ref><ref type="bibr">29]</ref>. Motif is defined as a subgraph induced by a sequence of selected temporal edges in <ref type="bibr" target="#b40">[40]</ref>, where the authors discovered that different domain networks have significantly different numbers of similar motifs, and different motifs usually occur at different time. Similar laws are also discovered in [6] that the authors study 19 graph data sets from domains like biology, medicine, social networks, and the web, to characterize how high-order structure emerges and differs in different domains. They discovered that the higher-order Egonet features can discriminate the domain of the graph, and the probability of simplicial closure events typically increases with additional edges or tie strength.</p><p>In hypergraphs, each hyperedge could connect an arbitrary number of nodes, rather than two <ref type="bibr" target="#b9">[10]</ref>, where the authors found that real-world static hypergraphs obey the following properties: (1) Giant Connected Components, that there is a connected component comprising a large proportion of nodes, and this proportion is significantly larger than that of the second-largest connected component. (2) Heavy-Tailed Degree Distributions, that high-degree nodes are more likely to form new links. (3) Small Effective Diameters, that most connected pairs can be reached by a small distance (4) High Clustering Coefficients, that the global average of local clustering coefficient is high. (5) Skewed Singularvalue Distributions, that the singular-value distribution is usually heavy-tailed. Later, the evolution of real-word hypergraphs is investigated in <ref type="bibr">[29]</ref>, and the following laws are discovered.</p><p>• Diminishing Overlaps: The overall overlaps of hyperedges decrease over time.</p><p>• Densification: The average degrees increase over time.</p><p>• Shrinking Diameter: The effective diameters decrease over time.</p><p>To be specific, given a hypergraph G(t) = (V (t), E(t)), the density of interactions is stated as follows.</p><formula xml:id="formula_0">DoI(G(t)) = | {{e i , e j } | e i ∩ e j ̸ = ∅ for e i , e j ∈ E(t)} | {{e i , e j }|e i , e j ∈ E(t)} (2)</formula><p>and the densification is stated as follows.</p><formula xml:id="formula_1">|E(t)| ∝ |V (t)| s<label>(3</label></formula><p>) where s &gt; 1 stands for the density term.</p><p>In heterogeneous information networks (where nodes and edges can have multiple types), the power law distribution is also discovered <ref type="bibr">[47]</ref>. For example, for the triplet "author-paper-venue" (i.e., A-P-V), the number of authors is power law distributed w.r.t the number of A-P-V instances composed by an author.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1">Low-Order Microscopic Laws</head><p>In <ref type="bibr">[34]</ref>, the authors view temporal graphs in a three-fold process, i.e., node arrival (determining how many nodes will be added), edge initiation (how many edges will be added), and edge destination (where are each edge will be added). They ignore the deletion of nodes and edges, and they assign variables (models) to parameterize this process.</p><p>• Edge Attachment with Locality (an inserted edge closing an open triangle): It is responsible for the edge destination. • Node Lifetime and Time Gap between Emitting Edges: It is responsible for edge initiation.</p><p>• Node Arrival Rate: It is responsible for the node arrival.</p><p>To model the individual behaviors, there are many candidate models for selection. For example, in edge attachment, the probability of a newcomer u to connect the node v can be proportional to v's current degree or v's current age or the combination. Based on fitting each model to the real-world observation under the supervision of MLE principle, the authors empirically choose the random-random model for edge attachment with locality, i.e., first, let node u choose a neighbor v uniformly and let v uniform randomly choose u's neighbor w to close a triangle. And node lifetime and time gap between emitting edges are defined as follows.</p><formula xml:id="formula_2">a(u) = t d(u) (u) -t 1 (u)<label>(4)</label></formula><p>where a(u) stand for the age of node u, t k (u) is the time when node u links its k th edge, d t (u) denote the degree of node u at time t, and d(u) = d T (u). T is the final timestamp of the data.</p><formula xml:id="formula_3">δ u (d) = t d+1 (u) -t d (u)<label>(5)</label></formula><p>where δ u (d) records the time gap between the current time and the time when that node emits its last edge. Finding the node arrival is a regression process in <ref type="bibr">[34]</ref>, for example, in Flickr graph N (t) = exp(0.25t), and N (t) = 3900t 2 + 76000t -130000 in LinkedIn graph.</p><p>In <ref type="bibr" target="#b41">[41,</ref><ref type="bibr">52]</ref>, the selection of edge attachment gets flourished where the authors propose several variants of edge attachment models for preserving the graph properties. With respect to the triangle closure phenomenon, several in-depth researches follow up. For example, in <ref type="bibr" target="#b24">[24]</ref>, researchers found that (1) the stronger the third tie (the interaction frequency of the closed edge) is, the less likely the first two ties are weakened;</p><p>(2) when the stronger the first two ties are, the more likely they are weakened.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2">High-Order Microscopic Laws</head><p>Hypergraph ego-network [9] is a structure defined to model the high-order interactions involving an individual node. The star ego-network T (u) is defined as follows.</p><formula xml:id="formula_4">T (u) = {s : (u ∈ s)}, ∀s ∈ S (<label>6</label></formula><formula xml:id="formula_5">)</formula><p>where S is the set of all hyperedges (or simplices). Also, in [9], there are other hypergraph egonetworks, like radial ego-network R(u) and contracted ego-network C(u). The relationship between them is as follows.</p><formula xml:id="formula_6">T (u) ⊆ R(u) ⊆ C(u)<label>(7)</label></formula><p>In [9], authors observe that contiguous hyperedges (simplices) in an ego-network tend to have relatively large interactions with each other, which suggests that temporally adjacent high-order interactions have high similarity, i.e., the same nodes tend to appear in neighboring simplices.</p><p>In <ref type="bibr" target="#b57">[57]</ref>, authors try to model the temporal graph growth in terms of motif evolution activities. In brief, this paper investigates how many motifs change and what are the exact motif types in each time interval and fits the arrival rate parameter of each type of motif against the whole observed temporal graph.</p><p>4 Some New Observation Space and Newly Discovered Graph Parameters</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1">New Different Spaces</head><p>In <ref type="bibr" target="#b13">[14]</ref>, the power law is revisited based on the eigendecomposition and singular value decomposition to provide guidance on the presence of power laws in terms of the degree distribution, singular value (of adjacency matrix) distribution, and the eigenvalue (of Laplacian matrix) distribution. The authors <ref type="bibr" target="#b13">[14]</ref> discovered that (1) degree distribution, singular value distribution, and eigenvalue distribution follow power law distribution in many real-world networks they collected;</p><p>(2) and a significant power law distribution of degrees usually indicates power law distributed singular values and power law distributed eigenvalues with a high probability.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2">New Parameters</head><p>Currently, if not all, most graph law research focuses on the traditional graph properties, like the number of nodes, number of edges, degrees, diameters, eigenvalues, and singular values. Here, we provide some recently proposed graph properties, although they have not yet been tested on the scale for fitting the graph law on real-world networks.</p><p>The local closure coefficient <ref type="bibr" target="#b54">[54]</ref> is defined as the fraction of length-2 paths (wedges) emanating from the head node (of the wedge) that induce a triangle, i.e., starting from a seed node of a wedge, how many wedges are closed. According to <ref type="bibr" target="#b54">[54]</ref>, features extracted within the constraints of the local closure coefficient can improve the link prediction accuracy. The local closure efficient of node u is defined as follows.</p><formula xml:id="formula_7">H(u) = 2T (u) W h (u)</formula><p>where W (h) (u) is the number of wedges where u stands for the head of the wedge, and T (u) denotes the number of triangles that contain node u.</p><p>The density of states (or spectral density) <ref type="bibr" target="#b10">[11]</ref> is defined as follows.</p><formula xml:id="formula_8">µ(λ) = 1 N N i=1 δ(λ -λ i ), f (λ)µ(λ) = trace(f (H))<label>(8)</label></formula><p>where H denotes any symmetric graph matrix, λ 1 , . . . , λ N denote the eigenvalues of H in the ascending order, δ stands for the Dirac delta function and f is any analytic test function.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">Law-Guided Research Tasks</head><p>The discovered graph laws describe the graph property, which provides guidance to many downstreaming tasks. Some examples are discussed below.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.1">Graph Generation</head><p>If not all, in most of graph law studies <ref type="bibr" target="#b9">[10,</ref><ref type="bibr">29,</ref><ref type="bibr" target="#b33">33,</ref><ref type="bibr">34,</ref><ref type="bibr" target="#b41">41,</ref><ref type="bibr" target="#b56">56,</ref><ref type="bibr" target="#b57">57]</ref>, after the law (i.e., evolution pattern) is discovered, a follow-up action is to propose the corresponding graph generative model to test whether there is a realizable graph generator could generate graphs while preserving the discovered law in terms of graph properties. Also, graph generation tasks have impactful application scenarios like drug design and protein discovery [59].</p><p>For example, in <ref type="bibr" target="#b33">[33]</ref>, the Forest Fire model is proposed to preserve the macroscopic graph law while larges preserve the discovered evolution pattern.</p><p>• First, node v first chooses an ambassador (i.e., node w) uniformly random, and establish a link to w;</p><p>• Second, node v generates a random value x, and selects x links of node w, where selecting in-links r times less than out-links;</p><p>• Third, node v forms links to w's neighbors; this step executes recursively (neighbors of neighbors) until v dies out.</p><p>This proposed Forest Fire model holds the following graph properties most of time.</p><p>• Heavy-tailed In-degrees: The highly linked nodes can easily get reached, i.e., "rich get richer".</p><p>• Communities: A newcomer copies neighbors of its ambassador.</p><p>• Heavy-tailed Out-degrees: The recursive nature produces large out-degree.</p><p>• Densification Law: A newcomer will have a lot of links near the community of its ambassador.</p><p>• Shrinking Diameter: It may not always hold.</p><p>In <ref type="bibr">[34]</ref>, authors combine the microscopic edge destination model, edge initiation model, and node arrival rate together, to model the real-world temporal network's growth. The parameters of these three models are fitted against the partial observation. i.e., G T</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>2</head><p>, which is the half of the entire evolving graph. Then they three produce the residual part of G ′ T . Finally, the generated G ′ T is compared with the ground truth G T , to see if the growth pattern is fully or near fully captured by these microscopic models. The procedures are stated as follows.</p><p>• First, nodes arrive using the node arrival function obtained from G T 2 ;</p><p>• Second, node u arrives and samples its lifetime a from the age distribution of G T 2 ;</p><p>• Third, node u adds the first edge to node v with probability proportional to node v's degree;</p><p>• Fourth, node u with degree d samples a time gap δ from the distribution of time gap in G T 2 ;</p><p>• When a node wakes up, if its lifetime has not expired yet, it creates a two-hop edge using the "random-random" triangle closing model;</p><p>• If a node's lifetime has expired, then it stops adding edges; otherwise, it repeats from Step 4.</p><p>The generated graph G ′ T is tested based on the comparison with the ground truth G T , in terms of degree distribution, clustering coefficient, and diameter distribution. Taking the Flickr graph for example, the generated graph is very similar to the ground truth with aforementioned metrics <ref type="bibr">[34]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.2">Link Prediction</head><p>To learn node representation vectors for predicting links between node pairs and contributing latent applications like recommender systems, CAW-N <ref type="bibr" target="#b48">[48]</ref> is proposed by inserting causal anonymous walks (CAWs) into the representation learning process. The CAW is a sequence of time -aware adjacent nodes, the authors claim that the extracted CAW sequence obeys the triadic closure law. To be specific, the temporal opening and closed triangles can be preserved in the extracted CAW sequence W . Further, to realize the inductive link prediction, CAW-N replaces the identification of each node in W with the relative position information, such that the CAW sequence W is transferred into anonymous Ŵ . Then, the entire Ŵ is inserted into an RNN-like model and gets the embedding vector of each node, the loss function states as follows.</p><formula xml:id="formula_9">enc( Ŵ ) = RNN({f 1 (I CAW (w i )) ⊕ f 2 (t i-1 -t i )} i=0,1,...,| Ŵ | )<label>(9)</label></formula><p>where I CAW (w i ) is the anonymous identification of node i in Ŵ , f 1 is the node embedding function realized by a multi-layer perceptron, f 2 is the time kernel function for representing a discrete time by a vector, and ⊗ denotes the concatenation operation. The training loss comes from predicting negative (disconnected) node pairs and positive (connected) node pairs. Also, there are some related link prediction models based on the guidance of static graph laws during the representation learning process, for example, SEAL <ref type="bibr" target="#b58">[58]</ref> and HHNE <ref type="bibr">[47]</ref>.</p><p>In the SEAL framework <ref type="bibr" target="#b58">[58]</ref>, for each target link, SEAL extracts a local enclosing subgraph around it, and uses a GNN to learn general graph structure features for link prediction. The corresponding graph parameters include but are not limited to</p><p>• Common Neighbors: Number of common neighbors of two nodes.</p><p>• Jaccard: Jaccard similarity on the set of neighbors of two nodes.</p><p>• Preferential Attachment: The product of the cardinal of the sets of neighbors of two nodes.</p><p>• Katz Index: The summarization over the collection of paths of two nodes.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.3">Natural Language Processing</head><p>To obtain the semantic representation vector of each word in the corpus, GloVe <ref type="bibr">[42]</ref> is proposed, which has been considered as one of the most popular word embedding models. GloVe utilizes the power law distribution constraint during the representation learning process. X ij denotes the number of times that word j occurs in the context of word i, and it follows</p><formula xml:id="formula_10">X ij = k (r ij ) α<label>(10)</label></formula><p>where r ij denotes the frequency rank of the word pair i and j in the whole corpus, and k and α are constant hyperparameters. Then the loss function of GloVe is stated as follows</p><formula xml:id="formula_11">J = V i,j f (X ij )(w ⊤ i w j + b i + b j -logX ij ) 2<label>(11)</label></formula><p>where w is the word vector, and b is the bias vector.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6">Future Directions</head><p>In this section, we would like to list several interesting research directions of graph parametric representation in modern graph research.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.1">Graph Laws on Temporal Graphs</head><p>Discovering accurate temporal graph laws from real-world networks heavily relies on the number of networks and the size of networks (e.g., number of nodes, number of edges, and time duration). However, some of the temporal graph law studies mentioned above usually consider the number of graphs ranging from 10 to 20, when they discover the evolution pattern. The existence of timedependent structure and feature information increases the difficulty of collecting real-world temporal graph data. To obtain robust and accurate (temporal) graph laws, we may need a considerably large amount of (temporal) network data available. Luckily, we have seen some pioneering work like TGB <ref type="bibr" target="#b26">[26]</ref> and TUDataset [39].</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.2">Graph Laws on Heterogeneous Networks</head><p>Though many graph laws have been proposed and verified on homogeneous graphs, real-world networks are usually heterogeneous [43] and contain a large number of interacting, multi-typed components. While the existing work [47] only studied 2 datasets to propose and verify the heterogeneous graph power law, the potential exists for a transition in graph laws from homogeneous networks to heterogeneous networks, suggesting the presence of additional parameters contributing to the comprehensive information within heterogeneous networks. For example, in an academic network, the paper citation subgraph and the author collaboration subgraph may have their own subgraph laws which affect other subgraphs' laws. Furthermore, Knowledge graphs, as a special group of heterogeneous networks, have not yet attracted much attention from the research community to study their laws.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.3">Transferability of Graph Laws</head><p>As we can see in the front part of the paper, many nascent graph laws are described verbally without the exact mathematical expression, which hinders the transfer from the graph law to the numerical constraints for the representation learning process. One latent reason for this phenomenon is that selecting appropriate models and parameters and fitting the exact values of parameters on large evolving graphs are very computationally demanding.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.4">Taxonomy of Graph Laws</head><p>After we discovered many graph laws, is there any taxonomy or hierarchy of those? For example, graph law A stands in the superclass of graph law B, and when we preserve graph law A during the representation, we actually have already preserved graph law B. For example, there is a hierarchy of different computer vision tasks, recently discovered <ref type="bibr" target="#b55">[55]</ref>. And corresponding research on graph law development seems like a promising direction.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.5">Domain-Specific Graph Laws</head><p>Since graphs serve as general data representations with extreme diversity, it is challenging to find universal graph laws that fit all graph domains because each domain may be internally different from another <ref type="bibr" target="#b60">[60]</ref>. In fact, in many cases, we have prior knowledge about the domain of a graph, which can be a social network, a protein network, or a transportation network. Thus, it is possible to study the domain-specific graph laws that work well on only a portion of graphs and then apply the graph laws only on those graphs.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.6">Graph Laws with LLMs</head><p>In the background of large language models (LLMs) developments, an interesting question attracts much research interest nowadays, i.e., can LLMs replace GNNs as the backbone model for graphs?</p><p>To answer this question, many recent works show the great efforts <ref type="bibr" target="#b20">[21,</ref><ref type="bibr" target="#b25">25,</ref><ref type="bibr" target="#b53">53]</ref>, where the key point is how to represent the structural information as the input for LLMs.</p><p>For example, Instruct-GLM <ref type="bibr" target="#b53">[53]</ref> follows the manner of instruction tuning and makes the template T of a 2-hop connection for a central node v as follows.</p><p>T (v, A) = {v} is connected with {|v 2 | v2∈A v 2 } within two hops. ( <ref type="formula">12</ref>) where A v k represents the list of node v's k-hop neighbors. As discussed above, the topological information (e.g., 1-hop or 2-hop connections) can serve as external modality information to contribute to (e.g., through prompting) the reasoning ability of large language models (LLMs) <ref type="bibr" target="#b25">[25]</ref> and achieve state-of-the-art on low-order tasks like node classification and link prediction.</p><p>Therefore, a natural question can be asked, i.e., instead of inputting local topological information to LLMs, how can we bring global topological information for LLMs to understand and make inferences for high-order tasks like graph classification, graph matching, and graph alignment? To the best of our knowledge, corresponding research still remains nascent but has great potential. Finding a proper graph parametric representation in a macroscopic way may be a viable solution for LLMs to comprehend graph-level information.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="7">Conclusion</head><p>Within the survey, we first review the concepts and developing progress of graph parametric representations (i.e., graph laws) from different perspectives like microscope and microscope, low-order and high-order connections, and static and temporal graphs. We then discuss various real-world application tasks that can benefit the study of graph parametric representations. Finally, we envision the latent challenges and opportunities of graph parametric representations in modern graph research with several interesting and possible future directions.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 2 :</head><label>2</label><figDesc>Figure 2: Position of Graph Law in Graph Representations.</figDesc><graphic coords="2,147.60,155.63,316.81,146.09" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 3 :</head><label>3</label><figDesc>Figure 3: Organization of Graph Law Introduction.</figDesc><graphic coords="3,147.60,72.00,316.80,72.87" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0"><head></head><label></label><figDesc></figDesc><graphic coords="1,147.60,247.51,316.78,166.09" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head>Table 1 :</head><label>1</label><figDesc>A summary of parameteric representations of graphs. Some laws have multiple aspects and are indexed by numbers in parentheses.</figDesc><table><row><cell>Input</cell><cell>Law</cell><cell>Parameter</cell><cell cols="3">Scope Order Temporality Description</cell></row><row><cell></cell><cell>Densification Law [33]</cell><cell>Density degree α</cell><cell>Macro Low</cell><cell>Dynamic</cell><cell>e(t) ∝ n(t) α , α ∈ [1, 2], e(t) is # edges at t</cell></row><row><cell></cell><cell>Shrinking Law [33]</cell><cell>Effective diameter d</cell><cell>Macro Low</cell><cell>Dynamic</cell><cell>dt+1 &lt; dt, d decreases as network grows</cell></row><row><cell></cell><cell>Motif Differing Law(1) [40]</cell><cell>Numbers of similar motifs n</cell><cell>Macro High</cell><cell>Dynamic</cell><cell>n1 ̸ = n2 for different domains</cell></row><row><cell></cell><cell>Motif Differing Law(2) [40]</cell><cell>Motif occurring timestamp t</cell><cell>Macro High</cell><cell>Dynamic</cell><cell>t1 ̸ = t2 for different motifs</cell></row><row><cell></cell><cell>Egonet Differing Law [6]</cell><cell>Features of Egonets X</cell><cell>Macro High</cell><cell>Static</cell><cell>X1 ̸ = X2 for different domains</cell></row><row><cell></cell><cell>Simplicial Closure Law [6]</cell><cell>Simplicial closure probability p</cell><cell>Macro High</cell><cell>Static</cell><cell>p increases with additional edges or tie strength</cell></row><row><cell></cell><cell>Spectral Power Law(1) [14]</cell><cell>Degree, SVD, eigen distributions</cell><cell>Macro High</cell><cell>Static</cell><cell>These distributions usually follow power-law</cell></row><row><cell></cell><cell>Spectral Power Law(2) [14]</cell><cell>Degree, SVD, eigen distributions</cell><cell>Macro High</cell><cell>Static</cell><cell>If one follow power-law, usually others follow</cell></row><row><cell>Graphs</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell></cell><cell cols="2">Edge Attachment Law(1) [34] Node degree d, edge create pe(d)</cell><cell>Micro Low</cell><cell>Dynamic</cell><cell>pe(d) ∝ d for node with degree d</cell></row><row><cell></cell><cell cols="2">Edge Attachment Law(2) [34] Node age a(u), edge create pe(d)</cell><cell>Micro Low</cell><cell>Dynamic</cell><cell>pe(d) seems to be non-decreasing with a(u)</cell></row><row><cell></cell><cell cols="2">Triangle Closure Law(1) [24] Triangular connections e1, e2, e3</cell><cell>Micro Low</cell><cell>Dynamic</cell><cell>Strong e3 ⇒ unlikely e1/e2 will be weakened</cell></row><row><cell></cell><cell cols="2">Triangle Closure Law(2) [24] Triangular connections e1, e2, e3</cell><cell>Micro Low</cell><cell>Dynamic</cell><cell>Strong e1/e2 ⇒ unlikely they will be weakened</cell></row><row><cell></cell><cell>Local Closure Law [54]</cell><cell>Local closure coefficient H(u)</cell><cell>Micro Low</cell><cell>Static</cell><cell>Please refer to Section 4 for details</cell></row><row><cell></cell><cell>Spectral Density Law [11]</cell><cell>Density of states µ(λ)</cell><cell>Macro High</cell><cell>Static</cell><cell>Please refer to Section 4 for details</cell></row><row><cell></cell><cell>Motif Activity Law(1) [57]</cell><cell>Motif type</cell><cell>Micro High</cell><cell>Dynamic</cell><cell>Motifs do not transit from one type to another</cell></row><row><cell></cell><cell>Motif Activity Law(2) [57]</cell><cell>Motif re-appear rate</cell><cell>Micro High</cell><cell>Dynamic</cell><cell>Motifs re-appear with configured rates</cell></row><row><cell></cell><cell>Edge Interacting Law [9]</cell><cell>Edge interacting rate</cell><cell>Micro High</cell><cell>Dynamic</cell><cell>Temporally adjacent interactions highly similar</cell></row><row><cell></cell><cell>Densification Law [47]</cell><cell>Density degree α, # meta-path</cell><cell>Macro Low</cell><cell>Dynamic</cell><cell>e(t) ∝ n(t)</cell></row><row><cell>Heterographs</cell><cell></cell><cell></cell><cell></cell><cell></cell></row></table><note><p><p><p><p>Hypergraphs</p>Degree Distribution Law</p><ref type="bibr" target="#b9">[10]</ref> </p>Node degree, edge link probability Macro High Dynamic High-degree nodes are likely to form new links SVD Distribution Law [10] Singular value distribution Macro High Static Singular value distribution usually heavy-tailed Diminishing Overlaps [29] density of interactions DoI(H(t)) Macro High Dynamic Overall hyperedge overlaps decrease over time Densification Law [29] Density degree α Macro High Dynamic e(t) ∝ n(t) α , α ≥ 1, e(t) is # hyperedges at t Shrinking Law [29] Hypergraph effective diameter d Macro High Dynamic dt+1 &lt; dt, d decreases as network grows α , α ≥ 1 for some meta-path Non-densification Law [47] Density degree α, # meta-path Macro Low Dynamic Maybe, for some meta-path, e(t) ̸ ∝ n(t) α</p></note></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="3" xml:id="foot_0"><p>Microscopic Graph LawsIn contrast to representing the whole distribution of the entire graph, many researchers try to model individual behavior and investigate how they interact with each other to see the evolution pattern microscopically.</p></note>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Reconstructing approximate tree metrics</title>
+		<author>
+			<persName><forename type="first">Ittai</forename><surname>Abraham</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mahesh</forename><surname>Balakrishnan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Fabian</forename><surname>Kuhn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dahlia</forename><surname>Malkhi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kunal</forename><surname>Venugopalan Ramasubramanian</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Talwar</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the twenty-sixth annual ACM symposium on Principles of distributed computing</title>
+		<meeting>the twenty-sixth annual ACM symposium on Principles of distributed computing</meeting>
+		<imprint>
+			<date type="published" when="2007">2007</date>
+			<biblScope unit="page" from="43" to="52" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<author>
+			<persName><forename type="first">M</forename><surname>Roy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Robert</forename><forename type="middle">M</forename><surname>Anderson</surname></persName>
+		</author>
+		<author>
+			<persName><surname>May</surname></persName>
+		</author>
+		<title level="m">Infectious diseases of humans: dynamics and control</title>
+		<imprint>
+			<publisher>Oxford university press</publisher>
+			<date type="published" when="1992">1992</date>
+			<biblScope unit="page">4</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<title level="m" type="main">Foundational models defining a new era in vision: A survey and outlook</title>
+		<author>
+			<persName><forename type="first">Muhammad</forename><surname>Awais</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Muzammal</forename><surname>Naseer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Salman</forename><forename type="middle">H</forename><surname>Khan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Rao</forename><surname>Muhammad Anwer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hisham</forename><surname>Cholakkal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mubarak</forename><surname>Shah</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ming-Hsuan</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Fahad</forename><surname>Shahbaz Khan</surname></persName>
+		</author>
+		<idno type="DOI">10.48550/arXiv.2307.13721</idno>
+		<ptr target="https://doi.org/10.48550/arXiv.2307.13721" />
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Emergence of scaling in random networks</title>
+		<author>
+			<persName><forename type="first">Albert-László</forename><surname>Barabási</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Réka</forename><surname>Albert</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">science</title>
+		<imprint>
+			<biblScope unit="volume">286</biblScope>
+			<biblScope unit="issue">5439</biblScope>
+			<biblScope unit="page" from="509" to="512" />
+			<date type="published" when="1999">1999</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Evolution of the social network of scientific collaborations</title>
+		<author>
+			<persName><forename type="first">Albert-Laszlo</forename><surname>Barabâsi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hawoong</forename><surname>Jeong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zoltan</forename><surname>Néda</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Erzsebet</forename><surname>Ravasz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andras</forename><surname>Schubert</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tamas</forename><surname>Vicsek</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Physica A: Statistical mechanics and its applications</title>
+		<imprint>
+			<biblScope unit="volume">311</biblScope>
+			<biblScope unit="issue">3-4</biblScope>
+			<biblScope unit="page" from="590" to="614" />
+			<date type="published" when="2002">2002</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Simplicial closure and higher-order link prediction</title>
+		<author>
+			<persName><forename type="first">Austin</forename><forename type="middle">R</forename><surname>Benson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Rediet</forename><surname>Abebe</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Michael</forename><forename type="middle">T</forename><surname>Schaub</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ali</forename><surname>Jadbabaie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jon</forename><forename type="middle">M</forename><surname>Kleinberg</surname></persName>
+		</author>
+		<idno type="DOI">10.1073/pnas.1800683115</idno>
+		<ptr target="https://doi.org/10.1073/pnas.1800683115.3,4" />
+	</analytic>
+	<monogr>
+		<title level="j">Proc. Natl. Acad. Sci. USA</title>
+		<imprint>
+			<biblScope unit="volume">115</biblScope>
+			<biblScope unit="issue">48</biblScope>
+			<biblScope unit="page" from="11221" to="E11230" />
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Graph of thoughts: Solving elaborate problems with large language models</title>
+		<author>
+			<persName><forename type="first">Maciej</forename><surname>Besta</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Nils</forename><surname>Blach</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ales</forename><surname>Kubicek</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Robert</forename><surname>Gerstenberger</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Michal</forename><surname>Podstawski</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lukas</forename><surname>Gianinazzi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Joanna</forename><surname>Gajda</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tomasz</forename><surname>Lehmann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hubert</forename><surname>Niewiadomski</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Piotr</forename><surname>Nyczyk</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Torsten</forename><surname>Hoefler</surname></persName>
+		</author>
+		<idno type="DOI">10.1609/aaai.v38i16.29720</idno>
+		<ptr target="https://doi.org/10.1609/aaai.v38i16.29720" />
+	</analytic>
+	<monogr>
+		<title level="m">Thirty-Eighth AAAI Conference on Artificial Intelligence, AAAI 2024, Thirty-Sixth Conference on Innovative Applications of Artificial Intelligence, IAAI 2024, Fourteenth Symposium on Educational Advances in Artificial Intelligence, EAAI 2014</title>
+		<editor>
+			<persName><forename type="first">J</forename><surname>Michael</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Jennifer</forename><forename type="middle">G</forename><surname>Wooldridge</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Sriraam</forename><surname>Dy</surname></persName>
+		</editor>
+		<editor>
+			<persName><surname>Natarajan</surname></persName>
+		</editor>
+		<meeting><address><addrLine>Vancouver, Canada</addrLine></address></meeting>
+		<imprint>
+			<publisher>AAAI Press</publisher>
+			<date type="published" when="2024">February 20-27, 2024. 2024</date>
+			<biblScope unit="page" from="17682" to="17690" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<monogr>
+		<title level="m" type="main">A survey on graph neural networks and graph transformers in computer vision: A task-oriented perspective</title>
+		<author>
+			<persName><forename type="first">Chaoqi</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yushuang</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qiyuan</forename><surname>Dai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hong-Yu</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mutian</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sibei</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiaoguang</forename><surname>Han</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yizhou</forename><surname>Yu</surname></persName>
+		</author>
+		<idno type="DOI">10.48550/arXiv.2209.13232</idno>
+		<ptr target="https://doi.org/10.48550/arXiv.2209.13232" />
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<monogr>
+		<title level="m" type="main">Hypergraph ego-networks and their temporal evolution</title>
+		<author>
+			<persName><forename type="first">Cazamere</forename><surname>Comrie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jon</forename><surname>Kleinberg</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2112.03498</idno>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="page">6</biblScope>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Structural patterns and generative models of real-world hypergraphs</title>
+		<author>
+			<persName><forename type="first">Manh</forename><surname>Tuan Do</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Se-Eun</forename><surname>Yoon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bryan</forename><surname>Hooi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kijung</forename><surname>Shin</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3394486.3403060</idno>
+		<ptr target="https://doi.org/10.1145/3394486.3403060.3" />
+	</analytic>
+	<monogr>
+		<title level="m">KDD 2020</title>
+		<editor>
+			<persName><forename type="first">Rajesh</forename><surname>Gupta</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Yan</forename><surname>Liu</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Jiliang</forename><surname>Tang</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">B</forename><forename type="middle">Aditya</forename><surname>Prakash</surname></persName>
+		</editor>
+		<imprint>
+			<publisher>ACM</publisher>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="page" from="176" to="186" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Network density of states</title>
+		<author>
+			<persName><forename type="first">Kun</forename><surname>Dong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Austin</forename><forename type="middle">R</forename><surname>Benson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">David</forename><surname>Bindel</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3292500.3330891</idno>
+		<ptr target="https://doi.org/10.1145/3292500.3330891.4,7" />
+	</analytic>
+	<monogr>
+		<title level="m">KDD 2019</title>
+		<editor>
+			<persName><forename type="first">Ankur</forename><surname>Teredesai</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Vipin</forename><surname>Kumar</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Ying</forename><surname>Li</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Rómer</forename><surname>Rosales</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Evimaria</forename><surname>Terzi</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">George</forename><surname>Karypis</surname></persName>
+		</editor>
+		<meeting><address><addrLine>Anchorage, AK, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>ACM</publisher>
+			<date type="published" when="2019">August 4-8, 2019. 2019</date>
+			<biblScope unit="page" from="1152" to="1161" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Random graph modeling: A survey of the concepts</title>
+		<author>
+			<persName><forename type="first">Mikhail</forename><surname>Drobyshevskiy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Denis</forename><surname>Turdakov</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3369782</idno>
+		<ptr target="https://doi.org/10.1145/3369782.2,4" />
+	</analytic>
+	<monogr>
+		<title level="j">ACM Comput. Surv</title>
+		<imprint>
+			<biblScope unit="volume">52</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page">36</biblScope>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<monogr>
+		<title level="m" type="main">A generalization of transformer networks to graphs</title>
+		<author>
+			<persName><forename type="first">Vijay</forename><surname>Prakash</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dwivedi</forename></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xavier</forename><surname>Bresson</surname></persName>
+		</author>
+		<idno>CoRR, abs/2012.09699</idno>
+		<ptr target="https://arxiv.org/abs/2012.09699.2" />
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">Revisiting power-law distributions in spectra of real world networks</title>
+		<author>
+			<persName><forename type="first">Nicole</forename><surname>Eikmeier</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">David</forename><forename type="middle">F</forename><surname>Gleich</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3097983.3098128</idno>
+		<ptr target="https://doi.org/10.1145/3097983.3098128.4" />
+	</analytic>
+	<monogr>
+		<title level="m">KDD 2017</title>
+		<imprint>
+			<publisher>ACM</publisher>
+			<date type="published" when="2017">2017</date>
+			<biblScope unit="page" from="817" to="826" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">DPPIN: A biological repository of dynamic protein-protein interaction network data</title>
+		<author>
+			<persName><forename type="first">Dongqi</forename><surname>Fu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jingrui</forename><surname>He</surname></persName>
+		</author>
+		<idno type="DOI">10.1109/BigData55660.2022.10020904</idno>
+		<ptr target="https://doi.org/10.1109/BigData55660.2022.10020904.2" />
+	</analytic>
+	<monogr>
+		<title level="m">IEEE International Conference on Big Data, Big Data 2022</title>
+		<editor>
+			<persName><forename type="first">Shusaku</forename><surname>Tsumoto</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Yukio</forename><surname>Ohsawa</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Lei</forename><surname>Chen</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Dirk</forename><surname>Van Den</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Xiaohua</forename><surname>Poel</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Yoichi</forename><surname>Hu</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Takuya</forename><surname>Motomura</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Lingfei</forename><surname>Takagi</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Ying</forename><surname>Wu</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Akihiro</forename><surname>Xie</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Vijay</forename><surname>Abe</surname></persName>
+		</editor>
+		<editor>
+			<persName><surname>Raghavan</surname></persName>
+		</editor>
+		<meeting><address><addrLine>Osaka, Japan</addrLine></address></meeting>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2022">December 17-20, 2022. 2022</date>
+			<biblScope unit="page" from="5269" to="5277" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">Natural and artificial dynamics in graphs: Concept, progress, and future</title>
+		<author>
+			<persName><forename type="first">Dongqi</forename><surname>Fu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jingrui</forename><surname>He</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Frontiers in Big Data</title>
+		<imprint>
+			<biblScope unit="volume">5</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">DISCO: comprehensive and explainable disinformation detection</title>
+		<author>
+			<persName><forename type="first">Dongqi</forename><surname>Fu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yikun</forename><surname>Ban</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hanghang</forename><surname>Tong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ross</forename><surname>Maciejewski</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jingrui</forename><surname>He</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3511808.3557202</idno>
+		<ptr target="https://doi.org/10.1145/3511808.3557202" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 31st ACM International Conference on Information &amp; Knowledge Management</title>
+		<editor>
+			<persName><forename type="first">Mohammad</forename><surname>Al</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Hasan</forename></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Li</forename><surname>Xiong</surname></persName>
+		</editor>
+		<meeting>the 31st ACM International Conference on Information &amp; Knowledge Management<address><addrLine>Atlanta, GA, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>ACM</publisher>
+			<date type="published" when="2022">October 17-21, 2022. 2022</date>
+			<biblScope unit="page" from="4848" to="4852" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<monogr>
+		<title level="m" type="main">Generating fine-grained causality in climate time series data for forecasting and anomaly detection</title>
+		<author>
+			<persName><forename type="first">Dongqi</forename><surname>Fu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yada</forename><surname>Zhu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hanghang</forename><surname>Tong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kommy</forename><surname>Weldemariam</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Onkar</forename><surname>Bhardwaj</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jingrui</forename><surname>He</surname></persName>
+		</author>
+		<idno type="DOI">10.48550/arXiv.2408.04254</idno>
+		<ptr target="https://doi.org/10.48550/arXiv.2408.04254.2" />
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">node2vec: Scalable feature learning for networks</title>
+		<author>
+			<persName><forename type="first">Aditya</forename><surname>Grover</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jure</forename><surname>Leskovec</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/2939672.2939754</idno>
+		<ptr target="https://doi.org/10.1145/2939672.2939754" />
+	</analytic>
+	<monogr>
+		<title level="m">KDD 2016</title>
+		<editor>
+			<persName><forename type="first">Balaji</forename><surname>Krishnapuram</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Mohak</forename><surname>Shah</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Alexander</forename><forename type="middle">J</forename><surname>Smola</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">C</forename><surname>Charu</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Dou</forename><surname>Aggarwal</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Rajeev</forename><surname>Shen</surname></persName>
+		</editor>
+		<editor>
+			<persName><surname>Rastogi</surname></persName>
+		</editor>
+		<imprint>
+			<publisher>ACM</publisher>
+			<date type="published" when="2016">2016</date>
+			<biblScope unit="page" from="855" to="864" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<monogr>
+		<title level="m" type="main">Graph representation learning</title>
+		<author>
+			<persName><surname>William L Hamilton</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+			<publisher>Morgan &amp; Claypool Publishers</publisher>
+			<biblScope unit="volume">2</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">Harnessing explanations: Llm-to-lm interpreter for enhanced text-attributed graph representation learning</title>
+		<author>
+			<persName><forename type="first">Xiaoxin</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xavier</forename><surname>Bresson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Thomas</forename><surname>Laurent</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Adam</forename><surname>Perold</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yann</forename><surname>Lecun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bryan</forename><surname>Hooi</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">The Twelfth International Conference on Learning Representations, ICLR 2024</title>
+		<meeting><address><addrLine>Vienna, Austria</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2024">May 7-11, 2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<monogr>
+		<title/>
+		<author>
+			<persName><surname>Openreview</surname></persName>
+		</author>
+		<ptr target="https://openreview.net/forum?id=RXFVcynVe1.3" />
+		<imprint>
+			<date type="published" when="2024">2024. , 10</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">Co-clustering for federated recommender system</title>
+		<author>
+			<persName><forename type="first">Xinrui</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shuo</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jacky</forename><surname>Keung</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jingrui</forename><surname>He</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3589334.3645626</idno>
+		<ptr target="https://doi.org/10.1145/3589334.3645626" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the ACM on Web Conference 2024</title>
+		<editor>
+			<persName><forename type="first">Tat-Seng</forename><surname>Chua</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Chong-Wah</forename><surname>Ngo</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Ravi</forename><surname>Kumar</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Hady</forename><forename type="middle">W</forename><surname>Lauw</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Roy Ka-Wei</forename><surname>Lee</surname></persName>
+		</editor>
+		<meeting>the ACM on Web Conference 2024<address><addrLine>WWW; Singapore</addrLine></address></meeting>
+		<imprint>
+			<publisher>ACM</publisher>
+			<date type="published" when="2024-05-13">2024. May 13-17, 2024. 2024</date>
+			<biblScope unit="page" from="3821" to="3832" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">Genius: Subteam replacement with clusteringbased graph neural networks</title>
+		<author>
+			<persName><forename type="first">Chuxuan</forename><surname>Hu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qinghai</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hanghang</forename><surname>Tong</surname></persName>
+		</author>
+		<idno type="DOI">10.1137/1.9781611978032.2</idno>
+		<ptr target="https://doi.org/10.1137/1.9781611978032.2.2" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2024 SIAM International Conference on Data Mining, SDM 2024</title>
+		<editor>
+			<persName><forename type="first">Shashi</forename><surname>Shekhar</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Vagelis</forename><surname>Papalexakis</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Jing</forename><surname>Gao</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Zhe</forename><surname>Jiang</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Matteo</forename><surname>Riondato</surname></persName>
+		</editor>
+		<meeting>the 2024 SIAM International Conference on Data Mining, SDM 2024<address><addrLine>Houston, TX, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>SIAM</publisher>
+			<date type="published" when="2024">April 18-20, 2024. 2024</date>
+			<biblScope unit="page" from="10" to="18" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<analytic>
+		<title level="a" type="main">Will triadic closure strengthen ties in social networks?</title>
+		<author>
+			<persName><forename type="first">Hong</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yuxiao</forename><surname>Dong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jie</forename><surname>Tang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hongxia</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Nitesh</forename><forename type="middle">V</forename><surname>Chawla</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiaoming</forename><surname>Fu</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3154399</idno>
+		<ptr target="https://doi.org/10.1145/3154399.4,6" />
+	</analytic>
+	<monogr>
+		<title level="j">ACM Trans. Knowl. Discov. Data</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="1" to="30" />
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<monogr>
+		<title level="m" type="main">Can llms effectively leverage graph structural information: When and why</title>
+		<author>
+			<persName><forename type="first">Jin</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xingjian</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qiaozhu</forename><surname>Mei</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jiaqi</forename><surname>Ma</surname></persName>
+		</author>
+		<idno type="DOI">10.48550/arXiv.2309.16595</idno>
+		<ptr target="https://doi.org/10.48550/arXiv.2309.16595.3,10" />
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<monogr>
+		<title level="m" type="main">Temporal graph benchmark for machine learning on temporal graphs</title>
+		<author>
+			<persName><forename type="first">Shenyang</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Farimah</forename><surname>Poursafaei</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jacob</forename><surname>Danovitch</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Matthias</forename><surname>Fey</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Weihua</forename><surname>Hu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Emanuele</forename><surname>Rossi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jure</forename><surname>Leskovec</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Michael</forename><forename type="middle">M</forename><surname>Bronstein</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Guillaume</forename><surname>Rabusseau</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Reihaneh</forename><surname>Rabbany</surname></persName>
+		</author>
+		<idno type="DOI">10.48550/arXiv.2307.01026</idno>
+		<ptr target="https://doi.org/10.48550/arXiv.2307.01026.9" />
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<title level="a" type="main">Graph representation learning meets computer vision: A survey</title>
+		<author>
+			<persName><forename type="first">Licheng</forename><surname>Jiao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jie</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Fang</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shuyuan</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chao</forename><surname>You</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xu</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lingling</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Biao</forename><surname>Hou</surname></persName>
+		</author>
+		<idno type="DOI">10.1109/TAI.2022.3194869</idno>
+		<ptr target="https://doi.org/10.1109/TAI.2022.3194869.2" />
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Trans. Artif. Intell</title>
+		<imprint>
+			<biblScope unit="volume">4</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="2" to="22" />
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<analytic>
+		<title level="a" type="main">Semi-supervised classification with graph convolutional networks</title>
+		<author>
+			<persName><forename type="first">Thomas</forename><forename type="middle">N</forename><surname>Kipf</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Max</forename><surname>Welling</surname></persName>
+		</author>
+		<ptr target="https://openreview.net/forum?id=SJU4ayYgl.2" />
+	</analytic>
+	<monogr>
+		<title level="m">ICLR 2017. OpenReview.net</title>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<analytic>
+		<title level="a" type="main">Evolution of real-world hypergraphs: Patterns and models without oracles</title>
+		<author>
+			<persName><forename type="first">Yunbum</forename><surname>Kook</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jihoon</forename><surname>Ko</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kijung</forename><surname>Shin</surname></persName>
+		</author>
+		<idno type="DOI">10.1109/ICDM50108.2020.00036</idno>
+		<ptr target="https://doi.org/10.1109/ICDM50108.2020.00036.3" />
+	</analytic>
+	<monogr>
+		<title level="m">ICDM 2020</title>
+		<editor>
+			<persName><forename type="first">Claudia</forename><surname>Plant</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Haixun</forename><surname>Wang</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Alfredo</forename><surname>Cuzzocrea</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Carlo</forename><surname>Zaniolo</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Xindong</forename><surname>Wu</surname></persName>
+		</editor>
+		<meeting><address><addrLine>Sorrento, Italy</addrLine></address></meeting>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2007">November 17-20, 2020. 2020. 4, 5, 7</date>
+			<biblScope unit="page" from="272" to="281" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<analytic>
+		<title level="a" type="main">What is twitter, a social network or a news media</title>
+		<author>
+			<persName><forename type="first">Haewoon</forename><surname>Kwak</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Changhyun</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hosung</forename><surname>Park</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sue</forename><forename type="middle">B</forename><surname>Moon</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/1772690.1772751</idno>
+		<ptr target="https://doi.org/10.1145/1772690.1772751" />
+	</analytic>
+	<monogr>
+		<title level="m">WWW 2010</title>
+		<editor>
+			<persName><forename type="first">Michael</forename><surname>Rappa</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Paul</forename><surname>Jones</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Juliana</forename><surname>Freire</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Soumen</forename><surname>Chakrabarti</surname></persName>
+		</editor>
+		<meeting><address><addrLine>Raleigh, North Carolina, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>ACM</publisher>
+			<date type="published" when="2010">April 26-30, 2010. 2010</date>
+			<biblScope unit="page" from="591" to="600" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<monogr>
+		<title level="m" type="main">Graphcast: Learning skillful medium-range global weather forecasting</title>
+		<author>
+			<persName><forename type="first">Rémi</forename><surname>Lam</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alvaro</forename><surname>Sanchez-Gonzalez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Matthew</forename><surname>Willson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Peter</forename><surname>Wirnsberger</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Meire</forename><surname>Fortunato</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alexander</forename><surname>Pritzel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Suman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Timo</forename><surname>Ravuri</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ferran</forename><surname>Ewalds</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zach</forename><surname>Alet</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Weihua</forename><surname>Eaton-Rosen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alexander</forename><surname>Hu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Stephan</forename><surname>Merose</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">George</forename><surname>Hoyer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jacklynn</forename><surname>Holland</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Oriol</forename><surname>Stott</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shakir</forename><surname>Vinyals</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Peter</forename><forename type="middle">W</forename><surname>Mohamed</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Battaglia</surname></persName>
+		</author>
+		<idno type="DOI">10.48550/arXiv.2212.12794</idno>
+		<ptr target="https://doi.org/10.48550/arXiv.2212.12794" />
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<analytic>
+		<title level="a" type="main">Grand: A fast and accurate graph retrieval framework via knowledge distillation</title>
+		<author>
+			<persName><forename type="first">Lin</forename><surname>Lan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pinghui</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Rui</forename><surname>Shi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tingqing</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Juxiang</forename><surname>Zeng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Feiyang</forename><surname>Sun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yang</forename><surname>Ren</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jing</forename><surname>Tao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiaohong</forename><surname>Guan</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3626772.3657773</idno>
+		<ptr target="https://doi.org/10.1145/3626772.3657773.2" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 47th International ACM SIGIR Conference on Research and Development in Information Retrieval, SIGIR 2024</title>
+		<editor>
+			<persName><forename type="first">Grace</forename><surname>Hui</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Yang</forename></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Hongning</forename><surname>Wang</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Sam</forename><surname>Han</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Claudia</forename><surname>Hauff</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Guido</forename><surname>Zuccon</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Yi</forename><surname>Zhang</surname></persName>
+		</editor>
+		<meeting>the 47th International ACM SIGIR Conference on Research and Development in Information Retrieval, SIGIR 2024<address><addrLine>Washington DC, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>ACM</publisher>
+			<date type="published" when="2024">July 14-18, 2024. 2024</date>
+			<biblScope unit="page" from="1639" to="1648" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<analytic>
+		<title level="a" type="main">Graphs over time: densification laws, shrinking diameters and possible explanations</title>
+		<author>
+			<persName><forename type="first">Jure</forename><surname>Leskovec</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jon</forename><forename type="middle">M</forename><surname>Kleinberg</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Christos</forename><surname>Faloutsos</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/1081870.1081893</idno>
+		<ptr target="https://doi.org/10.1145/1081870.1081893.2" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the Eleventh ACM SIGKDD International Conference on Knowledge Discovery and Data Mining</title>
+		<editor>
+			<persName><forename type="first">Robert</forename><surname>Grossman</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Roberto</forename><forename type="middle">J</forename><surname>Bayardo</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Kristin</forename><forename type="middle">P</forename><surname>Bennett</surname></persName>
+		</editor>
+		<meeting>the Eleventh ACM SIGKDD International Conference on Knowledge Discovery and Data Mining<address><addrLine>Chicago, Illinois, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>ACM</publisher>
+			<date type="published" when="2005">August 21-24, 2005. 2005. 4, 5, 7</date>
+			<biblScope unit="page" from="177" to="187" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<analytic>
+		<title level="a" type="main">Microscopic evolution of social networks</title>
+		<author>
+			<persName><forename type="first">Jure</forename><surname>Leskovec</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lars</forename><surname>Backstrom</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ravi</forename><surname>Kumar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andrew</forename><surname>Tomkins</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/1401890.1401948</idno>
+		<ptr target="https://doi.org/10.1145/1401890.1401948.2" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 14th ACM SIGKDD International Conference on Knowledge Discovery and Data Mining</title>
+		<editor>
+			<persName><forename type="first">Ying</forename><surname>Li</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Bing</forename><surname>Liu</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Sunita</forename><surname>Sarawagi</surname></persName>
+		</editor>
+		<meeting>the 14th ACM SIGKDD International Conference on Knowledge Discovery and Data Mining<address><addrLine>Las Vegas, Nevada, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>ACM</publisher>
+			<date type="published" when="2008">August 24-27, 2008. 2008. 4, 6, 7, 8</date>
+			<biblScope unit="page" from="462" to="470" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<analytic>
+		<title level="a" type="main">Everything evolves in personalized pagerank</title>
+		<author>
+			<persName><forename type="first">Zihao</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dongqi</forename><surname>Fu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jingrui</forename><surname>He</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3543507.3583474</idno>
+		<ptr target="https://doi.org/10.1145/3543507.3583474" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the ACM Web Conference 2023</title>
+		<editor>
+			<persName><forename type="first">Ying</forename><surname>Ding</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Jie</forename><surname>Tang</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Juan</forename><forename type="middle">F</forename><surname>Sequeda</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Lora</forename><surname>Aroyo</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Carlos</forename><surname>Castillo</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Geert-Jan</forename><surname>Houben</surname></persName>
+		</editor>
+		<meeting>the ACM Web Conference 2023<address><addrLine>WWW; Austin, TX, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>ACM</publisher>
+			<date type="published" when="2023-04-30">2023. 30 April 2023 -4 May 2023. 2023</date>
+			<biblScope unit="page" from="3342" to="3352" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b36">
+	<analytic>
+		<title level="a" type="main">Sphere: Expressive and interpretable knowledge graph embedding for set retrieval</title>
+		<author>
+			<persName><forename type="first">Zihao</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yuyi</forename><surname>Ao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jingrui</forename><surname>He</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3626772.3657910</idno>
+		<ptr target="https://doi.org/10.1145/3626772.3657910" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 47th International ACM SIGIR Conference on Research and Development in Information Retrieval, SIGIR 2024</title>
+		<editor>
+			<persName><forename type="first">Grace</forename><surname>Hui</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Yang</forename></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Hongning</forename><surname>Wang</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Sam</forename><surname>Han</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Claudia</forename><surname>Hauff</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Guido</forename><surname>Zuccon</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Yi</forename><surname>Zhang</surname></persName>
+		</editor>
+		<meeting>the 47th International ACM SIGIR Conference on Research and Development in Information Retrieval, SIGIR 2024<address><addrLine>Washington DC, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>ACM</publisher>
+			<date type="published" when="2024">July 14-18, 2024. 2024</date>
+			<biblScope unit="page" from="2629" to="2634" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b37">
+	<analytic>
+		<title level="a" type="main">Boosting graph structure learning with dummy nodes</title>
+		<author>
+			<persName><forename type="first">Xin</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jiayang</forename><surname>Cheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yangqiu</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xin</forename><surname>Jiang</surname></persName>
+		</author>
+		<ptr target="https://proceedings.mlr.press/v162/liu22d.html.4" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of Machine Learning Research</title>
+		<editor>
+			<persName><forename type="first">Kamalika</forename><surname>Chaudhuri</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Stefanie</forename><surname>Jegelka</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Le</forename><surname>Song</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Csaba</forename><surname>Szepesvári</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Gang</forename><surname>Niu</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Sivan</forename><surname>Sabato</surname></persName>
+		</editor>
+		<meeting>Machine Learning Research</meeting>
+		<imprint>
+			<publisher>PMLR</publisher>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="volume">162</biblScope>
+			<biblScope unit="page" from="13704" to="13716" />
+		</imprint>
+	</monogr>
+	<note>ICML 2022</note>
+</biblStruct>
+
+<biblStruct xml:id="b38">
+	<analytic>
+		<title level="a" type="main">New product diffusion models in marketing: A review and directions for research</title>
+		<author>
+			<persName><forename type="first">Vijay</forename><surname>Mahajan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Eitan</forename><surname>Muller</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Frank</forename><forename type="middle">M</forename><surname>Bass</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of marketing</title>
+		<imprint>
+			<biblScope unit="volume">54</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="1" to="26" />
+			<date type="published" when="1990">1990</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b39">
+	<analytic>
+		<title level="a" type="main">Tudataset: A collection of benchmark datasets for learning with graphs</title>
+		<author>
+			<persName><forename type="first">Christopher</forename><surname>Morris</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Nils</forename><forename type="middle">M</forename><surname>Kriege</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Franka</forename><surname>Bause</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kristian</forename><surname>Kersting</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Petra</forename><surname>Mutzel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Marion</forename><surname>Neumann</surname></persName>
+		</author>
+		<ptr target="www.graphlearning.io.9" />
+	</analytic>
+	<monogr>
+		<title level="m">ICML 2020 Workshop on Graph Representation Learning and Beyond (GRL+ 2020)</title>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b40">
+	<analytic>
+		<title level="a" type="main">Motifs in temporal networks</title>
+		<author>
+			<persName><forename type="first">Ashwin</forename><surname>Paranjape</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Austin</forename><forename type="middle">R</forename><surname>Benson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jure</forename><surname>Leskovec</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3018661.3018731</idno>
+		<ptr target="https://doi.org/10.1145/3018661.3018731.3" />
+	</analytic>
+	<monogr>
+		<title level="m">WSDM 2017</title>
+		<editor>
+			<persName><forename type="first">Milad</forename><surname>Maarten De Rijke</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Andrew</forename><surname>Shokouhi</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Min</forename><surname>Tomkins</surname></persName>
+		</editor>
+		<editor>
+			<persName><surname>Zhang</surname></persName>
+		</editor>
+		<imprint>
+			<publisher>ACM</publisher>
+			<date type="published" when="2017">2017</date>
+			<biblScope unit="page" from="601" to="610" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b41">
+	<analytic>
+		<title level="a" type="main">Evograph: An effective and efficient graph upscaling method for preserving graph properties</title>
+		<author>
+			<persName><forename type="first">Himchan</forename><surname>Park</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Min-Soo</forename><surname>Kim</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3219819.3220123</idno>
+		<ptr target="https://doi.org/10.1145/3219819.3220123.6,7" />
+	</analytic>
+	<monogr>
+		<title level="m">KDD 2018</title>
+		<editor>
+			<persName><forename type="first">Yike</forename><surname>Guo</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Faisal</forename><surname>Farooq</surname></persName>
+		</editor>
+		<meeting><address><addrLine>London, UK</addrLine></address></meeting>
+		<imprint>
+			<publisher>ACM</publisher>
+			<date type="published" when="2018">August 19-23, 2018. 2018</date>
+			<biblScope unit="page" from="2051" to="2059" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b42">
+	<analytic>
+		<title level="a" type="main">Glove: Global vectors for word representation</title>
+		<author>
+			<persName><forename type="first">Jeffrey</forename><surname>Pennington</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Richard</forename><surname>Socher</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Christopher</forename><forename type="middle">D</forename><surname>Manning</surname></persName>
+		</author>
+		<idno type="DOI">10.3115/v1/d14-1162</idno>
+		<ptr target="https://doi.org/10.3115/v1/d14-1162" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2014 Conference on Empirical Methods in Natural Language Processing, EMNLP 2014</title>
+		<editor>
+			<persName><forename type="first">Alessandro</forename><surname>Moschitti</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Bo</forename><surname>Pang</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Walter</forename><surname>Daelemans</surname></persName>
+		</editor>
+		<meeting>the 2014 Conference on Empirical Methods in Natural Language Processing, EMNLP 2014<address><addrLine>Doha, Qatar</addrLine></address></meeting>
+		<imprint>
+			<publisher>ACL</publisher>
+			<date type="published" when="2014">October 25-29, 2014. 2014</date>
+			<biblScope unit="page" from="1532" to="1543" />
+		</imprint>
+	</monogr>
+	<note>, A meeting of SIGDAT, a Special Interest Group of the ACL</note>
+</biblStruct>
+
+<biblStruct xml:id="b43">
+	<analytic>
+		<title level="a" type="main">A survey of heterogeneous information network analysis</title>
+		<author>
+			<persName><forename type="first">Chuan</forename><surname>Shi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yitong</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jiawei</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yizhou</forename><surname>Sun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Philip</forename><forename type="middle">S</forename><surname>Yu</surname></persName>
+		</author>
+		<idno type="DOI">10.1109/TKDE.2016.2598561</idno>
+		<ptr target="https://doi.org/10.1109/TKDE.2016.2598561.9" />
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Trans. Knowl. Data Eng</title>
+		<imprint>
+			<biblScope unit="volume">29</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="17" to="37" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b44">
+	<analytic>
+		<title level="a" type="main">All in one: Multi-task prompting for graph neural networks</title>
+		<author>
+			<persName><forename type="first">Xiangguo</forename><surname>Sun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hong</forename><surname>Cheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jia</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bo</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jihong</forename><surname>Guan</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3580305.3599256</idno>
+		<ptr target="https://doi.org/10.1145/3580305.3599256" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 29th ACM SIGKDD Conference on Knowledge Discovery and Data Mining, KDD 2023</title>
+		<editor>
+			<persName><forename type="first">K</forename><surname>Ambuj</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Yizhou</forename><surname>Singh</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Leman</forename><surname>Sun</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Dimitrios</forename><surname>Akoglu</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Xifeng</forename><surname>Gunopulos</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Ravi</forename><surname>Yan</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Fatma</forename><surname>Kumar</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Jieping</forename><surname>Ozcan</surname></persName>
+		</editor>
+		<editor>
+			<persName><surname>Ye</surname></persName>
+		</editor>
+		<meeting>the 29th ACM SIGKDD Conference on Knowledge Discovery and Data Mining, KDD 2023<address><addrLine>Long Beach, CA, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>ACM</publisher>
+			<date type="published" when="2023">August 6-10, 2023. 2023</date>
+			<biblScope unit="page" from="2120" to="2131" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b45">
+	<analytic>
+		<title level="a" type="main">Caselink: Inductive graph learning for legal case retrieval</title>
+		<author>
+			<persName><forename type="first">Yanran</forename><surname>Tang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ruihong</forename><surname>Qiu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hongzhi</forename><surname>Yin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xue</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zi</forename><surname>Huang</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3626772.3657693</idno>
+		<ptr target="https://doi.org/10.1145/3626772.3657693.2" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 47th International ACM SIGIR Conference on Research and Development in Information Retrieval, SIGIR 2024</title>
+		<editor>
+			<persName><forename type="first">Grace</forename><surname>Hui</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Yang</forename></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Hongning</forename><surname>Wang</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Sam</forename><surname>Han</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Claudia</forename><surname>Hauff</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Guido</forename><surname>Zuccon</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Yi</forename><surname>Zhang</surname></persName>
+		</editor>
+		<meeting>the 47th International ACM SIGIR Conference on Research and Development in Information Retrieval, SIGIR 2024<address><addrLine>Washington DC, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>ACM</publisher>
+			<date type="published" when="2024">July 14-18, 2024. 2024</date>
+			<biblScope unit="page" from="2199" to="2209" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b46">
+	<analytic>
+		<title level="a" type="main">Graph learning based recommender systems: A review</title>
+		<author>
+			<persName><forename type="first">Shoujin</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Liang</forename><surname>Hu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yan</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiangnan</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Quan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mehmet</forename><forename type="middle">A</forename><surname>Sheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Longbing</forename><surname>Orgun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Francesco</forename><surname>Cao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Philip</forename><forename type="middle">S</forename><surname>Ricci</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Yu</surname></persName>
+		</author>
+		<idno type="DOI">10.24963/ijcai.2021/630</idno>
+		<ptr target="https://doi.org/10.24963/ijcai.2021/630" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the Thirtieth International Joint Conference on Artificial Intelligence, IJCAI 2021</title>
+		<editor>
+			<persName><forename type="first">Zhi-Hua</forename><surname>Zhou</surname></persName>
+		</editor>
+		<meeting>the Thirtieth International Joint Conference on Artificial Intelligence, IJCAI 2021<address><addrLine>Virtual Event / Montreal, Canada</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2021-08-27">19-27 August 2021. 2021</date>
+			<biblScope unit="page" from="4644" to="4652" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b47">
+	<analytic>
+		<title level="a" type="main">Hyperbolic heterogeneous information network embedding</title>
+		<author>
+			<persName><forename type="first">Xiao</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yiding</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chuan</forename><surname>Shi</surname></persName>
+		</author>
+		<idno type="DOI">10.1609/aaai.v33i01.33015337</idno>
+		<ptr target="https://doi.org/10.1609/aaai.v33i01.33015337.4,5" />
+	</analytic>
+	<monogr>
+		<title level="m">The Thirty-Third AAAI Conference on Artificial Intelligence, AAAI 2019, The Thirty-First Innovative Applications of Artificial Intelligence Conference, IAAI 2019, The Ninth AAAI Symposium on Educational Advances in Artificial Intelligence</title>
+		<meeting><address><addrLine>EAAI; Honolulu, Hawaii, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>AAAI Press</publisher>
+			<date type="published" when="2009">2019. January 27 -February 1, 2019. 2019. , 8, 9</date>
+			<biblScope unit="page" from="5337" to="5344" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b48">
+	<analytic>
+		<title level="a" type="main">Inductive representation learning in temporal networks via causal anonymous walks</title>
+		<author>
+			<persName><forename type="first">Yanbang</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yen-Yu</forename><surname>Chang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yunyu</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jure</forename><surname>Leskovec</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pan</forename><surname>Li</surname></persName>
+		</author>
+		<ptr target="https://openreview.net/forum?id=KYPz4YsCPj.3" />
+	</analytic>
+	<monogr>
+		<title level="m">ICLR 2021. OpenReview.net</title>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b49">
+	<analytic>
+		<title level="a" type="main">Comprehensive fair meta-learned recommender system</title>
+		<author>
+			<persName><forename type="first">Tianxin</forename><surname>Wei</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jingrui</forename><surname>He</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3534678.3539269</idno>
+		<ptr target="https://doi.org/10.1145/3534678.3539269" />
+	</analytic>
+	<monogr>
+		<title level="m">KDD &apos;22: The 28th ACM SIGKDD Conference on Knowledge Discovery and Data Mining</title>
+		<editor>
+			<persName><forename type="first">Aidong</forename><surname>Zhang</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Huzefa</forename><surname>Rangwala</surname></persName>
+		</editor>
+		<meeting><address><addrLine>Washington, DC, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>ACM</publisher>
+			<date type="published" when="2022">August 14 -18, 2022. 2022</date>
+			<biblScope unit="page" from="1989" to="1999" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b50">
+	<monogr>
+		<title level="m" type="main">Graph neural networks for natural language processing: A survey</title>
+		<author>
+			<persName><forename type="first">Lingfei</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yu</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kai</forename><surname>Shen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiaojie</forename><surname>Guo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hanning</forename><surname>Gao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shucheng</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jian</forename><surname>Pei</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bo</forename><surname>Long</surname></persName>
+		</author>
+		<idno>CoRR, abs/2106.06090</idno>
+		<ptr target="https://arxiv.org/abs/2106.06090.2" />
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b51">
+	<analytic>
+		<title level="a" type="main">A graph-based recommendation across heterogeneous domains</title>
+		<author>
+			<persName><forename type="first">Deqing</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jingrui</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Huazheng</forename><surname>Qin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yanghua</forename><surname>Xiao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wei</forename><surname>Wang</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/2806416.2806523</idno>
+		<ptr target="https://doi.org/10.1145/2806416.2806523" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 24th ACM International Conference on Information and Knowledge Management, CIKM 2015</title>
+		<editor>
+			<persName><forename type="first">James</forename><surname>Bailey</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Alistair</forename><surname>Moffat</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">C</forename><surname>Charu</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Maarten</forename><surname>Aggarwal</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Ravi</forename><surname>De Rijke</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Vanessa</forename><surname>Kumar</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Timos</forename><forename type="middle">K</forename><surname>Murdock</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Jeffrey</forename><surname>Sellis</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Yu</forename><surname>Xu</surname></persName>
+		</editor>
+		<meeting>the 24th ACM International Conference on Information and Knowledge Management, CIKM 2015<address><addrLine>Melbourne, VIC, Australia</addrLine></address></meeting>
+		<imprint>
+			<publisher>ACM</publisher>
+			<date type="published" when="2015">October 19 -23, 2015. 2015</date>
+			<biblScope unit="page" from="463" to="472" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b52">
+	<monogr>
+		<title level="m" type="main">Microscopic evolution of social networks by triad position profile</title>
+		<author>
+			<persName><forename type="first">Yang</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yuxiao</forename><surname>Dong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Nitesh</forename><forename type="middle">V</forename><surname>Chawla</surname></persName>
+		</author>
+		<idno>CoRR, abs/1310.1525</idno>
+		<ptr target="http://arxiv.org/abs/1310.1525.6" />
+		<imprint>
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b53">
+	<analytic>
+		<title level="a" type="main">Language is all a graph needs</title>
+		<author>
+			<persName><forename type="first">Ruosong</forename><surname>Ye</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Caiqi</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Runhui</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shuyuan</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yongfeng</forename><surname>Zhang</surname></persName>
+		</author>
+		<ptr target="https://aclanthology.org/2024.findings-eacl.132.3" />
+	</analytic>
+	<monogr>
+		<title level="m">Findings of the Association for Computational Linguistics: EACL 2024</title>
+		<editor>
+			<persName><forename type="first">Yvette</forename><surname>Graham</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Matthew</forename><surname>Purver</surname></persName>
+		</editor>
+		<meeting><address><addrLine>St. Julian&apos;s, Malta</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computational Linguistics</publisher>
+			<date type="published" when="2024">March 17-22, 2024. 2024</date>
+			<biblScope unit="page" from="1955" to="1973" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b54">
+	<analytic>
+		<title level="a" type="main">The local closure coefficient: A new perspective on network clustering</title>
+		<author>
+			<persName><forename type="first">Austin</forename><forename type="middle">R</forename><surname>Hao Yin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jure</forename><surname>Benson</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Leskovec</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3289600.3290991</idno>
+		<ptr target="https://doi.org/10.1145/3289600.3290991.4,7" />
+	</analytic>
+	<monogr>
+		<title level="m">WSDM 2019</title>
+		<editor>
+			<persName><forename type="first">J</forename><forename type="middle">Shane</forename><surname>Culpepper</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Alistair</forename><surname>Moffat</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Paul</forename><forename type="middle">N</forename><surname>Bennett</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Kristina</forename><surname>Lerman</surname></persName>
+		</editor>
+		<imprint>
+			<publisher>ACM</publisher>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="page" from="303" to="311" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b55">
+	<analytic>
+		<title level="a" type="main">Taskonomy: Disentangling task transfer learning</title>
+		<author>
+			<persName><forename type="first">Alexander</forename><surname>Amir Roshan Zamir</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">William</forename><forename type="middle">B</forename><surname>Sax</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Leonidas</forename><forename type="middle">J</forename><surname>Shen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jitendra</forename><surname>Guibas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Silvio</forename><surname>Malik</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Savarese</surname></persName>
+		</author>
+		<idno type="DOI">10.1109/CVPR.2018.00391</idno>
+		<ptr target="http://openaccess.thecvf.com/content_cvpr_2018/html/Zamir_Taskonomy_Disentangling_Task_CVPR_2018_paper.html.9" />
+	</analytic>
+	<monogr>
+		<title level="m">2018 IEEE Conference on Computer Vision and Pattern Recognition, CVPR 2018</title>
+		<meeting><address><addrLine>Salt Lake City, UT, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>Computer Vision Foundation / IEEE Computer Society</publisher>
+			<date type="published" when="2018">June 18-22, 2018. 2018</date>
+			<biblScope unit="page" from="3712" to="3722" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b56">
+	<analytic>
+		<title level="a" type="main">On power law growth of social networks</title>
+		<author>
+			<persName><forename type="first">Chengxi</forename><surname>Zang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Peng</forename><surname>Cui</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Christos</forename><surname>Faloutsos</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wenwu</forename><surname>Zhu</surname></persName>
+		</author>
+		<idno type="DOI">10.1109/TKDE.2018.2801844</idno>
+		<ptr target="https://doi.org/10.1109/TKDE.2018.2801844.4" />
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Trans. Knowl. Data Eng</title>
+		<imprint>
+			<biblScope unit="volume">30</biblScope>
+			<biblScope unit="issue">9</biblScope>
+			<biblScope unit="page" from="1727" to="1740" />
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b57">
+	<analytic>
+		<title level="a" type="main">Dynamic network modeling from motif-activity</title>
+		<author>
+			<persName><forename type="first">Giselle</forename><surname>Zeno</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Timothy</forename><forename type="middle">La</forename><surname>Fond</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jennifer</forename><surname>Neville</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3366424.3383301</idno>
+		<ptr target="https://doi.org/10.1145/3366424.3383301.3" />
+	</analytic>
+	<monogr>
+		<title level="m">Companion of The 2020 Web Conference 2020</title>
+		<editor>
+			<persName><forename type="first">Amal</forename><forename type="middle">El</forename></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Fallah</forename><surname>Seghrouchni</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Gita</forename><surname>Sukthankar</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Tie-Yan</forename><surname>Liu</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Maarten</forename><surname>Van Steen</surname></persName>
+		</editor>
+		<meeting><address><addrLine>Taipei, Taiwan</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2020">April 20-24, 2020. 2020</date>
+			<biblScope unit="page" from="390" to="397" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b58">
+	<analytic>
+		<title level="a" type="main">Link prediction based on graph neural networks</title>
+		<author>
+			<persName><forename type="first">Muhan</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yixin</forename><surname>Chen</surname></persName>
+		</author>
+		<ptr target="https://proceedings.neurips.cc/paper/2018/hash/53f0d7c537d99b3824f0f99d62ea2428-Abstract.html" />
+	</analytic>
+	<monogr>
+		<title level="m">Advances in Neural Information Processing Systems 31: Annual Conference on Neural Information Processing Systems 2018</title>
+		<editor>
+			<persName><forename type="first">Samy</forename><surname>Bengio</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Hanna</forename><forename type="middle">M</forename><surname>Wallach</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Hugo</forename><surname>Larochelle</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Kristen</forename><surname>Grauman</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Nicolò</forename><surname>Cesa-Bianchi</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Roman</forename><surname>Garnett</surname></persName>
+		</editor>
+		<meeting><address><addrLine>NeurIPS; Montréal, Canada</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2018-12-03">2018. December 3-8, 2018. 2018</date>
+			<biblScope unit="page" from="5171" to="5181" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b59">
+	<monogr>
+		<title level="m" type="main">Artificial intelligence for science in quantum, atomistic, and continuum systems</title>
+		<author>
+			<persName><forename type="first">Xuan</forename><surname>Zhang</surname></persName>
+		</author>
+		<idno>CoRR, abs/2307.08423</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page">7</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b60">
+	<monogr>
+		<title level="m" type="main">Large graph models: A perspective</title>
+		<author>
+			<persName><forename type="first">Ziwei</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Haoyang</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zeyang</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yijian</forename><surname>Qin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xin</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wenwu</forename><surname>Zhu</surname></persName>
+		</author>
+		<idno type="DOI">10.48550/arXiv.2308.14522</idno>
+		<ptr target="https://doi.org/10.48550/arXiv.2308.14522.10" />
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b61">
+	<analytic>
+		<title level="a" type="main">Heterogeneous contrastive learning for foundation models and beyond</title>
+		<author>
+			<persName><forename type="first">Lecheng</forename><surname>Zheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Baoyu</forename><surname>Jing</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zihao</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hanghang</forename><surname>Tong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jingrui</forename><surname>He</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3637528.3671454</idno>
+		<ptr target="https://doi.org/10.1145/3637528.3671454" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 30th ACM SIGKDD Conference on Knowledge Discovery and Data Mining, KDD 2024</title>
+		<editor>
+			<persName><forename type="first">Ricardo</forename><surname>Baeza</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">-</forename><surname>Yates</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Francesco</forename><surname>Bonchi</surname></persName>
+		</editor>
+		<meeting>the 30th ACM SIGKDD Conference on Knowledge Discovery and Data Mining, KDD 2024<address><addrLine>Barcelona, Spain</addrLine></address></meeting>
+		<imprint>
+			<publisher>ACM</publisher>
+			<date type="published" when="2024">August 25-29, 2024. 2024</date>
+			<biblScope unit="page" from="6666" to="6676" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b62">
+	<monogr>
+		<title level="m" type="main">A comprehensive survey on pretrained foundation models: A history from BERT to chatgpt</title>
+		<author>
+			<persName><forename type="first">Ce</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qian</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chen</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jun</forename><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yixin</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Guangjing</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kai</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Cheng</forename><surname>Ji</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qiben</forename><surname>Yan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lifang</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hao</forename><surname>Peng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jianxin</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jia</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ziwei</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pengtao</forename><surname>Xie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Caiming</forename><surname>Xiong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jian</forename><surname>Pei</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Philip</forename><forename type="middle">S</forename><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lichao</forename><surname>Sun</surname></persName>
+		</author>
+		<idno type="DOI">10.48550/arXiv.2302.09419</idno>
+		<ptr target="https://doi.org/10.48550/arXiv.2302.09419" />
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b63">
+	<analytic>
+		<title level="a" type="main">Rare category detection on timeevolving graphs</title>
+		<author>
+			<persName><forename type="first">Dawei</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kangyang</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Nan</forename><surname>Cao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jingrui</forename><surname>He</surname></persName>
+		</author>
+		<idno type="DOI">10.1109/ICDM.2015.120</idno>
+		<ptr target="https://doi.org/10.1109/ICDM.2015.120" />
+	</analytic>
+	<monogr>
+		<title level="m">IEEE International Conference on Data Mining, ICDM 2015</title>
+		<editor>
+			<persName><forename type="first">C</forename><surname>Charu</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Zhi-Hua</forename><surname>Aggarwal</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Alexander</forename><surname>Zhou</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Hui</forename><surname>Tuzhilin</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Xindong</forename><surname>Xiong</surname></persName>
+		</editor>
+		<editor>
+			<persName><surname>Wu</surname></persName>
+		</editor>
+		<meeting><address><addrLine>Atlantic City, NJ, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>IEEE Computer Society</publisher>
+			<date type="published" when="2015-11-14">2015. November 14-17, 2015. 2015</date>
+			<biblScope unit="page" from="1135" to="1140" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b64">
+	<analytic>
+		<title level="a" type="main">SPARC: self-paced network representation for few-shot rare category characterization</title>
+		<author>
+			<persName><forename type="first">Dawei</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jingrui</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hongxia</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wei</forename><surname>Fan</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3219819.3219968</idno>
+		<ptr target="https://doi.org/10.1145/3219819.3219968" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 24th ACM SIGKDD International Conference on Knowledge Discovery &amp; Data Mining, KDD 2018</title>
+		<editor>
+			<persName><forename type="first">Yike</forename><surname>Guo</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Faisal</forename><surname>Farooq</surname></persName>
+		</editor>
+		<meeting>the 24th ACM SIGKDD International Conference on Knowledge Discovery &amp; Data Mining, KDD 2018<address><addrLine>London, UK</addrLine></address></meeting>
+		<imprint>
+			<publisher>ACM</publisher>
+			<date type="published" when="2018">August 19-23, 2018. 2018</date>
+			<biblScope unit="page" from="2807" to="2816" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b65">
+	<monogr>
+		<title level="m" type="main">Promptintern: Saving inference costs by internalizing recurrent prompt during large language model fine-tuning</title>
+		<author>
+			<persName><forename type="first">Jiaru</forename><surname>Zou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mengyu</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tao</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shi</forename><surname>Han</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dongmei</forename><surname>Zhang</surname></persName>
+		</author>
+		<idno type="DOI">10.48550/arXiv.2407.02211</idno>
+		<ptr target="https://doi.org/10.48550/arXiv.2407.02211" />
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>
