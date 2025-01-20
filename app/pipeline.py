@@ -240,7 +240,7 @@ class ResearchPipeline:
                 xml_path = os.path.join(self.xml_dir, f"{safe_citing_doi}.grobid.xml")
                 
                 # 提取引用信息
-                parser = ReferenceParser(xml_path, None)
+                parser = ReferenceParser(xml_path, None, auxiliar_file='special_cases.json')
                 references = parser.parse_references()
                 
                 # 创建CitingPaper对象

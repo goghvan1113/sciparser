@@ -10,7 +10,7 @@ from lxml import etree
 import re
 
 class ReferenceParser:
-    def __init__(self, xml_file, output_json_file):
+    def __init__(self, xml_file, output_json_file, auxiliar_file):
         """
         Initialize the reference parser
         
@@ -21,7 +21,15 @@ class ReferenceParser:
         self.xml_file = xml_file
         self.output_json_file = output_json_file
         self.nlp = self._load_spacy_model()
-        
+        self.auxiliar_file = auxiliar_file
+    
+    def customize_tokenizer(self, nlp, auxiliar_file):
+        with open(auxiliar_file, 'r') as file:
+            special_cases = json.load(file)
+        for word, tokens in special_cases.items():
+            nlp.tokenizer.add_special_case(word, tokens)
+        return nlp
+
     def _load_spacy_model(self):
         """Load spaCy model for sentence segmentation"""
         try:
@@ -31,13 +39,19 @@ class ReferenceParser:
             spacy.cli.download("en_core_web_sm")
             nlp = spacy.load("en_core_web_sm")
         return nlp
+    
+    def test_model_segmentation(self, text):
+        nlp = self._load_spacy_model()
+        nlp = self.customize_tokenizer(nlp, self.auxiliar_file)
+        doc = nlp(text)
+        return [sent.text.strip() for sent in doc.sents]
 
     def get_text_before_ref(self, ref, ns):
         """Extract text before reference citation"""
         preceding_text = ref.xpath('preceding-sibling::text()', namespaces=ns)
         text_before_ref = " ".join(preceding_text).strip() if preceding_text else ""
         text_before_ref = re.sub(r'^[^\w\s]+', '', text_before_ref)
-        sentences = [sent.text.strip() for sent in self.nlp(text_before_ref).sents]
+        sentences = self.test_model_segmentation(text_before_ref)
         text_before_ref = sentences[-1].strip() if sentences else ""
         return text_before_ref
 
@@ -45,7 +59,7 @@ class ReferenceParser:
         """Extract text after reference citation"""
         following_text = ref.xpath('following-sibling::text()', namespaces=ns)
         text_after_ref = " ".join(following_text).strip() if following_text else ""
-        sentences = [sent.text.strip() for sent in self.nlp(text_after_ref).sents]
+        sentences = self.test_model_segmentation(text_after_ref)
         text_after_ref = sentences[0].strip() if sentences else ""
         return text_after_ref
 
