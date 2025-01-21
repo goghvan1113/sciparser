@@ -1,5 +1,6 @@
 import sys
 import os
+import json
 
 root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(root_dir)
@@ -177,23 +178,112 @@ class RefParserUI:
         except Exception as e:
             return f"Error: {str(e)}", "", ""
 
+    def _generate_author_info_html(self, authors):
+        """生成作者信息HTML"""
+        info_html = "<div class='authors-list'>"
+        
+        for i, author in enumerate(authors):
+            papers = author.get('papers', [])
+            info_html += f"""
+            <div class='author-item' style='margin-bottom: 20px; padding: 15px; border: 1px solid #ddd;'>
+                <div class='author-basic-info'>
+                    <p><b>作者{i+1}姓名:</b> {author.get('name', '')}</p>
+                    <p><b>机构:</b> {', '.join(author.get('affiliations', [])) if author.get('affiliations') else '未知'}</p>
+                    <p><b>论文数量:</b> {author.get('paperCount', '')}</p>
+                    <p><b>总引用次数:</b> {author.get('citationCount', '')}</p>
+                    <p><b>Semantic Scholar主页:</b> <a href="{author.get('url', '')}" target="_blank">{author.get('url', '')}</a></p>
+                    <p><b>h指数:</b> {author.get('hIndex', '')}</p>
+                </div>
+                
+                <div class='papers-list' id='papers_{i}'>
+                    <h4>论文列表</h4>
+                    <div class='papers-container' style='max-height: 400px; overflow-y: auto;'>
+                    """
+            
+            # 添加论文列表
+            for paper in papers:
+                info_html += f"""
+                        <div class='paper-item' style='margin-bottom: 15px; padding: 10px; background-color: #f5f5f5;'>
+                            <p><b>标题:</b> {paper.get('title', '')}</p>
+                            <p><b>年份:</b> {paper.get('year', '')}</p>
+                            <p><b>引用次数:</b> {paper.get('citationCount', '')}</p>
+                            <p><b>发表于:</b> {paper.get('venue', '')}</p>
+                        </div>
+                    """
+                
+            info_html += """
+                    </div>
+                </div>
+            </div>
+            """
+        
+        info_html += "</div>"
+        return info_html
 
-    def process_author_request(self, author_input):
+    def process_author_request(self, author_input, papers_visible=False):
         """处理作者检索请求"""
         try:
             result = self.pipeline.process_author(author_input)
-            return result
+            author_info = self._generate_author_info_html(result['authors'])
+            
+            # 根据papers_visible状态添加显示/隐藏样式
+            style = """
+            <style>
+                .papers-list { display: %s; }
+            </style>
+            """ % ('block' if papers_visible else 'none')
+            
+            return style + author_info
+            
         except Exception as e:
-            return f"Error: {str(e)}", ""
-  
+            return f"Error: {str(e)}"
+
+
+    def process_author_papers(self, author_index, top_n):
+        """处理作者论文解析请求"""
+        try:
+            result = self.pipeline.process_author_papers(int(author_index), int(top_n))
+            
+            # 生成HTML展示
+            html = f"""
+            <div style='padding: 20px;'>
+                <h2>论文分析完成</h2>
+                <p>已分析作者 <b>{result['author'].get('name')}</b> 的论文</p>
+                <p>分析报告已保存至: {result['markdown_file']}</p>
+                <p>共分析 {len(result['papers_results'])} 篇论文（按引用次数排序）</p>
+                <hr>
+                <div style='max-height: 500px; overflow-y: auto;'>
+                    {self._generate_papers_analysis_html(result['papers_results'])}
+                </div>
+            </div>
+            """
+            return html
+        except Exception as e:
+            return f"Error: {str(e)}"
+
+    def _generate_papers_analysis_html(self, papers_results):
+        """生成论文分析结果的HTML"""
+        html = ""
+        for i, result in enumerate(papers_results, 1):
+            html += f"""
+            <div style='margin-bottom: 20px; padding: 10px; border: 1px solid #ddd;'>
+                <h3>{i}. {result['title']}</h3>
+                <p>发表年份: {result.get('year', '未知')}</p>
+                <p>发表venue: {result.get('venue', '未知')}</p>
+                <p>引用次数: {result.get('citationCount', 0)}</p>
+                <p>分析结果: 见Markdown文件</p>
+            </div>
+            """
+        return html
+    
     def create_ui(self):
         """创建两个Tab的WebUI界面"""
         with gr.Blocks() as demo:
             gr.Markdown(f"<h1 align='center'>{self.title}</h1>")
             
-            with gr.Tabs() as tabs:
+            with gr.Tabs():
                 # Tab 1: PDF解析
-                with gr.Tab("解析PDF"):
+                with gr.Tab("解析文献PDF"):
                     with gr.Row():
                         # 左侧: PDF上传和预览
                         with gr.Column():
@@ -218,7 +308,7 @@ class RefParserUI:
                                     ref_output = gr.HTML()
                 
                 # Tab 2: 论文检索与解析
-                with gr.Tab("文章检索与解析"):
+                with gr.Tab("文献检索与解析"):
                     with gr.Row():
                         # 左侧: 输入和结果展示区
                         with gr.Column(scale=1):
@@ -236,14 +326,52 @@ class RefParserUI:
                             gr.Markdown("### 引文内容")
                             citing_papers = gr.HTML()
 
+                # Tab 3: 作者检索与解析
                 with gr.Tab("作者检索与解析"):
                     with gr.Row():
-                        with gr.Column():
+                        # 左侧列：作者搜索
+                        with gr.Column(scale=1):
                             author_input = gr.Textbox(lines=1, label="作者姓名")
-                            search_author_btn = gr.Button("检索与解析", variant="primary")
-                        with gr.Column():
+                            search_author_btn = gr.Button("检索作者", variant="primary")
+                            papers_visible = gr.State(False)
+                            toggle_papers_btn = gr.Button("展开/收起论文列表", variant="secondary")
                             author_info = gr.HTML()
-                            author_papers = gr.HTML()
+                        
+                        # 右侧列：论文分析
+                        with gr.Column(scale=1):
+                            with gr.Row():
+                                author_index_input = gr.Number(
+                                    label="作者序号", 
+                                    minimum=1, 
+                                    maximum=10, 
+                                    step=1, 
+                                    value=1
+                                )
+                                top_n_input = gr.Number(
+                                    label="分析论文数量", 
+                                    minimum=1, 
+                                    maximum=10, 
+                                    step=1, 
+                                    value=1
+                                )
+                            parse_author_papers_btn = gr.Button("解析作者论文", variant="primary")
+                            final_papers_info = gr.HTML()
+
+                # 处理展开/收起按钮的点击事件
+                def toggle_papers(author_name, visible):
+                    return not visible, self.process_author_request(author_name, not visible)
+                
+                search_author_btn.click(
+                    fn=self.process_author_request,
+                    inputs=[author_input, papers_visible],
+                    outputs=[author_info]
+                )
+                
+                toggle_papers_btn.click(
+                    fn=toggle_papers,
+                    inputs=[author_input, papers_visible],
+                    outputs=[papers_visible, author_info]
+                )
 
             # 绑定事件处理
             view_btn.click(
@@ -264,10 +392,10 @@ class RefParserUI:
                 outputs=[paper_info, citing_papers]
             )
 
-            search_author_btn.click(
-                fn=self.process_author_request,
-                inputs=[author_input],
-                outputs=[author_info, author_papers]
+            parse_author_papers_btn.click(
+                fn=self.process_author_papers,
+                inputs=[author_index_input, top_n_input],
+                outputs=[final_papers_info]
             )
 
         return demo

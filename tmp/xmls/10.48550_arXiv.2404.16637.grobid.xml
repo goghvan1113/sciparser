@@ -1,0 +1,2019 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Zero-Shot Distillation for Image Encoders: How to Make Effective Use of Synthetic Data</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability  status="unknown">
+					<licence/>
+				</availability>
+				<date type="published" when="2024-04-25">25 Apr 2024</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Niclas</forename><surname>Popp¹</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="laboratory">¹University of Tübingen ²Bosch Center for Artificial Intelligence (BCAI)</orgName>
+								<orgName type="institution">Robert Bosch GmbH</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Jan</forename><forename type="middle">Hendrik</forename><surname>Metzen²</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="laboratory">¹University of Tübingen ²Bosch Center for Artificial Intelligence (BCAI)</orgName>
+								<orgName type="institution">Robert Bosch GmbH</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Matthias</forename><surname>Hein¹</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="laboratory">¹University of Tübingen ²Bosch Center for Artificial Intelligence (BCAI)</orgName>
+								<orgName type="institution">Robert Bosch GmbH</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Zero-Shot Distillation for Image Encoders: How to Make Effective Use of Synthetic Data</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date type="published" when="2024-04-25">25 Apr 2024</date>
+						</imprint>
+					</monogr>
+					<idno type="MD5">EAA43A6FB0C0AF29D0AD3917A9238028</idno>
+					<idno type="arXiv">arXiv:2404.16637v1[cs.CV]</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.2-SNAPSHOT" ident="GROBID" when="2025-01-21T07:32+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<textClass>
+				<keywords>
+					<term>Data-Free Knowledge Distillation</term>
+					<term>CLIP</term>
+					<term>Synthetic Data</term>
+					<term>Zero-Shot Classification</term>
+				</keywords>
+			</textClass>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Multi-modal foundation models such as CLIP have showcased impressive zero-shot capabilities. However, their applicability in resource-constrained environments is limited due to their large number of parameters and high inference time. While existing approaches have scaled down the entire CLIP architecture, we focus on training smaller variants of the image encoder, which suffices for efficient zero-shot classification. The use of synthetic data has shown promise in distilling representations from larger teachers, resulting in strong few-shot and linear probe performance. However, we find that this approach surprisingly fails in true zero-shot settings when using contrastive losses. We identify the exploitation of spurious features as being responsible for poor generalization between synthetic and real data. However, by using the image feature-based L2 distillation loss, we mitigate these problems and train students that achieve zero-shot performance which on four domainspecific datasets is on-par with a ViT-B/32 teacher model trained on DataCompXL, while featuring up to 92% fewer parameters.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">Introduction</head><p>Motivation. Image classifiers built on top of large vision(-language) foundation models, such as CLIP <ref type="bibr" target="#b34">[35]</ref> or DINOv2 <ref type="bibr" target="#b31">[32]</ref>, have shown impressive zero-shot capabilities across various tasks. However, their extensive parameter count and high inference latency present significant challenges for deployment in resourceconstrained edge devices used in driver-assistance systems, automated driving, mobile robotics, or video surveillance. Due to their reduced capacity, smaller models cannot be expected to match the performance of larger ones in arbitrary domains. Additionally, training large-scale foundation models typically involves several millions or billions of images, making it expensive and time-consuming. Together, this motivates the need for smaller domain-specific models, as well as data-efficient training procedures. In this work, we specifically focus on zeroshot image classification, for which only a small-scale image encoder is required. Class-specific text embeddings are fixed and can be precomputed off-device, while only image embeddings are computed on-device. Thus, our goal is to distill smaller drop-in replacements (students) of the CLIP image encoder (teacher) that achieve on-par performance on the specific target domains of interest. In particular, we want to specialize the image encoder student to novel domains for which we only know the relevant classes, but do not have access to actual images, the so called zero-shot distillation setting.</p><p>For zero-shot distillation, domain-specific data can be obtained from "generalpurpose" generative models, such as large-scale latent diffusion models <ref type="bibr" target="#b33">[34]</ref>, by class-aware prompting. However, learning from synthetic images has proven challenging <ref type="bibr" target="#b1">[2,</ref><ref type="bibr" target="#b36">37]</ref>: using simple class-specific text prompts, like those used for zeroshot classification by CLIP <ref type="bibr" target="#b34">[35]</ref>, yields low-diversity datasets and poor classifiers, as observed in previous studies <ref type="bibr" target="#b1">[2,</ref><ref type="bibr" target="#b36">37]</ref>. Furthermore, when training on a combination of natural and such low-diversity synthetic images, the overall accuracy starts to decline as synthetic data outweighs real data <ref type="bibr" target="#b1">[2]</ref>. More advanced methods for diversifying prompts with large-language models <ref type="bibr" target="#b50">[51]</ref>, together with a large compute budget for synthetic image generation, allow achieving high accuracy in linear probe or few-shot scenarios, indicating strong representation learning capabilities. However, we observe in this work that even with diverse prompting, the performance in zero-shot distillation with actual zero-shot evaluation remains comparatively low. We identify that fine-tuning small CLIP image encoders with contrastive text-image losses leads to models that exploit spurious features in images and because of this exhibits poor generalization between synthetic and real images. Linear probe evaluation involves a final linear layer trained on real-data and is thus not affected by the same issue.</p><p>Besides identifying the issue of spurious feature learning, our main contribution is the (somewhat unexpected) observation that a simple change of the distillation loss can mitigate this problem. Specifically, we find that employing a L 2 loss between student's and teacher's image features substantially reduces the tendency of the models to exploit spurious features and enhances their generalization capabilities between synthetic and real data. We attribute this to the fact that this loss distills image encoders without any influence of the teacher's text encoder and the potential shortcut learning it might encourage. Through one epoch of pre-training on DataComp medium <ref type="bibr" target="#b6">[7]</ref> and subsequent fine-tuning on diverse synthetic datasets generated using diffusion models and prompts from large language models, we achieve superior zero-shot classification performance on four target datasets compared to TinyCLIP <ref type="bibr" target="#b47">[48]</ref>, the current state-of-the-art for distilled CLIP models. Furthermore, our approach achieves on-par performance with the teacher model, all without utilizing a single annotated image from the target domain during training. When using a image encoder that features only 11 million trainable parameters, we manage to achieve the zero-shot performance of a ViT-B/32 with 86 million parameters within a margin of 5 percent points and outperform a TinyCLIP model with 90 million trainable parameters on three of four test datasets.</p><p>Main contributions. In this work, we show that small 1-to-1 replacements of the CLIP vision encoder can be efficiently and robustly trained in a zero-shot setting using feature distillation. Our main contributions are the following: 1. We introduce a unifying framework for zero-shot distillation of image encoders. 2. We identify failure cases of distillation when using contrastive losses for finetuning on small or synthetic datasets. We attribute this to models being prone to learning spurious features and overfitting to the training domain. 3. We propose feature distillation, which is not susceptible to these spurious features and generalizes better between synthetic and natural images. 4. Using our framework we manage to distill a ViT-B/32 CLIP vision encoder into student models with up to 93% fewer parameters that closely match the classification performance of the teacher and surpass existing baselines on the Oxford Pets <ref type="bibr" target="#b32">[33]</ref>, Flowers-102 <ref type="bibr" target="#b29">[30]</ref>, Stanford Cars <ref type="bibr" target="#b15">[16]</ref> and Food-101 <ref type="bibr" target="#b2">[3]</ref> datasets.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">Related Work</head><p>Knowledge Distillation of Vision-Language Models. Knowledge Distillation <ref type="bibr" target="#b13">[14]</ref> is a widely used technique for transferring knowledge from larger teacher models to smaller student models. In its vanilla form, the approach involves combining a standard training loss with a distillation loss that considers the output of both the student and teacher models, penalizing discrepancies between the two models. Knowledge distillation has been observed to not only benefit the test accuracy of the student on the target datasets but transfer other favorable properties of the teacher such as domain generalization <ref type="bibr" target="#b30">[31]</ref>. While this approach has been well-established for single-modality tasks including vision <ref type="bibr" target="#b26">[27,</ref><ref type="bibr" target="#b48">49]</ref> or language <ref type="bibr" target="#b14">[15,</ref><ref type="bibr" target="#b35">36]</ref>, recent works have extended the concept to the multi-modal setting, specifically in the context of vision-language models. CLIP-KD <ref type="bibr" target="#b49">[50]</ref> provides an extensive set of experiments comparing various different loss combinations. TinyCLIP <ref type="bibr" target="#b47">[48]</ref> proposed an advanced initialization process using weight inheritance from the teacher to the student as well as a multi-stage progressive distillation culminating in models that are only 1/4 the size of a ViT-B/32 CLIP model. MobileCLIP <ref type="bibr" target="#b45">[46]</ref> further refined the distillation process by incorporating image augmentation, synthetic captions, and dedicated architectural choices. In contrast to these existing methods, our approach focuses on finding only a oneto-one replacement of the vision encoder while the text encoder remains frozen. Apart from CLIP-specific techniques, unsupervised distillation based purely on images without labels has been identified as a data-efficient alternative to supervised training for vision encoders <ref type="bibr" target="#b11">[12]</ref> and class-incremental generalization <ref type="bibr" target="#b17">[18]</ref>. We build on this observation by combining unsupervised pre-training with targeted fine-tuning. Despite knowledge distillation being a widely adopted training technique, it has been observed that it does not always work as commonly understood. Even when the student features the same capacity as the the teacher, there can be significant discrepancies in their predictive distributions <ref type="bibr" target="#b30">[31,</ref><ref type="bibr" target="#b38">39]</ref>.</p><p>Training and Distillation Using Synthetic Images. Recent advancements in generative text-to-image models have sparked a growing interest in utilizing synthetic images for vision applications. Azizi et al. <ref type="bibr" target="#b1">[2]</ref> demonstrated that images from fine-tuned text-to-image models can be combined with real images to enhance the accuracy of classifiers on ImageNet-1k <ref type="bibr" target="#b4">[5]</ref>. For text-to-image generation, diffusion models are commonly employed, particularly for knowledge distillation <ref type="bibr" target="#b18">[19]</ref>. However, it was observed that the performance deteriorates when the number of synthetic images surpasses that of real images. Yu et al. <ref type="bibr" target="#b50">[51]</ref> attributed this decline to the lack of diversity in the used synthetic images. To mitigate this issue, they proposed a strategy to diversify the image generation process by incorporating prompts generated by large language models, thereby enhancing content and style variation. Another approach to diversification in the few-shot setting was presented by Da Costa et al. <ref type="bibr" target="#b3">[4]</ref>, which involved augmentations and low-rank adaptation. By scaling up synthetic datasets, Tian et al. <ref type="bibr" target="#b41">[42]</ref> and Hammoud et al. <ref type="bibr" target="#b10">[11]</ref> demonstrated the feasibility of training vision-language foundation models solely using images from text-to-image models. However, achieving performance on par with or surpassing models trained on real data necessitates the utilization of a large number of synthetic images, on the order of 10 7 or 10 8 . This not only prolongs the already long training process but also introduces additional computational overhead. Most importantly, the reported results are typically obtained by linear probing or after few-shot training and are not true zero-shot accuracies which we aim to optimize. To mitigate these challenges, we propose a hybrid approach that combines a large-scale dataset of natural images with a smaller set of domain-specific synthetic images.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">Framework for Zero-Shot Distillation</head><p>Zero-shot distillation refers to the process of transferring knowledge from a teacher to a student model in a setting where one does not have access to images from the target domain. It is thereby a special case of data-free knowledge distillation which describes the setting where the training data for teacher and the student differ. Zero-shot distillation specifically focuses on the ability of founda-tion models as teachers to perform well on unseen data due to their generalization properties. The objective is to transfer this performance to a smaller student model without utilizing any of the unseen data. Therefore, the primary goal is not to address the disparity between the datasets used to train the teacher and student, but rather to extract domain-specific knowledge from the teacher model without having access to the corresponding data. The term zero-shot distillation has been introduced previously <ref type="bibr" target="#b27">[28]</ref>, yet only in the setting for single-modal classifiers that were trained using the cross-entropy loss. In our case, we consider CLIP which is a vision-language model instead of a simple image classifier. In this section, we present a structured framework for zero-shot distillation. Specifically, we discuss the data domains, the training pipeline, the generation of diversified synthetic training data as well as the selection of an appropriate loss function.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1">Data Domain</head><p>In the context of (pre-)training for a zero-shot setting, there are currently two core approaches. The first one involves relying on large-scale data such as common crawl datasets <ref type="bibr" target="#b6">[7,</ref><ref type="bibr" target="#b37">38]</ref>. While this approach is feasible for large foundation models, it poses challenges for smaller models as these lack the same level of generalization capabilities due to their smaller capacity. The second approach involves training from scratch using either purely synthetic images <ref type="bibr" target="#b10">[11,</ref><ref type="bibr" target="#b41">42,</ref><ref type="bibr" target="#b42">43]</ref> or a combination of real and synthetic images <ref type="bibr" target="#b1">[2,</ref><ref type="bibr" target="#b50">51]</ref>. Yet by incorporating few-shot learning <ref type="bibr" target="#b10">[11,</ref><ref type="bibr" target="#b42">43]</ref> on real images or linear probing <ref type="bibr" target="#b10">[11,</ref><ref type="bibr" target="#b41">42,</ref><ref type="bibr" target="#b42">43]</ref> after training on synthetic data, the reported accuracies are no longer truly zero-shot. We optimize the actual zero-shot performance by adopting a two-stage approach: in the first stage, we pretrain on a large-scale general-purpose dataset consisting of natural images, and subsequently fine-tune using a smaller set of domain-specific synthetic images. This approach allows us to address the limitations of relying solely on generalization or training on synthetic data, and enables us to achieve strong zero-shot performance.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2">Training Pipeline</head><p>In order to shorten training in comparison to training from scratch, Wu et al. <ref type="bibr" target="#b47">[48]</ref> have introduced weight inheritance as an initialization scheme for distilling CLIP models. This method has a significant limitation as it can only be applied when the student model shares a similar architecture with the teacher model. Instead of using weight inheritance, we introduce a pre-training step <ref type="bibr" target="#b7">[8]</ref> which is not targeted to a specific domain. Pre-training as for large foundation models like the original CLIP <ref type="bibr" target="#b34">[35]</ref> typically requires substantial computational resources due to the use of billions of images. This contradicts the objective of resourceconstrained training for small models. He et al. <ref type="bibr" target="#b11">[12]</ref> observed that pre-training can be shortened significantly by using a feature-based loss. For our purpose of training 1-to-1 replacements of CLIP vision encoders, this step has further advantages: by aligning the embeddings of teacher and student, we can mitigate phenomena like the modality gap <ref type="bibr" target="#b19">[20]</ref> where corresponding output vectors are located in different areas of the embedding space. Subsequently, we fine-tune the pre-trained models towards the target domain of interest with the same loss.</p><p>The only difference between pre-training and fine-tuning is the training data.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.3">Data Diversification of Synthetic Images</head><p>In the context of zero-shot learning for image classification, synthetic data generation is based on the class names. However, it has been observed that using only the names to generate images using diffusion models leads to suboptimal performance <ref type="bibr" target="#b36">[37]</ref>. This is primarily due to the lack of diversity in the generated images as well as class ambiguity <ref type="bibr" target="#b3">[4]</ref>. One alternative is to utilize captions from existing real datasets for image generation. This approach is not entirely consistent with a zero-shot setting, as there may not be available captions for all classes. To address this challenge, recent approaches have turned to leveraging large language models (LLMs) to enhance diversity in the prompts. In addition to class names, LLMs are guided by additional inputs for diversification, such as information from a concept bank <ref type="bibr" target="#b10">[11]</ref> or specific requirements related to contextual and style diversification <ref type="bibr" target="#b50">[51]</ref>. By incorporating these additional sources of guidance, the generated synthetic data becomes more diverse and aligned with the desired objectives of the target setting. Using the approach from Yu et al. <ref type="bibr" target="#b50">[51]</ref>, we focus on contextual dimensions to achieve diversification. These dimensions are attributes that describe the context of the image such as the background, camera angle, object position, presentation style, and superclasses, all of which are tuned specifically for the target dataset. In contrast to Yu et al. <ref type="bibr" target="#b50">[51]</ref>, we do not prompt the LLM for each caption separately, but ask for different options for each contextual dimension. This reduces the risk of obtaining similar captions. The final prompt used for the text-to-image model is a comma-separated list of options for these contextual dimensions. Instead of using all possible combinations of options, which would result in a strongly growing number of images given more options, we perform combinatorial testing <ref type="bibr" target="#b0">[1,</ref><ref type="bibr" target="#b28">29]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.4">Loss Selection</head><p>Knowledge distillation involves combining a training loss L training with a distillation loss L distillation <ref type="bibr" target="#b13">[14]</ref>. The training loss L training takes into account the image and ground truth labels or captions, while the distillation loss L distillation is used to align the teacher and student models. Commonly, the overall loss is selected as</p><formula xml:id="formula_0">L overall = L training + λ L distillation ,</formula><p>where λ is a scaling parameter [9]. One might assume that using the CLIP loss for L training would be the most direct approach, as it was used to train the teacher model. However, He et al. observed that pre-training can be substantially sped up by solely employing a feature-based distillation loss without a supervised training loss. In contrast to the CLIP loss, which aims at aligning the text and image embedding of imagecaption pairs, the student directly learns from the image features of the teacher without considering the text. More precisely, for every optimization step, we sample a batch of N images {t i , i i } i=1,...,N as input. Denote the normalized image embedding corresponding to the i-th image by I S i for the student and I T i for the teacher. Based on this, the L 2 feature distillation loss</p><formula xml:id="formula_1">L feature 2 = N i=1 ∥I S i -I T i ∥ 2 is optimized.</formula><p>For fine-tuning, the CLIP loss function remains the commonly used approach. <ref type="bibr" target="#b9">[10]</ref>. Yet, it was initially designed to pre-train both the text and image encoder on large-scale vision-language datasets where each image has a distinct caption, for most image classification datasets, each image only possesses a class label instead of a diverse prompts. In this case, we employ the zero-shot captions "a photo of {class name} which is a type of {superclass}", which were originally introduced for the zero-shot inference of the original CLIP model <ref type="bibr" target="#b34">[35]</ref>, as T i . "Superclass" refers to a general description of the object that can be encountered such as pets, food, cars or similarly. By using these class-specific prompts, several images in a batch may share the same caption which conflicts the goal of decreasing the similarity of images embeddings to the text embeddings of not matching captions in the CLIP loss. An alternative to the CLIP loss is given by the multi-positive contrastive loss introduced in StableRep <ref type="bibr" target="#b42">[43]</ref>. To adapt the multi-positive (MP) loss to our setting, we replace the anchor sample by the embedding of a class-specific zero-shot prompt. Denote by Z k the normalized embedding of the zero-shot prompt for class k. The contrastive distribution is given by</p><formula xml:id="formula_2">q k = exp(⟨I i , Z k ⟩/τ ) M j=1 exp(⟨I i , Z j ⟩/τ ) and the ground-truth categorical distri- bution is p k = 1 l(Ii)=k M j=1 1 l(Ii)=j</formula><p>. Given M classes, the MP loss is computed as</p><formula xml:id="formula_3">L MP = - M k=1 p k log q k .</formula><p>We compare contrastive loss, MP loss, feature loss, as well as combinations thereof, on both synthetic and real data in our experiments. We observe that in the zero-shot settings, pure feature distillation is both the most efficient choice for pre-training and the most robust loss for fine-tuning.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">Experiments</head><p>In this section, we present the results of the models trained based on our framework and thereby explain how feature distillation enables zero-shot distillation with synthetic data. After a description of the setup we will compare our models to existing baselines which we outperform consistently. In the ablation studies, we uncover that using contrastive losses leads to students that exploit spurious features in the data, generalize poorly between synthetic and real data alongside being less robust to common corruptions of input images. Overall, this indicates that contrastive losses are a potential cause why efficient zero-shot distillation from synthetic has been an unresolved challenge.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1">Setup</head><p>Datasets and Hyperparameters As introduced in Section 3.2, we perform feature-based pre-training on a large-scale dataset consisting of natural images for various domains. For this purpose, we select DataComp medium <ref type="bibr" target="#b6">[7]</ref> and train for a single epoch. Originally, the dataset consists of 123 million images but at the time we conducted out experiments only 86% of the image URLs were still active. For fine-tuning, we target the Oxford Pets <ref type="bibr" target="#b32">[33]</ref>, Oxford Flowers <ref type="bibr" target="#b29">[30]</ref>, Food-101 <ref type="bibr" target="#b2">[3]</ref> and Stanford Cars <ref type="bibr" target="#b15">[16]</ref> to evaluate or models domain-specific datasets. These datasets are only used for testing while the actual training datasets used for training are synthetically generated based on the classes. Using the diversification strategy discussed in Section 3.3, we select a different set of five contextual dimensions and corresponding weights in the prompts to the diffusion model. More details on this selection are given in the supplementary material. For the pets, flowers and cars dataset we generate 15 options per contextual dimension while for the food dataset we use 30 as the target dataset is larger as well. This results in 265 and 1011 images per class, respectively. As the selection of options for the contextual dimensions and superclasses are relatively simple, we can use a smaller language model Llama-2 7B fine-tuned for chats <ref type="bibr" target="#b44">[45]</ref> and still obtain sufficiently diverse prompts. For the generation of the images, we utilize a LCM LoRA <ref type="bibr" target="#b24">[25]</ref> of Stable Diffusion XL <ref type="bibr" target="#b33">[34]</ref> with a guidance scale of 0.5 and prompt weighting. As in the original CLIP paper <ref type="bibr" target="#b34">[35]</ref> random square crops of the resized images are the only data augmentation used during training. For both pre-training and fine-tuning we use the same hyperparameters. We train using a batch size of 256 and a constant learning rate of 5 × 10 -4 for the AdamW optimizer <ref type="bibr" target="#b23">[24]</ref>. All other hyperparameters were kept consistent with the CLIP training methodology <ref type="bibr" target="#b34">[35]</ref>. One epoch of pre-training corresponds to 4.3 × 10 5 optimization steps. For fine-tuning, we perform 96 optimization epochs for all models. Even on the largest synthetic dataset this equals less than 9% of the update steps done during pre-training. Student and Teacher Architectures As teacher model, we employ a ViT-B/32 <ref type="bibr" target="#b5">[6]</ref> CLIP vision encoder that has been trained on DataComp-XL, a dataset consisting of 12.8 billion image-text pairs from Common Crawl <ref type="bibr" target="#b6">[7]</ref>. The corresponding text encoder follows the same architecture as described in the original CLIP paper, with 63 million parameters <ref type="bibr" target="#b34">[35]</ref> and an embedding dimension of 512. For our student models, we utilize two different types of architectures: Efficient-Nets <ref type="bibr" target="#b39">[40]</ref>, which are based on convolutional neural networks, and TinyViTs <ref type="bibr" target="#b39">[40]</ref>, which are hybrid models combining convolutions and transformers. For our final results, we respectively select three models in the 5, 10, and 20 million parameter range from each architecture type. We only report intermediate results on the TinyViT with 11 million parameters. All models are systematically scaled down to improve inference speed and reduce the number of parameters while still maintaining a high capacity for representation learning. To align the output of the vision encoder with the embedding dimension of the teacher model, we apply a single linear projection head. This ensures consistent dimensionality of the embedding space between the teacher and student models.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2">Zero-Shot Performance and Comparison to Baselines</head><p>In this section, we report the zero-shot classification accuracy of our models based on the TinyViT-11M architecture and compare them to existing bench-marks. The results are shown in Table <ref type="table" target="#tab_0">1</ref>. The first reference for the performance is the teacher itself which is trained on DataComp-XL as well as the same model trained on DataComp-medium. The teacher model achieves zero-shot accuracies of over 80% on the pets, cars and food datasets as well as over 70% on the flowers dataset. Additionally, we report the performance of four TinyCLIP models that have been trained on LAION-400M <ref type="bibr" target="#b37">[38]</ref> or YFCC-15M <ref type="bibr" target="#b40">[41]</ref> datasets. These TinyCLIP models have undergone extensive training on large-scale datasets for multiple epochs, which differs from our approach. Specifically, the smallest Tiny-CLIP model has been exposed to six times as many images as our models, while the largest models have encountered over 120 times as many samples. The Tiny-CLIP models exhibit a comparable size to our models in terms of the number of parameters, even when considering the frozen text encoder which is not required for zero-shot classification. The largest TinyCLIP model has 40% fewer parameters than the ViT-B/32 CLIP model and achieves its performance up to a margin of 9%. The smallest TinyCLIP model features the same number of trainable parameters but has a gap of over 75% to ViT-B/32 CLIP model on the cars dataset. At the time of conducting our experiments, we were unable to compare our results with MobileCLIP <ref type="bibr" target="#b45">[46]</ref> and CLIP-KD <ref type="bibr" target="#b49">[50]</ref> as these models are not publicly available. We report three types of models from our framework: trained from scratch, pretrained and finetuned. For reference, we include models that were fine-tuned on the real datasets as well. It is important to note that the reported accuracies are not zero-shot for these two cases. First, we observe that training from scratch or finetuning on synthetic data using the CLIP loss results in substantially worse performance. We assess this behavior in detail in the next section. Based on this observation, we base our framework solely on feature distillation. We find that the resulting models outperform even the largest TinyCLIP models on three of the four datasets despite having 88% less trainable parameters. Moreover, they achieve comparable performance to the teacher models with a margin of 5% on three of the four datasets. Similarly, our model outperforms the largest Tiny-CLIP model in these cases. The larger performance gap on the Food dataset can likely be attributed to its larger test set size, which is also evident in the Tiny-CLIP models. When comparing to ViT-B/32 trained on DataComp-medium, which has been trained on a comparable number of images, even our purely pretrained models demonstrate significantly superior performance. Similarly, when pre-training a student using the CLIP loss on DataComp-medium for one epoch, the resulting zero-shot accuracies are far worse compared to the feature-based loss. This validates the data-efficiency of feature distillation for pre-training <ref type="bibr" target="#b11">[12]</ref>. We report results for top-5 validation accuracy in the supplementary material.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.3">Ablations</head><p>Based on the observation that models trained solely using feature distillation outperform those incorporating label-based losses when fine-tuning on synthetic data, we hypothesize that the utilization of labels during fine-tuning leads the model to learn spurious features, as well as domain-specific characteristics that distinguish between synthetic and natural images. Previously, it was observed that the using the CLIP loss hinders the class-incremental generalization of students distilled on real images <ref type="bibr" target="#b17">[18]</ref>. We examine whether this observation transfers to the synthetic to real domain shift and potential spurious features. We highlight that the class-incremental setting is different from ours, as we use a fixed set of classes. To validate our hypothesis, we conducted three experiments on the pets dataset, deliberately introducing dedicated spurious features into synthetic and real images. Additionally, we evaluate students that we fine-tuned on either real or synthetic images on test sets from the respective other domain. Like that, we aim to provide further insights into the impact of label-based losses on the transferability of the models between synthetic and natural images. Subsequently, we employ larger and smaller students with two different architecture types to assess how the performance scales with the number of trainable parameters. Additionally, we report the performance of models trained from scratch.</p><p>Natural Images with Spurious Features. To investigate the impact of spurious features in the natural image domain, we add class-specific colored shapes to the images in the pets dataset. These shapes were added to each image in the training split, and examples can be seen in Figure <ref type="figure" target="#fig_1">2</ref>. We then proceeded to finetune the pre-trained student models using the same hyperparameters employed during pre-training using these images. The test accuracies of the resulting models are shown in Table <ref type="table" target="#tab_1">2</ref>. We observe a slight decrease in performance on the test set without spurious features when the pre-trained students were fine-tuned with contrastive losses. This suggests that the students did not acquire any addi- tional class-specific features during fine-tuning. However, when evaluating these fine-tuned students on a test set of real images where the colored shapes were mixed between classes, we observe a significant degradation in performance. In contrast, the students trained with the L 2 loss achieves accuracies comparable to the dataset without spurious features on both test sets. These findings highlight the robustness of the feature loss in mitigating the negative impact of spurious features in the natural image domain. Synthetic Images with Spurious Features. To investigate whether the observed behavior on real images could be replicated using synthetic ones, we generated a synthetic dataset incorporating dedicated spurious features. Specifically, we sample images where pets are positioned against a solid-colored background, with each class assigned a distinct color. The results shown in Table <ref type="table" target="#tab_1">2</ref> indicate that the performance of students trained with contrastive losses deteriorates when confronted with the presence of these spurious features. Figure <ref type="figure" target="#fig_1">2</ref> showcases instances of misclassifications. In contrast, the student trained with L 2 loss exhibited a test accuracy of 84.4%, which is only 5% lower than the accuracy of the teacher despite the domain gap between real and synthetic images, as well as the presence of spurious features. Generalization Between Synthetic and Real Images. In order to evaluate the ability of our models to generalize between synthetic and real images, we examine the performance of models that were fine-tuned on real training datasets when tested on independently generated synthetic datasets using the same methodology as the synthetic training sets. The results are presented in Table <ref type="table" target="#tab_3">3</ref>. The models fine-tuned with contrastive losses exhibited lower validation accuracy compared to the students trained with feature distillation. In contrast, for the models fine-tuned on synthetic data the reverse is true. Using the CLIP loss results in higher accuracy on the synthetic testset in comparison to feature distillation. This discrepancy suggests that the former models primarily learned domain-specific features of natural or synthetic images, thereby limiting their generalization capabilities between the two types.</p><p>Robustness to Common Corruptions. In order to evaluate the robustness of the models' learned representations against image perturbations, we conducted a  comprehensive benchmark study. We assessed the performance of the classifiers on 15 common corruptions <ref type="bibr" target="#b12">[13]</ref> at a fixed severity level of three, focusing on the pets dataset. The corresponding results are presented in Table <ref type="table" target="#tab_4">4</ref>. Our observations revealed that the students trained using the L 2 feature loss demonstrate higher robustness to corruptions, regardless of whether they were trained on real or synthetic data. The distinction to the models fine-tuned with contrastive losses is particularly prominent when training on synthetic data, where the models finetuned with the CLIP loss even perform worse than the purely pre-trained model. These findings provide further evidence that contrastive losses lead to learning spurious and datatype-specific features, making the models less robust to disturbances caused by common corruptions. When evaluating on synthetic test data with common corruptions, we observe that the performance drops are lower and the characteristics of the synthetic data are less disturbed by corruptions. Student Model Size. Alongside the results of a TinyViT-11M in Table <ref type="table" target="#tab_0">1</ref>, we report the zero-shot performance of five additional students after pre-training and fine-tuning using feature distillation in Figure <ref type="figure">3</ref>. As expected, there is a general trend of improved performance with increasing model size. Yet, we observe that the effectiveness of zero-shot fine-tuning is more pronounced for smaller models compared to larger ones: after fine-tuning, the difference in performance between the largest and smallest models is around 10% to 15%, while after purely pre-training it is as high as 30%. These findings highlight that zero-shot distillation is particularly effective for smaller models since it allows to adapt them to the target domain, without requiring real in-domain data.</p><p>Training From Scratch. We investigate the accuracy of models trained from scratch, both on real and synthetic images in Fig. <ref type="figure" target="#fig_2">4</ref>. On real data, using a sum of the L 2 and a contrastive loss indeed results in the best performance as observed in CLIP-KD <ref type="bibr" target="#b49">[50]</ref>. The low accuracy of the feature distilled student on the flowers dataset can be attributed to the small training set with only 10 images per class. On synthetic training data, the L 2 loss consistently performs best while the CLIP loss or the MP loss results are substantially worse. Combing the L 2 with one of the contrastive losses does not yield any performance gains in contrast to purely feature-based distillation. This is in line with the behavior observed during fine-tuning in Tab. 1.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">Conclusion</head><p>In this work, we introduced a framework for zero-shot distillation of small CLIP image encoders based on synthetic images. We make the surprising observation that contrastive losses are a potentially detrimental factor for generalization capabilities of models between synthetic and real data, due to the exploitation</p><formula xml:id="formula_4">3DUDPV0 7RS$FFXUDF\ 7LQ\9L7 3HWV )ORZHUV &amp;DUV )RRG 3DUDPV0 7RS$FFXUDF\ (IILFLHQW1HW 3HWV )ORZHUV &amp;DUV )RRG</formula><p>Fig. <ref type="figure">3</ref>: Zero-shot classification performance of the students after pre-training on Dat-aComp medium for one epoch and after finetuning on the synthetic datasets for 96 epochs (hatched). All experiments were performed only using feature distillation. of spurious features. By employing a pure image feature-based distillation loss, we successfully mitigate this limitation. As a result, we are able to train models that surpass the current state-of-the-art for zero-shot CLIP distillation, while featuring fewer parameters and not using labeled target domain images.</p><p>Limitations and Future Work. The presented results are based on a ViT-B/32 teacher; future work could explore the benefit of larger teachers for constantsized students. Furthermore, the potential of our small-scale image encoders beyond zero-shot settings could be explored, for instance in architectures that use CLIP image encoders such as BLIP-2 <ref type="bibr" target="#b16">[17]</ref> or LLava <ref type="bibr" target="#b20">[21]</ref><ref type="bibr" target="#b21">[22]</ref><ref type="bibr" target="#b22">[23]</ref>. Moreover, the current framework is limited to classification tasks. To broaden its applicability, future research could extend the framework to encompass other computer vision tasks such as object detection or image segmentation.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A Supplementary Material</head><p>A.1 Details of the Synthetic Data Generation</p><p>In this section, we provide further details on the synthetic data generation and the diversification process. As mentioned in Section 3.3, the prompts used to synthesize the images are based on the classnames and additional information given by an LLM. For each class, we ask the language model to provide information with respect to four contextual dimensions as well as a superclass. The contextual dimensions are dataset specific and are summarized in Table <ref type="table" target="#tab_5">5</ref>. Figure <ref type="figure">6</ref> shows a concrete example for a class from the pets dataset. For each of the contextual dimensions we collect 15 or 30 options from Llama 2 7B fine-tuned for chats <ref type="bibr" target="#b44">[45]</ref>. The larger number of options for the food dataset is used to accommodate its larger test set. In Table <ref type="table">6</ref> we summarize the sizes of the real target datasets. Instead of using all possible combinations of options for the contextual dimensions to generate the prompts, we use combinatorial testing <ref type="bibr" target="#b0">[1,</ref><ref type="bibr" target="#b28">29]</ref>. This approach is inspired by a recent work on systematic error identification <ref type="bibr" target="#b25">[26]</ref>. It reduces the number of images per class while ensuring that the prompts systematically cover the diversity contained in the answers from the LLM. For example, in case of 15 options per contextual dimension, this results in 265 images per class instead of 50625. The prompts are a comma separated list of the selected options, which are weighted to accommodate for contextual dimensions that are more or less important for certain domains. These weighted prompts are then used as input for a diffusion model. Specifically, we use Stable Diffusion XL <ref type="bibr" target="#b33">[34]</ref> LCM LoRA <ref type="bibr" target="#b24">[25]</ref>. To ensure sufficient image quality and diversity we employ a guidance scale of 0.5 and 6 inference steps. Further example images can be found in Figure <ref type="figure" target="#fig_3">5</ref>. These also showcase some of the known problems with diffusion models such as parts of the prompts which are missing in the image <ref type="bibr" target="#b51">[52]</ref> as in the first example for the food dataset.    </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A.4 Training Accuracies</head><p>In addition to the test accuracies reported in the main paper, we report the training accuracies of the fine-tuned models in Table <ref type="table" target="#tab_6">8</ref>. We observe that the models trained with a contrastive loss achieve higher training accuracy than the feature distilled students. This holds in particular on synthetic data. In combination with the results from Section 4, this underlines our hypothesis that contrastive losses lead to learning domain specific or spurious features over actual class or object specific features.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A.5 Contrastive Image Loss</head><p>As an alternative to the feature-based L 2 loss, we test a contrastive loss that is purely based on the image feature of the student and teacher. Using the notation from Section 3.4, it is defined as</p><formula xml:id="formula_5">L image contrastive = N i=1 -log exp(⟨I S i , I T i ⟩/τ ) N k=1 exp(⟨I S i , I T k ⟩/τ )<label>(1)</label></formula><p>where τ denotes a learnable temperature parameter. We use this loss both for pre-training and fine-tuning a TinyViT 11M with the same setup as for the L 2 loss in Section 4. The results are reported in Table <ref type="table" target="#tab_7">9</ref>. We observe that for pretraining, the contrastive image loss results in better performance in comparison to the L 2 loss, while for fine-tuning it is the other way around. Yet, the contrastive image loss still clearly outperforms the CLIP loss when fine-tuning on synthetic data. This validates our observation from Section 4 that using a purely feature based loss improves the generalization between synthetic and real data.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A.6 ImageNet-100 Fine-Tuning</head><p>As an addition to the domain specific datasets discussed in the main paper, we fine-tune the models on ImageNet-100 <ref type="bibr" target="#b43">[44]</ref> which is a subset of ImageNet-1k consisting of 100 classes with various objects that do not necessarily belong to a similar domain. To generate synthetic images, we use the same setup as for the datasets in Section 4 with prompt diversification and 30 options per contextual dimension. This equals 1011 images per class. The contextual dimensions are the same as for the cars dataset but without any prompt weighting. Instead of using the simple zero-shot prompts "a photo of a ..., which is a type of ...", we use the prompt ensembles consisting of 79 templates proposed by Radford et al. <ref type="bibr" target="#b34">[35]</ref>. These prompt templates are also used for the diversified prompts by starting  with a randomly chosen one before listing the classname and the options for the contextual dimensions. The results are shown in Table <ref type="table" target="#tab_8">10</ref>. For the contrastive losses, we observe the same trends as for the domain specific datasets. When finetuning on real data, the resulting test performance exceeds the teacher while fine-tuning with synthetic data deteriorates the accuracy in contrast to pure pre-training. For the L 2 loss this is not the case. Yet, fine-tuning with feature distillation yields almost the same zero-shot accuracy as pure pre-training. This is different to the domain specific datasets where we could observe a consistent improvement. This is likely due to the larger diversity in the real test images which is not sufficiently captured by the synthetic training data.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A.7 Linear Probing</head><p>To evaluate the linear probe accuracy of the teacher as well as the TinyViT 11M models pre-trained and fine-tuned on the pets dataset, we fit a linear classifier based on the unnormalized image features after the projection head. The classifier is fitted either using synthetic or real data, where only the case of synthetic data corresponds to the zero-shot setting. The hyperparameter sweeps for the regularization are performed on a validation split as in the original CLIP paper <ref type="bibr" target="#b34">[35]</ref>. The results are shown in Table <ref type="table" target="#tab_9">11</ref>. For the models fine-tuned on synthetic data, the performance is 8 to 10 % worse when probing with synthetic data in comparison to fitting the linear classification head with real data. This highlights that using linear probing based on real data improves the linear classification accuracy by a substantial margin. In contrast, the true zero-shot linear classifiers, where the classification head is fitted using synthetic data, perform comparable to or worse than pure zero-shot classification using the similarity between the image and prompt embeddings. In contrast to our framework, previous works <ref type="bibr" target="#b10">[11,</ref><ref type="bibr" target="#b41">42,</ref><ref type="bibr" target="#b42">43]</ref> mainly focus on the linear accuracy where the classification head is fitted with real data instead of targeting the true zero-shot setting without any real data which is the more difficult task to accomplish.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A.8 Performance Under Domain Shift</head><p>In addition to the synthetic-real domain gap, we investigate the accuracy of the fine-tuned models under dedicated domain shift. This setting is comparable to  the experiments performed by Zhou et al. <ref type="bibr" target="#b52">[53]</ref>. However, our setup requires no adversarial training. We sample a dataset of images that utilizes the prompt template "a sketch of a ..., which is a type of ..." instead of "a photo of a ..., which is a type of ..." to generate sketches rather than photorealistic images. The remainders of the prompts are identical to those of the independent synthetic test set. Figure <ref type="figure" target="#fig_6">8</ref> illustrates example images from this dataset. For zero-shot classification, we continue to employ "a photo of a ..., which is a type of ..." to simulate unknown domain shift. The results are presented in Table <ref type="table" target="#tab_10">12</ref>. When comparing to the testsets without dedicated domain shifts, we observe that the feature distilled student achieves the lowest decrease in performance, substantially outperforming the models that were fine-tuned using purely contrastive losses. Interestingly, the drop in accuracy is larger when using synthetic in comparison to real data for fine-tuning where the test set feature the domain shift from photos to sketches but not from synthetic to real images. Additionally, we test the models fine-tuned on ImageNet-100 on the corresponding classe of Ima-geNet Sketch <ref type="bibr" target="#b46">[47]</ref>. The results are shown in Table <ref type="table" target="#tab_3">13</ref>. In this case, the students distilled with the feature loss are again more robust against the shift to sketches. Our observations on domain shift mirror the behavior in the class-incremental setting <ref type="bibr" target="#b17">[18]</ref>. There, the models are trained on a subset of the real training images that contains only a fraction of the overall classes and are evaluated on the set of remaining classes. In our case, however, we use a fixed number of classes.  Table <ref type="table" target="#tab_3">13</ref>: Zero-Shot accuracy of the models fine-tuned on ImageNet-100 when tested on the 100 corresponding classes in ImageNet Sketch <ref type="bibr" target="#b46">[47]</ref>. The students distilled using feature distillation exhibit better performance as well as lower degration in comparison to the accuracy on standard ImageNet-100 </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A.9 Simple Prompts</head><p>To assess the influence of diverse prompts on image generation, we utilized zeroshot prompts "a photo of a ..., which is a type of ..." to generate images instead of diversified prompts from a LLM. We sample a synthetic pets dataset with the same number of images per class as in the diversified case. Example images are shown in Figure <ref type="figure">9</ref>. The diversity of the images decreases, especially with regard to the camera angle, as almost all images show only a frontal shot of the animals with the focus on the face. Furthermore, the variety of backgrounds decreases. We fine-tune a TinyViT 11M model on this dataset and observed the results in Table <ref type="table" target="#tab_4">14</ref>. The accuracy of feature distilled student exhibits only a small decrease in performance, while the models which were fine-tuned with contrastive losses significantly decreased. These findings indicate that the students distilled with the L 2 feature loss can deal better with a lack of diversity during fine-tuning.</p><p>A.10 Linear Classification Head Instead Of CLIP Architecture Instead of using the CLIP architecture, we train and distill TinyViT 11M model with a linear classification head on the pets dataset for comparison. We either </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Fig. 1 :</head><label>1</label><figDesc>Fig. 1: Overview over our zero-shot distillation framework and the observed properties of the contrastive and feature losses. The reported test accuracies are from a fine-tuned TinyViT-11M vision encoder.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Fig. 2 :</head><label>2</label><figDesc>Fig. 2: Examples for misclassifications of the students fine-tuned with the CLIP loss. The first row corresponds to setting with natural images. The second and third row correspond to the student trained on synthetic images. All of the test examples are classified correctly by the teacher and the student trained with L2 loss.</figDesc><graphic coords="12,226.18,339.44,75.59,72.27" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Fig. 4 :</head><label>4</label><figDesc>Fig. 4: Classification performance of the models after training from scratch for 96 epochs on either real or synthetic images.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Fig. 5 :</head><label>5</label><figDesc>Fig. 5: Examples for synthetic images from all four datasets together with the prompts used to generate them.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Fig. 7 :</head><label>7</label><figDesc>Fig. 7: Top-5 accuracy of the models after pre-training on DataComp medium for one epoch and after fine-tuning on the synthetic datasets for 96 epochs (hatched). The black dots indicate the top-5 accuracy of the teacher.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>A</head><label></label><figDesc>sketch of a keeshond (Dog, pet), A cozy living room with a comfortable couch and a warm fi replace., 10:00 AM, Sitting on a blanket, Directly overhead A sketch of a persian (Cat, pet), A serene garden or park with lush greenery and a comfortable spot for the cat to lounge., Afternoon, around 1-2pm., Lying on a soft blanket, looking adorable, Directly above A sketch of a russian blue (Cat, pet), A picturesque beach with sand and seashells, and a cat-friendly pier., 6:00 PM, Bottom of the frame, Directly above</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>Fig. 8 :</head><label>8</label><figDesc>Fig. 8: Examples from the synthetic test set which comprises of sketches.</figDesc><graphic coords="26,134.77,116.13,111.46,111.57" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head>Table 1 :</head><label>1</label><figDesc>The upper part summarizes the baseline CLIP and TinyCLIP. "Pre-train" denotes pre-training on a large but non domain-specific dataset. "Fine-tuned" contains the results where either synthetic data (zero-shot) or real data is used for fine-tuning the pre-trained model. Gray numbers indicate that performance is not zero-shot.</figDesc><table><row><cell></cell><cell></cell><cell></cell><cell></cell><cell cols="2">Trainable Params.</cell><cell></cell></row><row><cell></cell><cell>Model</cell><cell cols="6">Loss Training Datasets ImgEnc TxtEnc #Samples Seen Pets Flowers Cars Food</cell></row><row><cell>CLIP</cell><cell>ViT-B/32 ViT-B/32 RN-50</cell><cell cols="2">CLIP CLIP DataComp-medium DataComp-XL CLIP openai</cell><cell>86M 86M 86M</cell><cell>63M 63M 63M</cell><cell>12.8B 128M 32×400M</cell><cell>89.7 72.9 85.4 82.9 43.1 29.7 28.0 41.7 85.3 65.2 54.5 80.8</cell></row><row><cell>TinyCLIP</cell><cell cols="2">ViT-61M/32-29M CLIP ViT-40M/32-19M CLIP ViT-8M/16-3M CLIP RN-19M-19M CLIP</cell><cell>LAION-400M LAION-400M YFCC-15M LAION-400M</cell><cell>61M 40M 8M 19M</cell><cell>29M 19M 3M 19M</cell><cell>38×400M 38×400M 50×15M 12×400M</cell><cell>87.3 64.7 79.1 73.4 84.4 61.0 74.2 71.4 45.8 57.4 8.0 56.2 81.0 56.4 70.1 66.7</cell></row><row><cell>Pre-train</cell><cell>TinyViT-11M TinyViT-11M TinyViT-11M</cell><cell cols="2">CLIP DataComp-medium L2 DataComp-medium L2 DataComp-medium</cell><cell>11M 11M 11M</cell><cell>---</cell><cell>110M 110M 5× 110M</cell><cell>10.4 71.4 39.9 45.0 52.9 4.2 5.4 4.7 78.4 50.0 58.7 61.1</cell></row><row><cell></cell><cell>TinyViT-11M</cell><cell cols="2">L2 DataComp-medium</cell><cell>11M</cell><cell>-</cell><cell>110M</cell></row><row><cell></cell><cell></cell><cell>CLIP</cell><cell>+ Synthetic</cell><cell></cell><cell></cell><cell>+1M-9M</cell><cell>66.7 39.1 64.2 28.0</cell></row><row><cell>Fine-tuned</cell><cell>TinyViT-11M TinyViT-11M*</cell><cell cols="2">L2 DataComp-medium L2 + Synthetic L2 DataComp-medium CLIP + Real Train Images</cell><cell>11M 11M</cell><cell>--</cell><cell>110M +1M-9M 110M +1M-7M</cell><cell>87.5 68.3 81.9 71.9 88.0 90.6 90.7 89.1</cell></row><row><cell></cell><cell>TinyViT-11M*</cell><cell cols="2">L2 DataComp-medium</cell><cell>11M</cell><cell>-</cell><cell>110M</cell></row><row><cell></cell><cell></cell><cell cols="2">L2 + Real Train Images</cell><cell></cell><cell></cell><cell>+1M-7M</cell><cell>88.7 68.4 83.8 83.0</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1"><head>Table 2 :</head><label>2</label><figDesc>Accuracy of the students trained on data with spurious features, introduced through adding colored shapes (real) or class-specific unicolor backgrounds (synthetic), on pets test set without spurious features. The spurious pets dataset used for testing features the same colored shapes but coupled with different classes (denoted by shuffled). Red indicates strong overfitting to trainsets with spurious features.</figDesc><table><row><cell>Trainset</cell><cell>Pets Testset</cell><cell>L2</cell><cell>CLIP</cell><cell cols="4">MP L2+CLIP L2+MP Teacher</cell></row><row><cell>Real</cell><cell>Real Testset Real Testset + Shuffled Spurious Features Real Trainset + Spurious Features</cell><cell>88.9 88.0 90.3</cell><cell>60.0 48.7 96.5</cell><cell>77.3 51.7 96.5</cell><cell>88.0 88.0 95.7</cell><cell>90.0 88.6 88.3</cell><cell>89.8 88.7 89.6</cell></row><row><cell>Synth.</cell><cell cols="2">Real Testset Synthetic Testset Without Spurious Features 90.9 84.4 Synthetic Trainset + Spurious Features 94.2</cell><cell cols="2">24.3 53.6 100.0 100.0 31.0 61.7</cell><cell>81.2 91.4 99.3</cell><cell>35.6 66.7 100.0</cell><cell>89.7 93.9 93.3</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_3"><head>Table 3 :</head><label>3</label><figDesc>Classification accuracy of the fine-tuned models for pets on a synthetic test set which was independently but identically sampled as the synthetic train set.</figDesc><table><row><cell cols="4">Fine-Tuning Data Test Data Teacher Pre-Trained</cell><cell>L2</cell><cell cols="4">CLIP MP L2+CLIP L2+MP</cell></row><row><cell>Real</cell><cell>Synthetic</cell><cell>93.8</cell><cell>79.9</cell><cell>91.7</cell><cell>85.6</cell><cell>82.9</cell><cell>89.8</cell><cell>86.9</cell></row><row><cell>Synthetic</cell><cell>Synthetic</cell><cell>-</cell><cell>-</cell><cell>94.5</cell><cell cols="2">97.9 97.7</cell><cell>96.7</cell><cell>97.8</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_4"><head>Table 4 :</head><label>4</label><figDesc>Average performance of the models, which were fine-tuned on real data, on the pets testset under 15 common corruptions with severity 3.</figDesc><table><row><cell cols="4">Fine-Tuning Data Test Data Teacher Pre-Trained</cell><cell>L2</cell><cell cols="4">CLIP MP L2+CLIP L2+MP</cell></row><row><cell>Real</cell><cell>Real</cell><cell>78.2</cell><cell>52.4</cell><cell>73.6</cell><cell>65.3</cell><cell>64.8</cell><cell>77.7</cell><cell>66.7</cell></row><row><cell>Synthetic</cell><cell>Real</cell><cell>-</cell><cell>-</cell><cell>66.2</cell><cell>40.0</cell><cell>37.3</cell><cell>63.3</cell><cell>38.2</cell></row><row><cell>Real</cell><cell>Synthetic</cell><cell>93.6</cell><cell>73.5</cell><cell>93.8</cell><cell>94.5</cell><cell>94.2</cell><cell>95.2</cell><cell>93.2</cell></row><row><cell>Synthetic</cell><cell>Synthetic</cell><cell>-</cell><cell>-</cell><cell>90.8</cell><cell>83.5</cell><cell>83.4</cell><cell>91.2</cell><cell>85.4</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_5"><head>Table 5 :</head><label>5</label><figDesc>Contextual dimensions and prompt weights for the diversified data generation</figDesc><table><row><cell></cell><cell>Weight of</cell><cell>Contextual Dimensions</cell><cell>Options</cell><cell>Images</cell></row><row><cell cols="2">Dataset Classname</cell><cell>and Weights in Braket</cell><cell cols="2">per Dimension per Class</cell></row><row><cell>Pets</cell><cell>1.5</cell><cell>superclass (1.2), locations,</cell><cell>15</cell><cell>265</cell></row><row><cell></cell><cell></cell><cell>position, daytime, camera angle</cell><cell></cell><cell></cell></row><row><cell>Flowers</cell><cell>1.2</cell><cell>superclass, color, locations,</cell><cell>15</cell><cell>265</cell></row><row><cell></cell><cell></cell><cell>daytime (0.1), camera angle (0.1)</cell><cell></cell><cell></cell></row><row><cell>Cars</cell><cell>1.0</cell><cell>superclass, locations,</cell><cell>15</cell><cell>265</cell></row><row><cell></cell><cell></cell><cell>color, daytime, camera angle</cell><cell></cell><cell></cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_6"><head>Table 8 :</head><label>8</label><figDesc>Accuracy of the fine-tuned models on the datasets they were trained on.</figDesc><table><row><cell></cell><cell></cell><cell cols="2">Pets Pets Flowers Flowers Cars Cars Food Food</cell></row><row><cell>Trainset</cell><cell>Loss</cell><cell cols="2">Top-1 Top-5 Top-1 Top-5 Top-1 Top-5 Top-1 Top-5</cell></row><row><cell></cell><cell>L2</cell><cell>87.7 99.0 70.3</cell><cell>89.3 83.8 99.1 79.3 93.7</cell></row><row><cell>Real</cell><cell cols="2">CLIP MP L2+CLIP 91.2 99.9 90.6 89.7 98.5 97.3 89.1 98.5 97.5</cell><cell>100.0 90.6 100.0 97.6 99.2 100.0 90.7 100.0 97.5 99.2 98.0 92.2 100.0 90.8 98.3</cell></row><row><cell></cell><cell cols="2">L2+MP 100.0 100.0 97.7</cell><cell>100.0 92.8 100.0 98.5 99.6</cell></row><row><cell>Synthetic</cell><cell cols="3">L2 CLIP 100.0 100.0 97.8 95.3 100.0 68.0 MP 99.9 100.0 99.5 100.00 87.6 98.4 99.7 100.0 90.1 75.9 95.7 84.5 96.3 98.9 90.0 99.2 99.7 100.0 L2+CLIP 97.9 100.0 85.8 96.9 91.0 99.7 93.2 98.8 L2+MP 100.0 100.0 99.6 100.0 94.7 100.0 99.9 100.0</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_7"><head>Table 9 :</head><label>9</label><figDesc>Accuracy of the models that were pre-trained and fine-tuned using distillation with the contrastive image loss. The differences to L2 feature distillation and training using the CLIP loss are shown in gray.</figDesc><table><row><cell cols="2">Trainset Training</cell><cell>Loss</cell><cell>Pets</cell><cell>Flowers</cell><cell cols="2">Cars Food</cell></row><row><cell></cell><cell>Pre-Trained</cell><cell>Contrastive Image</cell><cell>72.8</cell><cell>39.6</cell><cell>46.5</cell><cell>54.5</cell></row><row><cell></cell><cell></cell><cell>Difference to L 2</cell><cell>+1.4</cell><cell>+0.5</cell><cell cols="2">+1.5 +1.4</cell></row><row><cell></cell><cell></cell><cell cols="2">Difference to Contrastive +52.4</cell><cell>+35.4</cell><cell cols="2">+41.1 +49.8</cell></row><row><cell>Real</cell><cell>Fine-Tuned</cell><cell>Image-Text (CLIP) Contrastive Image</cell><cell>83.9</cell><cell>64.9</cell><cell>81.4</cell><cell>80.4</cell></row><row><cell></cell><cell></cell><cell>Difference to L 2</cell><cell>-4.8</cell><cell>-3.5</cell><cell>-2.4</cell><cell>-2.6</cell></row><row><cell></cell><cell></cell><cell cols="2">Difference to Contrastive -5.5</cell><cell>-25.7</cell><cell>-9.3</cell><cell>-2.6</cell></row><row><cell></cell><cell></cell><cell>Image-Text (CLIP)</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>Synth.</cell><cell>Fine-Tuned</cell><cell cols="2">Contrastive Image Difference to L 2 Difference to Contrastive +13.8 80.5 -7.0 Image-Text (CLIP)</cell><cell>57.7 -10.6 +18.6</cell><cell cols="2">79.3 -2.6 +15.1 +40.8 68.8 -3.1</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_8"><head>Table 10 :</head><label>10</label><figDesc>Zero-Shot accuracy of a TinyViT 11M pre-trained for one epoch on Dat-aComp medium and fine-tuned on ImageNet-100 using either real or synthetic data. Using the CLIP loss with synthetic data decreases the performance in contrast to pure pre-training. Fine-tuning through L2 feature distillation yields a slight improvement.</figDesc><table><row><cell cols="3">Training Data Teacher Pre-Trained</cell><cell>L 2</cell><cell cols="4">CLIP MP L 2 +CLIP L 2 +MP</cell></row><row><cell>Real</cell><cell>86.1</cell><cell>74.3</cell><cell>81.8</cell><cell>87.0</cell><cell>87.7</cell><cell>87.2</cell><cell>89.3</cell></row><row><cell>Synthetic</cell><cell>-</cell><cell>-</cell><cell>74.0</cell><cell>53.2</cell><cell>52.4</cell><cell>74.2</cell><cell>68.2</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_9"><head>Table 11 :</head><label>11</label><figDesc>Linear probe accuracy of the teacher as well as TinyViT 11Ms models pre-trained for one epoch on DataComp medium and fine-tuned on pets. The linear accuracy of the models that were fine-tuned with synthetic data is increased substantially by probing with real data compared to probing with synthetic data.</figDesc><table><row><cell cols="4">Fine-Tuning Data Probing Data Teacher Pre-Trained</cell><cell>L2</cell><cell cols="4">CLIP MP L2+CLIP L2+MP</cell></row><row><cell>Real</cell><cell>Real</cell><cell>90.4</cell><cell>81.6</cell><cell>89.8</cell><cell>88.3</cell><cell>88.9</cell><cell>92.1</cell><cell>90.2</cell></row><row><cell>Real</cell><cell>Synthetic</cell><cell>84.0</cell><cell>71.8</cell><cell>82.1</cell><cell>87.7</cell><cell>88.3</cell><cell>87.7</cell><cell>88.9</cell></row><row><cell>Synthetic</cell><cell>Real</cell><cell>-</cell><cell>-</cell><cell>89.6</cell><cell>73.7</cell><cell>72.6</cell><cell>90.1</cell><cell>75.3</cell></row><row><cell>Synthetic</cell><cell>Synthetic</cell><cell>-</cell><cell>-</cell><cell>80.9</cell><cell>64.5</cell><cell>65.0</cell><cell>82.8</cell><cell>65.8</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_10"><head>Table 12 :</head><label>12</label><figDesc>Accuracy of the teacher as well as TinyViT 11Ms models pre-trained for one epoch on DataComp medium and fine-tuned on synthically generated pets test data which comprises of sketches. The feature-distilled student exhibit a substantially smaller drop in performance compared to the contrastively fine-tuned models.</figDesc><table><row><cell>Fine-Tuning Data</cell><cell cols="2">Teacher Pre-Trained</cell><cell>L2</cell><cell cols="4">CLIP MP L2+CLIP L2+MP</cell></row><row><cell>Real</cell><cell>89.3</cell><cell>71.3</cell><cell>83.3</cell><cell>70.4</cell><cell>72.6</cell><cell>83.8</cell><cell>73.0</cell></row><row><cell>Difference to real test data</cell><cell>-0.4</cell><cell>-7.1</cell><cell>-5.4</cell><cell cols="2">-17.6 -16.4</cell><cell>-13.9</cell><cell>-17.6</cell></row><row><cell>Synthetic</cell><cell>-</cell><cell>-</cell><cell>86.9</cell><cell>76.0</cell><cell>75.2</cell><cell>87.9</cell><cell>81.9</cell></row><row><cell>Difference to synthetic test data</cell><cell></cell><cell></cell><cell>-7.6</cell><cell cols="2">-21.5 -22.5</cell><cell>-8.8</cell><cell>-15.9</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_12"><head>Table 15 :</head><label>15</label><figDesc>Accuracy of the models that feature a linear classification head instead of a CLIP architecture. Training was performed on the synthetic and real pets datasets for 96 epochs using the cross-entropy loss (CE) with or without knowledge distillation (KL).</figDesc><table><row><cell>Fine-Tuning Data</cell><cell>Pre-Training Data</cell><cell>CE</cell><cell>CE+KL</cell></row><row><cell>Real</cell><cell>-</cell><cell>47.8</cell><cell>47.2</cell></row><row><cell>Synthetic</cell><cell>-</cell><cell>26.9</cell><cell>29.9</cell></row><row><cell>Real</cell><cell>ImageNet-22k</cell><cell>91.2</cell><cell>91.6</cell></row><row><cell>Synthetic</cell><cell>ImageNet-22k</cell><cell>71.3</cell><cell>67.4</cell></row></table></figure>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div><p>Acknowledgements. We would like to thank <rs type="person">Nicole Finnie</rs> for helpful discussion on pre-training CLIP models. We also thank the <rs type="institution">European Laboratory for Learning and Intelligent Systems (ELLIS)</rs> for supporting <rs type="person">Niclas Popp</rs>.</p></div>
+			</div>			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Diversified Caption</head><p>"A saint bernard (Dog, pet), Near a lake or river, 12:00 PM, Lying down, Directly overhead"</p><p>1. "What type of pet is a saint bernard?" 2."Where could a photo of a saint bernard be taken? Output only 15 numbered bullet points without complete sentences and no explanations.  To complement the framework presented in Section 4, we situate existing baselines with respect to the discussed components in Table <ref type="table">7</ref>. We state whether pre-training and/or fine-tuning is used on synthetic or natural images or both. Data diversification describes if the approach uses prompt or images diversification for the synthetic data. We note that our framework unifies existing pipelines.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A.3 Top-5 Test Accuracies</head><p>To complement the results in Section 4, we provide the top-5 accuracies of the pre-trained and fine-tuned models. Figure <ref type="figure">7</ref> visualizes the results. The trends mirror the observations from the Top-1 accuracy with an even smaller gap to the teacher. StableRep <ref type="bibr" target="#b42">[43]</ref> Linear probe, few-shot MP SynCLR <ref type="bibr" target="#b41">[42]</ref> Linear probe MP SynthCLIP <ref type="bibr" target="#b10">[11]</ref> Linear probe, few-shot CLIP Fake it till you make it <ref type="bibr" target="#b36">[37]</ref> Zero-Shot Acc. Cross-Entropy Diversify don't finetune <ref type="bibr" target="#b50">[51]</ref> Accuracy Custom <ref type="bibr" target="#b1">[2]</ref> Accuracy Cross-Entropy DM-KD <ref type="bibr" target="#b18">[19]</ref> Accuracy * KD [14] TinyCLIP <ref type="bibr" target="#b47">[48]</ref> Zero-Shot Acc. CLIP, Affinity Mapping MobileCLIP <ref type="bibr" target="#b45">[46]</ref> Zero-Shot Acc. CLIP, Affinity Mapping Zero-Shot Distillation (Ours) Zero-Shot Acc. L f eature</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>2</head><p>A photo of a chihuahua A photo of a abyssinian A photo of a maine coone Fig. <ref type="figure">9</ref>: Examples from the synthetic dataset set which was generated using the zeroshot prompts "a photo of ...". The resulting images feature less diversity in comparison to the diversified prompts generated by an LLM depicted in Figure <ref type="figure">5</ref>.</p><p>Table <ref type="table">14</ref>: Accuracy of the TinyViT 11Ms models pre-trained for one epoch on Data-Comp medium and fine-tuned on synthetically generated pets test data was sampled with the zero shot prompts "a phot of ..." instead of diverse prompts from a LLM. The performance of feature-distilled students degrade considerably less from a lack of diversity than the contrastively fine-tuned models. train from scratch or fine-tune models with pre-trained weights from ImageNet-22k (with the exception of the linear classification head which is always randomly initialized). As most of the classes from the pets dataset are contained in ImageNet-22k, the latter does not correspond to a strict zero-shot setting even when fine-tuning with synthetic data. To train the models, we optimize the standard cross-entropy loss as well as a sum of cross-entropy loss and the original knowledge distillation loss of Hinton et al. <ref type="bibr" target="#b13">[14]</ref>. We use the AdamW optimizer <ref type="bibr" target="#b23">[24]</ref> with no weight decay and the learning rate is set to 5 × 10 -4 which is the same as used by Wu et al. <ref type="bibr" target="#b48">[49]</ref> for fine-tuning. First, we observe that the drop in performance when fine-tuning with synthetic data in comparison to real data is similar to the CLIP models based on contrastive losses. Additionally, the performance of the model with classification head is worse compared to the CLIP models when trained from scratch. In contrast, the classifiers pretrained on ImageNet-22k and fine-tuned on the real training data achieve the best performance overall. This can presumably be attributed to the fact that most of the classes are already included in ImageNet-22k which was used for pre-training. Using knowledge distillation for the models with classification head only has a minor effect.</p></div>			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Constrained interaction testing: A systematic literature study</title>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">S</forename><surname>Ahmed</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">Z</forename><surname>Zamli</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Afzal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Bures</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Access</title>
+		<imprint>
+			<biblScope unit="volume">5</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page">19</biblScope>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Synthetic data from diffusion models improves imagenet classification</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Azizi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Kornblith</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Saharia</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Norouzi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">J</forename><surname>Fleet</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Transactions on Machine Learning</title>
+		<imprint>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page">21</biblScope>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Food-101 -mining discriminative components with random forests</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Bossard</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Guillaumin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Van Gool</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">ECCV</title>
+		<imprint>
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="page">8</biblScope>
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+		<author>
+			<persName><forename type="first">V</forename><forename type="middle">G T</forename><surname>Da Costa</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Dall'asen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Sebe</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Ricci</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2312.03046</idno>
+		<title level="m">Diversified in-domain synthesis with efficient fine-tuning for few-shot classification</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page">6</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Imagenet: A large-scale hierarchical image database</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Deng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Dong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Socher</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">J</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Fei-Fei</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">CVPR</title>
+		<imprint>
+			<publisher>Ieee</publisher>
+			<date type="published" when="2009">2009</date>
+			<biblScope unit="page">4</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">An image is worth 16x16 words: Transformers for image recognition at scale</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Dosovitskiy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Beyer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Kolesnikov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Weissenborn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Zhai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Unterthiner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Dehghani</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Minderer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Heigold</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Gelly</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Uszkoreit</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Houlsby</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">ICLR</title>
+		<imprint>
+			<biblScope unit="page">8</biblScope>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<monogr>
+		<title level="m" type="main">Datacomp: In search of the next generation of multimodal datasets</title>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">Y</forename><surname>Gadre</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Ilharco</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Fang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Hayase</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Smyrnis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Nguyen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Marten</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Wortsman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Ghosh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Orgad</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Entezari</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Daras</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Pratt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Ramanujan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Bitton</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Marathe</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Mussmann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Vencu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Cherti</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Krishna</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">W</forename><surname>Koh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">O</forename><surname>Saukh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Ratner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Hajishirzi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Farhadi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Beaumont</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Oh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Dimakis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Jitsev</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Carmon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Shankar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Schmidt</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2304.14108</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page">8</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Vision-language pre-training: Basics, recent advances, and future trends</title>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Gan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Gao</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Found. Trends. Comput. Graph. Vis</title>
+		<imprint>
+			<biblScope unit="volume">14</biblScope>
+			<biblScope unit="issue">3-4</biblScope>
+			<biblScope unit="page" from="163" to="352" />
+			<date type="published" when="2022-12">dec 2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Knowledge distillation: A survey</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Gou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">J</forename><surname>Maybank</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Tao</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Int. J. Comput. Vision</title>
+		<imprint>
+			<biblScope unit="volume">129</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page">6</biblScope>
+			<date type="published" when="2021-06">jun 2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Finetune like you pretrain: Improved finetuning of zero-shot vision models</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Goyal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Kumar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Garg</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Kolter</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Raghunathan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">CVPR</title>
+		<imprint>
+			<biblScope unit="page">7</biblScope>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<monogr>
+		<title level="m" type="main">Synthclip: Are we ready for a fully synthetic clip training</title>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">A A K</forename><surname>Hammoud</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Itani</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Pizzati</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Torr</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Bibi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Ghanem</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2402.01832</idno>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+			<biblScope unit="page" from="21" to="24" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Knowledge distillation as efficient pretraining: Faster convergence, higher data-efficiency, and better transferability</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Sun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Bai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Qi</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">CVPR</title>
+		<imprint>
+			<biblScope unit="volume">4</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page">9</biblScope>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Benchmarking neural network robustness to common corruptions and perturbations</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Hendrycks</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Dietterich</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">ICLR</title>
+		<imprint>
+			<biblScope unit="page">12</biblScope>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<monogr>
+		<title level="m" type="main">Distilling the knowledge in a neural network</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Hinton</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">O</forename><surname>Vinyals</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Dean</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1503.02531</idno>
+		<imprint>
+			<date type="published" when="2015">2015</date>
+			<biblScope unit="page" from="21" to="27" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">Tiny-BERT: Distilling BERT for natural language understanding</title>
+		<author>
+			<persName><forename type="first">X</forename><surname>Jiao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Yin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Shang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Jiang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Q</forename><surname>Liu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">EMNLP</title>
+		<editor>
+			<persName><forename type="first">T</forename><surname>Cohn</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Y</forename><surname>He</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Y</forename><surname>Liu</surname></persName>
+		</editor>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="page">3</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">3d object representations for finegrained categorization</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Krause</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Stark</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Deng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Fei-Fei</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">4th International IEEE Workshop on 3D Representation and Recognition (3dRR-13)</title>
+		<meeting><address><addrLine>Sydney, Australia</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2013">2013</date>
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="page">8</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">BLIP-2: bootstrapping language-image pretraining with frozen image encoders and large language models</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Savarese</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Hoi</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ICML</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page">14</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">Distilling large vision-language model with out-of-distribution generalizability</title>
+		<author>
+			<persName><forename type="first">X</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Fang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Ling</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Tu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Su</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ICCV</title>
+		<imprint>
+			<date type="published" when="2023-10">October 2023</date>
+			<biblScope unit="volume">4</biblScope>
+			<biblScope unit="page">25</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<monogr>
+		<title level="m" type="main">Is synthetic data from diffusion models ready for knowledge distillation?</title>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Yang</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2305.12954</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="volume">4</biblScope>
+			<biblScope unit="page">21</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">Mind the gap: Understanding the modality gap in multi-modal contrastive representation learning</title>
+		<author>
+			<persName><forename type="first">W</forename><surname>Liang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Kwon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Yeung</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Zou</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">NeurIPS</title>
+		<imprint>
+			<biblScope unit="page">5</biblScope>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<monogr>
+		<title level="m" type="main">Improved baselines with visual instruction tuning</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><forename type="middle">J</forename><surname>Lee</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2310.03744</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page">14</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<monogr>
+		<title level="m" type="main">Llava-next: Improved reasoning, ocr, and world knowledge</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Shen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><forename type="middle">J</forename><surname>Lee</surname></persName>
+		</author>
+		<ptr target="https://llava-vl.github.io/blog/2024-01-30-llava-next/14" />
+		<imprint>
+			<date type="published" when="2024-01">January 2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">Visual instruction tuning</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Q</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><forename type="middle">J</forename><surname>Lee</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">NeurIPS</title>
+		<imprint>
+			<biblScope unit="page">14</biblScope>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">Decoupled weight decay regularization</title>
+		<author>
+			<persName><forename type="first">I</forename><surname>Loshchilov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Hutter</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">ICLR</title>
+		<imprint>
+			<biblScope unit="volume">8</biblScope>
+			<biblScope unit="page">27</biblScope>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<monogr>
+		<author>
+			<persName><forename type="first">S</forename><surname>Luo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Tan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Patil</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Gu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Von Platen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Passos</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Zhao</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2311.05556</idno>
+		<idno>) 8</idno>
+		<title level="m">Lcm-lora: A universal stable-diffusion acceleration module</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page">19</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<title level="a" type="main">Identification of systematic errors of image classifiers on rare subgroups</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">H</forename><surname>Metzen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Hutmacher</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">G</forename><surname>Hua</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Boreiko</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Zhang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ICCV</title>
+		<imprint>
+			<date type="published" when="2023-10">October 2023</date>
+			<biblScope unit="page">19</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<analytic>
+		<title level="a" type="main">Improved knowledge distillation via teacher assistant</title>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">I</forename><surname>Mirzadeh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Farajtabar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Levine</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Matsukawa</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Ghasemzadeh</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">AAAI</title>
+		<imprint>
+			<biblScope unit="page">3</biblScope>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<title level="a" type="main">Zero-shot knowledge distillation in deep networks</title>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">K</forename><surname>Nayak</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">R</forename><surname>Mopuri</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Shaj</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">V</forename><surname>Babu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Chakraborty</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ICML</title>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="page">5</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<analytic>
+		<title level="a" type="main">A survey of combinatorial testing</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Nie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Leung</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">ACM Comput. Surv</title>
+		<imprint>
+			<biblScope unit="volume">43</biblScope>
+			<biblScope unit="issue">02</biblScope>
+			<biblScope unit="page">19</biblScope>
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<analytic>
+		<title level="a" type="main">Automated flower classification over a large number of classes</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">E</forename><surname>Nilsback</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Zisserman</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the Indian Conference on Computer Vision, Graphics and Image Processing</title>
+		<meeting>the Indian Conference on Computer Vision, Graphics and Image Processing</meeting>
+		<imprint>
+			<date type="published" when="2008">2008</date>
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="page">8</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<monogr>
+		<title level="m" type="main">What knowledge gets distilled in knowledge distillation?</title>
+		<author>
+			<persName><forename type="first">U</forename><surname>Ojha</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">S</forename><surname>Rajan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Liang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><forename type="middle">J</forename><surname>Lee</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="page">4</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<monogr>
+		<title level="m" type="main">Dinov2: Learning robust visual features without supervision</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Oquab</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Darcet</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Moutakanni</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">V</forename><surname>Vo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Szafraniec</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Khalidov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Fernandez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Haziza</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Massa</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>El-Nouby</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Howes</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">Y</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Sharma</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">W</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Galuba</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Rabbat</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Assran</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Ballas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Synnaeve</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Misra</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Jegou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Mairal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Labatut</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Joulin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Bojanowski</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="volume">1</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<analytic>
+		<title level="a" type="main">Cats and dogs</title>
+		<author>
+			<persName><forename type="first">O</forename><forename type="middle">M</forename><surname>Parkhi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Vedaldi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Zisserman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">V</forename><surname>Jawahar</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">CVPR</title>
+		<imprint>
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="page">8</biblScope>
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<monogr>
+		<title level="m" type="main">Sdxl: Improving latent diffusion models for high-resolution image synthesis</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Podell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>English</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Lacey</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Blattmann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Dockhorn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Müller</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Penna</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Rombach</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2307.01952</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page">19</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<analytic>
+		<title level="a" type="main">Learning transferable visual models from natural language supervision</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Radford</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">W</forename><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Hallacy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Ramesh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Goh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Agarwal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Sastry</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Askell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Mishkin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Clark</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Krueger</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Sutskever</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">ICML</title>
+		<imprint>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page">24</biblScope>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<monogr>
+		<author>
+			<persName><forename type="first">V</forename><surname>Sanh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Debut</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Chaumond</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Wolf</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1910.01108</idno>
+		<idno>) 3</idno>
+		<title level="m">Distilbert, a distilled version of bert: smaller, faster, cheaper and lighter</title>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b36">
+	<analytic>
+		<title level="a" type="main">Fake it till you make it: Learning transferable representations from synthetic imagenet clones</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">B</forename><surname>Sariyildiz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Karteek</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Larlus</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Kalantidis</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">CVPR</title>
+		<imprint>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page">21</biblScope>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b37">
+	<monogr>
+		<author>
+			<persName><forename type="first">C</forename><surname>Schuhmann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Vencu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Beaumont</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Kaczmarczyk</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Mullis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Katta</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Coombes</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Jitsev</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Komatsuzaki</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2111.02114</idno>
+		<idno>) 5</idno>
+		<title level="m">Laion-400m: Open dataset of clip-filtered 400 million image-text pairs</title>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="page">9</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b38">
+	<analytic>
+		<title level="a" type="main">Does knowledge distillation really work?</title>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">D</forename><surname>Stanton</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Izmailov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Kirichenko</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">A</forename><surname>Alemi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">G</forename><surname>Wilson</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">NeurIPS</title>
+		<imprint>
+			<biblScope unit="page">4</biblScope>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b39">
+	<analytic>
+		<title level="a" type="main">EfficientNet: Rethinking model scaling for convolutional neural networks</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Tan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Q</forename><surname>Le</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ICML</title>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="page">8</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b40">
+	<analytic>
+		<title level="a" type="main">Yfcc100m: the new data in multimedia research</title>
+		<author>
+			<persName><forename type="first">B</forename><surname>Thomee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Elizalde</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Shamma</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Ni</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Friedland</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Poland</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Borth</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">J</forename><surname>Li</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Communications of the ACM</title>
+		<imprint>
+			<biblScope unit="volume">59</biblScope>
+			<biblScope unit="page">9</biblScope>
+			<date type="published" when="2016-01">01 2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b41">
+	<monogr>
+		<title level="m" type="main">Learning vision from models rivals learning vision from data</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Tian</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Fan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Katabi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Krishnan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Isola</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2312.17742</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page" from="21" to="24" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b42">
+	<analytic>
+		<title level="a" type="main">Stablerep: Synthetic images from text-to-image models make strong visual representation learners</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Tian</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Fan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Isola</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Chang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Krishnan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">NeurIPS</title>
+		<imprint>
+			<biblScope unit="volume">5</biblScope>
+			<biblScope unit="issue">7</biblScope>
+			<biblScope unit="page">24</biblScope>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b43">
+	<monogr>
+		<title level="m" type="main">Contrastive multiview coding</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Tian</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Krishnan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Isola</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/978-3-030-58621-8_45</idno>
+		<ptr target="https://doi.org/10.1007/978-3-030-58621-8_4523" />
+		<imprint>
+			<date type="published" when="2020">2020</date>
+			<publisher>Springer-Verlag</publisher>
+			<biblScope unit="page" from="776" to="794" />
+			<pubPlace>Berlin, Heidelberg</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b44">
+	<monogr>
+		<author>
+			<persName><forename type="first">H</forename><surname>Touvron</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Martin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Stone</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Albert</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Almahairi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Babaei</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Bashlykov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Batra</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Bhargava</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Bhosale</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Bikel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Blecher</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">C</forename><surname>Ferrer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Cucurull</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Esiobu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Fernandes</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Fu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Fu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Fuller</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Gao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Goswami</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Goyal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Hartshorn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Hosseini</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Hou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Inan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Kardas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Kerkez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Khabsa</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Kloumann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Korenev</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">S</forename><surname>Koura</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">A</forename><surname>Lachaux</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Lavril</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Liskovich</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Lu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Mao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Martinet</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Mihaylov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Mishra</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Molybog</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Nie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Poulton</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Reizenstein</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Rungta</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Saladi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Schelten</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Silva</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">M</forename><surname>Smith</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Subramanian</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><forename type="middle">E</forename><surname>Tan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Tang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Taylor</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Williams</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">X</forename><surname>Kuan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Yan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Zarov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Fan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Kambadur</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Narang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Rodriguez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Stojnic</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Edunov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Scialom</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2307.09288</idno>
+		<idno>) 8</idno>
+		<title level="m">Llama 2: Open foundation and fine-tuned chat models</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page">19</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b45">
+	<monogr>
+		<title level="m" type="main">Mobileclip: Fast image-text models through multi-modal reinforced training</title>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">K A</forename><surname>Vasu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Pouransari</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Faghri</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Vemulapalli</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">O</forename><surname>Tuzel</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2311.17049</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page">21</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b46">
+	<analytic>
+		<title level="a" type="main">Learning robust global representations by penalizing local predictive power</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Ge</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Lipton</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">P</forename><surname>Xing</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">NeurIPS</title>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="page">26</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b47">
+	<analytic>
+		<title level="a" type="main">TinyCLIP: CLIP distillation via affinity mimicking and weight inheritance</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Peng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Xiao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Yuan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Xuan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Valenzuela</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><forename type="middle">S</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Chao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Hu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">ICCV</title>
+		<imprint>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page">21</biblScope>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b48">
+	<analytic>
+		<title level="a" type="main">Tinyvit: Fast pretraining distillation for small vision transformers</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Peng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Xiao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Fu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Yuan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">ECCV</title>
+		<imprint>
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="page">27</biblScope>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b49">
+	<monogr>
+		<title level="m" type="main">CLIP-KD: An empirical study of distilling clip models</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>An</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Bi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Xu</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2307.12732</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page">13</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b50">
+	<monogr>
+		<title level="m" type="main">Diversify, don&apos;t fine-tune: Scaling up visual recognition training with synthetic images</title>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Zhu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Culatana</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Krishnamoorthi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Xiao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><forename type="middle">J</forename><surname>Lee</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2312.02253</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page">21</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b51">
+	<monogr>
+		<title level="m" type="main">A survey of diffusion based image generation models: Issues and their solutions</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">M</forename><surname>Tasnim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Shi</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2308.13142</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page">19</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b52">
+	<analytic>
+		<title level="a" type="main">Distilling out-of-distribution robustness from vision-language foundation models</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><forename type="middle">X</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Wang</surname></persName>
+		</author>
+		<ptr target="https://openreview.net/forum?id=iwp3H8uSeK25" />
+	</analytic>
+	<monogr>
+		<title level="m">NeurIPS</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

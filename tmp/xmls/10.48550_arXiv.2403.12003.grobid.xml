@@ -1,0 +1,3341 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">GenView: Enhancing View Quality with Pretrained Generative Model for Self-Supervised Learning</title>
+				<funder ref="#_g49t5Gd">
+					<orgName type="full">KAUST Center of Excellence on GenAI</orgName>
+				</funder>
+				<funder ref="#_ESCzvr7">
+					<orgName type="full">National Natural Science Foundation of China</orgName>
+				</funder>
+				<funder ref="#_jpVajAr">
+					<orgName type="full">Guangdong Basic and Applied Basic Research Foundation</orgName>
+				</funder>
+				<funder ref="#_VYtVT7d">
+					<orgName type="full">CAST</orgName>
+				</funder>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability  status="unknown">
+					<licence/>
+				</availability>
+				<date type="published" when="2024-11-28">28 Nov 2024</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Xiaojie</forename><surname>Li</surname></persName>
+							<email>xiaojieli0903@gmail.com</email>
+							<idno type="ORCID">0000-0001-6449-2727</idno>
+							<affiliation key="aff0">
+								<orgName type="institution">Harbin Institute of Technology (Shenzhen)</orgName>
+							</affiliation>
+							<affiliation key="aff1">
+								<orgName type="department">Cheng Laboratory</orgName>
+								<address>
+									<settlement>Peng</settlement>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Yibo</forename><surname>Yang</surname></persName>
+							<email>yibo.yang93@gmail.com</email>
+							<idno type="ORCID">0000-0003-0530-7231</idno>
+							<affiliation key="aff2">
+								<orgName type="institution">King Abdullah University of Science and Technology (KAUST)</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Xiangtai</forename><surname>Li</surname></persName>
+							<email>xiangtai94@gmail.com</email>
+							<idno type="ORCID">0000-0002-0550-8247</idno>
+							<affiliation key="aff3">
+								<orgName type="department">S-Lab</orgName>
+								<orgName type="institution">Nanyang Technological University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Jianlong</forename><surname>Wu</surname></persName>
+							<email>wujianlong@hit.edu.cn</email>
+							<idno type="ORCID">0000-0003-0247-5221</idno>
+							<affiliation key="aff0">
+								<orgName type="institution">Harbin Institute of Technology (Shenzhen)</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Yu</forename><surname>Yue</surname></persName>
+							<idno type="ORCID">0000-0002-9865-2212</idno>
+							<affiliation key="aff1">
+								<orgName type="department">Cheng Laboratory</orgName>
+								<address>
+									<settlement>Peng</settlement>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Bernard</forename><surname>Ghanem</surname></persName>
+							<email>bernard.ghanem@kaust.edu.sa</email>
+							<idno type="ORCID">0000-0002-5534-587X</idno>
+							<affiliation key="aff2">
+								<orgName type="institution">King Abdullah University of Science and Technology (KAUST)</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Min</forename><surname>Zhang</surname></persName>
+							<email>zhangmin2021@hit.edu.cn</email>
+							<idno type="ORCID">0000-0002-3895-5510</idno>
+							<affiliation key="aff0">
+								<orgName type="institution">Harbin Institute of Technology (Shenzhen)</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">GenView: Enhancing View Quality with Pretrained Generative Model for Self-Supervised Learning</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date type="published" when="2024-11-28">28 Nov 2024</date>
+						</imprint>
+					</monogr>
+					<idno type="MD5">9BBBEA520570437B54754A21FFF60CBD</idno>
+					<idno type="arXiv">arXiv:2403.12003v2[cs.CV]</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.2-SNAPSHOT" ident="GROBID" when="2025-01-21T07:32+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<textClass>
+				<keywords>
+					<term>Self-supervised learning</term>
+					<term>Contrastive learning</term>
+					<term>View generation</term>
+					<term>Generative models</term>
+				</keywords>
+			</textClass>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Self-supervised learning has achieved remarkable success in acquiring high-quality representations from unlabeled data. The widely adopted contrastive learning framework aims to learn invariant representations by minimizing the distance between positive views originating from the same image. However, existing techniques to construct positive views highly rely on manual transformations, resulting in limited diversity and potentially false positive pairs. To tackle these challenges, we present GenView, a controllable framework that augments the diversity of positive views leveraging the power of pretrained generative models while preserving semantics. We develop an adaptive view generation method that dynamically adjusts the noise level in sampling to ensure the preservation of essential semantic meaning while introducing variability. Additionally, we introduce a quality-driven contrastive loss, which assesses the quality of positive pairs by considering both foreground similarity and background diversity. This loss prioritizes the high-quality positive pairs we construct while reducing the influence of low-quality pairs, thereby mitigating potential semantic inconsistencies introduced by generative models and aggressive data augmentation. Thanks to the improved positive view quality and the quality-driven contrastive loss, GenView significantly improves self-supervised learning across various tasks. For instance, GenView improves MoCov2 performance by 2.5%/2.2% on ImageNet linear/semi-supervised classification. Moreover, GenView even performs much better than naively augmenting the ImageNet dataset with Laion400M or ImageNet21K.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">Introduction</head><p>Self-supervised learning (SSL) has demonstrated remarkable capability in acquiring robust and generalized visual representations from abundant unlabeled data sources <ref type="bibr" target="#b1">[2,</ref><ref type="bibr" target="#b14">15,</ref><ref type="bibr" target="#b15">16,</ref><ref type="bibr" target="#b25">26,</ref><ref type="bibr" target="#b26">27,</ref><ref type="bibr" target="#b29">30,</ref><ref type="bibr" target="#b31">32,</ref><ref type="bibr" target="#b32">33,</ref><ref type="bibr" target="#b38">39,</ref><ref type="bibr" target="#b49">50,</ref><ref type="bibr" target="#b62">63,</ref><ref type="bibr" target="#b63">64,</ref><ref type="bibr" target="#b89">90,</ref><ref type="bibr" target="#b93">94,</ref><ref type="bibr" target="#b96">97,</ref><ref type="bibr">104</ref>, 106], which can be transferred or leveraged in downstream tasks. Among the various approaches within SSL, Contrastive Learning (CL) <ref type="bibr" target="#b11">[12,</ref><ref type="bibr" target="#b12">13,</ref><ref type="bibr" target="#b15">16,</ref><ref type="bibr" target="#b16">17,</ref><ref type="bibr" target="#b18">19,</ref><ref type="bibr" target="#b38">39,</ref><ref type="bibr" target="#b51">52</ref>, 106] has emerged as a prominent method, showcasing its effectiveness in numerous downstream tasks (e.g., classification <ref type="bibr" target="#b34">[35,</ref><ref type="bibr" target="#b50">51,</ref><ref type="bibr" target="#b97">98]</ref>, detection <ref type="bibr" target="#b8">[9,</ref><ref type="bibr" target="#b33">34,</ref><ref type="bibr" target="#b52">53,</ref><ref type="bibr" target="#b71">72,</ref><ref type="bibr" target="#b86">87]</ref>, and segmentation <ref type="bibr" target="#b27">[28,</ref><ref type="bibr" target="#b47">48,</ref><ref type="bibr" target="#b48">49,</ref><ref type="bibr" target="#b58">59,</ref><ref type="bibr" target="#b91">92]</ref>). CL aims to learn invariant representations that remain consistent across various conditions or environments by maximizing the similarity of representations obtained from different distorted versions of a sample, referred to as positive views. Consequently, the construction of high-quality positive views is crucial for CL. A high-quality positive view should retain the semantics of the original images while introducing as much semantic-irrelevant attribute diversity and environmental variations as possible, such that the learned representations can be more generalizable for downstream tasks.</p><p>Current CL methods <ref type="bibr" target="#b11">[12,</ref><ref type="bibr" target="#b12">13,</ref><ref type="bibr" target="#b15">16,</ref><ref type="bibr" target="#b16">17,</ref><ref type="bibr" target="#b29">30]</ref> often employ predefined image augmentations (e.g., random cropping, color distortions, and Gaussian blur) on the same instance to obtain positive views. However, they face two limitations: (1) Limited Diversity: Standard augmentations only modify surface-level visual characteristics and fail to introduce new content to capture high-level variations, such as different object viewpoints, textures, or variations within a semantic category. This limitation hinders performance in domains with high intra-category diversity. (2) False Positive Risk: Aggressive augmentations are not always precise, potentially leading to false positive pairs. As depicted in Fig. <ref type="figure" target="#fig_0">1</ref>(a), random cropping of distant patches may miss the entire object, which could mislead the representation learning by minimizing the distance between the object and background in the embedding space. Additionally, as shown in Fig. <ref type="figure" target="#fig_0">1</ref>(b), cropping nearby patches may fail to introduce sufficient object variations, causing limited diversity in another way. Advanced methods, such as employing stronger augmentations while preserving task-relevant information <ref type="bibr" target="#b83">[84]</ref>, saliency-guided sampling <ref type="bibr" target="#b78">[79]</ref>, and center-suppressed sampling <ref type="bibr" target="#b65">[66]</ref>, have been developed to create informative positive pairs. Some methods expand the diversity of positive pairs by utilizing information from the entire training dataset <ref type="bibr" target="#b11">[12,</ref><ref type="bibr" target="#b22">23]</ref>. However, these methods primarily concentrate on optimizing positive views within an instance without introducing new content or incorporating additional information beyond the existing dataset. Consequently, they still have limited ability to capture extensive high-level variations.</p><p>Generative models, such as Stable Diffusion <ref type="bibr" target="#b73">[74]</ref> and DALL-E2 <ref type="bibr" target="#b68">[69]</ref>, have been very successful in generating high-quality diversified images conditioned on an image or embedding. These off-the-shelf pretrained models could help enrich view contents given an image due to their abundant prior knowledge learned from large-scale datasets <ref type="bibr" target="#b13">[14,</ref><ref type="bibr" target="#b76">77]</ref>. Albeit they have been leveraged for image classification to address data scarcity <ref type="bibr" target="#b7">[8,</ref><ref type="bibr" target="#b9">10,</ref><ref type="bibr" target="#b21">22,</ref><ref type="bibr" target="#b75">76,</ref><ref type="bibr" target="#b84">85,</ref><ref type="bibr">100,</ref><ref type="bibr">105,</ref><ref type="bibr">107]</ref>, integrating pretrained generative models to pair the images for self-supervised learning is NOT a trivial problem. Despite the strong generative ability, these models may be pretrained on the datasets from different distributions, and the sampling process is not determinant. As a result, they will still inevitably face the risk of generating images with different semantics from the conditional images, resulting in false positive pairs. This presents a key challenge: how to appropriately control the randomness of generation while maintaining semantic consistency to help SSL in a controllable way.</p><p>To address these challenges, we introduce GenView, a controllable framework that enhances view quality for SSL using the powerful pretrained generative model, and guide contrastive learning via quality assessment. In our framework, as shown in Fig. <ref type="figure" target="#fig_0">1</ref>, given an image as the source view, we construct its positive view using the synthetic image sampled from a pretrained generative model conditioned on this image. To optimally balance the trade-off between diversity and semantic fidelity, we develop an adaptive view generation method, which dynamically adjusts the noise level of the generative model to control the extent of perturbation applied to the conditional image embedding. We calculate the proportion of the foreground area within an input image. If the subject is not prominent with a low foreground proportion, it reduces the perturbation strength to ensure the correct semantic content of the synthetic image. If the subject is clear and distinguishable with a high foreground proportion, it increases the perturbation strength to create more variations for more diverse content and environments. As depicted in Fig. <ref type="figure" target="#fig_0">1(c</ref>), the view constructed by our method has a different pose and environment compared to the traditional way.</p><p>Even with our adaptive view generation, false positive pairs are still inevitable because both the sampling of the generative model and cropping are not determinant. To further mitigate the effect of potential false positive pairs that could mislead contrastive learning, we introduce a quality-driven contrastive loss to guide the contrastive learning with pair quality. Concretely, we assess the quality of positive pairs considering both foreground similarity and background diversity. It prioritizes the positive pairs with high foreground similarity to ensure semantic coherence, while also favoring the pairs with low background similarity to promote diverse environments for learning invariant representations. We then recalibrate the contrastive loss function by reweighting each pair with its pair quality, which enhances the contributions of high-quality positive pairs, and simultaneously reduces the influence of low-quality and even false pairs. As illustrated in Fig. <ref type="figure" target="#fig_0">1(c</ref>) and (d), our quality-driven contrastive loss assigns a higher score to the high-quality positive pair and a lower score to the pair with a relatively lower quality. In summary, the contributions of this paper include:</p><p>-We introduce GenView framework, which enhances the view quality for SSL leveraging the power of pretrained generative model in a controllable way. An adaptive view generation method is developed to construct positive views, balancing the trade-off between diversity and semantic fidelity. -We propose a quality-driven contrastive loss that prioritizes high-quality positive pairs to guide the contrastive learning with pair quality, further mitigating the impact of low-quality and false pairs. -In experiments, GenView significantly enhances the performance of popular contrastive learning algorithms including MoCov2 <ref type="bibr" target="#b16">[17]</ref>, SimSiam <ref type="bibr" target="#b17">[18]</ref>, BYOL <ref type="bibr" target="#b29">[30]</ref>, and MoCov3 <ref type="bibr" target="#b18">[19]</ref> on various downstream tasks such as linear/semisupervised classification, semantic segmentation, and object detection. Particularly, GenView also performs better than naively augmenting the Ima-geNet1K dataset with Laion400M or ImageNet21K.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">Related Work</head><p>Self-Supervised Learning. Self-supervised learning is a promising paradigm for representation learning, relying on unlabeled data and pretext tasks such as auto-encoders <ref type="bibr" target="#b64">[65,</ref><ref type="bibr" target="#b85">86]</ref>, image pixel generation <ref type="bibr" target="#b28">[29,</ref><ref type="bibr" target="#b43">44]</ref>, rotation prediction <ref type="bibr" target="#b26">[27]</ref>, jigsaw puzzles <ref type="bibr" target="#b62">[63]</ref>, and mask image modeling <ref type="bibr" target="#b3">[4,</ref><ref type="bibr" target="#b31">32]</ref>. In recent years, contrastive learning (CL) methods <ref type="bibr" target="#b15">[16,</ref><ref type="bibr" target="#b16">17,</ref><ref type="bibr" target="#b32">33,</ref><ref type="bibr" target="#b39">40,</ref><ref type="bibr" target="#b63">64,</ref><ref type="bibr" target="#b82">83,</ref><ref type="bibr" target="#b93">94,</ref><ref type="bibr">106</ref>] have significantly improved SSL by reducing the distance between representations of positive pairs and increasing the distance between representations of negative pairs in the latent feature space simultaneously. Complementing CL approaches, various non-CL methods have emerged, seeking alternatives to negative samples and strategies to prevent network output collapse <ref type="bibr">[1, 11-13, 18, 24, 30, 47, 102]</ref>. The construction of a pair of views is crucial in contrastive learning <ref type="bibr" target="#b11">[12,</ref><ref type="bibr" target="#b15">16,</ref><ref type="bibr" target="#b82">83]</ref>, and traditional SSL generates positive views through hand-designed augmentations, which may face limited diversity and induce semantically irrelevant pairs. Later studies introduce stronger augmentations preserving task-relevant information <ref type="bibr" target="#b83">[84]</ref>, unsupervised saliency maps for cropping constraints <ref type="bibr" target="#b78">[79]</ref>, and center-suppressed sampling for increased diversity <ref type="bibr" target="#b65">[66]</ref>. Clustering-based methods <ref type="bibr" target="#b10">[11,</ref><ref type="bibr" target="#b11">12]</ref> and neighborhood-based methods <ref type="bibr" target="#b22">[23]</ref> expand the diversity of positive pairs by leveraging information from the training dataset. However, the diversity introduced is ultimately confined to the scope of the training dataset, limiting the ability to capture extensive diversity for learning more generalizable representation. In our method, we break free from this limitation by utilizing the pretrained image-conditioned generative model for high-quality view generation.</p><p>Generative Models. Various generative models, including VAEs <ref type="bibr" target="#b43">[44,</ref><ref type="bibr" target="#b70">71]</ref>, GANs <ref type="bibr" target="#b6">[7,</ref><ref type="bibr" target="#b28">29,</ref><ref type="bibr" target="#b41">42,</ref><ref type="bibr" target="#b53">54]</ref>, autoregressive models <ref type="bibr" target="#b69">[70]</ref>, and diffusion models <ref type="bibr" target="#b5">[6,</ref><ref type="bibr" target="#b36">37,</ref><ref type="bibr" target="#b37">38,</ref><ref type="bibr" target="#b68">69,</ref><ref type="bibr" target="#b73">74,</ref><ref type="bibr" target="#b90">91]</ref> (DMs), have demonstrated the ability to create highly realistic images. Particularly, DMs such as Imagen <ref type="bibr" target="#b74">[75]</ref>, GLIDE <ref type="bibr" target="#b61">[62]</ref>, Stable Diffusion <ref type="bibr" target="#b73">[74]</ref>, and DALL-E2 <ref type="bibr" target="#b68">[69]</ref>, trained on extensive large-scale datasets such as LAION-5B <ref type="bibr" target="#b76">[77]</ref> and CC12M <ref type="bibr" target="#b13">[14]</ref>, have excelled in generating photorealism images. Recent research has explored generative models for data augmentation in various tasks, including classification <ref type="bibr" target="#b21">[22,</ref><ref type="bibr" target="#b35">36,</ref><ref type="bibr" target="#b54">55,</ref><ref type="bibr" target="#b60">61,</ref><ref type="bibr" target="#b75">76,</ref><ref type="bibr" target="#b79">80,</ref><ref type="bibr">100]</ref>, segmentation <ref type="bibr" target="#b47">[48,</ref><ref type="bibr" target="#b55">56,</ref><ref type="bibr" target="#b87">88,</ref><ref type="bibr" target="#b91">92,</ref><ref type="bibr" target="#b95">96]</ref>, and test-time optimization <ref type="bibr" target="#b24">[25]</ref>. In representation learning, GANs <ref type="bibr" target="#b80">[81]</ref>, instanceconditioned GANs <ref type="bibr" target="#b2">[3,</ref><ref type="bibr" target="#b98">99]</ref>, neural transformation networks <ref type="bibr" target="#b42">[43]</ref>, and DMs <ref type="bibr">[101]</ref> have been employed to introduce more variations. However, the diversity introduced is still constrained by the training dataset used for SSL.</p><p>Instead of training generative models from scratch, some methods use pretrained generative models to augment representation learning, leveraging the prior knowledge learned from large-scale datasets <ref type="bibr" target="#b13">[14,</ref><ref type="bibr" target="#b76">77]</ref> to enhance the highlevel diversity of the generated views <ref type="bibr" target="#b21">[22,</ref><ref type="bibr" target="#b35">36,</ref><ref type="bibr" target="#b40">41,</ref><ref type="bibr" target="#b79">80,</ref><ref type="bibr" target="#b81">82,</ref><ref type="bibr" target="#b84">85,</ref><ref type="bibr">103]</ref>. However, these models rely on constant <ref type="bibr" target="#b21">[22,</ref><ref type="bibr" target="#b35">36,</ref><ref type="bibr" target="#b81">82,</ref><ref type="bibr">103]</ref> or random <ref type="bibr" target="#b79">[80,</ref><ref type="bibr" target="#b84">85,</ref><ref type="bibr">107]</ref> hyperparameters to determine the extent of deviation in the generated images. This can lead to uncontrolled data generation characterized by inconsistent semantics with the conditional image, reducing the quality of positive pairs. In contrast, our approach employs adaptive view generation that controls the noise level when sampling images to keep a balance between semantic fidelity and diversity based on individual image characteristics. We also propose a quality-driven contrastive loss to enhance the contributions of high-quality positive pairs while diminishing the impact of low-quality and false pairs.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">Method</head><p>In this section, we first provide a review of self-supervised learning in Sec. 3.1. We introduce our framework in Sec. 3.2. Then, we develop adaptive view generation and quality-driven contrastive loss in Sec. 3.3 and 3.4.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1">Preliminaries on Self-Supervised Learning</head><p>Current SSL frameworks often create positive pairs (P 1 i , P 2 i ) for each instance X i in a batch of n images X 1:n = {X i } n i=1 . These pairs are generated by applying random predefined augmentations to the same instance:</p><formula xml:id="formula_0">P 1 i = t 1 (X i ), P 2 i = t 2 (X i ),<label>(1)</label></formula><p>where the augmentations, t 1 (•) and t 2 (•), can either be from the same (t</p><formula xml:id="formula_1">1 , t 2 ∼ T ) or from different distributions (t 1 ∼ T , t 2 ∼ T ′ ). The encoder network f (•) is then applied to P 1 i to extract the representation, resulting in h 1 i = f (P 1 i</formula><p>). These representations are projected into an embedding space using a two-layer nonlinear projection head, denoted as</p><formula xml:id="formula_2">z 1 i = g(h 1 i ).</formula><p>Additionally, P 2 i can be encoded using the same encoder and projection head as P 1 i <ref type="bibr" target="#b11">[12,</ref><ref type="bibr" target="#b17">18]</ref>, or their momentumupdated versions <ref type="bibr" target="#b29">[30,</ref><ref type="bibr" target="#b32">33]</ref>.</p><p>Various SSL frameworks, including SimCLR <ref type="bibr" target="#b15">[16]</ref> and MoCo <ref type="bibr" target="#b32">[33]</ref>, use the noise contrastive estimation objective L SSL, NCE to distinguish between instances: with τ as the temperature parameter. Additionally, methods like BYOL <ref type="bibr" target="#b29">[30]</ref> and SimSiam <ref type="bibr" target="#b17">[18]</ref> introduce a non-linear predictor head q(•) to map z to p, minimizing negative cosine similarity L SSL, COS as:</p><formula xml:id="formula_3">L SSL, NCE = -log exp(z 1 i • z 2 i /τ ) exp(z 1 i • z 2 i /τ ) + N k=1 exp(z 1 i • z k /τ ) ,<label>(2)</label></formula><formula xml:id="formula_4">L SSL, COS = - p 1 i ∥p 1 i ∥ • z 2 i ∥z 2 i ∥ .<label>(3)</label></formula><p>SwAV <ref type="bibr" target="#b11">[12]</ref> employs a linear mapping of positive embeddings z 1 and z 2 to learned prototypes to obtain "codes" z1 and z2 . The targets are transformed with a Sinkhorn-Knopp (SK) step. Then the Kullback-Leibler divergence loss L SSL, KL is computed as:</p><formula xml:id="formula_5">L SSL, KL = D KL (z 1 ∥SK(z 2 )).<label>(4)</label></formula><p>In experiments, we will integrate GenView on all these popular SSL methods to test its generalizability.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2">Our Framework</head><p>The framework of our method is depicted in Fig. <ref type="figure" target="#fig_1">2</ref>. Traditional methods face the challenge of limited view diversity by generating positive pairs by applying augmentation twice to the same instance, as illustrated in Eq. (1). To this end, we employ an image-conditioned pretrained generative model to enhance the view quality. Specifically, we utilize the Stable unCLIP model, an extension of Stable Diffusion <ref type="bibr" target="#b73">[74]</ref> with unCLIP <ref type="bibr" target="#b68">[69]</ref>, fine-tuned to accept CLIP <ref type="bibr" target="#b67">[68]</ref> ViT-H/14 image embeddings in addition to text encodings. To improve the diversity of positive views, we inject Gaussian noise perturbations to the conditional image embedding through a diffusion process noisy(•, l), which adds l steps of Gaussian noise to the conditional image embedding. The degree of variation in the final images is controlled by the perturbation strength l, with a higher value leading to an increased diversity.</p><p>The generation stage starts with a random normal distribution z T ∼ N (0, I), where T represents the denoising steps of the generation process. The pretrained diffusion model G(•), conditioned on the noisy image embeddings, iteratively denoises the latent features. The synthetic positive view can be defined as:</p><formula xml:id="formula_6">X + i = G(z T , noisy(c i , l), w),<label>(5)</label></formula><p>where w refers to the pretrained parameters of the generative model, and c i represents the conditional image embedding obtained from the CLIP image encoder as c i = C(X i ).</p><p>We then design a pair construction mechanism by leveraging the original image as one view and pairing it with another view generated by the generative model for contrastive learning. Specifically, hand-designed data augmentations (t ∼ T for the original image and t + ∼ T or T ′ for the synthetic image) are applied to create an enhanced pair of positive views (P i , P + i ):</p><formula xml:id="formula_7">P i = t(X i ), P + i = t + (X + i ).<label>(6)</label></formula><p>Through this mechanism, we significantly increase view diversity by leveraging the capabilities of the generative model, as illustrated in Fig. <ref type="figure" target="#fig_0">1</ref>. Meanwhile, unlike most generative model-based augmentation methods <ref type="bibr" target="#b42">[43,</ref><ref type="bibr" target="#b80">81,</ref><ref type="bibr" target="#b98">99]</ref>, which generate positive pairs from two synthetic images derived from the same original image, GenView integrates the original image itself as one of the views. This approach effectively controls potential feature drift caused by domain differences between the dataset used to train the generative model and the current pretraining dataset. Furthermore, when the synthetic image contains noise, such as artifacts or semantic discrepancies, the presence of the original real image prevents excessive deviation in feature learning. Thus, while enhancing the view diversity, our framework maintains stability and fidelity when combining the traditional augmentation with the strength of the generative model.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.3">Adaptive View Generation</head><p>To address the concerns related to inappropriate noise levels during image generation, we develop an adaptive view generation method, which dynamically adjusts the noise level based on the proportion of the foreground content. This introduces diverse positive pairs while ensuring coherent subject semantics. Given a conditional image X i , we employ a pretrained CLIP image encoder C(•) to extract latent features Z i ∈ R H×W ×K , where H, W , and K represent the height, width, and the dimension of features, respectively. To separate the image's main object from the background, we perform Principal Component Analysis (PCA) among features for all images and obtain the first component. Then, we apply min-max normalization to generate attention maps A i ∈ R H×W , where higher values indicate a higher probability of being foreground content. The proportion</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Lower foreground proportion Higher foreground proportion</head><p>Real image Lower noise level Higher noise level Fig. <ref type="figure" target="#fig_3">3</ref>: Illustration of our adaptive view generation. For the images with lower foreground proportion, a lower noise level is selected (in blue) because a higher noise level could easily result in synthetic images whose semantic contents are changed (1st column), disappeared (2nd column), or distorted (3rd column). For the images with higher foreground proportion, a higher noise level is favored (in green) to introduce diversity, e.g. different pose (4th column), action (5th column), and background (6th column).</p><p>of foreground content, denoted as p i , is calculated as follows:</p><formula xml:id="formula_8">p i = H h=1 W w=1 B(A i,h,w , a) H × W ,<label>(7)</label></formula><p>where B(•, a) represents a binary thresholding function with a as the threshold.</p><p>To map the proportion to the noise level l ada , we introduce a function F ada . The range of the ratio p is evenly divided into 5 intervals, and values are mapped to discrete scales: {0, 100, 200, 300, 400}. To reduce the risk of excessive distortion from higher noise levels, we limit the maximum at 400, even though noise levels during training could reach up to 1000. The adaptive noise level l ada i is calculated as follows:</p><formula xml:id="formula_9">l ada i = F ada (p i ) = 100 • p i 0.2 , (<label>8</label></formula><formula xml:id="formula_10">)</formula><p>where ⌊•⌋ rounds down to the nearest integer. Our approach adapts noise levels to the characteristics of images, and thus effectively balances the trade-off between semantic fidelity and diversity in generated images. As illustrated in Fig. <ref type="figure" target="#fig_3">3</ref>, the selected noise level (in blue) is low for the images with a lower foreground proportion to better preserve their semantic contents, while for those with a higher proportion, a high noise level is adopted (in green) to introduce more diversity because the key subjects are less likely to be changed or disappeared in their generated images. The adaptive generated positive view is defined as:</p><formula xml:id="formula_11">X + i = G(z T , noisy(c i , l ada i ), w).<label>(9)</label></formula><p>This process works in an offline manner before SSL training, so does not increase the burden on training time. Besides, the offline view generation is once-for-all and the generation result can be re-used multiple times for various baselines.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.4">Quality-driven Contrastive Loss</head><p>In this section, we introduce a quality-driven contrastive loss that guides contrastive learning by assessing the quality of positive pairs. It prioritizes the pairs with high foreground similarity and low background similarity to facilitate the learning of invariant representations.</p><p>Given a pair of positive views (P i , P + i ), we employ a frozen encoder that is pretrained by CLIP (without accessing the dataset for SSL), denoted as E(•), to extract feature maps</p><formula xml:id="formula_12">F i , F + i ∈ R H ′ ×W ′ ×K ′ .</formula><p>PCA is performed on feature maps, and min-max normalization is applied to the first component of PCA features, generating foreground attention maps</p><formula xml:id="formula_13">M f i , M f + i ∈ R H ′ ×W ′ .</formula><p>The background activation map for the i-th sample is defined as</p><formula xml:id="formula_14">M b i = 1 -M f i .</formula><p>Subsequently, we use these maps to aggregate feature maps into foreground and background representations, yielding</p><formula xml:id="formula_15">z f i , z f + i , z b i , z b+ i ∈ R K ′ ,</formula><p>which can be computed as follows:</p><formula xml:id="formula_16">z f i = M f i ⊗ F i , z f + i = M f + i ⊗ F + i , z b i = M b i ⊗ F i , z b+ i = M b+ i ⊗ F + i ,<label>(10)</label></formula><p>where the operation ⊗ represents spatial aggregation defined as</p><formula xml:id="formula_17">z = M ⊗ F = H h=1 W w=1 M h,w F h,w, * .</formula><p>We calculate the foreground-foreground similarity s f i and background-background similarity s b i as follows:</p><formula xml:id="formula_18">s f i = sim(z f i , z f + i ), s b i = sim(z b i , z b+ i ),<label>(11)</label></formula><p>where sim(•, •) denotes the cosine similarity of the input representations. Next, we introduce a quality score for each positive pair:</p><formula xml:id="formula_19">q i = s f i -s b i .<label>(12)</label></formula><p>We then propose a re-weighting factor denoted as w i , based on the computed pair qualities of a batch of images, to adjust the contribution of each pair to the overall loss during contrastive training:</p><formula xml:id="formula_20">w i = exp(q i ) n j=1 exp(q j ) . (<label>13</label></formula><formula xml:id="formula_21">)</formula><p>The re-weighting factor w i is used to balance the influence of different pairs, allowing us to prioritize the pairs with higher foreground similarity and lower background similarity, and also mitigate the potential influence of those lowquality or wrong positive pairs. The final contrastive loss is defined as:</p><formula xml:id="formula_22">LSSL,* = w i L SSL,* ,<label>(14)</label></formula><p>where L SSL,* can be any contrastive loss in Eqs. ( <ref type="formula" target="#formula_3">2</ref>)-( <ref type="formula" target="#formula_5">4</ref>).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">Experiments</head><p>We compare GenView with state-of-the-art SSL methods, including MoCov2 <ref type="bibr" target="#b32">[33]</ref>, BYOL <ref type="bibr" target="#b29">[30]</ref>, SwAV <ref type="bibr" target="#b11">[12]</ref>, SimSiam <ref type="bibr" target="#b17">[18]</ref>, and MoCov3 <ref type="bibr" target="#b18">[19]</ref>. We experiment with various network architectures, such as ResNet-18 <ref type="bibr" target="#b34">[35]</ref>, ResNet-50 <ref type="bibr" target="#b34">[35]</ref>, ViT-S <ref type="bibr" target="#b20">[21]</ref>, and ViT-B <ref type="bibr" target="#b20">[21]</ref>. By default, ResNet-50 serves as the backbone. ViT-S and ViT-B are adopted for comparison with MoCov3. For details on adaptive view generation and quality-driven contrastive loss implementations for different pretraining datasets, please refer to the Appendices A and C.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1">Main Results</head><p>Linear classification. Semi-supervised classification. We evaluate the fine-tuning performance of the pretraind models for semi-supervised classification with 1% and 10% of labeled IN-1K samples, selected by SimCLR <ref type="bibr" target="#b15">[16]</ref>. We fine-tune the models for 20 epochs with the classifier learning rate 1.0 (0.2) and backbone learning rate 0.00001 (0.02) for 1% (10%) subset with a cosine-annealed scheduler. Tab. 2 presents the results of top-1 and top-5 accuracy on the validation set of IN-1K.  Our method consistently outperforms the baseline approaches across different training durations. With 1% labels, GenView pretrained for 200 epochs with MoCov2 achieves an improvement of +8.5% in top-1 accuracy, and the one pretrained for 300 epochs with MoCov3 still improves top-1 accuracy by +1.9%.</p><p>Transfer learning on object detection and instance segmentation. We evaluate the transfer learning performance of the pretrained models on MS-COCO object detection and instance segmentation benchmarks <ref type="bibr" target="#b57">[58]</ref>. The models are pretrained on IN-1K for 200 epochs, followed by fine-tuning on the train2017 split and evaluation on the val2017 split. We use a batch size of 16 and follow Detetron2's 1× schedule <ref type="bibr" target="#b92">[93]</ref>, consisting of 90k training iterations with learning rate decay at the 60k-th and 80k-th iterations by a factor of 10. Both tasks utilize Mask R-CNN <ref type="bibr" target="#b33">[34]</ref> with ResNet-50-FPN <ref type="bibr" target="#b56">[57]</ref> backbone. Tab. 3 presents the results of bounding box AP and instance mask AP. We observe that GenView is also able to enhance the downstream performances. When integrated on SimSiam, MoCov2, and BYOL, GenView excels in all metrics for detection and instance segmentation, highlighting its capacity to improve representation learning for complex localization and pixel-level tasks. Additionally, FreeATM also generates the same number of images as GenView using augmented prompts <ref type="bibr">[103]</ref>.</p><p>We notice that GenView surpasses FreeATM on object detection even without relying on text prompts, emphasizing our approach's effectiveness.</p><p>Comparison with naive augmentation methods. We evaluate our method by comparing it to traditional data augmentation techniques.   indicating the benefits from more training data in a similar domain. The most impressive results are obtained when using our framework with only 0.15 million generated images, leading to a remarkable 3.2% improvement in top-1 accuracy, demonstrating that the effectiveness of our framework mainly stems from better pair construction, instead of introducing more training data.</p><p>Comparison with other view construction methods. To evaluate Gen-View's effectiveness in enhancing SSL models compared to existing positive view construction methods, we conduct pretraining and evaluation on CIFAR-10 [45] (CF10), CIFAR-100 <ref type="bibr" target="#b44">[45]</ref> (CF100), and Tiny ImageNet <ref type="bibr" target="#b45">[46]</ref> (TinyIN) datasets. We train ResNet-18 <ref type="bibr" target="#b34">[35]</ref> for 500/500/200 epochs on CF10/CF100/TinyIN. For linear evaluation on validation sets of these datasets, the classifier is trained for 100 epochs using the SGD optimizer with a cosine-annealed learning rate of 0.2, no weight decay, and momentum of 0.9. As shown in Tab. 5, the methods are categorized based on the source of variance they use in data augmentation: within instance, within the pretraining datasets, and beyond the pretraining datasets. GenView, when combined with MoCov2, consistently outperforms the other data augmentation methods in SSL, demonstrating its effectiveness in borrowing rich knowledge from large-scale datasets to construct high-quality positive views.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2">Ablations</head><p>Influence of each component. We evaluate the contributions of individual components as well as their combinations. ResNet-18 models are pretrained on IN-100 for 100 epochs using MoCov3 as the baseline, with a batch size of 512. IN-100 is a subset of IN-1K selected by <ref type="bibr" target="#b82">[83]</ref>. For conditioning the generation of positive views with GenView, we employ 50,000 randomly selected class-balanced images from IN-100. We use a cosine decay learning rate schedule and employ the LARS optimizer with a learning rate of 1.2, weight decay of 1e-6, and momentum of 0.9. Linear evaluation settings are consistent with those detailed in Tab. 1, with a training duration of 50 epochs. Tab. 6 offers valuable insights: (1)  Utilizing our framework but without our adaptive view generation significantly enhances accuracy, achieving a top-1 accuracy improvement of 5.98% compared to the baseline. <ref type="bibr">(</ref>2) The incorporation of adaptive view generation further elevates model performance, resulting in an improvement of 8.44% (from 65.52% to 73.96%). ( <ref type="formula" target="#formula_4">3</ref>) The quality-driven contrastive loss also plays a pivotal role in our framework. It can further improve the performance of adaptive view generation.</p><p>Applying the quality-driven contrastive loss to the baseline method leads to a modest gain of 1.45% (from 65.52% to 66.97%). However, when combined with our framework, a more substantial performance improvement of 3.38% (from 71.50% to 74.88%) is observed. This highlights the effectiveness of our framework and also the importance of the proposed modules in enhancing contrastive learning by improving the quality of positive pairs.</p><p>Influence of the noise level selection strategies. We examine the impact of different noise level selection strategies on SSL performance in Tab.  performance, with top-1 accuracy consistently increasing from 62.39% at α = 0 to 70.55% at α = 1.0. This highlights the significance of a higher GenView application probability in enhancing the model's ability to learn meaningful representations. By default, we set α = 1 for all the experiments in our main results. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">Conclusion</head><p>In this paper, we aim to address the challenge of creating diverse and semantically coherent positive views for SSL. We introduce GenView, a framework that leverages the ability of pretrained generative model in a controllable way to enhance the view quality. It employs an adaptive view generation method that dynamically adjusts noise levels for controlled variability. The quality-driven contrastive loss prioritizes high-quality positive pairs with greater foreground similarity and background diversity while diminishing the impact of low-quality or even false pairs. Experiments demonstrate that GenView consistently improves the SSL performance in various tasks, and outperforms other view augmentation methods. Ablation studies analyze the efficacy of each component, and qualitative evaluation shows its effectiveness in constructing views with background, pose, and view angle variations.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A Implementation Details</head><p>Method for adding noise perturbations. We use the pretrained Stable un-CLIP v2-1 model to generate image variations based on CLIP image embeddings c. An empty string serves as the text prompt to avoid any reference to image contexts or object names. The noised image embedding with perturbation strength l is defined as: noisy(c, l) = √ a l c + (1 -a l )ε, where ε ∼ N (0, I), and a l is the cumulative product of α i values for i ranging from 0 to l. Each α i is defined as 1 -β i , with β i representing the noise variance introduced at step i, following the default linear schedule for β <ref type="bibr">[1:l]</ref> from DDPM <ref type="bibr" target="#b36">[37]</ref>. Higher values of the perturbation strength l result in increased diversity in the generated images.</p><p>Method for calculating foreground proportion. We use the pretrained CLIP ViT-H/14 backbone, which serves as the conditional image encoder in Stable UnCLIP v2-1, for the encoder C used in determining the proportion of foreground content before image generation. This backbone generates 256 tokens with a dimension of 1280 from a 224 2 input resolution. For calculating PCA features, 10,000 images are randomly sampled from the original dataset. The threshold a in Eq. ( <ref type="formula" target="#formula_8">7</ref>) is selected to ensure that foreground tokens account for approximately 40% of the total tokens, providing a clear separation between foreground and background as depicted in the Sec. 3.3.</p><p>Method for generating attention maps. We employ the pretrained CLIP ConvNext-Base (with wide embedding dimension) backbone as the encoder E to extract feature maps from augmented positive views. These feature maps have a resolution of 7 2 based on a 224 2 input resolution. We compute foreground and background attention maps using the PCA vector computation method described in the previous paragraph.</p><p>Hyper-parameters for view generation. We generate one augmented image for each image in the training set of IN-1K/CF10/CF100/TinyIN, with T (the number of denoising steps) set to 20 for efficiency. The classifier-free guidance scale <ref type="bibr" target="#b37">[38]</ref> is set to 10 to ensure image quality. The diversity of generated images is controlled by the level of noise perturbations applied to the image embeddings. To match the original dataset sizes of IN-1K/CF10/CF100/TinyIN, we resize the generated images from their original resolution of 768 2 to 512 2 /32 2 /32 2 /64 2 , respectively.</p><p>Comparison with SSL methods. The baseline results of MoCov3 in Tab. 1 are from the public codebase. Hyper-parameters for comparison with other SSL methods pretrained on IN-1K are listed in Tab. 9. (DiffAug), and W-perturb <ref type="bibr" target="#b30">[31]</ref>. For our experiments, we use three datasets: CF10, CF100, and TinyIN. We employ SGD as the optimizer with a learning rate of 0.5, weight decay of 5e-4, and momentum of 0.9. The learning rate follows a linear warm-up for 10 epochs and then switches to the cosine decay scheduler. Batch sizes are set to 512 for CF10 and CF100 and 256 for TinyIN. The momentum coefficient for the momentum-updated encoder and memory buffer size is set to 0.99/0.99/0.996 and 4096/4096/16384 for CF10/CF100/TinyIN, respectively. We use the L SSL, NCE loss with a temperature of 0.2 and train for 500 epochs on CF10 and CF100 and 200 epochs on TinyIN. The backbone architecture used is ResNet18 with an embedding dimension of 512 and a projection dimension of 128. We replace the first 7x7 Conv of stride 2 with 3x3 Conv of stride 1 and remove the first max-pooling operation. For data augmentations, we use random resized crops (the lower bound of random crop ratio is set to 0.2), color distortion (strength=0.4) with a probability of 0.8, and Gaussian blur with a probability of 0.5. The images from the CF10/CF100 and TinyIN datasets are resized to 32x32 and 64x64 resolution. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B Additional Illustration</head><p>Further visualization and limitation analysis. -Capacity constraints in the CLIP conditional encoder or generator can challenge the accurate representation of long-tailed categories or complex scenes, resulting in less realistic generations, such as the generated airships (2nd row of the 9th column) and lobsters (2nd row of the 10th column). -The granularity of conditional images is crucial, as lower-resolution images can lead to a loss of detail and misclassification of the generated images. For instance, conditioning on a camel image in the 5th row of the 9th column with a resolution of 32 2 produces a generated image resembling a horse, losing the camel's distinctive features. -Partially visible objects, like the head of the king penguin in the 3rd row of the 9th column, may result in generation errors, yielding images resembling ducks (4th row of the 9th column) or birds (4th row of the 10th column).</p><p>Despite these limitations, GenView's adaptive view generation method ensures that the synthesized samples maintain attributes similar to the conditional images, providing valuable information for SSL training. Additionally, our quality-driven contrastive loss mechanism addresses semantic inconsistencies, mitigating their impact on contrastive representation learning. Future work will focus on refining diffusion models to enhance generative augmentation and address the highlighted failure cases.</p><p>Table <ref type="table" target="#tab_0">10</ref>: Average cosine similarity between positive views and original images. Retrieval refers to pairs constructed by retrieving the most similar image from Laion400M and pairing it with the query image. RS and AS refer to methods in Tab. 7.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Method</head><p>Retrieval RS AS (ours)</p><p>Cosine Similarity 0.674 0.729 0.743</p><p>Evaluation of positive views constructed by different methods. We calculate the average cosine similarity between the original images and their associated positive views for different methods. We randomly sample 50,000 images from IN-1K and compute the cosine similarity of CLIP image embeddings for each pair. The results are presented in Tab. 10, which demonstrates that our method produces positive views with significantly higher semantic similarity to the original images compared to the RS and Retrieval Laion400M methods.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>C Algorithm</head><p>The GenView algorithm is detailed in Algorithm 1.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Algorithm 1 GenView</head><p>Require: Original images X1:n, CLIP image encoder C(•), pretrained diffusion model G(•) Offline Adaptive View Generation 1: for each image Xi in X1:n do 2:</p><p>Zi, ci ← C(Xi) 3:</p><p>Ai ← Normalize(PCA(Zi)) 4: pi ← B(A i ,a) H×W 5: l ada i ← F ada (pi) 6:</p><p>X + i ← G(N (0, I), noisy(ci, l ada i ), w) 7: end for Training with Quality-driven Contrastive Loss 8: for each image Xi and its corresponding X + i do 9:</p><p>Pi, P + i ← t(Xi), t + (X + i ) 10:</p><p>Fi, F + i ← E(Pi), E(P + i ) 11:</p><p>Compute </p><formula xml:id="formula_23">M f i , M f + i , M b i , M b+ i 12: Compute z f i , z f + i , z b i , z b+ i 13: s f i , s b i ← sim(z f i , z f + i ),</formula></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Fig. 1 :</head><label>1</label><figDesc>Fig. 1: The motivation of GenView: (a) and (b) show standard augmentation-based positive pairs, while (c) and (d) are GenView-constructed pairs. Standard augmentations may cause false positive pair (a) or less diverse pair (b). As a comparison, GenView preserves subject semantics with variations (c and d) and assesses the pair quality to guide contrastive learning.</figDesc><graphic coords="2,209.90,150.13,85.16,112.93" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Fig. 2 :</head><label>2</label><figDesc>Fig.2: GenView is composed of a view quality enhancement framework, an adaptive view generation method to balance diversity and semantic fidelity, and a quality-driven contrastive loss mechanism. The framework generates the enhanced view by passing the noisy image embedding, which is extracted from the frozen CLIP encoder, to the imageconditioned pretrained generative models (the Stable Diffusion generator). Positive views are passed through encoders to compute the contrastive loss, with an emphasis on those high-quality positive pairs. The encoders f can be the same encoder or different ones, e.g. an encoder and its momentum-updated one. All the pretrained CLIP encoder and Stable Diffusion have not accessed the dataset for SSL.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Fig. 4 :</head><label>4</label><figDesc>Fig. 4: The positive pair of views constructed by GenView conditioned on images from IN-1K, and CF10.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>4. 3</head><label>3</label><figDesc>Qualitative Evaluation A qualitative illustration of the positive views constructed by GenView is shown in Fig. 4. The top rows display original images, and the bottom rows show images generated by GenView. This visualization demonstrates GenView's capacity to introduce variations in background, pose, and view angle while preserving the main semantics, which is crucial for learning invariant representations. More visual examples are provided in the Appendix B.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Fig. 5 :</head><label>5</label><figDesc>Fig. 5: Visualization of positive pairs generated by GenView, depicting successful variations and failure cases (outlined in red).</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Fig. 5</head><label>5</label><figDesc>displays positive pairs generated by GenView, showing its ability to introduce variations while maintaining semantic consistency. Notable observations include:</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head>Table 1 :</head><label>1</label><figDesc>Linear evaluation on IN-1K.</figDesc><table><row><cell>Method</cell><cell cols="3">Architecture Epochs Top-1</cell></row><row><cell>InstDisc [94]</cell><cell>ResNet-50</cell><cell>200</cell><cell>56.5</cell></row><row><cell>SimCLR [16]</cell><cell>ResNet-50</cell><cell>200</cell><cell>66.8</cell></row><row><cell>PCL [47]</cell><cell>ResNet-50</cell><cell>200</cell><cell>67.6</cell></row><row><cell>Adco [67]</cell><cell>ResNet-50</cell><cell>200</cell><cell>68.6</cell></row><row><cell>InfoMin [84]</cell><cell>ResNet-50</cell><cell>200</cell><cell>70.1</cell></row><row><cell>NNCLR [23]</cell><cell>ResNet-50</cell><cell>200</cell><cell>70.7</cell></row><row><cell>LEVEL [39]</cell><cell>ResNet-50</cell><cell>200</cell><cell>72.8</cell></row><row><cell>Barlow Twins [102]</cell><cell>ResNet-50</cell><cell>300</cell><cell>71.4</cell></row><row><cell>CLIP [68]</cell><cell>ResNet-50</cell><cell>-</cell><cell>74.3</cell></row><row><cell>MoCov2 [33]</cell><cell>ResNet-50</cell><cell>200</cell><cell>67.5</cell></row><row><cell cols="2">MoCov2 + C-Crop [66] ResNet-50</cell><cell>200</cell><cell>67.8</cell></row><row><cell>MoCov2 + GenView</cell><cell>ResNet-50</cell><cell cols="2">200 70.0</cell></row><row><cell>SwAV [12]  *</cell><cell>ResNet-50</cell><cell>200</cell><cell>70.5</cell></row><row><cell>SwAV + GenView</cell><cell>ResNet-50</cell><cell cols="2">200 71.7</cell></row><row><cell>SimSiam [18]</cell><cell>ResNet-50</cell><cell>200</cell><cell>70.0</cell></row><row><cell>SimSiam + GenView</cell><cell>ResNet-50</cell><cell cols="2">200 72.2</cell></row><row><cell>BYOL [30]  *</cell><cell>ResNet-50</cell><cell>200</cell><cell>71.8</cell></row><row><cell>BYOL + GenView</cell><cell>ResNet-50</cell><cell cols="2">200 73.2</cell></row><row><cell>MoCov3 [19]</cell><cell>ResNet-50</cell><cell>100</cell><cell>68.9</cell></row><row><cell>MoCov3 + GenView</cell><cell>ResNet-50</cell><cell cols="2">100 72.7</cell></row><row><cell>MoCov3 [19]</cell><cell>ResNet-50</cell><cell>300</cell><cell>72.8</cell></row><row><cell>MoCov3 + GenView</cell><cell>ResNet-50</cell><cell cols="2">300 74.8</cell></row><row><cell>MoCov3 [19]</cell><cell>ViT-S</cell><cell>300</cell><cell>73.2</cell></row><row><cell>MoCov3 + GenView</cell><cell>ViT-S</cell><cell cols="2">300 74.5</cell></row><row><cell>MoCov3 [19]</cell><cell>ViT-B</cell><cell>300</cell><cell>76.7</cell></row><row><cell>MoCov3 + GenView</cell><cell>ViT-B</cell><cell cols="2">300 77.8</cell></row></table><note><p>* : our reproduction.</p></note></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1"><head>Table 2</head><label>2</label><figDesc></figDesc><table><row><cell cols="6">: Comparison with existing</cell></row><row><cell cols="6">SSL methods for semi-supervised</cell></row><row><cell cols="6">learning on IN-1K. Models with</cell></row><row><cell cols="6">ResNet-50 backbone are pretrained on</cell></row><row><cell cols="4">IN-1K.  * : our reproduction.</cell><cell></cell><cell></cell></row><row><cell>Method</cell><cell>Epochs</cell><cell cols="4">1% Labels 10% Labels</cell></row><row><cell></cell><cell></cell><cell cols="4">Top-1 Top-5 Top-1 Top-5</cell></row><row><cell>PCL [47]</cell><cell>200</cell><cell>-</cell><cell>75.6</cell><cell>-</cell><cell>86.2</cell></row><row><cell>SwAV [12]</cell><cell>800</cell><cell cols="4">53.9 78.5 70.2 89.9</cell></row><row><cell>SimCLR [16]</cell><cell cols="5">1000 48.3 75.5 65.6 87.8</cell></row><row><cell>Barlow Twins [102]</cell><cell cols="5">1000 55.0 79.2 69.7 89.3</cell></row><row><cell>NNCLR [23]</cell><cell cols="5">1000 56.4 80.7 69.8 89.3</cell></row><row><cell>MoCov3 [19]  *</cell><cell>100</cell><cell cols="4">50.4 76.6 66.8 88.4</cell></row><row><cell cols="6">MoCov3 + GenView 100 51.9 78.5 68.4 89.4</cell></row><row><cell>MoCov2 [33]  *</cell><cell>200</cell><cell cols="4">42.1 70.9 60.9 84.2</cell></row><row><cell cols="6">MoCov2 + GenView 200 50.6 78.3 63.1 86.0</cell></row><row><cell>BYOL [30]  *</cell><cell>200</cell><cell cols="4">53.2 78.8 68.2 89.0</cell></row><row><cell>BYOL + GenView</cell><cell cols="5">200 55.6 81.3 68.6 89.5</cell></row><row><cell>MoCov3 [19]  *</cell><cell>300</cell><cell cols="4">56.2 80.7 69.4 89.7</cell></row><row><cell cols="6">MoCov3 + GenView 300 58.1 82.5 70.6 90.4</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2"><head>Table 3 :</head><label>3</label><figDesc>Transfer learning on MS-COCO object detection and instance segmentation. Models with ResNet-50 backbone are pretrained for 200 epochs on IN-1K. * : our reproduction.</figDesc><table><row><cell>Method</cell><cell cols="2">Object Det.</cell><cell cols="3">Instance Seg.</cell></row><row><cell></cell><cell cols="5">AP AP50 AP75 AP AP50 AP75</cell></row><row><cell>ReSim [95]</cell><cell cols="5">39.8 60.2 43.5 36.0 57.1 38.6</cell></row><row><cell>DenseCL [89]</cell><cell cols="5">40.3 59.9 44.3 36.4 57.0 39.2</cell></row><row><cell>SimSiam [18]  *</cell><cell cols="5">38.5 57.8 42.3 34.7 54.9 37.1</cell></row><row><cell>SimSiam + GenView</cell><cell cols="5">39.1 58.5 43.0 35.2 55.9 37.7</cell></row><row><cell>MoCov2 [17]  *</cell><cell cols="5">39.7 59.4 43.6 35.8 56.5 38.4</cell></row><row><cell cols="2">MoCov2 + FreeATM [103] 40.1 -</cell><cell>-</cell><cell>-</cell><cell>-</cell><cell>-</cell></row><row><cell>MoCov2 + GenView</cell><cell cols="5">40.5 60.0 44.3 36.3 57.1 38.9</cell></row><row><cell>BYOL [30]  *</cell><cell cols="5">40.6 60.9 44.5 36.7 58.0 39.4</cell></row><row><cell>BYOL + GenView</cell><cell cols="5">41.2 61.5 44.9 37.0 58.4 39.7</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_4"><head>Table 4</head><label>4</label><figDesc></figDesc><table><row><cell cols="3">: Comparison with naive</cell></row><row><cell cols="3">data augmentation methods un-</cell></row><row><cell cols="3">der linear evaluation on IN-1K.</cell></row><row><cell cols="3">Models with ResNet-50 backbone are</cell></row><row><cell cols="3">pretrained for 50 epochs on expanded</cell></row><row><cell cols="3">datasets. The 4-th row incorporates</cell></row><row><cell cols="3">0.3M synthetic images produced by the</cell></row><row><cell cols="3">generative model. The last row uses our</cell></row><row><cell cols="3">framework in Sec. 3.2. with only 0.15M</cell></row><row><cell>synthetic images.</cell><cell></cell><cell></cell></row><row><cell>Dataset</cell><cell>Images</cell><cell>Top-1 Top-5</cell></row><row><cell>IN-1K</cell><cell>1.28M</cell><cell>62.39 84.57</cell></row><row><cell>IN-1K + Laion400M [77]</cell><cell cols="2">1.28M + 0.3M 63.31 85.53</cell></row><row><cell cols="3">IN-1K + ImageNet-21K [73] 1.28M + 0.3M 64.10 85.86</cell></row><row><cell cols="3">IN-1K + Synthetic images 1.28M + 0.3M 63.36 85.14</cell></row><row><cell>IN-1K + Our framework</cell><cell cols="2">1.28M + 0.15M 65.62 87.25</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_5"><head>Table 5 :</head><label>5</label><figDesc>Comparison with other view construction methods under linear evaluation on different datasets. ResNet-18 is used as the backbone.</figDesc><table><row><cell>Methods</cell><cell cols="3">CF10 CF100 TinyIN</cell></row><row><cell cols="2">Variance within instance</cell><cell></cell><cell></cell></row><row><cell>MoCov2 + C-Crop [66]</cell><cell cols="3">88.78 57.65 47.98</cell></row><row><cell>BYOL + C-Crop [66]</cell><cell cols="3">92.54 64.62 47.23</cell></row><row><cell cols="3">Variance within pretraining datasets</cell><cell></cell></row><row><cell cols="2">SimCLR + ViewMaker [81] 86.30</cell><cell>-</cell><cell>-</cell></row><row><cell>SimCLR + NTN [43]</cell><cell>86.90</cell><cell>-</cell><cell>-</cell></row><row><cell>MoCov2 + LMA [99]</cell><cell cols="2">92.02 64.89</cell><cell>-</cell></row><row><cell>SimSiam + LMA [99]</cell><cell cols="2">92.46 65.70</cell><cell>-</cell></row><row><cell cols="4">Simsiam + DiffAug [101] 87.30 60.10 45.30</cell></row><row><cell cols="3">Variance beyond pretraining datasets</cell><cell></cell></row><row><cell>W-perturb [31]</cell><cell>92.90</cell><cell>-</cell><cell>51.05</cell></row><row><cell>MoCov2 + GenView</cell><cell cols="3">93.00 67.49 56.76</cell></row><row><cell>BYOL + GenView</cell><cell cols="3">93.56 67.53 54.79</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_6"><head>Table 6</head><label>6</label><figDesc></figDesc><table><row><cell cols="4">: Influence of each compo-</cell></row><row><cell cols="4">nent under linear evaluation on</cell></row><row><cell cols="4">IN-100. ResNet-18 models are pre-</cell></row><row><cell cols="4">trained on IN-100 for 100 epochs. Our</cell></row><row><cell cols="4">framework refers to using our frame-</cell></row><row><cell cols="4">work to construct views but with-</cell></row><row><cell cols="4">out dynamically adjusting the noise</cell></row><row><cell cols="4">perturbation and the quality-driven</cell></row><row><cell cols="4">contrastive loss. Ada.View represents</cell></row><row><cell cols="4">our proposed adaptive view genera-</cell></row><row><cell cols="4">tion method. Qual.Driv.Cont indi-</cell></row><row><cell cols="4">cates the use of our quality-driven con-</cell></row><row><cell>trastive loss.</cell><cell></cell><cell></cell><cell></cell></row><row><cell cols="3">Our framework Ada.View Qual.Driv.Cont</cell><cell>Top-1</cell></row><row><cell>×</cell><cell>×</cell><cell>×</cell><cell>65.52</cell></row><row><cell>×</cell><cell>×</cell><cell>✓</cell><cell>66.97 (↑ 1.45)</cell></row><row><cell>✓</cell><cell>×</cell><cell>×</cell><cell>71.50 (↑ 5.98)</cell></row><row><cell>✓</cell><cell>✓</cell><cell>×</cell><cell>73.96 (↑ 8.44)</cell></row><row><cell>✓</cell><cell>×</cell><cell>✓</cell><cell>74.88 (↑ 9.36)</cell></row><row><cell>✓</cell><cell>✓</cell><cell>✓</cell><cell>75.40 (↑ 9.88)</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_7"><head>Table 7 :</head><label>7</label><figDesc>Influence of different noise level selection strategies under linear evaluation on IN-100. ResNet-18 models are pretrained on IN-100 for 100 epochs. Top-1 62.39 65.86 68.38 69.04 69.47 70.55 Top-5 84.57 87.10 89.02 89.29 89.49 90.34</figDesc><table><row><cell cols="5">Method CS(0) CS(100) CS(200) CS(300) CS(400) RS AS</cell></row><row><cell cols="2">Top-1 71.80 72.14</cell><cell>71.50</cell><cell>71.76</cell><cell>72.08 72.96 73.96</cell></row><row><cell cols="2">Top-5 92.19 92.34</cell><cell>91.88</cell><cell>92.02</cell><cell>92.36 92.78 93.22</cell></row><row><cell cols="5">Table 8: Influence of GenView appli-</cell></row><row><cell cols="5">cation probability under linear classi-</cell></row><row><cell cols="5">fication on IN-1K. Models with ResNet-</cell></row><row><cell cols="5">50 backbone are pretrained for 50 epochs</cell></row><row><cell>on IN-1K.</cell><cell></cell><cell></cell><cell></cell></row><row><cell>α</cell><cell>0</cell><cell cols="3">0.1 0.3 0.5 0.8</cell><cell>1.0</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_9"><head>Table 9 :</head><label>9</label><figDesc>Hyperparameters for comparison with SSL models pretrained on IN-1K.Comparison with naive augmentation methods. To expand IN-1K with additional training data without introducing new classes, we employ a retrievalbased technique<ref type="bibr" target="#b4">[5]</ref> for expanding IN-1K with Laion400M. We query the entire Laion400M dataset with 0.3 million randomly sampled IN-1K images and select the most similar image for each query image. For expanding IN-1K with IN-21K, we randomly sample 0.3 million non-repeating images with labels matching those in the IN-1K dataset. For GenView, positive views are generated for 0.15 million randomly sampled IN-1K images. For the experiments, the ResNet-50 models are pretrained on the expanded dataset using a batch size of 512. We apply a cosine decay learning rate schedule and use the LARS optimizer with a learning rate of 1.2, weight decay of 1e-6, and momentum of 0.9. Linear evaluation settings align with those in Tab. 1.</figDesc><table><row><cell></cell><cell>MoCov2</cell><cell cols="3">SwAV SimSiam BYOL</cell><cell>MoCov3</cell><cell>MoCov3</cell></row><row><cell>Optimizer</cell><cell>SGD</cell><cell>LARS</cell><cell>SGD</cell><cell>LARS</cell><cell>LARS</cell><cell>AdamW</cell></row><row><cell>Learning Rate</cell><cell>0.03</cell><cell>0.6</cell><cell>0.05</cell><cell>4.8</cell><cell>1.2/9.6/4.8</cell><cell>2.4e-3</cell></row><row><cell>Weight Decay</cell><cell>1e-4</cell><cell>1e-4</cell><cell>1e-4</cell><cell>1e-6</cell><cell>1e-6</cell><cell>0.1</cell></row><row><cell>Momentum</cell><cell>0.9</cell><cell>0.9</cell><cell>0.9</cell><cell>0.9</cell><cell>0.9</cell><cell>-</cell></row><row><cell>Cosine Decay</cell><cell>✓</cell><cell>✓</cell><cell>✓</cell><cell>✓</cell><cell>✓</cell><cell>✓</cell></row><row><cell>Batch Size</cell><cell>256</cell><cell>256</cell><cell>256</cell><cell>4096</cell><cell cols="2">512/4096/4096 4096/4096</cell></row><row><cell>Loss</cell><cell cols="5">LSSL,NCE LSSL,KL LSSL,COS LSSL,COS LSSL,NCE</cell><cell>LSSL,NCE</cell></row><row><cell>Epochs</cell><cell>200</cell><cell>200</cell><cell>200</cell><cell>200</cell><cell>100/300</cell><cell>300</cell></row><row><cell>Backbone</cell><cell cols="4">ResNet50 ResNet50 ResNet50 ResNet50</cell><cell>ResNet50</cell><cell>VIT-S/ViT-B</cell></row><row><cell>Embedding Dim</cell><cell>2048</cell><cell>2048</cell><cell>2048</cell><cell>2048</cell><cell>2048</cell><cell>384/768</cell></row><row><cell>Projection Dim</cell><cell>128</cell><cell>128</cell><cell>2048</cell><cell>256</cell><cell>256</cell><cell>256</cell></row><row><cell cols="7">Comparison with other view construction methods. We compare our ap-</cell></row><row><cell cols="7">proach with several baseline methods, including ContrastiveCrop [66] (C-Crop),</cell></row><row><cell cols="7">ViewMaker [81], Neural Transform Network [43] (NTN), Local Manifold Aug-</cell></row><row><cell cols="7">mentation method [99] (LMA), Diffusion-based augmentation from scratch [101]</cell></row></table></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" xml:id="foot_0"><p>&amp; 𝑞! =</p></note>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div><head>Acknowledgements</head><p>This work was supported in part by the <rs type="funder">National Natural Science Foundation of China</rs> under Grant <rs type="grantNumber">62376069</rs>, in part by <rs type="programName">Young Elite Scientists Sponsorship Program</rs> by <rs type="funder">CAST</rs> under Grant <rs type="grantNumber">2023QNRC001</rs>, and in part by <rs type="funder">Guangdong Basic and Applied Basic Research Foundation</rs> under Grant <rs type="grantNumber">2024A1515012027</rs>. The work was also supported by funding from <rs type="funder">KAUST Center of Excellence on GenAI</rs>, under award number <rs type="grantNumber">5940</rs>.</p></div>
+			</div>
+			<listOrg type="funding">
+				<org type="funding" xml:id="_ESCzvr7">
+					<idno type="grant-number">62376069</idno>
+					<orgName type="program" subtype="full">Young Elite Scientists Sponsorship Program</orgName>
+				</org>
+				<org type="funding" xml:id="_VYtVT7d">
+					<idno type="grant-number">2023QNRC001</idno>
+				</org>
+				<org type="funding" xml:id="_jpVajAr">
+					<idno type="grant-number">2024A1515012027</idno>
+				</org>
+				<org type="funding" xml:id="_g49t5Gd">
+					<idno type="grant-number">5940</idno>
+				</org>
+			</listOrg>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Self-labelling via simultaneous clustering and representation learning</title>
+		<author>
+			<persName><forename type="first">Y</forename><forename type="middle">M</forename><surname>Asano</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Rupprecht</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Vedaldi</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">ICLR</title>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Self-supervised learning from images with a joint-embedding predictive architecture</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Assran</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Q</forename><surname>Duval</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Misra</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Bojanowski</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Vincent</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Rabbat</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Le-Cun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Ballas</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">CVPR</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page" from="15619" to="15629" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<title level="m" type="main">Instance-conditioned gan data augmentation for representation learning</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Astolfi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Casanova</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Verbeek</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Vincent</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Romero-Soriano</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Drozdzal</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2303.09677</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Beit: Bert pre-training of image transformers</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Bao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Dong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Piao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Wei</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">ICLR</title>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+		<title level="m" type="main">Clip retrieval: Easily compute clip embeddings and build a clip retrieval system with them</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Beaumont</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+			<publisher>GitHub</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<monogr>
+		<author>
+			<persName><forename type="first">F</forename><surname>Bie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Ghanem</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Yao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Holmes</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Golnari</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">A</forename><surname>Clifton</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2309.00810</idno>
+		<title level="m">Renaissance: A survey into ai text-to-image generation in the era of large model</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Large scale gan training for high fidelity natural image synthesis</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Brock</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Donahue</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Simonyan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">ICLR</title>
+		<imprint>
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<monogr>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">F</forename><surname>Burg</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Wenzel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Zietlow</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Horn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">O</forename><surname>Makansi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Locatello</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Russell</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2304.10253</idno>
+		<title level="m">A data augmentation perspective on diffusion models and retrieval</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">End-to-end object detection with transformers</title>
+		<author>
+			<persName><forename type="first">N</forename><surname>Carion</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Massa</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Synnaeve</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Usunier</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Kirillov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Zagoruyko</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ECCV</title>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page" from="213" to="229" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Extracting training data from diffusion models</title>
+		<author>
+			<persName><forename type="first">N</forename><surname>Carlini</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Hayes</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Nasr</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Jagielski</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Sehwag</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Tramer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Balle</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Ippolito</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Wallace</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">USENIX Security</title>
+		<imprint>
+			<publisher>USENIX Association</publisher>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page" from="5253" to="5270" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Deep clustering for unsupervised learning of visual features</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Caron</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Bojanowski</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Joulin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Douze</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ECCV</title>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2018">2018</date>
+			<biblScope unit="page" from="132" to="149" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<monogr>
+		<title level="m" type="main">Unsupervised learning of visual features by contrasting cluster assignments</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Caron</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Misra</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Mairal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Goyal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Bojanowski</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Joulin</surname></persName>
+		</author>
+		<editor>NeurIPS.</editor>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+			<publisher>MIT Press</publisher>
+			<biblScope unit="page" from="9912" to="9924" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Emerging properties in self-supervised vision transformers</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Caron</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Touvron</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Misra</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Jégou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Mairal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Bojanowski</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Joulin</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ICCV</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="page" from="9650" to="9660" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">Conceptual 12m: Pushing webscale image-text pre-training to recognize long-tail visual concepts</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Changpinyo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Sharma</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Ding</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Soricut</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">CVPR</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="page" from="3558" to="3568" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">Ccsd: cross-camera self-distillation for unsupervised person re-identification</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Gao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Sun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Sang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Visual Intelligence</title>
+		<imprint>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page">27</biblScope>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">A simple framework for contrastive learning of visual representations</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Kornblith</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Norouzi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Hinton</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ICML</title>
+		<imprint>
+			<publisher>PMLR</publisher>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="page" from="1597" to="1607" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<monogr>
+		<title level="m" type="main">Improved baselines with momentum contrastive learning</title>
+		<author>
+			<persName><forename type="first">X</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Fan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Girshick</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>He</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2003.04297</idno>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">Exploring simple siamese representation learning</title>
+		<author>
+			<persName><forename type="first">X</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>He</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">CVPR</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="page" from="15750" to="15758" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">An empirical study of training self-supervised vision transformers</title>
+		<author>
+			<persName><forename type="first">X</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Xie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>He</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ICCV</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="page" from="9640" to="9649" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">Imagenet: A large-scale hierarchical image database</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Deng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Dong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Socher</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">J</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Fei-Fei</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">CVPR</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2009">2009</date>
+			<biblScope unit="page" from="248" to="255" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">An image is worth 16x16 words: transformers for image recognition at scale</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Dosovitskiy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Beyer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Kolesnikov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Weissenborn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Zhai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Unterthiner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Dehghani</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Minderer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Heigold</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Gelly</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">ICLR</title>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">Diversify your vision datasets with automatic diffusion-based augmentation</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Dunlap</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Umino</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">E</forename><surname>Gonzalez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Darrell</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">NeurIPS</title>
+		<imprint>
+			<publisher>MIT Press</publisher>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page" from="79024" to="79034" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">With a little help from my friends: Nearest-neighbor contrastive learning of visual representations</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Dwibedi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Aytar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Tompson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Sermanet</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Zisserman</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ICCV</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="page" from="9588" to="9597" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">Whitening for self-supervised representation learning</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Ermolov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Siarohin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Sangineto</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Sebe</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ICML</title>
+		<imprint>
+			<publisher>PMLR</publisher>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="page" from="3015" to="3024" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<analytic>
+		<title level="a" type="main">Diverse data augmentation with diffusions for effective test-time prompt tuning</title>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">M</forename><surname>Feng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Khan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Zuo</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ICCV</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page" from="2704" to="2714" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<monogr>
+		<title level="m" type="main">Learning and leveraging world models in visual representation learning</title>
+		<author>
+			<persName><forename type="first">Q</forename><surname>Garrido</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Assran</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Ballas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Bardes</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Najman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Lecun</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2403.00504</idno>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<analytic>
+		<title level="a" type="main">Unsupervised representation learning by predicting image rotations</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Gidaris</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Singh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Komodakis</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">ICLR</title>
+		<imprint>
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<title level="a" type="main">Rich feature hierarchies for accurate object detection and semantic segmentation</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Girshick</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Donahue</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Darrell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Malik</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">CVPR</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2014">2014</date>
+			<biblScope unit="page" from="580" to="587" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<analytic>
+		<title level="a" type="main">Generative adversarial nets</title>
+		<author>
+			<persName><forename type="first">I</forename><surname>Goodfellow</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Pouget-Abadie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Mirza</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Warde-Farley</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Ozair</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Courville</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Bengio</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">NeurIPS</title>
+		<imprint>
+			<publisher>MIT Press</publisher>
+			<date type="published" when="2014">2014</date>
+			<biblScope unit="page" from="2672" to="2680" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<analytic>
+		<title level="a" type="main">Bootstrap your own latent: A new approach to self-supervised learning</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">B</forename><surname>Grill</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Strub</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Altché</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Tallec</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Richemond</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Buchatskaya</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Doersch</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Avila Pires</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Guo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Gheshlaghi Azar</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">NeurIPS</title>
+		<imprint>
+			<publisher>MIT Press</publisher>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="page" from="21271" to="21284" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<monogr>
+		<title level="m" type="main">Constructive assimilation: Boosting contrastive learning performance through view generation strategies</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Han</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Han</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Sudalairaj</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Loh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Dangovski</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Deng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Agrawal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Metaxas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Karlinsky</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">W</forename><surname>Weng</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2304.00601</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<analytic>
+		<title level="a" type="main">Masked autoencoders are scalable vision learners</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Xie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Dollár</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Girshick</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">CVPR</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page" from="16000" to="16009" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<analytic>
+		<title level="a" type="main">Momentum contrast for unsupervised visual representation learning</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Fan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Xie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Girshick</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">CVPR</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="page" from="9729" to="9738" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<analytic>
+		<title level="a" type="main">Mask r-cnn</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Gkioxari</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Dollár</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Girshick</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ICCV</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2017">2017</date>
+			<biblScope unit="page" from="2961" to="2969" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<analytic>
+		<title level="a" type="main">Deep residual learning for image recognition</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Ren</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Sun</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">CVPR</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2016">2016</date>
+			<biblScope unit="page" from="770" to="778" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<analytic>
+		<title level="a" type="main">Is synthetic data from generative models ready for image recognition?</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Sun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Xue</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Torr</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Bai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Qi</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">ICLR</title>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b36">
+	<analytic>
+		<title level="a" type="main">Denoising diffusion probabilistic models</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Ho</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Jain</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Abbeel</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">NeurIPS</title>
+		<imprint>
+			<publisher>MIT Press</publisher>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="page" from="6840" to="6851" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b37">
+	<monogr>
+		<title level="m" type="main">Classifier-free diffusion guidance</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Ho</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Salimans</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+			<publisher>NeurIPS. MIT Press</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b38">
+	<analytic>
+		<title level="a" type="main">Learning where to learn in cross-view self-supervised learning</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>You</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Zheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Qian</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Yamasaki</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">CVPR</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page" from="14451" to="14460" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b39">
+	<analytic>
+		<title level="a" type="main">Contrastive masked autoencoders are stronger vision learners</title>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Jin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Lu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Q</forename><surname>Hou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">M</forename><surname>Cheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Fu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Shen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Feng</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">TPAMI</title>
+		<imprint>
+			<biblScope unit="volume">46</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="2506" to="2517" />
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b40">
+	<analytic>
+		<title level="a" type="main">Generative models as a data source for multiview representation learning</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Jahanian</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Puig</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Tian</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Isola</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">ICLR</title>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b41">
+	<analytic>
+		<title level="a" type="main">Training generative adversarial networks with limited data</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Karras</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Aittala</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Hellsten</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Laine</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Lehtinen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Aila</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">NeurIPS</title>
+		<imprint>
+			<publisher>MIT Press</publisher>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="page" from="12104" to="12114" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b42">
+	<analytic>
+		<title level="a" type="main">Neural transformation network to generate diverse views for contrastive learning</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Das</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Choi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Jeong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Yun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Kim</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">CVPR</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page" from="4901" to="4911" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b43">
+	<analytic>
+		<title level="a" type="main">Auto-encoding variational Bayes</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">P</forename><surname>Kingma</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Welling</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">ICLR</title>
+		<imprint>
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b44">
+	<monogr>
+		<author>
+			<persName><forename type="first">A</forename><surname>Krizhevsky</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Hinton</surname></persName>
+		</author>
+		<title level="m">Learning multiple layers of features from tiny images</title>
+		<imprint>
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b45">
+	<analytic>
+		<title level="a" type="main">Tiny imagenet visual recognition challenge</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Le</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Yang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">CS</title>
+		<imprint>
+			<biblScope unit="volume">231</biblScope>
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b46">
+	<analytic>
+		<title level="a" type="main">Prototypical contrastive learning of unsupervised representations</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Xiong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Socher</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">C</forename><surname>Hoi</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ICLR. PMLR</title>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b47">
+	<monogr>
+		<title level="m" type="main">Transformer-based visual segmentation: A survey</title>
+		<author>
+			<persName><forename type="first">X</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Ding</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Yuan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Cheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Jiangmiao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">C</forename><surname>Loy</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2304.2023</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b48">
+	<analytic>
+		<title level="a" type="main">Omg-seg: Is one model good enough for all segmentation?</title>
+		<author>
+			<persName><forename type="first">X</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Yuan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Ding</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">C</forename><surname>Loy</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">CVPR</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2024">2024</date>
+			<biblScope unit="page" from="27948" to="27959" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b49">
+	<monogr>
+		<title level="m" type="main">Mask again: Masked knowledge distillation for masked video modeling</title>
+		<author>
+			<persName><forename type="first">X</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Nie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Zhang</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<publisher>ACM</publisher>
+			<biblScope unit="page" from="2221" to="2232" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b50">
+	<analytic>
+		<title level="a" type="main">Local correlation consistency for knowledge distillation</title>
+		<author>
+			<persName><forename type="first">X</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Fang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Liao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Qian</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ECCV</title>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="page" from="18" to="33" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b51">
+	<analytic>
+		<title level="a" type="main">Fine-grained key-value memory enhanced predictor for video representation learning</title>
+		<author>
+			<persName><forename type="first">X</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Kang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Nie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Zhang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ACM MM</title>
+		<imprint>
+			<publisher>ACM</publisher>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page" from="2264" to="2274" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b52">
+	<analytic>
+		<title level="a" type="main">Detector-in-detector: Multi-level analysis for human-parts</title>
+		<author>
+			<persName><forename type="first">X</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Q</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Zhou</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ACCV</title>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="page" from="228" to="240" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b53">
+	<analytic>
+		<title level="a" type="main">Eliminating gradient conflict in reference-based line-art colorization</title>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Geng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Kang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Yang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ECCV</title>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page" from="579" to="596" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b54">
+	<monogr>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Yang</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2305.12954</idno>
+		<title level="m">Is synthetic data from diffusion models ready for knowledge distillation?</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b55">
+	<analytic>
+		<title level="a" type="main">Open-vocabulary object segmentation with diffusion models</title>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Q</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Xie</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ICCV</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page" from="7667" to="7676" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b56">
+	<analytic>
+		<title level="a" type="main">Feature pyramid networks for object detection</title>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">Y</forename><surname>Lin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Dollár</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Girshick</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Hariharan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Belongie</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">CVPR</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2017">2017</date>
+			<biblScope unit="page" from="2117" to="2125" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b57">
+	<analytic>
+		<title level="a" type="main">Microsoft coco: common objects in context</title>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">Y</forename><surname>Lin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Maire</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Belongie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Hays</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Perona</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Ramanan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Dollár</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">L</forename><surname>Zitnick</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ECCV</title>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2014">2014</date>
+			<biblScope unit="page" from="740" to="755" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b58">
+	<analytic>
+		<title level="a" type="main">Fully convolutional networks for semantic segmentation</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Long</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Shelhamer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Darrell</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">CVPR</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2015">2015</date>
+			<biblScope unit="page" from="3431" to="3440" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b59">
+	<analytic>
+		<title level="a" type="main">SGDR: Stochastic gradient descent with warm restarts</title>
+		<author>
+			<persName><forename type="first">I</forename><surname>Loshchilov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Hutter</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">ICLR</title>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b60">
+	<analytic>
+		<title level="a" type="main">Rethinking the effect of data augmentation in adversarial contrastive cearning</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Luo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Wang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">ICLR</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b61">
+	<analytic>
+		<title level="a" type="main">Glide: Towards photorealistic image generation and editing with text-guided diffusion models</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">Q</forename><surname>Nichol</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Dhariwal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Ramesh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Shyam</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Mishkin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Mcgrew</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Sutskever</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Chen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ICML</title>
+		<imprint>
+			<publisher>PMLR</publisher>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page" from="16784" to="16804" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b62">
+	<analytic>
+		<title level="a" type="main">Unsupervised learning of visual representations by solving jigsaw puzzles</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Noroozi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Favaro</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ECCV</title>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2016">2016</date>
+			<biblScope unit="page" from="69" to="84" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b63">
+	<monogr>
+		<title level="m" type="main">Representation learning with contrastive predictive coding</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">V D</forename><surname>Oord</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">O</forename><surname>Vinyals</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1807.03748</idno>
+		<imprint>
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b64">
+	<analytic>
+		<title level="a" type="main">Context encoders: Feature learning by inpainting</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Pathak</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Krahenbuhl</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Donahue</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Darrell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">A</forename><surname>Efros</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">CVPR</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2016">2016</date>
+			<biblScope unit="page" from="2536" to="2544" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b65">
+	<analytic>
+		<title level="a" type="main">Crafting better contrastive views for siamese representation learning</title>
+		<author>
+			<persName><forename type="first">X</forename><surname>Peng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Zhu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>You</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">CVPR</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page" from="16031" to="16040" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b66">
+	<analytic>
+		<title level="a" type="main">Learning generalized transformation equivariant representations via autoencoding transformations</title>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">J</forename><surname>Qi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Lin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Wang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">TPAMI</title>
+		<imprint>
+			<biblScope unit="volume">44</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="2045" to="2057" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b67">
+	<analytic>
+		<title level="a" type="main">Learning transferable visual models from natural language supervision</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Radford</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">W</forename><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Hallacy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Ramesh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Goh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Agarwal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Sastry</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Askell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Mishkin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Clark</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ICML</title>
+		<imprint>
+			<publisher>PMLR</publisher>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="page" from="8748" to="8763" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b68">
+	<monogr>
+		<author>
+			<persName><forename type="first">A</forename><surname>Ramesh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Dhariwal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Nichol</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Chu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Chen</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2204.06125</idno>
+		<title level="m">Hierarchical textconditional image generation with clip latents</title>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b69">
+	<analytic>
+		<title level="a" type="main">Zero-shot text-to-image generation</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Ramesh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Pavlov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Goh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Gray</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Voss</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Radford</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Sutskever</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ICML</title>
+		<imprint>
+			<publisher>PMLR</publisher>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="page" from="8821" to="8831" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b70">
+	<analytic>
+		<title level="a" type="main">Generating diverse high-fidelity images with vq-vae-2</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Razavi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Van Den Oord</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">O</forename><surname>Vinyals</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">NeurIPS</title>
+		<imprint>
+			<publisher>MIT Press</publisher>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="page" from="14866" to="14876" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b71">
+	<analytic>
+		<title level="a" type="main">Faster r-cnn: Towards real-time object detection with region proposal networks</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Ren</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Girshick</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Sun</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">NeurIPS</title>
+		<imprint>
+			<publisher>MIT Press</publisher>
+			<date type="published" when="2015">2015</date>
+			<biblScope unit="page" from="91" to="99" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b72">
+	<monogr>
+		<author>
+			<persName><forename type="first">T</forename><surname>Ridnik</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Ben-Baruch</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Noy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Zelnik-Manor</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2104.10972</idno>
+		<title level="m">Imagenet-21k pretraining for the masses</title>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b73">
+	<analytic>
+		<title level="a" type="main">High-resolution image synthesis with latent diffusion models</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Rombach</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Blattmann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Lorenz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Esser</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Ommer</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">CVPR</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page" from="10684" to="10695" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b74">
+	<analytic>
+		<title level="a" type="main">Photorealistic textto-image diffusion models with deep language understanding</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Saharia</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Chan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Saxena</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Whang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">L</forename><surname>Denton</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Ghasemipour</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Gontijo Lopes</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Karagol Ayan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Salimans</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">NeurIPS</title>
+		<imprint>
+			<publisher>MIT Press</publisher>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page" from="36479" to="36494" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b75">
+	<analytic>
+		<title level="a" type="main">Fake it till you make it: Learning transferable representations from synthetic imagenet clones</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">B</forename><surname>Sariyildiz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Alahari</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Larlus</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Kalantidis</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">CVPR</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page" from="8011" to="8021" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b76">
+	<analytic>
+		<title level="a" type="main">Laion-5b: An open large-scale dataset for training next generation image-text models</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Schuhmann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Beaumont</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Vencu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Gordon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Wightman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Cherti</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Coombes</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Katta</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Mullis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Wortsman</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">NeurIPS</title>
+		<imprint>
+			<publisher>MIT Press</publisher>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page" from="25278" to="25294" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b77">
+	<monogr>
+		<author>
+			<persName><forename type="first">C</forename><surname>Schuhmann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Vencu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Beaumont</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Kaczmarczyk</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Mullis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Katta</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Coombes</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Jitsev</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Komatsuzaki</surname></persName>
+		</author>
+		<title level="m">Laion-400m: Open dataset of clipfiltered 400 million image-text pairs</title>
+		<imprint>
+			<publisher>NeurIPS. MIT Press</publisher>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b78">
+	<analytic>
+		<title level="a" type="main">Casting your model: Learning to localize improves self-supervised representations</title>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">R</forename><surname>Selvaraju</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Desai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Johnson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Naik</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">CVPR</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="page" from="11058" to="11067" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b79">
+	<analytic>
+		<title level="a" type="main">Diversity is definitely needed: Improving model-agnostic zero-shot classification via stable diffusion</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Shipard</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Wiliem</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">N</forename><surname>Thanh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Xiang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Fookes</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">CVPR</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page" from="769" to="778" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b80">
+	<analytic>
+		<title level="a" type="main">Viewmaker networks: Learning views for unsupervised representation learning</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Tamkin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Goodman</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">ICLR</title>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b81">
+	<analytic>
+		<title level="a" type="main">Stablerep: Synthetic images from text-to-image models make strong visual representation learners</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Tian</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Fan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Isola</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Chang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Krishnan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">NeurIPS</title>
+		<imprint>
+			<publisher>MIT Press</publisher>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page" from="48382" to="48402" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b82">
+	<analytic>
+		<title level="a" type="main">Contrastive multiview coding</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Tian</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Krishnan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Isola</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ECCV</title>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="page" from="776" to="794" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b83">
+	<analytic>
+		<title level="a" type="main">What makes for good views for contrastive learning?</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Tian</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Sun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Poole</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Krishnan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Schmid</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Isola</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">NeurIPS</title>
+		<imprint>
+			<publisher>MIT Press</publisher>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="page" from="6827" to="6839" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b84">
+	<analytic>
+		<title level="a" type="main">Effective data augmentation with diffusion models</title>
+		<author>
+			<persName><forename type="first">B</forename><surname>Trabucco</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Doherty</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Gurinas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Salakhutdinov</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">ICLR</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b85">
+	<analytic>
+		<title level="a" type="main">Extracting and composing robust features with denoising autoencoders</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Vincent</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Larochelle</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Bengio</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">A</forename><surname>Manzagol</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ICML</title>
+		<imprint>
+			<publisher>PMLR</publisher>
+			<date type="published" when="2008">2008</date>
+			<biblScope unit="page" from="1096" to="1103" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b86">
+	<analytic>
+		<title level="a" type="main">Head: Hetero-assists distillation for heterogeneous object detectors</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Liao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Jiang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Qian</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Liu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ECCV</title>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page" from="314" to="331" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b87">
+	<analytic>
+		<title level="a" type="main">Art-point: Improving rotation robustness of point cloud classifiers via adversarial rotation</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Tao</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">CVPR</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page" from="14371" to="14380" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b88">
+	<analytic>
+		<title level="a" type="main">Dense contrastive learning for self-supervised visual pre-training</title>
+		<author>
+			<persName><forename type="first">X</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Shen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Kong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Li</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">CVPR</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="page" from="3024" to="3033" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b89">
+	<analytic>
+		<title level="a" type="main">Deep comprehensive correlation mining for image clustering</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Long</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Qian</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Lin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Zha</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">CVPR</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="page" from="8150" to="8159" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b90">
+	<monogr>
+		<title level="m" type="main">Towards language-driven video inpainting via multimodal large language models</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Si</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Tong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Liu</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+			<biblScope unit="page" from="12501" to="12511" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b91">
+	<analytic>
+		<title level="a" type="main">Towards open vocabulary learning: A survey</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Yuan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Ding</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Tong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Jiang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Ghanem</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Tao</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">TPAMI</title>
+		<imprint>
+			<biblScope unit="volume">46</biblScope>
+			<biblScope unit="issue">7</biblScope>
+			<biblScope unit="page" from="5092" to="5113" />
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b92">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Kirillov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Massa</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">Y</forename><surname>Lo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Girshick</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Detectron</title>
+		<imprint>
+			<biblScope unit="volume">2</biblScope>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b93">
+	<analytic>
+		<title level="a" type="main">Unsupervised feature learning via nonparametric instance discrimination</title>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Xiong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">X</forename><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Lin</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">CVPR</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2018">2018</date>
+			<biblScope unit="page" from="3733" to="3742" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b94">
+	<analytic>
+		<title level="a" type="main">Region similarity representation learning</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Xiao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">J</forename><surname>Reed</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Keutzer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Darrell</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ICCV</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="page" from="10539" to="10548" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b95">
+	<monogr>
+		<title level="m" type="main">Mosaicfusion: Diffusion models as data augmenters for large vocabulary instance segmentation</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Xie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><forename type="middle">S</forename><surname>Ong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">C</forename><surname>Loy</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2309.13042</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b96">
+	<analytic>
+		<title level="a" type="main">Sscnet: learning-based subspace clustering</title>
+		<author>
+			<persName><forename type="first">X</forename><surname>Xie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Lin</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Visual Intelligence</title>
+		<imprint>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page">11</biblScope>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b97">
+	<analytic>
+		<title level="a" type="main">Towards theoretically inspired neural initialization optimization</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Yuan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Lin</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">NeurIPS</title>
+		<imprint>
+			<publisher>MIT Press</publisher>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page" from="18983" to="18995" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b98">
+	<monogr>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">Y</forename><surname>Cheung</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Ji</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2211.02798</idno>
+		<title level="m">Local manifold augmentation for multiview semantic consistency</title>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page">100</biblScope>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b99">
+	<monogr>
+		<author>
+			<persName><forename type="first">M</forename><surname>Ye-Bin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Hyeon-Woo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Choi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Kwak</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">H</forename><surname>Oh</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2308.00994</idno>
+		<title level="m">Exploiting synthetic data for data imbalance problems: baselines from a data perspective</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page">101</biblScope>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b100">
+	<monogr>
+		<title level="m" type="main">Boosting unsupervised contrastive learning using diffusion-based data augmentation from scratch</title>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Zang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Luo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>You</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2309.07909</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page">102</biblScope>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b101">
+	<analytic>
+		<title level="a" type="main">Barlow twins: Self-supervised learning via redundancy reduction</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Zbontar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Jing</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Misra</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Lecun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Deny</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ICML</title>
+		<imprint>
+			<publisher>PMLR</publisher>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="page">103</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b102">
+	<monogr>
+		<title level="m" type="main">Free-atm: Exploring unsupervised learning on diffusion-generated images with free attention masks</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">J</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Xue</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Han</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Bai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">Z</forename><surname>Shou</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2308.06739</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page">104</biblScope>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b103">
+	<monogr>
+		<title level="m" type="main">A two-stage adaptation of large language models for text ranking</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Long</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Xie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Zhang</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2311.16720</idno>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+			<biblScope unit="page">105</biblScope>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b104">
+	<analytic>
+		<title level="a" type="main">Expanding small-scale datasets with guided imagination</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Hooi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Feng</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">NeurIPS</title>
+		<imprint>
+			<publisher>MIT Press</publisher>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page">106</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b105">
+	<analytic>
+		<title level="a" type="main">Ressl: Relational self-supervised learning with weak augmentation</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Zheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>You</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Qian</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Xu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">NeurIPS</title>
+		<imprint>
+			<publisher>MIT Press</publisher>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="page">107</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b106">
+	<monogr>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Sahak</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Ba</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2305.15316</idno>
+		<ptr target="https://github.com/facebookresearch/moco-v3" />
+		<title level="m">Training on thin air: Improve image classification with generated data</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

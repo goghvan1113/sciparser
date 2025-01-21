@@ -1,0 +1,2466 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Rethinking cluster-conditioned diffusion models for label-free image synthesis</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Nikolas</forename><surname>Adaloglou</surname></persName>
+							<email>adaloglo@hhu.de</email>
+							<affiliation key="aff0">
+								<orgName type="institution" key="instit1">University of Dusseldorf</orgName>
+								<orgName type="institution" key="instit2">Heinrich Heine University of Dusseldorf</orgName>
+								<orgName type="institution" key="instit3">University of Dusseldorf</orgName>
+								<orgName type="institution" key="instit4">University of Dusseldorf</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Heinrich</forename><surname>Heine</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution" key="instit1">University of Dusseldorf</orgName>
+								<orgName type="institution" key="instit2">Heinrich Heine University of Dusseldorf</orgName>
+								<orgName type="institution" key="instit3">University of Dusseldorf</orgName>
+								<orgName type="institution" key="instit4">University of Dusseldorf</orgName>
+							</affiliation>
+							<affiliation key="aff0">
+								<orgName type="institution" key="instit1">University of Dusseldorf</orgName>
+								<orgName type="institution" key="instit2">Heinrich Heine University of Dusseldorf</orgName>
+								<orgName type="institution" key="instit3">University of Dusseldorf</orgName>
+								<orgName type="institution" key="instit4">University of Dusseldorf</orgName>
+							</affiliation>
+							<affiliation key="aff0">
+								<orgName type="institution" key="instit1">University of Dusseldorf</orgName>
+								<orgName type="institution" key="instit2">Heinrich Heine University of Dusseldorf</orgName>
+								<orgName type="institution" key="instit3">University of Dusseldorf</orgName>
+								<orgName type="institution" key="instit4">University of Dusseldorf</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Tim</forename><surname>Kaiser</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution" key="instit1">University of Dusseldorf</orgName>
+								<orgName type="institution" key="instit2">Heinrich Heine University of Dusseldorf</orgName>
+								<orgName type="institution" key="instit3">University of Dusseldorf</orgName>
+								<orgName type="institution" key="instit4">University of Dusseldorf</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Felix</forename><surname>Michels</surname></persName>
+							<email>felix.michels@hhu.de</email>
+							<affiliation key="aff0">
+								<orgName type="institution" key="instit1">University of Dusseldorf</orgName>
+								<orgName type="institution" key="instit2">Heinrich Heine University of Dusseldorf</orgName>
+								<orgName type="institution" key="instit3">University of Dusseldorf</orgName>
+								<orgName type="institution" key="instit4">University of Dusseldorf</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Markus</forename><surname>Kollmann</surname></persName>
+							<email>markus.kollmann@hhu.de</email>
+							<affiliation key="aff0">
+								<orgName type="institution" key="instit1">University of Dusseldorf</orgName>
+								<orgName type="institution" key="instit2">Heinrich Heine University of Dusseldorf</orgName>
+								<orgName type="institution" key="instit3">University of Dusseldorf</orgName>
+								<orgName type="institution" key="instit4">University of Dusseldorf</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Rethinking cluster-conditioned diffusion models for label-free image synthesis</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<idno type="MD5">7C01E2B0557DD6622211E4A1BE6F361D</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.2-SNAPSHOT" ident="GROBID" when="2025-01-21T07:32+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Diffusion-based image generation models can enhance image quality when conditioned on ground truth labels. Here, we conduct a comprehensive experimental study on image-level conditioning for diffusion models using cluster assignments. We investigate how individual clustering determinants, such as the number of clusters and the clustering method, impact image synthesis across three different datasets. Given the optimal number of clusters with respect to image synthesis, we show that cluster-conditioning can achieve state-of-the-art performance, with an FID of 1.67 for CIFAR10 and 2.17 for CIFAR100, along with a strong increase in training sample efficiency. We further propose a novel empirical method to estimate an upper bound for the optimal number of clusters. Unlike existing approaches, we find no significant association between clustering performance and the corresponding cluster-conditional FID scores.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.">Introduction</head><p>Diffusion models have enabled significant progress in many visual generative tasks, such as image synthesis <ref type="bibr" target="#b28">[29,</ref><ref type="bibr" target="#b38">39,</ref><ref type="bibr">57]</ref> and manipulation <ref type="bibr" target="#b79">[80]</ref>. Conditioning diffusion models on human-annotated data is today's standard practice as it significantly improves the image fidelity [8, <ref type="bibr" target="#b22">23,</ref><ref type="bibr" target="#b4">25]</ref>. Image-level conditioning is typically realized by using associated text captions <ref type="bibr" target="#b64">[65,</ref><ref type="bibr" target="#b65">66]</ref> or class labels, if available <ref type="bibr" target="#b28">[29,</ref><ref type="bibr">53]</ref>. Nonetheless, human-annotated labels are costly and often contain inaccuracies <ref type="bibr">[7,</ref><ref type="bibr" target="#b9">10]</ref>, while publicly available image-text pairs can be non-descriptive <ref type="bibr">[9]</ref>.</p><p>Large, human-annotated datasets are prohibitively costly <ref type="bibr" target="#b58">[59]</ref> and hard to obtain in a plethora of real-life applications such as medical image synthesis <ref type="bibr" target="#b40">[41]</ref>. Human annotation is subject to the label collection procedure and can have vary-  ing annotation hierarchies <ref type="bibr" target="#b2">[3,</ref><ref type="bibr" target="#b10">11,</ref><ref type="bibr" target="#b30">31</ref>]. An ideal conditioning signal would be based solely on shared characteristics corresponding to general visual concepts, as illustrated in Fig. <ref type="figure" target="#fig_1">1</ref>. To provide a ground truth (GT) label-free alternative that is applicable to unlabelled datasets, we focus on clusterbased conditioning on diffusion models. Image clustering refers to algorithmically assigning a semantic group to an image, called a cluster, given an a priori number of such groups <ref type="bibr" target="#b13">[14,</ref><ref type="bibr" target="#b7">18,</ref><ref type="bibr">38]</ref>.</p><p>Maximizing cluster alignment with ground truth (GT) labels does not guarantee optimal cluster-conditional image generation. To create visually distinguishable groups (Fig. <ref type="figure" target="#fig_1">1</ref>), a clustering algorithm would sometimes group images into more fine-grained groups than the GT labels, i.e., sub-grouping analog and digital devices that map to the arXiv:2403.00570v2 [cs.CV] 19 Nov 2024 same label or merge similarly looking images with different labels (merging different types of trees).</p><p>Deep image clustering has recently seen significant progress <ref type="bibr" target="#b3">[4,</ref><ref type="bibr">78,</ref><ref type="bibr">81]</ref>, especially when utilizing off-the-shelf features learned from large-scale pre-training [2, <ref type="bibr" target="#b2">3,</ref><ref type="bibr">76]</ref>. Currently, the relationship between clustering performance and cluster-conditional image synthesis performance remains unclear for several reasons. First, clustering metrics capture the alignment to GT labels, whereas generative models may benefit more from visually distinguishable groups <ref type="bibr">[34]</ref>. Second, clustering metrics cannot be computed for unlabeled datasets. Third, existing metrics are not suitable for fairly evaluating cluster assignments with varying numbers of clusters. Therefore, they cannot help to determine the optimal cluster granularity w.r.t. generative performance for an arbitrary dataset. This aspect has not been sufficiently explored to date <ref type="bibr" target="#b4">[25,</ref><ref type="bibr" target="#b49">50]</ref>.</p><p>Existing cluster-conditioned generative approaches <ref type="bibr" target="#b4">[25,</ref><ref type="bibr">34,</ref><ref type="bibr" target="#b49">50]</ref> often adopt simple generative baselines <ref type="bibr" target="#b28">[29]</ref> and have mainly investigated k-means clustering on balanced classification datasets. The adoption of k-means is justified due to its ability to work with off-the-shelf feature extractors and its non-parametric nature, apart from setting the number of clusters. Conversely, it is well-established that k-means is suboptimal for image clustering because its cluster assignments are highly imbalanced <ref type="bibr">[34,</ref><ref type="bibr">76]</ref>. While cluster-conditioned approaches are sensitive to the number of clusters <ref type="bibr" target="#b4">[25]</ref>, there is currently no method to predetermine this number. Previous methods have overlooked this <ref type="bibr" target="#b4">[25,</ref><ref type="bibr">34,</ref><ref type="bibr" target="#b49">50]</ref>, significantly hindering their applicability to unlabeled datasets. Recent feature-based image clustering methods have demonstrated superior performance compared to k-means [2, 76], and their efficacy in conditional image generation is yet to be investigated. For the above reasons, cluster-conditioning methods underperform GT conditional ones to date.</p><p>In this paper, we systematically study clustering as a label-free condition for diffusion models. We demonstrate that optimal cluster granularity achieves state-of-the-art FID scores (1.67 for CIFAR10 and 2.17 for CIFAR100) while enhancing training sample efficiency. We propose a computationally efficient method to derive an upper cluster bound using feature-based clustering, which narrows the search space for optimal image synthesis performance. We validate this upper bound across three datasets and two generative metrics. Finally, we find no significant association between clustering performance and cluster-conditional image synthesis performance across various clustering methods, performance metrics, and pre-trained models.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.">Related Work</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.1.">Conditional generative models</head><p>Early attempts on controllable image synthesis adopted generative adversarial networks (GANs) <ref type="bibr">[52]</ref>. By conditioning both the generator and discriminator on human labels, GANs can produce images for a specific GT label, even at the scale of ImageNet <ref type="bibr" target="#b12">[13]</ref>. Recently, diffusion models (DMs) have emerged as an expressive and flexible category of generative models <ref type="bibr" target="#b29">[30,</ref><ref type="bibr" target="#b39">40,</ref><ref type="bibr" target="#b62">63,</ref><ref type="bibr" target="#b67">68,</ref><ref type="bibr">69]</ref>. Internal guidance-based methods <ref type="bibr">[24,</ref><ref type="bibr" target="#b29">30,</ref><ref type="bibr" target="#b31">32,</ref><ref type="bibr" target="#b32">33]</ref> further improved the flexibility and visual fidelity of DMs during sampling such as classifier and classifier-free guidance. DMs exhibit an enormous number of label-conditional variants <ref type="bibr" target="#b28">[29,</ref><ref type="bibr" target="#b38">39,</ref><ref type="bibr">44,</ref><ref type="bibr">53,</ref><ref type="bibr">58]</ref>. Recently, Stein et al. <ref type="bibr" target="#b70">[71]</ref> proposed the adoption of Fréchet DINOv2 <ref type="bibr" target="#b53">[54]</ref> distance as it aligns better with human preferences and demonstrated that DMs achieve the highest perceptual realism.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.2.">Alternative conditioning of generative models</head><p>Unlike internal guidance <ref type="bibr" target="#b29">[30,</ref><ref type="bibr" target="#b31">32,</ref><ref type="bibr" target="#b32">33]</ref>, external conditioning signals are computed from the training set using additional models, which is commonly referred to as selfconditioning. Self-conditioning signals can be roughly divided into image-level and sub-image-level. Image-level conditioning refers to a single condition for all pixels in an image, such as cluster assignments or text captions <ref type="bibr" target="#b62">[63]</ref>. Sub-image-level conditions refer to specific parts or regions of an image <ref type="bibr" target="#b5">[6,</ref><ref type="bibr">34]</ref>. For instance, Hu et al. <ref type="bibr">[34]</ref> extend DMs to incorporate conditioning of bounding boxes or segmentation masks. Feature-based conditioning. Using image or text features can also provide an informative conditioning signal <ref type="bibr">[12,</ref><ref type="bibr">49,</ref><ref type="bibr" target="#b60">61,</ref><ref type="bibr">67]</ref>. <ref type="bibr">Bordes et al. [12]</ref> condition DMs directly on image representations (oracle features from real images) and reveal their impact on visual fidelity. Instanceconditioned GAN combines GT labels with features from each image's NN set <ref type="bibr" target="#b15">[16]</ref>. Ramesh et al. <ref type="bibr" target="#b60">[61]</ref> leverage the zero-shot capability of CLIP to condition DMs on languageguided image representations to improve diversity. Zhou et al. provide a language-free framework <ref type="bibr" target="#b83">[84]</ref> that directly generates text features for images using CLIP. Still, CLIP models require an a priori set of descriptive candidate captions, such as label names. Cluster-based conditioning. Similar to label conditioning, conditioning on cluster assignments facilitates DMs by allowing them to specialize on a distinct set of shared visual features <ref type="bibr" target="#b4">[25,</ref><ref type="bibr">34,</ref><ref type="bibr" target="#b49">50]</ref>. In <ref type="bibr" target="#b4">[25]</ref>, Bao et al. computed the kmeans clusters offline using contrastive learned features on the training data. However, their approach could not outperform the label-conditioned models. The first cluster-based approach that achieves competitive performance compared to GT labels leverages pre-trained feature extractors <ref type="bibr">[34]</ref>, which is the closest to our work. In <ref type="bibr">[34]</ref>, the authors attempt to weak establish a correlation between clustering and cluster-conditional generative performance for different self-supervised models. The observed correlation cannot be tested on unlabeled datasets, and its sensitivity to the number of clusters is unknown. While it was demonstrated that DINO <ref type="bibr">[15]</ref> provides the most informative k-means clusters <ref type="bibr">[34]</ref>, their method lacks a strategy for choosing the cluster granularity for unlabeled datasets.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.">Method</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1.">Notations and prerequisites</head><p>We consider the frequent scenario where we have access to an unlabeled dataset D and a pre-trained feature extractor g(•). We denote the number of ground truth (GT) labels as C GT , which we assume to be unknown. To distinguish cluster-based conditioning from the image clustering task, we denote the number of visual groups C V of D as the optimal number of clusters w.r.t. image synthesis (e.g. as measured by FID <ref type="bibr" target="#b27">[28]</ref>). We adopt the diffusion model approach of Karras et al. (EDM <ref type="bibr" target="#b38">[39]</ref>) as a baseline, which introduced various improvements to the standard DDPM <ref type="bibr" target="#b28">[29]</ref>. We provide an overview of EDM in the supplementary material. Although we focus on EDM throughout this work, our method can be applied to any conditional generative model. TEMI clustering. Given an a priori determined number of clusters C and a feature extractor g(.), TEMI [2] first mines the m nearest neighbors (NN) of all x ∈ D in the feature space of g(•) based on their cosine similarity. We denote the set of NN for x by S x . During training, TEMI randomly samples x from D and x ′ from S x to generate image pairs with similar (visual) features. A self-distillation framework is introduced to learn the cluster assignments with a teacher and student head h t (•) and h s (•) that share the same architecture (i.e. 3-layer MLP) but differ w.r.t. their parameters. The features of the image pair are fed to the student and teacher heads h i s (z), h i t (z ′ ), where i ∈ {1, . . . , H} is the head index and z = g(x), z ′ = g(x ′ ). The outputs of the heads are converted to probabilities q s (c|x) and q t (c|x ′ ) using a softmax function. The TEMI objective,</p><formula xml:id="formula_0">L i TEMI (x, x ′ ) := - 1 H H j=1 C c ′ =1 q j t (c ′ |x)q j t (c ′ |x ′ ) log C c=1 q i s (c|x)q i t (c|x ′ ) γ qi t (c) ,<label>(1)</label></formula><p>maximizes the pointwise mutual information between images x and x ′ , using the clustering index c as information bottleneck <ref type="bibr">[38]</ref>. Here, qt i (c) is an estimate of the teacher cluster distribution E x∼pdata q i t (c|x) , which can be com-puted by an exponential moving average over mini-batches B defined as qt i (c) ← λ qt (c) + (1 -λ) 1</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>|B|</head><p>x∈B q i t (c|x). The hyperparameter γ ∈ (0.5, 1] avoids the collapse of all sample pairs into a single cluster, and λ ∈ (0, 1) is a momentum hyperparameter. The loss function Eq. ( <ref type="formula" target="#formula_0">1</ref>) is further symmetrized and averaged over heads to obtain the final training loss. After training, the cluster assignments c * (x) = arg max c q t (c|x) and the empirical cluster distribution q(c) on the training set is computed from the TEMI head with the lowest loss. We use c * (x) as a condition of the generative model during training and sample from q(c) to generate images. Adaloglou et al. <ref type="bibr">[2]</ref> show that the value γ = 0.6 enforces a close to uniform cluster utilization and achieves state-of-the-art clustering accuracy for C GT [2].</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2.">Cluster-conditional EDM (C-EDM)</head><p>We consider k-means and TEMI clusters using off-theshelf feature extractors with C V clusters to compute cluster assignments. We experimentally observed that C V &gt; C GT , even though this is not a requirement of our approach. We highlight that clustering using C &gt; C GT while enforcing a uniform cluster utilization (such as TEMI with γ = 0.6) has not been previously explored [2, <ref type="bibr" target="#b34">35,</ref><ref type="bibr">48,</ref><ref type="bibr">76]</ref> as it reduces the cluster alignment with the GT labels. We denote the cluster-conditioned EDM model as C-EDM.</p><p>A direct estimation of C V is hard to obtain for unlabeled datasets. In principle, C V can be found using a hyperparameter search with FID as an evaluation metric, which is computationally expensive. In contrast to existing approaches that perform a restricted hyperparameter search around C GT , we propose a new metric that allows us to derive an upper bound for C V (Sec. 3.3), which requires no prior knowledge about the dataset.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.3.">Estimating the upper cluster bound</head><p>We aim to find an upper cluster bound C max using TEMI (γ = 0.6), such that C V &lt; C max . During this computation, we neither use the generative model nor any additional information. We highlight that previous works <ref type="bibr" target="#b4">[25,</ref><ref type="bibr">34,</ref><ref type="bibr" target="#b49">50]</ref> have overlooked this design choice and iterate within a small range around C GT . We denote the number of utilized clusters (one training sample is assigned to it) as C u after TEMI clustering. The TEMI cluster utilization ratio is defined as r C := C u C ≤ 1. Importantly, there is no guarantee that the full cluster spectrum will be utilized. Unlike kmeans that always has r C = 1, we observe that as the number of clusters C increases, the TEMI cluster utilization ratio r C typically decreases, which provides dataset-specific information. Intuitively, TEMI clustering with γ = 0.6 is enforcing r C → 1, and the observation of r C &lt; 1 is an indication that the maximum number of TEMI clusters is reached for γ = 0.6.</p><p>The search for C max involves doubling the number of clusters C at each iteration until the r C falls below a threshold, r C ≤ α, followed by a more fine-grained grid search. C max is then defined as the highest C for which r C &gt; α. This results in a worst-case time complexity of O(log 2 ( Cmax Cstart )). This is conceptually similar to the elbow method <ref type="bibr" target="#b41">[42,</ref><ref type="bibr">75]</ref>. In this sense, the proposed heuristic has the same limitations as the elbow method. Yet, it is currently the only method that provides a practitioner with a starting point for an unlabelled dataset. After detecting C max , we perform a bounded grid search to find C V ∈ [2, C max ) using the generative model. To obtain a simple cross-dataset estimate, we empirically find a cutoff threshold r C ≤ 0.96 to work well across three datasets.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.">Experimental evaluation 4.1. Datasets, models, and metrics</head><p>Following prior works [2, 34, 83], we use DINO ViT-B pre-trained on ImageNet [22] for image clustering. We report the Fréchet inception distance (FID) <ref type="bibr" target="#b27">[28]</ref> to quantify the image generation performance as it simultaneously captures visual fidelity and diversity. To facilitate future comparisons, we also compute the Fréchet DINOv2 distance (FDD) <ref type="bibr" target="#b70">[71]</ref> that replaces the features of InceptionNet-v3 <ref type="bibr" target="#b72">[73,</ref><ref type="bibr">74]</ref> with DINOv2 ViT-L <ref type="bibr" target="#b53">[54]</ref>. FID and FDD are averaged over three independently generated sample sets of 50K images each. To measure the cluster alignment w.r.t. GT labels, we use the adjusted normalized mutual information (ANMI) as in <ref type="bibr" target="#b34">[35]</ref>.</p><p>We follow the default hyperparameter setup for EDM <ref type="bibr" target="#b38">[39]</ref> and TEMI <ref type="bibr">[2]</ref>. We denote the number of samples (in millions) seen during training as M img . We use M img = 200 when comparing C-EDM with other baselines and state-of-the-art methods (Tab. 1), and M img = 100 when comparing across different number of clusters. We train the TEMI clustering heads for 200 epochs per dataset. All the experiments were conducted on 4 NVIDIA A100 GPUs with 40GB VRAM each. On this hardware, TEMI clustering was more than 50× faster than training EDM on FFHQ-64, which requires more than 2 days for 200 M img with a batch size of 512. Additional implementation details and hyperparameters can be found in the supplementary material. We verify our approach across CIFAR10, CIFAR100 [45] and FFHQ. CIFAR10 and CIFAR100 have 50K samples and 32 2 resolution images, while we use the 64x64 and 128x128 versions of FFHQ (FFHQ-64, FFHQ-128) consisting of 70K samples. Finally, diffusion sampling methods are not included, as they can be incorporated into any diffusion model <ref type="bibr" target="#b29">[30,</ref><ref type="bibr">43,</ref><ref type="bibr">64</ref>].</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2.">State-of-the-art comparison for image synthesis</head><p>Comparison with state-of-the-art unconditional generative models. With respect to FID, we found C V = 100, 200, 400 to be close to optimal cluster granularities for CIFAR10, CIFAR100, and FFHQ-64, respectively. We use these values to report FIDs compared to GT conditional and unconditional generative models in Tab. 1. Compared to unconditional methods, C-EDM achieves an average relative FID improvement of 24.4% and 24.9% using TEMI and k-means clusters, respectively. More importantly, previous cluster-conditional approaches did not achieve near-stateof-the-art FIDs because they: a) adopted non-competitive diffusion baselines such as DDPM <ref type="bibr" target="#b28">[29]</ref>, b) did not consider pre-trained feature extractors for clustering <ref type="bibr" target="#b4">[25]</ref>, c) did not use the optimal cluster granularity [34]. For instance, Hu et al. <ref type="bibr">[34]</ref> used 400 clusters on CIFAR100 using DINO ViT-B for clustering, while Fig. <ref type="figure">3</ref> shows that 200 clusters lead to a superior FID using C-EDM (11.2% relative improvement).</p><p>Comparison with state-of-the-art GT conditional  generative models. Intriguingly, using C-EDM with C V clusters, we report small improvements compared to GT label conditioning on CIFAR10 and CIFAR100 in Tab. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.3.">Cluster utilization ratio and discovered upper bounds</head><p>We depict how the TEMI cluster utilization r C changes in tandem with FID for different numbers of clusters in Fig. <ref type="figure">3</ref>. Crucially, this approach also applies to FFHQ, where no GT labels exist. Moreover, we can discern certain patterns across datasets: (i) C V always has a high utilization ratio, (ii) the majority of experiments with C &lt; C max outperform the unconditional model at M img = 100, and (iii) C V &gt; C GT for CIFAR10 and CIFAR100, which is in line with <ref type="bibr">[34]</ref>. Even though the choice of α = 0.96 is not guaranteed to be generally applicable and is based on empirical evidence, a more or less strict choice can be used based on the practitioner's computational budget. The introduced upper bound can be computed with negligible computational overhead and without access to GT labels or training the generative model, which on large scales (ImageNet) can require up to 4MWh per experiment <ref type="bibr" target="#b39">[40]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.4.">Investigating the connection between clustering and cluster-conditional image synthesis</head><p>FID and ANMI. On image clustering benchmarks, TEMI (γ = 0.6) outperforms k-means, where we respectively measure an ANMI of 60.6% versus 59.2% on CIFAR10 and 72.3% versus 67.6% on CIFAR100. However, their generative performance displays negligible differences in terms of FID for C = C V . We emphasize that the imbalanced clusters of k-means are penalized when computing clustering metrics such as ANMI on balanced classification datasets, while during image synthesis, this is naturally mitigated by sampling from q(c). Tab. 1 suggests that imbalanced cluster assignments are beneficial for unlabelled datasets such as FFHQ, where we report a relative gain of 4.8% using k-means clusters compared to TEMI. C-EDM matches EDM when C = C GT . In Fig. <ref type="figure">3</ref>, we observe that the GT label conditioning closely follows the FID of TEMI clusters for C = C GT . In Tab. 2, we leverage the two annotation levels of CIFAR100 [45], specifically the 20 GT superclasses and the 100 GT labels to benchmark how different grouping methods perform in image synthesis. Apart from image clustering, we create textbased pseudo-labels with CLIP (OpenCLIP ViT-G/14 <ref type="bibr" target="#b35">[36]</ref>) similar to <ref type="bibr" target="#b50">[51]</ref>. Then, CLIP pseudo-labels are derived from zero-shot classification <ref type="bibr" target="#b58">[59]</ref> using the arg max of the textimage similarity after softmax <ref type="bibr" target="#b0">[1]</ref>. For reference, we pro- vide the FID with the number of visual groups C V = 200 for k-means and TEMI clusters. Interestingly, all methods attain a similar FID for C GT = 100, while TEMI achieves the best FID only for C = 20. This suggests that generative performance is mostly invariant to the grouping method, including human annotation, given a feature extractor that captures general visual concepts. Next, we investigate the impact of the pre-trained feature extractor.</p><formula xml:id="formula_1">C =</formula><p>The number of visual groups is insensitive to the chosen feature extractor. The broader adoption of the discovered C V for each dataset requires our analysis to be insensitive to the chosen feature extractor. In Fig.  </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.">Discussion</head><p>Highly fine-grained clusters lead to out-ofdistribution samples. To quantify the degree of outof-distribution for the generated C-EDM samples, we measure the AUROC using the top-1 NN cosine similarity (1-NN) using DINO ViT-B <ref type="bibr" target="#b71">[72]</ref> and compare with the test split of CIFAR10 and CIFAR100 (Fig. <ref type="figure" target="#fig_4">5</ref>). We note that 1-NN is independent of the data distribution of the generated samples and thus does not account for diversity. The highest C considered for CIFAR10 and CIFAR100 produces the highest AUROC, suggesting that the features of the generated samples are pushed away from the training data. We hypothesize that this behavior originates from highly specialized clusters that cannot always be generated from the initial noise, resulting in visual artifacts. In parallel, we measure how similar the C-EDM samples are compared to the unconditional ones using FID. We call this metric unconditional FID (uFID). We observe that uFID increases as C increases, suggesting that the generated samples for larger C are farther away in feature space than the unconditional samples. The clusters' granularity level determines conditional generative performance. The quality of feature representations is typically determined by linear separability w.r.t. GT labels <ref type="bibr" target="#b54">[55]</ref>. However, our experimental analysis shows that in image synthesis, the quality of image-level conditioning primarily depends on the granularity of the cluster assignments (Tab. 2 and Fig. <ref type="figure">3</ref>). Overall, we find no significant connection between the task of feature-based clustering and cluster-conditional image generation (Fig. <ref type="figure">4</ref> and Tab. 3). The pre-trained model and the categorization method do not severely affect generative performance for the considered datasets.</p><p>Generative metric and optimal number of clusters. Here, we investigate the impact of the choice of generative metric by comparing FDD and FID. We highlight that the only difference is that FID and FDD use InceptionV3 and DINOv2 features, respectively. The cross-dataset evaluation in Fig. <ref type="figure" target="#fig_6">6</ref> shows that FID and FDD do not always agree with respect to the number of visual groups. The largest disagreement is observed on CIFAR10. Still, the discovered upper bound C max always includes the number of visual groups. Moreover, we evaluate both metrics across training iterations and found that while FID fluctuates after M img = 120, FDD decreases monotonically (supplementary material). Finally, we measured additional feature-based metrics such as precision, recall, diversity, coverage, MSS, and inception score without success. Similar to <ref type="bibr" target="#b20">[21,</ref><ref type="bibr" target="#b36">37,</ref><ref type="bibr" target="#b46">47,</ref><ref type="bibr" target="#b55">56,</ref><ref type="bibr" target="#b70">71]</ref>, we argue that new generative metrics must be developed.</p><p>Visual comparison of C-EDM to EDM. In Fig. <ref type="figure" target="#fig_7">7</ref>, we map clusters to their respective CIFAR100 classes and produce samples with C-EDM and GT conditional EDM using the same noise. Samples exhibit high visual similarity, corroborating with Tab. 2 and Fig. <ref type="figure" target="#fig_3">2</ref>. More visualizations are provided in the supplementary material.   Measuring the confidence of the generated samples using TEMI. In Fig. <ref type="figure">8</ref>, we show the generated examples with the lowest and highest maximum softmax probability <ref type="bibr">[27]</ref> of the TEMI head as a measure of confidence. For comparison, we show unconditional samples generated using the same initial noise in the denoising process. Visual inspection shows that low-confidence C-EDM samples do not have coherent semantics compared to the unconditional ones, leading to inferior image quality. We hypothesize that the sampled condition for the low-confidence samples is in conflict with the existing patterns in the initial noise.</p><p>Increasing the number of conditions likely leads to worse image-condition alignment <ref type="bibr" target="#b29">[30,</ref><ref type="bibr" target="#b31">32,</ref><ref type="bibr" target="#b64">65]</ref>. We argue that internal guidance methods could be employed to increase the image quality in such cases, which is left for future work.</p><p>By contrast, highly confident C-EDM samples show more clearly defined semantics than unconditional ones. When the low frequencies, such as the object's shape, remain intact, cluster conditioning aids in refining local pixel patterns. Confident C-EDM samples consist of simple pixel patterns that are easy to generate, such as a white background. Confidence can also be leveraged in future works in rejection sampling schemes <ref type="bibr">[17]</ref>. More samples are provided in the supplementary material.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.">Conclusion</head><p>In this paper, a systematic empirical study was conducted focusing on conditioning diffusion models with cluster assignments. It was demonstrated that cluster conditioning achieves state-of-the-art FID on three generative benchmarks while attaining strong sample efficiency. To reduce the search space for estimating the visual groups of the dataset, a novel method that computes an upper cluster bound based solely on clustering was proposed. Finally, our experimental study indicates that generative performance using cluster assignments depends primarily on the granularity of the assignments.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B.2. Image synthesis beyond ImageNet.</head><p>ImageNet is currently the largest labeled public dataset, and a single experiment using a recent state-of-the-art diffusion model on ImageNet requires up to 4MWh at 512 2 resolution <ref type="bibr" target="#b39">[40]</ref>. Based on our experiments, clusters match or outperform the human-derived labels on image generation by estimating the visual groups. Using the introduced upper bound, the search space of the visual groups is significantly reduced with minimal computational overhead, while no further hyperparameter tuning is required. Therefore, it allows future works to incorporate unlabelled data and experiment at scales beyond ImageNet while being sample efficient. Additionally, the sample efficiency compared to noisy or non-mutually exclusive labels could be investigated in future works.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>C. Deep image clustering with TEMI C.1. Intuition for γ</head><p>In the TEMI loss function, there are two parts inside the log sum: the numerator q i s (c|x)q i t (c|x ′ ) γ aligns the cluster assignment of a positive pair and is maximal when each individual assignment is one-hot. On the other hand, the denominator qi t (c) promotes a uniform cluster distribution. By dividing element-wise with the cluster probability, it is effectively up-weighing the summand corresponding to classes with low probability. In other words, when qi t (c) is low. The hyperparameter γ reduces the influence of the numerator, which leads to partial collapse <ref type="bibr" target="#b25">[26]</ref> when γ = 1.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>C.2. What about the lower bound? TEMI with</head><p>γ = 1 experiments.</p><p>Starting with a high overestimation of the number of clusters (e.g. 1K for CIFAR10), we find that TEMI clustering with γ = 1 utilizes a subset of clusters, which could be used as a lower cluster bound. More precisely, we find a maximum standard deviation of 6.4 for C u across datasets and feature extractors (see Supp.). Intuitively, C u is the minimum amount of clusters TEMI (with γ = 1) uses to group all image pairs. This behavior is analogous to clusterbased self-supervised learning (using image augmentations) [15, 82] and has been recently coined as partial prototype collapse <ref type="bibr" target="#b25">[26]</ref>. Nonetheless, the lower bound is more applicable to large scales as the measured standard deviation might exclude the optimal granularity for small, highly curated datasets. Due to the above limitation, we leave this for future work.</p><p>As depicted in Tab. 4, the utilized number of clusters C u is not sensitive to the pre-determined number of clusters nor the choice of backbone for TEMI clustering when γ = 1.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>C.3. TEMI with different backbones.</head><p>Here, we report ANMI across various cluster sizes based on the result reported in the main paper (Fig. <ref type="figure" target="#fig_4">5</ref>, main paper). For all the conducted experiments, we used TEMI with γ = 0.6. Apart from having roughly the same FID, we can observe the ranking of backbones w.r.t ANMI is not consistent across cluster sizes.   <ref type="figure" target="#fig_1">10</ref>. Visualizing generated images from CIFAR100 using C-EDM (even rows) and ground truth conditional EDM (odd rows) using the same initial noise and deterministic noise sampling. We map the C=100 CIFAR100 cluster to the respective ground truth class as computed via the Hungarian one-to-one mapping.</p><p>Table <ref type="table">5</ref>. CIFAR10 ANMI across different cluster sizes and stateof-the-art feature extractors used for TEMI clustering with γ = 0.6. We only reported the ANMI for C = 100 in the main manuscript.  <ref type="bibr" target="#b19">[20]</ref> 70.6 64.7 58.9 in a generative context, we sample from a uniform cluster distribution instead of q(c) for balanced classification datasets (CIFAR10 and CIFAR100). As expected, k-means is more dependent to q(c) compared to TEMI, as its FID is significantly deteriorated.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>D. The EDM diffusion baseline.</head><p>This section briefly summarizes the EDM framework for diffusion models, which was used extensively in this work. For more details and the official EDM code, we refer the reader to the original paper by Karras et al. <ref type="bibr" target="#b38">[39]</ref>.</p><p>Given a data distribution p data (x), consider the conditional distribution p(x; σ) of data samples noised with i.i.d. Gaussian noise of variance σ 2 . Diffusion-based generative models learn to follow trajectories that connect noisy samples x ∼ p(x; σ) with data points y ∼ p data (x). Song et al. <ref type="bibr">[70]</ref> introduced the idea of formulating the forward trajectories (from data to noise) using stochastic differential equations (SDE) that evolve samples x(σ) according to p(x; σ) with σ = σ(t) as a function of time t. They also Uncond. C=10 C=100 C=200 C=400 C=600 C=1K</p><p>Figure <ref type="figure" target="#fig_3">12</ref>. Generated FFHQ-64 samples using C-EDM and TEMI clusters with different granularity levels C as well as unconditional EDM (Uncond., first column). All samples in a row use the same initial noise. The cluster assignment is randomly sampled from q(c) for each C. Table <ref type="table">6</ref>. We report FID for k-means and TEMI with and without considering the training data's cluster distribution q(c). U({1, .., C}) denotes the uniform cluster distribution. We use CV = 100, 200, 400 for CIFAR10, CIFAR100 and FFHQ, respectively. ∆ quantifies the absolute difference.</p><p>EDM <ref type="bibr" target="#b38">[39]</ref>    proposed a corresponding "probability flow" ordinary differential equation (ODE), which is fully deterministic and maps the data distribution p data (x) to the same noise distribution p(x; σ(t)) as the SDE, for a given time t. The ODE continuously adds or removes noise as the sample evolves through time. To formulate the ODE in its simplest form, we need to set a noise schedule σ(t) and obtain the score function ∇ x log p(x; σ): dx = -σ(t)σ(t)∇ x log p(x; σ)dt.</p><p>(2)</p><p>While mathematical motivations exist for the choice of schedule σ(t), empirically motivated choices were shown to be superior <ref type="bibr" target="#b38">[39]</ref>. The main component here, the score func-tion, is learned by a neural network through what is known as denoising score matching. The core observation here is that the score does not depend on the intractable normalization constant of p(x, σ(t)), which is the reason that diffusion models in their current formulation work at all (maybe remove this side-note). Given a denoiser D(x, σ) and the L2-denoising error</p><formula xml:id="formula_2">E y∼pdata E n∼N (0,σ 2 I) [∥D(y + n, σ) -y∥ 2 ],<label>(3)</label></formula><p>we can recover the score function via ∇ x log p(x, σ) = (D(x, σ) -x)/σ 2 . Thus, parametrizing the denoiser as a neural network and training it on Eq. ( <ref type="formula" target="#formula_2">3</ref>) allows us to learn the score function needed for Eq. (2). To solve the ODE in Eq. (2), we can put the recovered score function into Eq. (2) and apply numerical ODE solvers, like Euler's method or Heun's method <ref type="bibr">[5]</ref>. The ODE is discretized into a finite number of sampling times t 0 , ..., t N and then solved through iteratively computing the score and taking a step with an ODE solver.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>E. Additional implementation details and hyperparameters</head><p>When searching for C V , we evaluate EDM after training with M img = 100 and for M img = 200 once C V is found. We only report k-means cluster conditioning with k = C V . All our reported FID and FDD values are averages over 3 runs of 50k images each, each with different random seeds. Below, we show the hyperparameters we used for all datasets to enable reproducibility. We always use the average FID and FDD for three sets of 50K generated images. The used hyperparameters can be found in Tabs. 7 and 8</p><p>To assign the CLIP pseudo-labels (Sec. 4.4) to the training set, we compute the cosine similarity of the image and label embeddings using openclip's ViT-G/14 <ref type="bibr" target="#b35">[36]</ref>. The label embeddings use prompt ensembling and use the five prompts: a photo of a &lt;label&gt;, a blurry photo of a &lt;label&gt;, a photo of many &lt;label&gt;, a photo of the large &lt;label&gt;, and a photo of the small &lt;label&gt; as in <ref type="bibr" target="#b50">[51]</ref>.  </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 1 .</head><label>1</label><figDesc>Figure 1. An ideal image-level conditioning should group images based on shared patterns, shown in the same row, which do not always align with human labels, indicated above each image (CI-FAR100 [45] samples).</figDesc><graphic coords="1,346.00,398.36,53.67,53.67" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 2 .</head><label>2</label><figDesc>Figure 2. FID (y-axis) versus seen samples during training in millions (x-axis). TEMI and k-means clusters are computed using the representations of DINO ViT-B [15]. We used CV = 100, 200, 400 for CIFAR10, CIFAR100 and FFHQ-64 respectively. The training sample efficiency compared to the unconditional baseline is indicated by the arrow. Best viewed in color.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Figure 5 .</head><label>5</label><figDesc>Figure 5. Top 1-NN cosine similarity AUROC (left y-axis) and Frechet distance between the C-EDM and unconditional samples (uFID) for different cluster sizes C (x-axis). For the computation of AUROC, we use the official test splits.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>Figure 6 .</head><label>6</label><figDesc>Figure 6. FID (left y-axis) and FDD (right y-axis) versus number of clusters (x-axis) using C-EDM at Mimg = 100. The non-filled markers indicate the unconditional EDM.</figDesc><graphic coords="8,308.86,264.66,236.24,66.36" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_7"><head>Figure 7 .</head><label>7</label><figDesc>Figure 7. Comparing C-EDM samples generated with learned cluster assignments (top row, C=100) to EDM samples generated with GT labels, on CIFAR100. The clusters are mapped to GT classes using the Hungarian algorithm.</figDesc><graphic coords="8,56.02,264.66,224.43,124.68" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_8"><head></head><label></label><figDesc>Figure 8. Generated high (a) and low (b) confidence CIFAR10 samples. The top row depicts the unconditional (Uncond.) samples, while the bottom row shows the generated samples using C-EDM with TEMI (C = 100). Images on the same column are produced with the same initial noise.</figDesc><graphic coords="8,308.86,344.46,236.25,58.23" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_9"><head>Figure 9 .</head><label>9</label><figDesc>Figure 9. Visual comparison between C-EDM (C=400) and unconditional EDM (Uncond.) at Mimg = 100M on FFHQ at 128x128.Table 4. Number of utilised clusters C u for different number of input clusters C (left) and different backbones (right) using TEMI with β = 1 with the DINO ViT-B/16 backbone. We show the relatively small sensitivity of C u to the choice of C and backbone; we report a standard deviation of a maximum value of 6.37 across different cluster sizes and 6.44 across backbones on CIFAR10.</figDesc><graphic coords="13,61.36,72.00,472.49,366.05" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_10"><head>Figure 11 .</head><label>11</label><figDesc>Figure 11. Visualizing generated images from FFHQ-64 using CEDM for different number of clusters C with the same random noise. We use deterministic noise sampling. Each noise gets a condition sampled from p(c) for each individual clusters.</figDesc><graphic coords="15,61.36,72.62,472.50,239.88" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_11"><head>Figure 13 .</head><label>13</label><figDesc>Figure 13.  Visualizing training images from FFHQ that belong to the same TEMI cluster. Images that are grouped into the same cluster are shown in the same row. We use the trained TEMI model with CV = 400 using the DINO backbone. Cluster assignments are picked to illustrate that images with similar visual characteristics are grouped together (i.e., beanies, smiling faces, glasses, hats, kids, etc.). Images are randomly sampled from each cluster.</figDesc><graphic coords="16,61.36,71.99,472.51,567.01" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_12"><head>Figure 14 .Figure 15 .</head><label>1415</label><figDesc>Figure 14. Generated low-(a) and high-confident (b) CIFAR100 samples . The top row depicts the unconditional (Uncond.) samples, while the bottom row shows the generated samples using C-EDM with TEMI (C = 200).Images on the same column are produced with the same initial noise. Confidence is quantified using maximum softmax probability (MSP). MSP is measured using TEMI trained on CIFAR100 without annotated data.</figDesc><graphic coords="17,61.36,179.24,472.50,93.79" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0"><head></head><label></label><figDesc></figDesc><graphic coords="14,61.36,71.99,472.51,354.38" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head>Table 1 .</head><label>1</label><figDesc>State-of-the-art generative model comparison: FID (↓) for various GT labeled and unlabelled benchmarks. We use CV =100, 200, 400 clusters for CIFAR10, CIFAR100, and FFHQ-64, respectively. Self-conditional methods with † use the pre-trained DINO ViT-B feature extractor. Ground truth and oracle feature conditioning results are marked in gray color as they are not a fair comparison.</figDesc><table><row><cell></cell><cell cols="2">CIFAR10</cell><cell cols="2">CIFAR100</cell><cell cols="2">FFHQ-64 FFHQ-128</cell></row><row><cell>Generative methods</cell><cell cols="6">Unlabelled GT Unlabelled GT Unlabelled Unlabelled</cell></row><row><cell>DDPM [29, 34]</cell><cell>3.17</cell><cell>-</cell><cell>10.7</cell><cell>9.7</cell><cell>-</cell><cell>-</cell></row><row><cell>PFGM++ [79]</cell><cell>-</cell><cell>1.74</cell><cell>-</cell><cell>-</cell><cell>2.43</cell><cell>-</cell></row><row><cell>EDM [39]</cell><cell>1.97</cell><cell>1.79</cell><cell>-</cell><cell>-</cell><cell>2.39</cell><cell>-</cell></row><row><cell>EDM (our reproduction)</cell><cell>2.07</cell><cell>1.81</cell><cell>3.41</cell><cell>2.21</cell><cell>2.53</cell><cell>5.93</cell></row><row><cell>Self-conditional methods</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>IDDPM+k-means (k=10) [25]</cell><cell>2.23</cell><cell>-</cell><cell>-</cell><cell>-</cell><cell>-</cell><cell>-</cell></row><row><cell>DDPM+k-means  † (k=400) [34]</cell><cell>-</cell><cell>-</cell><cell>9.6</cell><cell>-</cell><cell>-</cell><cell>-</cell></row><row><cell>C-EDM+k-means  † (Ours)</cell><cell>1.69</cell><cell>-</cell><cell>2.21</cell><cell>-</cell><cell>1.99</cell><cell>-</cell></row><row><cell>C-EDM+TEMI  † (Ours)</cell><cell>1.67</cell><cell>-</cell><cell>2.17</cell><cell>-</cell><cell>2.09</cell><cell>4.40</cell></row><row><cell>EDM+oracle features  † (Ours)</cell><cell>2.21</cell><cell>-</cell><cell>2.25</cell><cell>-</cell><cell>1.77</cell><cell>-</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1"><head></head><label></label><figDesc>V with easily distinguishable visual patterns, such as groups of images with beanies, smiling faces, glasses, sunglasses, hats, and kids (see supplementary). Finally, we find that the sample efficiency of C-EDM against GT conditional EDM heavily depends on the quality and granularity of the GT labels.</figDesc><table /><note><p><p><p><p>1.</p>For instance, 4.77% mean relative improvement in FID using TEMI. Even though cluster-conditioning is primarily designed for unconditional generation, such as FFHQ, we demonstrate that it can match or outperform GT labels, which showcases the effectiveness of C-EDM. Sample efficiency. In addition to the reported gains in FID, we study the sample efficiency of C-EDM during training across datasets in Fig.</p>2</p>. On CIFAR10 and CIFAR100, the training sample efficiency for C = C V compared to the unconditional model (C = 1) peaks at 5×, where C-EDM with M img = 40 outperforms the unconditional model at M img = 200. On FFHQ-64, which is not a classification dataset, we report a sample efficiency of 3.3×. TEMI and k-means demonstrate identical sample efficiency compared to the unconditional model. Intuitivly, a more informative conditioning signal enables learning the data distribution faster. Upon visual inspection, we could identify FFHQ clusters for C = C</p></note></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2"><head></head><label></label><figDesc>Figure 3. FID (left y-axis) and TEMI cluster utilization ratio rC (right y-axis) across different numbers of clusters C (x-axis) using C-EDM, evaluated at Mimg = 100. The green area indicates the discovered cluster range [2, Cmax) for rC ≤ α = 0.96.</figDesc><table><row><cell>FID</cell><cell>CIFAR10</cell><cell></cell><cell>r C</cell><cell>FID</cell><cell>CIFAR100</cell><cell>r C</cell><cell>FID</cell><cell>FFHQ</cell><cell>r C</cell></row><row><cell>3.2</cell><cell></cell><cell></cell><cell>1.0</cell><cell>3.6</cell><cell></cell><cell>1.0</cell><cell>2.8</cell><cell></cell><cell>1.0</cell></row><row><cell>2.8</cell><cell></cell><cell></cell><cell>0.98</cell><cell>3.2</cell><cell></cell><cell>0.97</cell><cell>2.6</cell><cell></cell><cell>0.97</cell></row><row><cell>2.4</cell><cell></cell><cell></cell><cell>0.96</cell><cell>2.8</cell><cell></cell><cell>0.94</cell><cell>2.4</cell><cell></cell><cell>0.94</cell></row><row><cell>2.0</cell><cell></cell><cell></cell><cell>0.94</cell><cell>2.4</cell><cell></cell><cell>0.91</cell><cell>2.2</cell><cell></cell><cell>0.91</cell></row><row><cell>1 200</cell><cell>400</cell><cell>600</cell><cell>800</cell><cell cols="3">C = 1 200 400 600 800 1000</cell><cell cols="3">C = 1 200 400 600 800 1000</cell></row><row><cell></cell><cell></cell><cell>FID</cell><cell></cell><cell cols="2">TEMI cluster utilization ratio (r C )</cell><cell></cell><cell cols="2">GT labels (FID)</cell></row><row><cell></cell><cell></cell><cell></cell><cell>C</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>CIFAR100</cell><cell></cell><cell>20</cell><cell cols="3">100 200</cell><cell></cell><cell></cell><cell></cell></row><row><cell cols="5">Human annotation (GT) 3.10 2.41</cell><cell>-</cell><cell></cell><cell></cell><cell></cell></row><row><cell cols="2">CLIP pseudo-labels</cell><cell cols="3">3.38 2.42</cell><cell>-</cell><cell></cell><cell></cell><cell></cell></row><row><cell cols="2">k-means clusters</cell><cell cols="4">3.09 2.41 2.36</cell><cell></cell><cell></cell><cell></cell></row><row><cell>TEMI clusters</cell><cell></cell><cell cols="4">2.93 2.37 2.31</cell><cell></cell><cell></cell><cell></cell></row></table><note><p><p><p>Table</p>2</p>. FID for different grouping methods as a condition to EDM (Mimg = 100). We use the 20 GT superclasses and 100 GT labels of CIFAR100. CLIP pseudo-labels are computed using zero-shot classification pseudo-labels based on the GT label names.</p></note></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_3"><head>Table 3 .</head><label>3</label><figDesc>Effect of self-supervised fine-tuning (adapted weights) on the pre-trained DINO ViT-B. ACC stands for the 20-NN classification accuracy using the DINO features. We measure FID and FDD for both models at Mimg = 100.</figDesc><table><row><cell></cell><cell>FID</cell><cell>CIFAR10</cell></row><row><cell></cell><cell>2.2</cell></row><row><cell></cell><cell>2.0</cell></row><row><cell></cell><cell>1.8</cell></row><row><cell></cell><cell cols="2">C = 1 50 100 150 200 250 300 350 400</cell></row><row><cell></cell><cell></cell><cell>MoCov3 (59.3)</cell><cell>iBOT (62.7)</cell></row><row><cell></cell><cell></cell><cell>DINO (60.7)</cell><cell>OpenCLIP (64.7)</cell></row><row><cell></cell><cell></cell><cell>DINOv2 (63.8)</cell></row><row><cell></cell><cell cols="2">Dataset-specific features do not improve generative per-</cell></row><row><cell></cell><cell cols="2">formance. To realize dataset-dependent adaptation of the</cell></row><row><cell></cell><cell cols="2">feature extractor, we perform self-supervised fine-tuning</cell></row><row><cell>4, we show that the</cell><cell cols="2">on CIFAR10 and CIFAR100, starting from the ImageNet</cell></row><row><cell>pre-trained models considered in this work achieve similar</cell><cell cols="2">weights in Tab. 3. We train all layers for 15 epochs</cell></row><row><cell>FIDs across different numbers of clusters even though the</cell><cell cols="2">similar to [62] using the DINO framework, resulting in</cell></row><row><cell>ANMI varies up to 5.4% on CIFAR10. Feature extractors</cell><cell cols="2">"DINO adapted weights". We find large improvements in</cell></row><row><cell>differ in terms of the number of parameters (86M up to 1.8</cell><cell cols="2">classification accuracy and ANMI, which is in line with</cell></row><row><cell>billion), pre-training dataset size (1.2M up to 2B), and ob-</cell><cell cols="2">the fact that the learned features are more dataset-specific</cell></row><row><cell></cell><cell cols="2">[60, 62, 77]. However, the gains in classification and clus-</cell></row><row><cell></cell><cell cols="2">tering do not translate into conditional image generation,</cell></row><row><cell></cell><cell cols="2">which suggests that image synthesis requires features that</cell></row><row><cell></cell><cell cols="2">capture general visual concepts.</cell></row></table><note><p><p><p><p><p><p><p><p><p><p><p><p>jective (MoCO</p><ref type="bibr" target="#b8">[19]</ref></p>,</p>DINO [15]</p>, iBOT</p>[82]</p>, CLIP</p><ref type="bibr" target="#b35">[36,</ref><ref type="bibr" target="#b58">59]</ref></p>). Our finding is consistent with concurrent work on the scale of ImageNet [49] that shows that linear probing accuracy is not indicative of generative performance for feature-based Figure 4. FID (y-axis) across different numbers of clusters C (xaxis) using C-EDM with TEMI with different feature extractors. The ANMI is shown in parentheses for CV =100.</p>conditioning. The fact that differences in discriminative performance do not translate to improvements in FID is in contrast with Hu et al.</p>[34]</p>.</p></note></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_4"><head></head><label></label><figDesc>It is well-established in the clustering literature that kmeans clusters are highly imbalanced [76]. To illustrate this</figDesc><table><row><cell>Figure</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell cols="4">TEMI CIFAR10 FFHQ CIFAR100</cell><cell></cell><cell></cell></row><row><cell>γ = 1</cell><cell>C u</cell><cell>C u</cell><cell>C u</cell><cell>TEMI</cell><cell>CIFAR10</cell></row><row><cell>100</cell><cell>33</cell><cell>36</cell><cell>48</cell><cell>γ = 1, C = 500</cell><cell>C u</cell></row><row><cell>400</cell><cell>38</cell><cell>48</cell><cell>48</cell><cell>DINO ViT-B/16 [15]</cell><cell>34</cell></row><row><cell>500</cell><cell>34</cell><cell>54</cell><cell>51</cell><cell>MoCOv3 ViT-B/16 [19]</cell><cell>39</cell></row><row><cell>800</cell><cell>40</cell><cell>45</cell><cell>47</cell><cell>iBOT ViT-L/14 [82]</cell><cell>45</cell></row><row><cell>1K</cell><cell>34</cell><cell>49</cell><cell>47</cell><cell>OpenCLIP ViT-G/14 [20]</cell><cell>47</cell></row><row><cell>2K</cell><cell>48</cell><cell>52</cell><cell>54</cell><cell>DINOv2 ViT-g/14 [54]</cell><cell>50</cell></row><row><cell>5K</cell><cell>28</cell><cell>42</cell><cell>51</cell><cell>Mean</cell><cell>43</cell></row><row><cell>Mean</cell><cell>36.4</cell><cell>46.6</cell><cell>49.4</cell><cell>Std</cell><cell>6.44</cell></row><row><cell>Std</cell><cell>6.37</cell><cell>6.16</cell><cell>2.63</cell><cell></cell><cell></cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell cols="2">C.4. Dependence on q(c) during generative sam-</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell cols="2">pling on balanced classification datasets.</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_7"><head>Table 7 .</head><label>7</label><figDesc>Hyperparameters used for training EDM and C-EDM. Bold signifies that the value is changing across datasets. All other parameters of the training setup were identical to the specifications of Karras et. al<ref type="bibr" target="#b38">[39]</ref>, which are detailed there.</figDesc><table><row><cell>Hyperparameter</cell><cell cols="2">CIFAR10/CIFAR100 FFHQ-64/AFHQ-64</cell></row><row><cell>Optimization</cell><cell></cell><cell></cell></row><row><cell>optimizer</cell><cell>Adam</cell><cell>Adam</cell></row><row><cell>learning rate</cell><cell>0.001</cell><cell>0.001</cell></row><row><cell>betas</cell><cell>0.9, 0.999</cell><cell>0.9, 0.999</cell></row><row><cell>batch size</cell><cell>1024</cell><cell>512</cell></row><row><cell>FP16</cell><cell>true</cell><cell>true</cell></row><row><cell>SongUNet</cell><cell></cell><cell></cell></row><row><cell>model channels</cell><cell>128</cell><cell>128</cell></row><row><cell>channel multiplier</cell><cell>2-2-2</cell><cell>1-2-2-2</cell></row><row><cell>dropout</cell><cell>13%</cell><cell>5% / 25%</cell></row><row><cell>Augmentation</cell><cell></cell><cell></cell></row><row><cell>augment dim</cell><cell>9</cell><cell>9</cell></row><row><cell>probability</cell><cell>12%</cell><cell>15%</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_8"><head>Table 8 .</head><label>8</label><figDesc>TEMI hyperparameters</figDesc><table><row><cell>Hyperparameter</cell><cell>Value</cell></row><row><cell>Head hyperparameters</cell><cell></cell></row><row><cell>MLP hidden layers</cell><cell>2</cell></row><row><cell>hidden dim</cell><cell>512</cell></row><row><cell>bottleneck dim</cell><cell>256</cell></row><row><cell>Head final gelu</cell><cell>false</cell></row><row><cell>Number of heads (H)</cell><cell>50</cell></row><row><cell>Loss</cell><cell>TEMI</cell></row><row><cell>γ</cell><cell>0.6</cell></row><row><cell>Momentum λ</cell><cell>0.996</cell></row><row><cell>Use batch normalization</cell><cell>false</cell></row><row><cell>Dropout</cell><cell>0.0</cell></row><row><cell>Temperature</cell><cell>0.1</cell></row><row><cell>Nearest neibohrs (NN)</cell><cell>50</cell></row><row><cell>Norm last layer</cell><cell>false</cell></row><row><cell>Optimization</cell><cell></cell></row><row><cell>FP16 (mixed precision)</cell><cell>false</cell></row><row><cell>Weight decay</cell><cell>0.0001</cell></row><row><cell>Clip grad</cell><cell>0</cell></row><row><cell>Batch size</cell><cell>512</cell></row><row><cell>Epochs</cell><cell>200</cell></row><row><cell>Learning rate</cell><cell>0.0001</cell></row><row><cell>Optimizer</cell><cell>AdamW</cell></row><row><cell>Drop path rate</cell><cell>0.1</cell></row><row><cell>Image size</cell><cell>224</cell></row></table></figure>
+		</body>
+		<back>
+
+			<div type="availability">
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Code is available at <ref type="url" target="https://github.com/">https://github.com/</ref> </p></div>
+			</div>
+
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Code. Code is available at <ref type="url" target="https://github.com/HHU-MMBS/cedm-official-wavc2025">https://github.com/ HHU-MMBS/cedm-official-wavc2025</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A. Visualizations</head><p>In Fig. <ref type="figure">10</ref>, we map the TEMI clusters to classes using the Hungarian mapping <ref type="bibr" target="#b45">[46]</ref> on CIFAR100. For the mapping to be one-to-one, we set C = 100. We then generate samples using the same initial noise with both C-EDM and GT-conditioned EDM and visualize the first 20 clusters on CIFAR100. Given the same initial noise and the cluster that is mapped to its respective GT class, we observe a lot of visual similarities in the images, even though the two models (C-EDM and EDM) have different weights and have been trained with different types of conditioning.</p><p>In Figs. 11 and 12, we visualize C-EDM samples generated from the same initial noise on FFHQ-64 for diffusion models trained with varying cluster granularities. Each noise gets a condition sampled from p(c). Similar to our quantitative analysis, the generated images from small cluster sizes are closer to the unconditional prediction. Finally, in Fig. <ref type="figure">9</ref>, we visualize cluster-conditioned and unconditional FFHQ samples at M img = 100M .</p><p>In Fig. <ref type="figure">13</ref>, we visualize real training FFHQ images that are grouped in the same TEMI cluster using the DINO features. We visually identify groups with shared characteristics such as sunglasses, hats, beanies, pictures of infants, and pictures of speakers talking to a microphone. Finally, in Fig. <ref type="figure">14</ref> we provide a more detailed visual comparison of low and high confidence samples using C-EDM on CI-FAR100.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B. Additional discussion points B.1. FID and FDD across training iterations</head><p>In Fig. <ref type="figure">15</ref>, we report FID and FDD across training using C-EDM with TEMI clusters. We notice that FID tends to saturate faster than FDD and fluctuates more between checkpoints. FDD keeps decreasing monotonically, with minimal fluctuation and always prefers the samples at M img = 200. Since both metrics compute the Frechet distance, these tendencies can only be attributed to the supervised InceptionV3 features. Even though the study of generative metrics is out of the scope of this work and a human evaluation is necessary as in <ref type="bibr" target="#b70">[71]</ref>, we hope that our findings w.r.t. cluster-conditioning can facilitate future works.</p></div>			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<author>
+			<persName><forename type="first">Nikolas</forename><surname>Adaloglou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Felix</forename><surname>Michels</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tim</forename><surname>Kaiser</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Markus</forename><surname>Kollmann</surname></persName>
+		</author>
+		<idno>arXiv-2303</idno>
+		<title level="m">Adapting contrastive language-image pretrained (clip) models for out-of-distribution detection</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv eprints</note>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Exploring the limits of deep image clustering using pretrained models</title>
+		<author>
+			<persName><forename type="first">Nikolas</forename><surname>Adaloglou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Felix</forename><surname>Michels</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hamza</forename><surname>Kalisch</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Markus</forename><surname>Kollmann</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">34th British Machine Vision Conference 2023</title>
+		<meeting><address><addrLine>Aberdeen, UK</addrLine></address></meeting>
+		<imprint>
+			<publisher>BMVA</publisher>
+			<date type="published" when="2023">November 20-24, 2023. 2023</date>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="page">4</biblScope>
+		</imprint>
+	</monogr>
+	<note>BMVC 2023</note>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<author>
+			<persName><forename type="first">Nikolas</forename><surname>Adaloglou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Felix</forename><surname>Michels</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kaspar</forename><surname>Senft</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Diana</forename><surname>Petrusheva</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Markus</forename><surname>Kollmann</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2406.01203</idno>
+		<idno>. 1</idno>
+		<title level="m">Scaling up deep clustering methods beyond imagenet-1k</title>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+			<biblScope unit="page">2</biblScope>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Selfsupervised classification network</title>
+		<author>
+			<persName><forename type="first">Elad</forename><surname>Amrani</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Leonid</forename><surname>Karlinsky</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alex</forename><surname>Bronstein</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">European Conference on Computer Vision</title>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page" from="116" to="132" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Computer Methods for Ordinary Differential Equations and Differential-Algebraic Equations</title>
+		<author>
+			<persName><forename type="first">Uri</forename><forename type="middle">M</forename><surname>Ascher</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Linda</forename><forename type="middle">R</forename><surname>Petzold</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Society for Industrial and Applied Mathematics</title>
+		<imprint>
+			<biblScope unit="page">18</biblScope>
+			<date type="published" when="1998">1998</date>
+			<pubPlace>USA</pubPlace>
+		</imprint>
+	</monogr>
+	<note>1st edition</note>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Universal guidance for diffusion models</title>
+		<author>
+			<persName><forename type="first">Arpit</forename><surname>Bansal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hong-Min</forename><surname>Chu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Avi</forename><surname>Schwarzschild</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Soumyadip</forename><surname>Sengupta</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Micah</forename><surname>Goldblum</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jonas</forename><surname>Geiping</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tom</forename><surname>Goldstein</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition</title>
+		<meeting>the IEEE/CVF Conference on Computer Vision and Pattern Recognition</meeting>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page" from="843" to="852" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Do we train on test data? purging cifar of near-duplicates</title>
+		<author>
+			<persName><forename type="first">Björn</forename><surname>Barz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Joachim</forename><surname>Denzler</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Imaging</title>
+		<imprint>
+			<biblScope unit="volume">6</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page">41</biblScope>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<monogr>
+		<author>
+			<persName><forename type="first">Georgios</forename><surname>Batzolis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jan</forename><surname>Stanczuk</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Carola-Bibiane</forename><surname>Schönlieb</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Christian</forename><surname>Etmann</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2111.13606</idno>
+		<title level="m">Conditional image generation with score-based diffusion models</title>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<monogr>
+		<title level="m" type="main">Improving image generation with better captions</title>
+		<author>
+			<persName><forename type="first">James</forename><surname>Betker</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Gabriel</forename><surname>Goh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Li</forename><surname>Jing</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jianfeng</forename><surname>Timbrooks</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Linjie</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Longouyang</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Juntangzhuang</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Joycelee</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Yufeiguo</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Wesammanassra</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Prafulladhariwal</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Caseychu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Aditya</forename><surname>Yunxinjiao</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Ramesh</surname></persName>
+		</author>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<monogr>
+		<author>
+			<persName><forename type="first">Lucas</forename><surname>Beyer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Olivier</forename><forename type="middle">J</forename><surname>Hénaff</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alexander</forename><surname>Kolesnikov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiaohua</forename><surname>Zhai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Aäron</forename><surname>Van Den Oord</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2006.07159</idno>
+		<idno>. 1</idno>
+		<title level="m">Are we done with imagenet?</title>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<monogr>
+		<author>
+			<persName><forename type="first">Lucas</forename><surname>Beyer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Olivier</forename><forename type="middle">J</forename><surname>Hénaff</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alexander</forename><surname>Kolesnikov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiaohua</forename><surname>Zhai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Aäron</forename><surname>Van Den Oord</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2006.07159</idno>
+		<title level="m">Are we done with imagenet?</title>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<monogr>
+		<title level="m" type="main">High fidelity visualization of what your self-supervised representation knows about</title>
+		<author>
+			<persName><forename type="first">Florian</forename><surname>Bordes</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Randall</forename><surname>Balestriero</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pascal</forename><surname>Vincent</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="volume">2</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<monogr>
+		<title level="m" type="main">Large scale gan training for high fidelity natural image synthesis</title>
+		<author>
+			<persName><forename type="first">Andrew</forename><surname>Brock</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jeff</forename><surname>Donahue</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Karen</forename><surname>Simonyan</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="volume">2</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">Deep clustering for unsupervised learning of visual features</title>
+		<author>
+			<persName><forename type="first">Mathilde</forename><surname>Caron</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Piotr</forename><surname>Bojanowski</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Armand</forename><surname>Joulin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Matthijs</forename><surname>Douze</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the European conference on computer vision (ECCV)</title>
+		<meeting>the European conference on computer vision (ECCV)</meeting>
+		<imprint>
+			<date type="published" when="2018">2018</date>
+			<biblScope unit="page" from="132" to="149" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">Emerg-ing properties in self-supervised vision transformers</title>
+		<author>
+			<persName><forename type="first">Mathilde</forename><surname>Caron</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hugo</forename><surname>Touvron</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ishan</forename><surname>Misra</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hervé</forename><surname>Jégou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Julien</forename><surname>Mairal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Piotr</forename><surname>Bojanowski</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Armand</forename><surname>Joulin</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF international conference on computer vision</title>
+		<meeting>the IEEE/CVF international conference on computer vision</meeting>
+		<imprint>
+			<date type="published" when="2021">2021. 6, 12, 13</date>
+			<biblScope unit="page">14</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">Instanceconditioned gan</title>
+		<author>
+			<persName><forename type="first">Arantxa</forename><surname>Casanova</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Marlene</forename><surname>Careil</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jakob</forename><surname>Verbeek</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Michal</forename><surname>Drozdzal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Adriana</forename><forename type="middle">Romero</forename><surname>Soriano</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Advances in Neural Information Processing Systems</title>
+		<imprint>
+			<biblScope unit="volume">34</biblScope>
+			<biblScope unit="page" from="27517" to="27529" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">Generalized accept-reject sampling schemes</title>
+		<author>
+			<persName><forename type="first">George</forename><surname>Casella</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Christian</forename><forename type="middle">P</forename><surname>Robert</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Martin</forename><forename type="middle">T</forename><surname>Wells</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="s">Lecture Notes-Monograph Series</title>
+		<imprint>
+			<biblScope unit="page" from="342" to="347" />
+			<date type="published" when="2004">2004</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">Deep adaptive image clustering</title>
+		<author>
+			<persName><forename type="first">Jianlong</forename><surname>Chang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lingfeng</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Gaofeng</forename><surname>Meng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shiming</forename><surname>Xiang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chunhong</forename><surname>Pan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE international conference on computer vision</title>
+		<meeting>the IEEE international conference on computer vision</meeting>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+			<biblScope unit="page" from="5879" to="5887" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">An empirical study of training self-supervised vision transformers</title>
+		<author>
+			<persName><forename type="first">Xinlei</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Saining</forename><surname>Xie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kaiming</forename><surname>He</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF International Conference on Computer Vision</title>
+		<meeting>the IEEE/CVF International Conference on Computer Vision</meeting>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="page">14</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">Reproducible scaling laws for contrastive language-image learning</title>
+		<author>
+			<persName><forename type="first">Mehdi</forename><surname>Cherti</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Romain</forename><surname>Beaumont</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ross</forename><surname>Wightman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mitchell</forename><surname>Wortsman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Gabriel</forename><surname>Ilharco</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Cade</forename><surname>Gordon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Christoph</forename><surname>Schuhmann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ludwig</forename><surname>Schmidt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jenia</forename><surname>Jitsev</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition</title>
+		<meeting>the IEEE/CVF Conference on Computer Vision and Pattern Recognition</meeting>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="volume">13</biblScope>
+			<biblScope unit="page">14</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">Effectively unbiased fid and inception score and where to find them</title>
+		<author>
+			<persName><forename type="first">Min</forename><surname>Jin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chong</forename></persName>
+		</author>
+		<author>
+			<persName><forename type="first">David</forename><surname>Forsyth</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF conference on computer vision and pattern recognition</title>
+		<meeting>the IEEE/CVF conference on computer vision and pattern recognition</meeting>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="page" from="6070" to="6079" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">Imagenet: A large-scale hierarchical image database</title>
+		<author>
+			<persName><forename type="first">Jia</forename><surname>Deng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wei</forename><surname>Dong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Richard</forename><surname>Socher</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Li-Jia</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kai</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Li</forename><surname>Fei-Fei</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">2009 IEEE conference on computer vision and pattern recognition</title>
+		<imprint>
+			<publisher>Ieee</publisher>
+			<date type="published" when="2009">2009</date>
+			<biblScope unit="page">4</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">Diffusion models beat gans on image synthesis</title>
+		<author>
+			<persName><forename type="first">Prafulla</forename><surname>Dhariwal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alexander</forename><surname>Nichol</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Advances in neural information processing systems</title>
+		<imprint>
+			<biblScope unit="volume">34</biblScope>
+			<biblScope unit="page" from="8780" to="8794" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">Diffusion models beat gans on image synthesis</title>
+		<author>
+			<persName><forename type="first">Prafulla</forename><surname>Dhariwal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alexander</forename><surname>Nichol</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Advances in neural information processing systems</title>
+		<imprint>
+			<biblScope unit="volume">34</biblScope>
+			<biblScope unit="page" from="8780" to="8794" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<monogr>
+		<title level="m" type="main">Why are conditional generative models better than unconditional ones? In NeurIPS Workshop on Score-Based Methods</title>
+		<author>
+			<persName><forename type="first">Bao</forename></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="page">4</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<monogr>
+		<title level="m" type="main">On partial prototype collapse in clusteringbased self-supervised learning</title>
+		<author>
+			<persName><forename type="first">Hariprasath</forename><surname>Govindarajan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Per</forename><surname>Sidén</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jacob</forename><surname>Roll</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Fredrik</forename><surname>Lindsten</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+			<biblScope unit="page">12</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<analytic>
+		<title level="a" type="main">A baseline for detecting misclassified and out-of-distribution examples in neural networks</title>
+		<author>
+			<persName><forename type="first">Dan</forename><surname>Hendrycks</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kevin</forename><surname>Gimpel</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Learning Representations</title>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<title level="a" type="main">Gans trained by a two time-scale update rule converge to a local nash equilibrium</title>
+		<author>
+			<persName><forename type="first">Martin</forename><surname>Heusel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hubert</forename><surname>Ramsauer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Thomas</forename><surname>Unterthiner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bernhard</forename><surname>Nessler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sepp</forename><surname>Hochreiter</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Advances in neural information processing systems</title>
+		<imprint>
+			<biblScope unit="volume">30</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page">4</biblScope>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<analytic>
+		<title level="a" type="main">Denoising diffusion probabilistic models</title>
+		<author>
+			<persName><forename type="first">Jonathan</forename><surname>Ho</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ajay</forename><surname>Jain</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pieter</forename><surname>Abbeel</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Advances in neural information processing systems</title>
+		<imprint>
+			<biblScope unit="volume">33</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page">4</biblScope>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<monogr>
+		<title level="m" type="main">Classifier-free diffusion guidance</title>
+		<author>
+			<persName><forename type="first">Jonathan</forename><surname>Ho</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tim</forename><surname>Salimans</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2207.12598</idno>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page">8</biblScope>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<monogr>
+		<author>
+			<persName><forename type="first">Laura</forename><surname>Hollink</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Aysenur</forename><surname>Bilgin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jacco</forename><surname>Van Ossenbruggen</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1910.12619</idno>
+		<idno>. 1</idno>
+		<title level="m">Is it a fruit, an apple or a granny smith? predicting the basic level in a concept hierarchy</title>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<analytic>
+		<title level="a" type="main">Improving sample quality of diffusion models using self-attention guidance</title>
+		<author>
+			<persName><forename type="first">Susung</forename><surname>Hong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Gyuseong</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wooseok</forename><surname>Jang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Seungryong</forename><surname>Kim</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF International Conference on Computer Vision (ICCV)</title>
+		<meeting>the IEEE/CVF International Conference on Computer Vision (ICCV)</meeting>
+		<imprint>
+			<date type="published" when="2023-10">October 2023</date>
+			<biblScope unit="page">8</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<monogr>
+		<author>
+			<persName><forename type="first">Tao</forename><surname>Vincent</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yunlu</forename><surname>Hu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mathilde</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yuki</forename><forename type="middle">M</forename><surname>Caron</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Asano</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">M</forename><surname>Cees</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bjorn</forename><surname>Snoek</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Ommer</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2312.08825</idno>
+		<title level="m">Guided diffusion from self-supervised diffusion features</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<analytic>
+		<title level="a" type="main">Self-guided diffusion models</title>
+		<author>
+			<persName><forename type="first">Tao</forename><surname>Vincent</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">David</forename><forename type="middle">W</forename><surname>Hu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yuki</forename><forename type="middle">M</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Gertjan</forename><forename type="middle">J</forename><surname>Asano</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Burghouts</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">M</forename><surname>Cees</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Snoek</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">CVPR</title>
+		<imprint>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page">6</biblScope>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<analytic>
+		<title level="a" type="main">Learning representation for clustering via prototype scattering and positive sampling</title>
+		<author>
+			<persName><forename type="first">Zhizhong</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jie</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Junping</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hongming</forename><surname>Shan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Transactions on Pattern Analysis and Machine Intelligence</title>
+		<imprint>
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="page">4</biblScope>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<monogr>
+		<title level="m" type="main">Openclip, July 2021. If you use this software</title>
+		<author>
+			<persName><forename type="first">Gabriel</forename><surname>Ilharco</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mitchell</forename><surname>Wortsman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ross</forename><surname>Wightman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Cade</forename><surname>Gordon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Nicholas</forename><surname>Carlini</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Rohan</forename><surname>Taori</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Achal</forename><surname>Dave</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Vaishaal</forename><surname>Shankar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hongseok</forename><surname>Namkoong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">John</forename><surname>Miller</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hannaneh</forename><surname>Hajishirzi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ali</forename><surname>Farhadi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ludwig</forename><surname>Schmidt</surname></persName>
+		</author>
+		<imprint>
+			<biblScope unit="page">19</biblScope>
+		</imprint>
+	</monogr>
+	<note>please cite it as below. 5, 6</note>
+</biblStruct>
+
+<biblStruct xml:id="b36">
+	<monogr>
+		<title level="m" type="main">Rethinking fid: Towards a better evaluation metric for image generation</title>
+		<author>
+			<persName><forename type="first">Sadeep</forename><surname>Jayasumana</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Srikumar</forename><surname>Ramalingam</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andreas</forename><surname>Veit</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Daniel</forename><surname>Glasner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ayan</forename><surname>Chakrabarti</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sanjiv</forename><surname>Kumar</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2401.09603</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b37">
+	<analytic>
+		<title level="a" type="main">Invariant information clustering for unsupervised image classification and segmentation</title>
+		<author>
+			<persName><forename type="first">Xu</forename><surname>Ji</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Joao</forename><forename type="middle">F</forename><surname>Henriques</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andrea</forename><surname>Vedaldi</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF International Conference on Computer Vision</title>
+		<meeting>the IEEE/CVF International Conference on Computer Vision</meeting>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="page">3</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b38">
+	<analytic>
+		<title level="a" type="main">Elucidating the design space of diffusion-based generative models</title>
+		<author>
+			<persName><forename type="first">Tero</forename><surname>Karras</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Miika</forename><surname>Aittala</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Timo</forename><surname>Aila</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Samuli</forename><surname>Laine</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Advances in Neural Information Processing Systems</title>
+		<imprint>
+			<biblScope unit="volume">35</biblScope>
+			<biblScope unit="page">20</biblScope>
+			<date type="published" when="2022">2022. 2, 3, 4, 14, 15, 17</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b39">
+	<monogr>
+		<title level="m" type="main">Analyzing and improving the training dynamics of diffusion models</title>
+		<author>
+			<persName><forename type="first">Tero</forename><surname>Karras</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Miika</forename><surname>Aittala</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jaakko</forename><surname>Lehtinen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Janne</forename><surname>Hellsten</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Timo</forename><surname>Aila</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Samuli</forename><surname>Laine</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="page">12</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b40">
+	<monogr>
+		<title level="m" type="main">Diffusion models for medical image analysis: A comprehensive survey</title>
+		<author>
+			<persName><forename type="first">Amirhossein</forename><surname>Kazerouni</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ehsan</forename><surname>Khodapanah Aghdam</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Moein</forename><surname>Heidari</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Reza</forename><surname>Azad</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mohsen</forename><surname>Fayyaz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ilker</forename><surname>Hacihaliloglu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dorit</forename><surname>Merhof</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2211.07804</idno>
+		<idno>. 1</idno>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b41">
+	<analytic>
+		<title level="a" type="main">The application of cluster analysis in strategic management research: an analysis and critique</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>David</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Christopher</forename><forename type="middle">L</forename><surname>Ketchen</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Shook</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Strategic management journal</title>
+		<imprint>
+			<biblScope unit="volume">17</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="441" to="458" />
+			<date type="published" when="1996">1996</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b42">
+	<monogr>
+		<author>
+			<persName><forename type="first">Dongjun</forename><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yeongmin</forename><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Se</forename><surname>Jung Kwon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wanmo</forename><surname>Kang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Il-Chul</forename><surname>Moon</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2211.17091</idno>
+		<title level="m">Refining generative process with discriminator guidance in score-based diffusion models</title>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b43">
+	<analytic>
+		<title level="a" type="main">Variational diffusion models</title>
+		<author>
+			<persName><forename type="first">Diederik</forename><surname>Kingma</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tim</forename><surname>Salimans</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ben</forename><surname>Poole</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jonathan</forename><surname>Ho</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Advances in neural information processing systems</title>
+		<imprint>
+			<biblScope unit="volume">34</biblScope>
+			<biblScope unit="page" from="21696" to="21707" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b44">
+	<monogr>
+		<title level="m" type="main">Learning multiple layers of features from tiny images</title>
+		<author>
+			<persName><forename type="first">Alex</forename><surname>Krizhevsky</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Geoffrey</forename><surname>Hinton</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2009">2009</date>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="page">5</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b45">
+	<analytic>
+		<title level="a" type="main">The hungarian method for the assignment problem</title>
+		<author>
+			<persName><surname>Harold W Kuhn</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Naval research logistics quarterly</title>
+		<imprint>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="issue">1-2</biblScope>
+			<biblScope unit="page">12</biblScope>
+			<date type="published" when="1955">1955</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b46">
+	<monogr>
+		<author>
+			<persName><forename type="first">Tuomas</forename><surname>Kynkäänniemi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tero</forename><surname>Karras</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Miika</forename><surname>Aittala</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Timo</forename><surname>Aila</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jaakko</forename><surname>Lehtinen</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2203.06026</idno>
+		<title level="m">The role of imagenet classes in fr\&apos;echet inception distance</title>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b47">
+	<monogr>
+		<title level="m" type="main">Prototypical contrastive learning of unsupervised representations</title>
+		<author>
+			<persName><forename type="first">Junnan</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pan</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Caiming</forename><surname>Xiong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Steven Ch</forename><surname>Hoi</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2005.04966</idno>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b48">
+	<monogr>
+		<title level="m" type="main">Selfconditioned image generation via generating representations</title>
+		<author>
+			<persName><forename type="first">Tianhong</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dina</forename><surname>Katabi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kaiming</forename><surname>He</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page">6</biblScope>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b49">
+	<analytic>
+		<title level="a" type="main">Diverse image generation via selfconditioned gans</title>
+		<author>
+			<persName><forename type="first">Steven</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tongzhou</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">David</forename><surname>Bau</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jun-Yan</forename><surname>Zhu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Antonio</forename><surname>Torralba</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF conference on computer vision and pattern recognition</title>
+		<meeting>the IEEE/CVF conference on computer vision and pattern recognition</meeting>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="page">3</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b50">
+	<analytic>
+		<title level="a" type="main">Delving into out-of-distribution detection with vision-language representations</title>
+		<author>
+			<persName><forename type="first">Yifei</forename><surname>Ming</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ziyang</forename><surname>Cai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jiuxiang</forename><surname>Gu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yiyou</forename><surname>Sun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wei</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yixuan</forename><surname>Li</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Advances in Neural Information Processing Systems</title>
+		<imprint>
+			<biblScope unit="volume">35</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page">19</biblScope>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b51">
+	<monogr>
+		<title level="m" type="main">Conditional generative adversarial nets</title>
+		<author>
+			<persName><forename type="first">Mehdi</forename><surname>Mirza</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Simon</forename><surname>Osindero</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1411.1784</idno>
+		<imprint>
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b52">
+	<analytic>
+		<title level="a" type="main">Improved denoising diffusion probabilistic models</title>
+		<author>
+			<persName><forename type="first">Alexander</forename><surname>Quinn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Nichol</forename></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Prafulla</forename><surname>Dhariwal</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Machine Learning</title>
+		<imprint>
+			<publisher>PMLR</publisher>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="page">2</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b53">
+	<monogr>
+		<title level="m" type="main">Dinov2: Learning robust visual features without supervision</title>
+		<author>
+			<persName><forename type="first">Maxime</forename><surname>Oquab</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Timothée</forename><surname>Darcet</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Théo</forename><surname>Moutakanni</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Huy</forename><surname>Vo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Marc</forename><surname>Szafraniec</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Vasil</forename><surname>Khalidov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pierre</forename><surname>Fernandez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Daniel</forename><surname>Haziza</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Francisco</forename><surname>Massa</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alaaeldin</forename><surname>El-Nouby</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2304.07193</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page" from="13" to="14" />
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b54">
+	<analytic>
+		<title level="a" type="main">What do self-supervised vision transformers learn</title>
+		<author>
+			<persName><forename type="first">Namuk</forename><surname>Park</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wonjae</forename><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Byeongho</forename><surname>Heo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Taekyung</forename><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sangdoo</forename><surname>Yun</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">The Eleventh International Conference on Learning Representations</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b55">
+	<analytic>
+		<title level="a" type="main">On aliased resizing and surprising subtleties in gan evaluation</title>
+		<author>
+			<persName><forename type="first">Gaurav</forename><surname>Parmar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Richard</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jun-Yan</forename><surname>Zhu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition</title>
+		<meeting>the IEEE/CVF Conference on Computer Vision and Pattern Recognition</meeting>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page" from="11410" to="11420" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b56">
+	<analytic>
+		<title level="a" type="main">Scalable diffusion models with transformers</title>
+		<author>
+			<persName><forename type="first">William</forename><surname>Peebles</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Saining</forename><surname>Xie</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF International Conference on Computer Vision (ICCV)</title>
+		<meeting>the IEEE/CVF International Conference on Computer Vision (ICCV)</meeting>
+		<imprint>
+			<date type="published" when="2023-10">October 2023</date>
+			<biblScope unit="page" from="4195" to="4205" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b57">
+	<analytic>
+		<title level="a" type="main">Scalable diffusion models with transformers</title>
+		<author>
+			<persName><forename type="first">William</forename><surname>Peebles</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Saining</forename><surname>Xie</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF International Conference on Computer Vision</title>
+		<meeting>the IEEE/CVF International Conference on Computer Vision</meeting>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page" from="4195" to="4205" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b58">
+	<analytic>
+		<title level="a" type="main">Learning transferable visual models from natural language supervision</title>
+		<author>
+			<persName><forename type="first">Alec</forename><surname>Radford</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jong</forename><forename type="middle">Wook</forename><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chris</forename><surname>Hallacy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Aditya</forename><surname>Ramesh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Gabriel</forename><surname>Goh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sandhini</forename><surname>Agarwal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Girish</forename><surname>Sastry</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Amanda</forename><surname>Askell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pamela</forename><surname>Mishkin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jack</forename><surname>Clark</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International conference on machine learning</title>
+		<imprint>
+			<publisher>PMLR</publisher>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="page">6</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b59">
+	<analytic>
+		<title level="a" type="main">Selfsupervised anomaly detection by self-distillation and negative sampling</title>
+		<author>
+			<persName><forename type="first">Nima</forename><surname>Rafiee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Rahil</forename><surname>Gholamipoor</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Nikolas</forename><surname>Adaloglou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Simon</forename><surname>Jaxy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Julius</forename><surname>Ramakers</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Markus</forename><surname>Kollmann</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Artificial Neural Networks</title>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page">6</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b60">
+	<monogr>
+		<author>
+			<persName><forename type="first">Aditya</forename><surname>Ramesh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Prafulla</forename><surname>Dhariwal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alex</forename><surname>Nichol</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Casey</forename><surname>Chu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mark</forename><surname>Chen</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2204.06125</idno>
+		<title level="m">Hierarchical text-conditional image generation with clip latents</title>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page">3</biblScope>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b61">
+	<analytic>
+		<title level="a" type="main">Anomaly detection requires better representations</title>
+		<author>
+			<persName><forename type="first">Tal</forename><surname>Reiss</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Niv</forename><surname>Cohen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Eliahu</forename><surname>Horwitz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ron</forename><surname>Abutbul</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yedid</forename><surname>Hoshen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">European Conference on Computer Vision</title>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page">6</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b62">
+	<analytic>
+		<title level="a" type="main">High-resolution image synthesis with latent diffusion models</title>
+		<author>
+			<persName><forename type="first">Robin</forename><surname>Rombach</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andreas</forename><surname>Blattmann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dominik</forename><surname>Lorenz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Patrick</forename><surname>Esser</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Björn</forename><surname>Ommer</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">CVF Conference on Computer Vision and Pattern Recognition (CVPR)</title>
+		<imprint>
+			<date type="published" when="2021">2022. 2021</date>
+			<biblScope unit="page" from="10674" to="10685" />
+		</imprint>
+	</monogr>
+	<note>ieee</note>
+</biblStruct>
+
+<biblStruct xml:id="b63">
+	<monogr>
+		<author>
+			<persName><forename type="first">Seyedmorteza</forename><surname>Sadat</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jakob</forename><surname>Buhmann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Derek</forename><surname>Bradely</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Otmar</forename><surname>Hilliges</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Romann M</forename><surname>Weber</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2310.17347</idno>
+		<idno>. 4</idno>
+		<title level="m">Cads: Unleashing the diversity of diffusion models through condition-annealed sampling</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b64">
+	<analytic>
+		<title level="a" type="main">Photorealistic text-to-image diffusion models with deep language understanding</title>
+		<author>
+			<persName><forename type="first">Chitwan</forename><surname>Saharia</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">William</forename><surname>Chan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Saurabh</forename><surname>Saxena</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lala</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jay</forename><surname>Whang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Emily</forename><forename type="middle">L</forename><surname>Denton</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kamyar</forename><surname>Ghasemipour</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Raphael</forename><forename type="middle">Gontijo</forename><surname>Lopes</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Burcu</forename><surname>Karagol Ayan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tim</forename><surname>Salimans</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Advances in Neural Information Processing Systems</title>
+		<imprint>
+			<biblScope unit="volume">35</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page">8</biblScope>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b65">
+	<monogr>
+		<title level="m" type="main">Knndiffusion: Image generation via large-scale retrieval</title>
+		<author>
+			<persName><forename type="first">Shelly</forename><surname>Sheynin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Oron</forename><surname>Ashual</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Adam</forename><surname>Polyak</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Uriel</forename><surname>Singer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Oran</forename><surname>Gafni</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Eliya</forename><surname>Nachmani</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yaniv</forename><surname>Taigman</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b66">
+	<monogr>
+		<title level="m" type="main">Knndiffusion: Image generation via large-scale retrieval</title>
+		<author>
+			<persName><forename type="first">Shelly</forename><surname>Sheynin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Oron</forename><surname>Ashual</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Adam</forename><surname>Polyak</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Uriel</forename><surname>Singer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Oran</forename><surname>Gafni</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Eliya</forename><surname>Nachmani</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yaniv</forename><surname>Taigman</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2204.02849</idno>
+		<idno>. 2</idno>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b67">
+	<analytic>
+		<title level="a" type="main">Deep unsupervised learning using nonequilibrium thermodynamics</title>
+		<author>
+			<persName><forename type="first">Jascha</forename><surname>Sohl-Dickstein</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Eric</forename><surname>Weiss</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Niru</forename><surname>Maheswaranathan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Surya</forename><surname>Ganguli</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International conference on machine learning</title>
+		<imprint>
+			<publisher>PMLR</publisher>
+			<date type="published" when="2015">2015</date>
+			<biblScope unit="page" from="2256" to="2265" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b68">
+	<monogr>
+		<title level="m" type="main">Denoising diffusion implicit models</title>
+		<author>
+			<persName><forename type="first">Jiaming</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chenlin</forename><surname>Meng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Stefano</forename><surname>Ermon</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2010.02502</idno>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b69">
+	<monogr>
+		<title level="m" type="main">Score-based generative modeling through stochastic differential equations</title>
+		<author>
+			<persName><forename type="first">Yang</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jascha</forename><surname>Sohl-Dickstein</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Diederik</forename><forename type="middle">P</forename><surname>Kingma</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Abhishek</forename><surname>Kumar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Stefano</forename><surname>Ermon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ben</forename><surname>Poole</surname></persName>
+		</author>
+		<idno>CoRR, abs/2011.13456</idno>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="page">14</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b70">
+	<analytic>
+		<title level="a" type="main">Exposing flaws of generative model evaluation metrics and their unfair treatment of diffusion models</title>
+		<author>
+			<persName><forename type="first">George</forename><surname>Stein</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jesse</forename><forename type="middle">C</forename><surname>Cresswell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Rasa</forename><surname>Hosseinzadeh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yi</forename><surname>Sui</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Brendan</forename><forename type="middle">Leigh</forename><surname>Ross</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Valentin</forename><surname>Villecroze</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhaoyan</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Anthony</forename><forename type="middle">L</forename><surname>Caterini</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Eric</forename><surname>Taylor</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Gabriel</forename><surname>Loaiza-Ganem</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Thirtyseventh Conference on Neural Information Processing Systems</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page">12</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b71">
+	<analytic>
+		<title level="a" type="main">Outof-distribution detection with deep nearest neighbors</title>
+		<author>
+			<persName><forename type="first">Yiyou</forename><surname>Sun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yifei</forename><surname>Ming</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiaojin</forename><surname>Zhu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yixuan</forename><surname>Li</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ternational Conference on Machine Learning</title>
+		<imprint>
+			<publisher>PMLR</publisher>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page">7</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b72">
+	<analytic>
+		<title level="a" type="main">Going deeper with convolutions</title>
+		<author>
+			<persName><forename type="first">Christian</forename><surname>Szegedy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wei</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yangqing</forename><surname>Jia</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pierre</forename><surname>Sermanet</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Scott</forename><surname>Reed</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dragomir</forename><surname>Anguelov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dumitru</forename><surname>Erhan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Vincent</forename><surname>Vanhoucke</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andrew</forename><surname>Rabinovich</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE conference on computer vision and pattern recognition</title>
+		<meeting>the IEEE conference on computer vision and pattern recognition</meeting>
+		<imprint>
+			<date type="published" when="2015">2015</date>
+			<biblScope unit="page" from="1" to="9" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b73">
+	<analytic>
+		<title level="a" type="main">Rethinking the inception architecture for computer vision</title>
+		<author>
+			<persName><forename type="first">Christian</forename><surname>Szegedy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Vincent</forename><surname>Vanhoucke</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sergey</forename><surname>Ioffe</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jon</forename><surname>Shlens</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zbigniew</forename><surname>Wojna</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE conference on computer vision and pattern recognition</title>
+		<meeting>the IEEE conference on computer vision and pattern recognition</meeting>
+		<imprint>
+			<date type="published" when="2016">2016</date>
+			<biblScope unit="page" from="2818" to="2826" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b74">
+	<monogr>
+		<title level="m" type="main">Who belongs in the family? Psychometrika</title>
+		<author>
+			<persName><forename type="first">Thorndike</forename><surname>Robert</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1953">1953</date>
+			<biblScope unit="volume">18</biblScope>
+			<biblScope unit="page" from="267" to="276" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b75">
+	<analytic>
+		<title level="a" type="main">Scan: Learning to classify images without labels</title>
+		<author>
+			<persName><forename type="first">Wouter</forename><surname>Van Gansbeke</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Simon</forename><surname>Vandenhende</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Stamatios</forename><surname>Georgoulis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Marc</forename><surname>Proesmans</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Luc</forename><surname>Van Gool</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">European conference on computer vision</title>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="page">13</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b76">
+	<analytic>
+		<title level="a" type="main">Clipn for zero-shot ood detection: Teaching clip to say no</title>
+		<author>
+			<persName><forename type="first">Hualiang</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yi</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Huifeng</forename><surname>Yao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiaomeng</forename><surname>Li</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF International Conference on Computer Vision</title>
+		<meeting>the IEEE/CVF International Conference on Computer Vision</meeting>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page" from="1802" to="1812" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b77">
+	<analytic>
+		<title level="a" type="main">Unsupervised deep embedding for clustering analysis</title>
+		<author>
+			<persName><forename type="first">Junyuan</forename><surname>Xie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ross</forename><surname>Girshick</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ali</forename><surname>Farhadi</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International conference on machine learning</title>
+		<imprint>
+			<publisher>PMLR</publisher>
+			<date type="published" when="2016">2016</date>
+			<biblScope unit="page">2</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b78">
+	<monogr>
+		<title level="m" type="main">Pfgm++: Unlocking the potential of physics-inspired generative models</title>
+		<author>
+			<persName><forename type="first">Yilun</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ziming</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yonglong</forename><surname>Tian</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shangyuan</forename><surname>Tong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Max</forename><surname>Tegmark</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tommi</forename><surname>Jaakkola</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2302.04265</idno>
+		<idno>2023. 4</idno>
+		<imprint/>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b79">
+	<analytic>
+		<title level="a" type="main">Paint by example: Exemplar-based image editing with diffusion models</title>
+		<author>
+			<persName><forename type="first">Binxin</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shuyang</forename><surname>Gu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bo</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ting</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xuejin</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiaoyan</forename><surname>Sun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dong</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Fang</forename><surname>Wen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition</title>
+		<meeting>the IEEE/CVF Conference on Computer Vision and Pattern Recognition</meeting>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page" from="18381" to="18391" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b80">
+	<analytic>
+		<title level="a" type="main">Self-labelling via simultaneous clustering and representation learning</title>
+		<author>
+			<persName><forename type="first">Y</forename><forename type="middle">M</forename><surname>Asano</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Rupprecht</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Vedaldi</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ternational Conference on Learning Representations</title>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b81">
+	<monogr>
+		<title level="m" type="main">ibot: Image bert pre-training with online tokenizer</title>
+		<author>
+			<persName><forename type="first">Jinghao</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chen</forename><surname>Wei</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Huiyu</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wei</forename><surname>Shen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Cihang</forename><surname>Xie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alan</forename><surname>Yuille</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tao</forename><surname>Kong</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2111.07832</idno>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="page">14</biblScope>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b82">
+	<monogr>
+		<title level="m" type="main">Deep clustering with features from self-supervised pretraining</title>
+		<author>
+			<persName><forename type="first">Xingzhi</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Nevin</forename><forename type="middle">L</forename><surname>Zhang</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2207.13364</idno>
+		<idno>. 4</idno>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b83">
+	<analytic>
+		<title level="a" type="main">Towards language-free training for text-to-image generation</title>
+		<author>
+			<persName><forename type="first">Yufan</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ruiyi</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Changyou</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chunyuan</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chris</forename><surname>Tensmeyer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tong</forename><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jiuxiang</forename><surname>Gu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jinhui</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tong</forename><surname>Sun</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition</title>
+		<meeting>the IEEE/CVF Conference on Computer Vision and Pattern Recognition</meeting>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page" from="17907" to="17917" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

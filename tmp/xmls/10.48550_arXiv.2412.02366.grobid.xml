@@ -1,0 +1,2443 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">GenMix: Effective Data Augmentation with Generative Diffusion Model Image Editing</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability  status="unknown">
+					<licence/>
+				</availability>
+				<date type="published" when="2024-12-06">6 Dec 2024</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Khawar</forename><surname>Islam</surname></persName>
+						</author>
+						<author>
+							<persName><forename type="first">Muhammad</forename><surname>Zaigham Zaheer</surname></persName>
+						</author>
+						<author>
+							<persName><forename type="first">Arif</forename><surname>Mahmood</surname></persName>
+						</author>
+						<author>
+							<persName><forename type="first">Karthik</forename><surname>Nandakumar</surname></persName>
+						</author>
+						<author>
+							<persName><forename type="first">Naveed</forename><surname>Akhtar</surname></persName>
+						</author>
+						<title level="a" type="main">GenMix: Effective Data Augmentation with Generative Diffusion Model Image Editing</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date type="published" when="2024-12-06">6 Dec 2024</date>
+						</imprint>
+					</monogr>
+					<idno type="MD5">CA1241A8A61A8D3014290B9DF47CF615</idno>
+					<idno type="arXiv">arXiv:2412.02366v3[cs.CV]</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.2-SNAPSHOT" ident="GROBID" when="2025-01-21T07:32+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<textClass>
+				<keywords>
+					<term>Data Augmentation</term>
+					<term>Mixup Data Augmentation</term>
+					<term>Diffusion Models</term>
+					<term>Generative Synthetic Data</term>
+					<term>Synthetic Data ✦</term>
+				</keywords>
+			</textClass>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Data augmentation is widely used to enhance generalization in visual classification tasks. However, traditional methods struggle when source and target domains differ, as in domain adaptation, due to their inability to address domain gaps. This paper introduces GenMix, a generalizable prompt-guided generative data augmentation approach that enhances both in-domain and cross-domain image classification. Our technique leverages image editing to generate augmented images based on custom conditional prompts, designed specifically for each problem type. By blending portions of the input image with its edited generative counterpart and incorporating fractal patterns, our approach mitigates unrealistic images and label ambiguity, improving performance and adversarial robustness of the resulting models. Efficacy of our method is established with extensive experiments on eight public datasets for general and fine-grained classification, in both in-domain and cross-domain settings. Additionally, we demonstrate performance improvements for self-supervised learning, learning with data scarcity, and adversarial robustness. As compared to the existing state-of-the-art methods, our technique achieves stronger performance across the board.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">INTRODUCTION</head><p>Deep Neural Networks (DNNs) have achieved remarkable advancements across various computer vision tasks, such as image classification <ref type="bibr" target="#b0">Dosovitskiy et al. (2020)</ref>; <ref type="bibr">He et al. (2016a)</ref>; <ref type="bibr" target="#b2">Liu et al. (2022)</ref>; <ref type="bibr" target="#b3">Tan and Le (2019)</ref>, object detection <ref type="bibr" target="#b4">Fang et al. (2021)</ref>; <ref type="bibr" target="#b5">He et al. (2017)</ref>; <ref type="bibr" target="#b6">Wang et al. (2021)</ref>, image captioning <ref type="bibr" target="#b7">Fei et al. (2022)</ref>; <ref type="bibr" target="#b8">Ke et al. (2019)</ref>, human pose estimation <ref type="bibr" target="#b9">Liu et al. (2021)</ref>; <ref type="bibr" target="#b10">Luo et al. (2021)</ref>, and image segmentation <ref type="bibr" target="#b11">Badrinarayanan et al. (2017)</ref>; <ref type="bibr" target="#b12">Strudel et al. (2021)</ref>. However, as the complexity of these tasks increases, so do the computational costs associated with modern DNN architectures, including larger memory footprints, model sizes, higher FLOPs, and longer inference times <ref type="bibr" target="#b13">DeVries and Taylor (2017)</ref>. Recent models employ billions of parameters to enhance feature representation. This often leads to overfitting and challenges in generalization, especially when the training data is limited or poorly structured. These issues become even more pronounced in cross-domain settings, where models must adapt to divergent data distributions.</p><p>Image mixing based data augmentation techniques have proven effective for enhancing the generalization of deep learning models. A wide array of such techniques has been introduced, including CutMix <ref type="bibr">Yun et al. (2019a)</ref>, <ref type="bibr">Mixup Kim et al. (2020a)</ref>, SnapMix <ref type="bibr" target="#b16">Huang et al. (2021)</ref>, Co-Mixup <ref type="bibr">Kim et al. (2020b)</ref>, SaliencyMix <ref type="bibr" target="#b18">Uddin et al. (2020)</ref>, GuidedMixup <ref type="bibr" target="#b19">Kang and Kim (2023)</ref>, <ref type="bibr">MixPro Zhao et al. (2022</ref><ref type="bibr">), TransMix Chen et al. (2022a)</ref>, and PuzzleMix <ref type="bibr">Kim et al. (2020a)</ref>. These methods typically involve combining portions of randomly Corresponding author: Khawar Islam (khawari@student.unimelb.edu.au).</p><p>selected images of corresponding labels through various mixing strategies to generate augmented samples -see top row in Fig. <ref type="figure" target="#fig_0">1</ref>. By employing linear interpolation or other blending techniques, they create novel training images to enrich the dataset for addressing potential model overfitting <ref type="bibr" target="#b16">Huang et al. (2021)</ref>; <ref type="bibr">Yun et al. (2019b)</ref>; <ref type="bibr" target="#b23">Zhang et al. (2018)</ref>; <ref type="bibr" target="#b24">Han et al. (2022)</ref>; <ref type="bibr" target="#b25">Qin et al. (2023)</ref>; <ref type="bibr" target="#b26">Islam (2022)</ref>. Though effective, image mixing based data augmentation encounters challenges, such as the omission of salient regions and label ambiguities due to the random blending of image content <ref type="bibr">Kim et al. (2020a)</ref>. To mitigate these issues, several approaches have incorporated saliency-driven methods, which prioritize the preservation of important regions by overlaying them onto less significant background areas of the target image <ref type="bibr">Kim et al. (2020a)</ref>; <ref type="bibr" target="#b18">Uddin et al. (2020)</ref>; <ref type="bibr" target="#b19">Kang and Kim (2023)</ref>; <ref type="bibr" target="#b27">Islam et al. (2022)</ref>. While these techniques offer improvements, they introduce considerable computational overhead and rely on the accuracy of the saliency methods, which is a limiting factor. Furthermore, by combining images from diverse categories, these techniques can still overlook crucial contextual information, leaving the problem of inadequate feature preservation unresolved.</p><p>Diffusion Models (DMs) <ref type="bibr" target="#b35">Takagi and Nishimoto (2023)</ref>; <ref type="bibr" target="#b36">Du et al. (2023)</ref>; <ref type="bibr" target="#b37">Luo et al. (2023)</ref>; <ref type="bibr" target="#b38">Saharia et al. (2022)</ref>; <ref type="bibr" target="#b39">Dhariwal and Nichol (2021)</ref> have recently emerged as powerful tools for image-to-image generation and editing. Some studies <ref type="bibr" target="#b40">Trabucco et al. (2024)</ref>; <ref type="bibr" target="#b41">Azizi et al. (2023)</ref> have also explored using DM generated images to augment training data. However, we empirically observe limited performance gains from these approaches, with models trained on synthetic data occasionally underperforming compared to the baseline models without augmentation <ref type="bibr" target="#b41">Azizi et al. (2023)</ref>. This can be attributed to the limited control over image generation of the DMs. Due to the model sensitivity to conditional prompts, generating complex scenes, layouts, and shapes becomes challenging <ref type="bibr" target="#b42">Zhang et al. (2023)</ref>. Poorly crafted prompts often yield unsuitable images for augmentation, which can lead to model adaption to an incorrect data distribution. This underscores the need for more precise prompt selection and better control mechanisms in the augmentation process to improve both in-domain generalization and cross-domain performance.</p><p>To address this, we propose GenMix, a generlizable data augmentation technique that leverages generative pretrained diffusion models to compute diverse augmentation samples through carefully designed conditional prompts. GenMix creates hybrid images by blending original and generated content, maintaining essential semantics of the original image, see bottom row of Fig. <ref type="figure" target="#fig_0">1</ref>. To further enrich structural diversity, we incorporate self-similarity fractals into the hybrid images, a strategy proven to enhance machine learning safety <ref type="bibr" target="#b33">Hendrycks et al. (2022)</ref>; <ref type="bibr" target="#b43">Huang et al. (2024)</ref>. This blending mitigates overfitting and improves model performance. Our strategy is unlike any previous attempts of directly using DM images for augmentation <ref type="bibr" target="#b40">Trabucco et al. (2024)</ref>; <ref type="bibr" target="#b41">Azizi et al. (2023)</ref>. It effectively incorporates a range of operations in its components to achieve outstanding eventual performance -see Table <ref type="table" target="#tab_1">1</ref>. Our experiments show that GenMix surpasses current state-ofthe-art (SOTA) augmentation methods by improving generalization and adversarial robustness. Additionally, it facilitates prompt-guided learning in both in-domain and cross-domain tasks, making it highly adaptable for diverse computer vision problems. Furthermore, our results confirm that GenMix is compatible with a wide range of datasets and it integrates seamlessly into existing SOTA frameworks.</p><p>The main contributions of this work are as follows:</p><p>•</p><p>We introduce a novel data augmentation method, GenMix that leverages image-editing with generative diffusion models guided by curated conditional prompts. Our technique merges original and generated images, followed by blending self-similarity fractals, which reduces overfitting and ensures robust training.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>•</head><p>We explore the applicability of GenMix to both indomain classification and domain adaptation tasks, introducing sets of bespoke conditional prompt for enhanced adaptability. Notably, GenMix is the first method to address both in-domain and domain adaptation tasks effectively.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>•</head><p>We demonstrate with extensive experiments across eight datasets that GenMix outperforms existing SOTA augmentation methods in general classification, fine-grained classification, adversarial robustness, and cross-domain tasks.</p><p>A preliminary version of this research was presented at IEEE CVPR 2024 <ref type="bibr" target="#b44">Islam et al. (2024)</ref>. This article is a major extension of the preliminary work. Here, we propose a more effective approach to fuse the original and generated images by introducing a smoothness factor, leading to consistent performance gains. As compared to <ref type="bibr" target="#b44">Islam et al. (2024)</ref>, we also extend the fractal image dataset to add more variety and structural complexity to the the final augmented images. Moreover, besides providing considerable further details for the technique, prior art and evaluation, we also explore the applicability of our work to domain adaption tasks such as open-partial, open-set, and partial-set to facilitate a more comprehensive view of the resulting data augmentation. To the best of our knowledge, GenMix is the first augmentation technique that enables significant performance gains in both in-domain and cross-domain tasks, signifying its importance in training robust large-scale learning systems.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">RELATED WORK</head><p>Data augmentation is widely adopted to enhance the diversity of training datasets. Traditional methods apply basic </p><formula xml:id="formula_0">✓ ✓ ✓ ✓ ✓ ✓ ✓ ✓ ✓ ✓ ✓ ✓ Target image ✓ ✓ ✗ ✓ ✓ ✓ ✗ ✓ ✓ ✓ ✓ ✓ ✗ Fractal image ✗ ✗ ✗ ✗ ✗ ✗ ✗ ✓ ✗ ✓ ✗ ✗ ✓ Textual prompts ✗ ✗ ✗ ✗ ✗ ✗ ✗ ✗ ✗ ✗ ✗ ✗ ✓ Specific prompts ✗ ✗ ✗ ✗ ✗ ✗ ✗ ✗ ✗ ✗ ✗ ✗ ✓ Interpolation ✗ ✓ ✓ ✗ ✓ ✗ ✗ ✓ ✓ ✓ ✓ ✓ ✓ Concatenation ✓ ✗ ✗ ✓ ✓ ✓ ✓ ✓ ✗ ✓ ✓ ✓ ✓ Tasks Adversarial robustness ✓ ✓ ✓ ✓ ✓ ✓ ✓ ✓ ✓ ✓ ✓ ✗ ✓ General classification ✓ ✓ ✓ ✓ ✓ ✓ ✓ ✓ ✓ ✓ ✓ ✓ ✓ Fine-grained ✗ ✗ ✗ ✗ ✗ ✗ ✗ ✗ ✗ ✗ ✓ ✓ ✓ Transfer learning ✓ ✗ ✗ ✓ ✗ ✗ ✗ ✗ ✗ ✗ ✗ ✗ ✓ Data scarcity ✗ ✗ ✗ ✗ ✗ ✗ ✗ ✗ ✗ ✗ ✓ ✓ ✓ Open-partial ✗ ✗ ✗ ✗ ✗ ✗ ✗ ✗ ✗ ✗ ✗ ✗ ✓ Open-set ✗ ✗ ✗ ✗ ✗ ✗ ✗ ✗ ✗ ✗ ✗ ✗ ✓ Partial-set ✗ ✗ ✗ ✗ ✗ ✗ ✗ ✗ ✗ ✗ ✗ ✗ ✓</formula><p>transformations, such as flipping, rotation, and color jittering, to create new images from the original data. However, while these transformations can increase performance and improve generalization, they often lack semantic diversity, failing to capture key features critical for more complex tasks. This motivates the need for more advanced augmentation techniques that can introduce greater variation in the data while preserving essential content. Although existing methods are effective within their settings, they often lack in generalizability. The conventional image mixing techniques remain brittle due to their non-adaptive nature while more recent generative modeling based methods underperform due to poorly crafted prompts. Moreover, the desired augmentation image formation by these methods largely ignore the semantics while blending the available images. Unlike these previous techniques, our method focuses on combining original and generated images in a more sophisticated manner for semantic preservation while also leveraging a predefined library of conditional prompts. Our hybrid images are also blended with fractal patterns to further boost the overall model generalization and robustness.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">PROPOSED METHOD</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1">Overview</head><p>Existing image mixing based data augmentation techniques may induce label ambiguities by pasting the source image contents onto the target image and consequently replacing either important regions of the foreground or the required background context <ref type="bibr" target="#b19">Kang and Kim (2023)</ref>; <ref type="bibr">Yun et al. (2019b)</ref>. The central idea of our approach is to augment the source image only while preserving the key semantics and concatenating a portion of the source image with its generative Improvements of our image by blending fractal is inspired by <ref type="bibr" target="#b33">Hendrycks et al. (2022</ref><ref type="bibr" target="#b54">Hendrycks et al. ( , 2021))</ref>. However, in our case, the blending objective for augmentation is unique to our approach.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2">GenMix Details</head><p>The proposed GenMix is quite effective data augmentation method that aims to enhance the generalization and robustness of the deep neural networks. Formally, I i ∈ R h×w×c is a training dataset image. Our data augmentation method is defined as: D mix (•) : R h×w×c → R h×w×c . Input image I i goes through proposed generation using randomly selected prompt p j , seamless concatenation using random mask M u , and linearly interpolated using a random fractal image F v to obtain the final augmented image A ijuv . The overall augmentation process, as shown in Algorithm 1, may be represented as</p><formula xml:id="formula_1">A ijuv = D mix (I i , p j , M u , F v , λ).</formula><p>(1)</p><p>Prompt Guided Image Editing: Our image editing step E(.) consists of a pre-trained image editing diffusion model that </p><formula xml:id="formula_2">Îij = G(I i , p j ), where p j ∈ P<label>(2)</label></formula><p>Seamless Concatenation: We concatenate a portion of the original input image I i with its edited version Îij using a randomly selected mask M u from the set of masks to create a hybrid image H iju :</p><formula xml:id="formula_3">H iju = ( Îij ⊙ M u ) + (I i ⊙ (1 -M u )),<label>(3)</label></formula><p>where M u is a mask, ⊙ is a pixel-wise multiplication operator. The set of masks contains four kinds of masks including horizontal, vertical and flipped versions. Such masking ensures the availability of the semantics of the input image to the learning network while reaping the benefits of the generated images.</p><p>The mask M u consists of zeros, ones, and smoothly varying values for seamless concatenation. To create a smooth transition between two images, our mask consists of three parts: Randomly select prompt p j from P 5:</p><formula xml:id="formula_4">M 0 ∈ R h×(w-b)/2 containing zeros, M 1 ∈ R h×</formula><p>Image Editing: Îij ← E(I i , p j ) 6:</p><p>Randomly select mask M u from M 7:</p><p>Concatenation:</p><formula xml:id="formula_5">H iju ← M u ⊙ I i + (1 -M u ) ⊙ Îij 8: Randomly select F v from F 9:</formula><p>Linear Interpolation:</p><formula xml:id="formula_6">A ijuv ← (1 -λ)H iju + λF v 10: Add A ijuv to D ′ 11:</formula><p>end for 12: end for 13: return D ′ M 0 side to 1 on the M 1 side, over the specified blending width b. The same M u is applied across all three color channels of one image and (1-M u ) is applied to the second image and then both images are added to get the hybrid image as shown by Eq. (3).</p><p>Fractal Interpolation: A self-similarity fractals dataset F is collected and used for inducing structural variations in the hybrid images. The interpolated image H iju is linearly computed between a randomly selected fractal image F v ∈ F and the hybrid image H iju :</p><formula xml:id="formula_7">A ijuv = λF v + (1 -λ)H iju , 0 ≤ λ &lt; 1 (4)</formula><p>where λ is the interpolation factor. This results in the final augmented image A ijuv used to train or fine-tune deep neural networks. The overall augmentation process of GenMix can be represented as:</p><formula xml:id="formula_8">A ijuv = (1 -λ)(I i ⊙ M u + Îij ⊙ (1 -M u )) + λF v ,<label>(5)</label></formula><p>An ablation study is conducted to find the appropriate value of λ.  <ref type="figure" target="#fig_5">3</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">EXPERIMENTAL SETUP</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">PERFORMANCE EVALUATION</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.1">General Classification</head><p>General Classification (GC) is an essential task used to assess the effectiveness of data augmentation approaches. An increase in GC accuracy indicates that the augmentation method fairly introduces meaningful variations in input data to enhance the learning process. In our evaluation, we applied our method to three challenging datasets Table <ref type="table">2</ref> showcases a comparison of Top-1 and Top-5 performances on ImageNet-1K dataset, and compares with the existing SOTA methods. GenMix exhibited strong performance, achieving a Top-1 accuracy gain of 2.76% over the Vanilla <ref type="bibr">He et al. (2016b)</ref> performer. Compared to Guided-Mixup <ref type="bibr" target="#b19">Kang and Kim (2023)</ref>, which shows the second best results for Top-5 accuracy, our approach attains an absolute performance improvement of 1.6% for Top-5 and 1.2% for Top-1 accuracy.   We outperform the strong baseline of GuidedMixup <ref type="bibr" target="#b19">Kang and Kim (2023)</ref> for Top-5 accuracy by an absolute gain of 1.2%.</p><p>We observe similar trends on the CIFAR-100 dataset. GenMix outperforms the Vanilla <ref type="bibr">He et al. (2016b)</ref> with Top-1 and Top-5 absolute accuracy gains of 6.25% and 4.49%, respectively. These results across diverse and challenging benchmark datasets underscore the effectiveness of Gen-Mix in enhancing learning outcomes. They also indicate its capability to mitigate overfitting and promote better generalization in neural network training.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.2">Adversarial Robustness</head><p>In line with current state-of-the-art methods <ref type="bibr">Kim et</ref>   <ref type="formula">2021</ref>), we assess the robustness of GenMix method against adversarial attacks and input perturbations for general classification. For these evaluations, we employ fast adversarial training <ref type="bibr" target="#b67">Wong et al. (2020)</ref> to generate adversarially perturbed input images. The primary objective of these tests is to determine if our augmentation technique offers enhanced resistance to adversarial attacks. We measure performance using the FGSM <ref type="bibr" target="#b67">Wong et al. (2020)</ref> error rates as an indicator of robustness against such attacks.</p><p>As presented in Table <ref type="table">2</ref>, our approach achieves an error rate of 16.83% on CIFAR-100, outperforming all other methods in comparison. Similarly, on Tiny ImageNet-200, our method outperforms existing state-of-the-art techniques with an error rate of 34.47%. These results highlight that our method maintains strong resilience to adversarial perturbations, surpassing the performance of existing topperforming approaches.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.3">Fine-Grained Visual Classification</head><p>Fine-Grained Visual Classification (FGVC) poses arduous challenge compared to general classification because it requires distinguishing subtle variations between objects  within the similar category with broader range. To effectively train a model on such tasks, a generative augmentation approach must carefully preserve these fine-grained details. We assess the performance of GenMix on FGVC task using three well-known datasets: CUB <ref type="bibr" target="#b60">Nilsback and Zisserman (2008)</ref> It is notable that GenMix achieves the highest accuracy across all the datasets. On the CUB dataset, it achieves an absolute gain of top 2.3% over the strong baseline of Guided-AP <ref type="bibr" target="#b19">Kang and Kim (2023)</ref>. For the Aircraft dataset, GenMix achieves an absolute gain of 1.5%. Lastly, on the Stanford Cars dataset, the absolute gain is again more than 1%. This consistent performance gain of GenMixcan be attributed to the preservation of subtle but important visual information in the hybrid image constructed in our approach.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.4">Transfer Learning</head><p>Transfer learning or fine-tuning, is a prevalent technique for adapting large neural network architectures pre-trained on large-scale datasets to smaller datasets. It requires limited computational resources and helps conducting experiments rapidly. Notably, many augmentation methods <ref type="bibr">Kim et</ref>    <ref type="table" target="#tab_7">4</ref>.</p><p>On the Flower102 dataset, GenMix achieved the highest accuracy of 98.27%. A similar trend is evident in the Aircraft dataset, where GenMix reached 85.83%. In the Stanford Cars dataset, GenMix again led with 93.47%. GenMix significantly surpassed other augmentation techniques, demonstrating its effectiveness in transfer learning scenarios. As compared to the vanilla baselines, our method achieves absolute performance gains of 3.3%, 4.2% and 5.4% on the used datasets. It is noteworthy that the accuracy obtained by GenMix through fine-tuning (Table <ref type="table" target="#tab_7">4</ref>) is comparable to its performance when trained from scratch on the Aircraft and Cars dataset (Table <ref type="table" target="#tab_6">3</ref>). Since fine-tuning requires substantially fewer computational resources than training from scratch, this experiment highlights the practical importance of GenMix in deep learning applications.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.5">Data Scarcity</head><p>Data scarcity presents a significant challenge when training deep neural networks. With only a limited number of examples per class, deep networks may struggle to learn meaningful patterns, which can lead to overfitting and a reduced ability to generalize. To mitigate this, augmentation techniques are commonly applied to increase the amount of training data. In this context, we evaluate the performance of ResNet-18 <ref type="bibr">He et al. (2016b)</ref> trained with just 10 images per class from the original Flower102 dataset. As shown in Table <ref type="table" target="#tab_9">5</ref>, GenMix consistently outperforms other mixup approaches, achieving Top-1 accuracy of 77.23% and Top-5 accuracy of 74.35%. Our method is specifically designed to diversify the training dataset. By using custom conditional prompts, GenMix artificially expands and enriches the dataset, leading to stronger neural network learning.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.6">Domain Adaptation</head><p>When DNNs encounter data from distributions that differ from their training data, a noticeable decline in performance is often observed. To tackle this issue, domain adaptation framework <ref type="bibr" target="#b77">Ganin et al. (2016)</ref>; <ref type="bibr" target="#b78">Kouw and Loog (2019)</ref> has been developed, which utilizes labeled data from source domains to train DNNs for unlabeled target domains using </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Open-set Domain Adaptation (OSDA).</head><p>In OSDA a significant portion of the target samples comes from new categories that are absent in the source domain. Since these categories do not have specific labels, existing methods often treat them collectively as a single "unknown" class. In Table <ref type="table" target="#tab_11">7</ref>, LEAD + GenMix achieved an average improvement in the H-score of 1.5% compared to the baseline LEAD, un-derscoring the significance of our proposed augmentation strategy. Particularly, considerable improvements of 4.1% for Cl2Ar, 5.4% for Re2CL and 3.4% for Re2Pr; can be observed by the addition of GenMix augmentation in the baseline LEAD <ref type="bibr" target="#b76">Qu et al. (2024)</ref> method.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Partial Domain Adaptation (PDA).</head><p>PDA focuses on adapting a model trained on a source domain to a target domain where only a subset of the classes overlap. We compare the performance of a number of techniques on the Office-Home dataset while adapting LEAD as LEAD + GenMixto showcase the gain enabled by our method. Table <ref type="table" target="#tab_13">8</ref> shows the accuracy for various domain adaptation tasks as well as the average accuracy across all tasks. LEAD + GenMix achieved an average improvement in the H-score of 0.5% over the LEAD. Particularly, for Pr2Cl maximum improvement of 9.5%, in Re2CL, an improvement of 4.6%, in Cl2Pr, an improvement of 1.4% is observed by the addition of GenMix augmentation.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.7">Self-Supervised Learning</head><p>We experimented with self-supervised learning models MoCo v2 <ref type="bibr" target="#b84">He et al. (2020)</ref> and SimSiam Chen and He (2021) by incorporating our proposed GenMix augmentation method. consistently boosts the performance across various datasets for self-supervised learning methods. The systematic gains highlight the robustness of our approach, demonstrating its potential to enhance the accuracy of state-of-the-art models in different domains.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6">ANALYSIS AND DISCUSSION</head><p>In this section, we present an in-depth analysis of the different design choices made in GenMix, supporting it by a comprehensive ablation study.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.1">Grad-CAM Visualization</head><p>Gradient-weighted Class Activation Mapping (Grad-CAM)  <ref type="figure" target="#fig_8">4</ref>. We observe that the models with existing mixup based methods have less focused region in some images, compared to our proposed GenMix. It shows that these methods focus specific object features such as front lights or wheels of the car only. The Grad-CAM saliency map of the model trained using Gen-Mix focuses on the full object, implying better generalization. This property can be attributed to the fact that GenMix works with a single image and mixes different parts of the same image and its edited versions to augment the data. Our method covers more area of the object while focusing less on the context, whereas the compared approaches are more local within the object and in some cases also have focus outside the object. Thus GenMix better retains the structure of the foreground object, resulting in an enlarged focus on the entire object representing better generalization.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.2">Ablation Studies</head><p>To assess the significance of the component of our approach, we performed an ablation study by systematically removing the impact of individual components and recording the performance on ResNet-50 across the Stanford Cars and Flowers-102 datasets, as shown in Table <ref type="table" target="#tab_1">10</ref>.</p><p>In the table, the baseline <ref type="bibr">He et al. (2016b)</ref> using only the original images I i obtains Top-1 and Top-5 accuracies of 85.52% &amp; 90.34% on Stanford Cars and 78.83% &amp; 94.38% on Flowers102. Introducing fractal interpolation (F v ) to the input images brings a slight improvement in performance for both datasets. We then eliminate both seamless concatenation (H iju ) and fractal interpolation (F v ) by conducting experiments using only the edited images ( Îij ) as augmented images for training. This setup aligns more closely with methods in <ref type="bibr" target="#b40">Trabucco et al. (2024)</ref>; <ref type="bibr" target="#b41">Azizi et al. (2023)</ref>, which also use diffusion-generated images as augmentations. Our results for this experiment in the table are consistent with the insights of <ref type="bibr" target="#b41">Azizi et al. (2023)</ref>, suggesting that using generated images directly does not always significantly outperform the vanilla approach. We then perform experiments where edited images are interpolated with fractal images during training. In the Cars dataset, this leads to a slight improvement over the baseline, with Top-1 and Top-5 accuracies of 89.42% and 91.57%, respectively. However, the Flowers dataset shows a slight drop in performance, indicating that fractal interpolation is more effective when combined with greater diversity in the training set. Next, we remove the fractal interpolation but retain the seamless concatenation of edited ( Îij ) and original (I i ) images to form hybrid images (H iju ) for data augmentation. This boosts performance for both datasets. We conjecture that this improvement is due to the combined presence of both generated and original image content in each augmented image, highlighting the importance of the seamless concatenation step in GenMix. Finally, when all components, including fractal interpolation, are incorporated, the model achieves its best performance for both datasets. These consistent improvements with each additional component emphasize the effectiveness of the design choices in GenMix for data augmentation.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.3">Augmentation Overhead</head><p>We evaluate the computational overhead of various state-ofthe-art image augmentation methods, including GenMix, in relation to their performance improvements. As defined by TABLE 10: Ablation study using Stanford Cars (Cars) and Flowers102 (Flow) datasets. Top-1 and Top-5 accuracies are reported with different combinations of I i : Input image, Îij : Edited images using prompts p j , H iju : Hybrid images using random mask M u , and F v : fractal images used to obtain final interpolated image A ijuv . </p><note type="other">GenMix GuidedMixup Mixup PuzzleMix CutMix Input Image</note><formula xml:id="formula_9">I i ✓ ✓ - - - - Îij - - ✓ ✓ - - H iju - - - - ✓ ✓ Fv - ✓ - ✓ - ✓<label>Cars</label></formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.4">Impact of Prompt Selection</head><p>Diffusion model outputs are dependent on the input prompts <ref type="bibr" target="#b36">Du et al. (2023)</ref>. Our approach to designing bespoke conditional prompts focuses on creating prompts that edit images while maintaining their structural integrity, making them applicable across various datasets. As outlined in the main text, we introduce filter-like prompts such as snowy, sunset, and rainbow, demonstrating their effectiveness in training robust classifiers. We also explore some bad prompts that are unsuitable for the image editing in GenMix as shown in Figure <ref type="figure" target="#fig_10">6</ref>. Descriptive or overly complex prompts tend to produce images that deviate significantly from the original distribution, often leading to unrealistic foregrounds and backgrounds, making them ineffective for training. It further emphasizes the value of our proposed filter-like bespoke conditional prompts, which avoid introducing unwanted alterations to the training data.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.5">Replacing Concatenation with CutMix and Mixup</head><p>In these experiments, we integrate    <ref type="bibr">Yun et al. (2019b)</ref> or Mixup <ref type="bibr" target="#b23">Zhang et al. (2018)</ref> yields improvements over the original techniques. While GenMix provides consistent gains in these settings, the best performance of 81.30% is achieved when our originally proposed method is used.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.6">Increasing Smooth Mask Vs Performance</head><p>Experiments were also conducted using the Flowers102 dataset to assess how different smooth masking strategies affect the overall performance of the proposed method. The results are reported in Table <ref type="table" target="#tab_18">12</ref>. Employing even a single type of mask -specifically, vertical mask; our approach significantly outperforms the vanilla <ref type="bibr">He et al. (2016b)</ref> baseline in terms of accuracy. Introducing both vertical and horizontal masks leads to further improvements. The highest accuracy is achieved when both mask types are combined with random flipping between the positions of input and generated images, enhancing the diversity of the training data. Moreover, the method is compatible with masking techniques from previous studies, such as those in <ref type="bibr">Yun et al. (2019b)</ref>; <ref type="bibr" target="#b23">Zhang et al. (2018)</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="7">CONCLUSION</head><p>In this work, a data augmentation technique dubbed as GenMix is proposed which is built on pre-trained image  </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Fig. 1 :</head><label>1</label><figDesc>Fig. 1: Representative examples of augmentation techniques. Top: Conventional image mixing methods like CutMix Yun et al. (2019b), Mixup Zhang et al. (2018), GridMix Baek et al. (2021), SmoothMix Lee et al. (2020), ResizeMix Qin et al. (2020) and FMix Harris et al. (2020) use interpolation or other strategies to mix source and target images, largely disregarding the natural appearance of the resulting image. Bottom: Our GenMix is a label-preserving technique like AugMix Hendrycks et al. (2019), PixMix Hendrycks et al. (2022) and IPMix Huang et al. (2023). However, it utilizes a generative diffusion model with custom tailored prompts for high quality augmentation. Three different outputs (1A, 2A and 3A) for the target are shown for GenMix.</figDesc><graphic coords="2,73.80,43.70,464.39,175.69" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Fig. 2 :</head><label>2</label><figDesc>Fig.2: Overview of the proposed GenMix method. An input image and a randomly selected prompt are input to a pretrained image editing diffusion model to obtain a generated image. Input and generated images are smoothly concatenated using a binary mask to obtain a hybrid image. A random fractal image is finally blended with this hybrid image to obtain the augmented image.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head></head><label></label><figDesc>requires a prompt p j from a predefined set of k prompts, P = {p 1 , p 2 , . . . , p k } where j ∈ [1, k] along with the input training image I i and produces an edited counterpart image Îij . The image generation process in conventional diffusion models is often open-ended for image-to-image or textto-image translation. On the other hand, image editing is guided by textual prompts. The aim is to obtain diverse image-to-image translations guided by textual prompts. In our case, as the goal is to achieve a slightly modified but not too different version of I i , filter-like prompts are curated in P which do not alter the image drastically. Examples of the prompts used in GenMix are shown in Figure 3. The overall generation step can be represented as:</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head></head><label></label><figDesc>(w-b)/2 containing ones, and M b ∈ R h×b containing the blending matrix where b is the blending width. These three parts are stacked to form the mask: M u = M 0 M b M 1 either horizontally or vertically. We generate the blending matrix M b such that the values smoothly transition from 0 on the Algorithm 1 GenMix Require: I i ∈ D training images dataset, m: number of augmented images, p j ∈ P set of textual prompts, M u ∈ M set of smooth masks, F v ∈ F set of selfsimilarity fractal images, λ: interpolation weight Ensure: D ′ : m Augmented images 1: D ′ ← ∅ 2: for each image I i in D do 3:for a in {1 : m} do 4:</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head></head><label></label><figDesc>: CIFAR-100, ImageNet-1K, and Tiny-ImageNet-200. Aligning with the practices of current state-of-the-art (SOTA) methods, we used ResNet50 for the ImageNet-1K, and utilized the PreActResNet18 for the Tiny-ImageNet-200 and CIFAR-100 datasets Huang et al. (2021); Kim et al. (2020b); Uddin et al. (2020); Kang and Kim (2023), and employed ResNet50 for the ImageNet dataset Kim et al. (2020a); Yun et al. (2019b); Hendrycks et al. (2019).</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Fig. 3 :</head><label>3</label><figDesc>Fig. 3: Different bespoke conditional prompts -columns -are used to obtain generated images preserving important features and adding rich visual appearance to the input images. Each row shows a representative input from a different dataset. TABLE 2: Top-1 and Top-5 accuracies comparison on ImageNet-1K using ResNet-50, on Tiny ImageNet-200 and CIFAR-100 using PreActResNet-18. FGSM error rates on CIFAR-100 and Tiny-ImageNet-200 datasets are also computed for PreActResNet-18. Compared numbers are taken either from the original papers or from Kang and Kim (2023), following the exact protocols.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head></head><label></label><figDesc>al. (2020a,b); Uddin et al. (2020); Kang and Kim (2023); Yun et al. (2019b); Hendrycks et al. (2019); Verma et al. (2019); Hong et al. (</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_7"><head></head><label></label><figDesc>al. (2020a); Huang et al. (2021); Kim et al. (2020b); Uddin et al. (2020); Kang and Kim (2023); Yun et al. (2019b); Zhang et al. (2018); Hendrycks et al. (2019); Verma et al. (2019) have not reported their performance for this popular application.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_8"><head>Fig. 4 :</head><label>4</label><figDesc>Fig. 4: Representative Grad-CAM visualizations of saliency maps for Mixup Zhang et al. (2018), CutMix Yun et al. (2019b), PuzzleMix Kim et al. (2020a), GuidedMixup Kang and Kim (2023) methods on random input images of Stanford Cars dataset. We train ResNet50 from scratch for a fair comparison. Saliency maps for GenMix are more consistent and better focused on the salient image regions.</figDesc><graphic coords="10,463.00,99.74,75.04,53.15" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_9"><head>Fig. 5 :</head><label>5</label><figDesc>Fig. 5: Augmentation overhead A O vs Accuracy (%) plot on CUB-200-2011 dataset with batch size 32.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_10"><head>Fig. 6 :</head><label>6</label><figDesc>Fig. 6: Some examples of badly designed prompts: Top row: Original training examples. Bottom row: The corresponding generated images. It demonstrates that using detailed prompts (in blue) leads to poor quality images that are unsuitable for training. The image in the last column from CIFAR100, along with its prompt, produces a black image with no visible output.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_11"><head></head><label></label><figDesc>editing diffusion models. GenMix enhances diversity in the training data while preserving the original semantic content of the input images. It employs editing, smooth concatenation, and fractal blending to produce the final augmented images. GenMix has shown performance improvement across multiple tasks including general classification, fine-grained classification, domain adaptation, addressing data scarcity, fine-tuning, self-supervised learning, and adversarial robustness, over several architectures and benchmark datasets including ImageNet-1k, Tiny-ImageNet-200, CIFAR-100, Oxford Flower102, Caltech Birds, Stanford-Cars, FGVC Aircraft, and Office-Home. Across a wide range of experiments, our method has consistently demonstrated improved performance outperforming existing SOTA image augmentation methods.The proposed method has the potential to improve learning of deep models across a wide range of tasks. Limitations: GenMix has two key limitations: (1) It relies on text prompts for image editing, and inappropriate text prompts may result in undesired outputs. To address this, we propose a set of filter-like prompts that can be applied to a wide range of natural images. (2) GenMix introduces additional overhead for editing images, but this cost may be considered as a trade off for improved convergence in large-scale learning models. Image editing cost can be effectively handled by generating edited images in advance and employing faster image editing methods.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1"><head>TABLE 1 :</head><label>1</label><figDesc>Comparison of data augmentation methods. Components include central operations and inputs. Tasks are the key problems for which the efficacy of the methods is established.</figDesc><table><row><cell>Input</cell><cell>CutMix Mixup GridMix SMix ResMix FMix AugMix PixMix IPMix Diff-Mix Aziz DA-Fusion Ours</cell></row><row><cell>Source image</cell><cell>✓</cell></row><row><cell>Components</cell><cell></cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2"><head>Diffusion Models for Augmentation. Recently</head><label></label><figDesc></figDesc><table><row><cell></cell><cell>well-known method is PixMix Hendrycks et al. (2022) that</cell></row><row><cell></cell><cell>extends AugMix Hendrycks et al. (2019) by mixing input im-</cell></row><row><cell></cell><cell>ages with fractal and feature visualization images, improv-</cell></row><row><cell></cell><cell>ing machine learning safety. A comprehensive overview of</cell></row><row><cell></cell><cell>various image-mixing methods, along with their compo-</cell></row><row><cell></cell><cell>nents and task accomplishment is presented in Table 1.</cell></row><row><cell></cell><cell>Automated Data Augmentation. Several researchers have</cell></row><row><cell></cell><cell>also explored automated data augmentation for improving</cell></row><row><cell>, there has</cell><cell>model performance. For instance, AutoAugment Cubuk</cell></row><row><cell>been a growing interest in leveraging Diffusion Models</cell><cell>et al. (2018) utilizes reinforcement learning to discover op-</cell></row><row><cell>(DMs) for data augmentation. Azizi et al. Azizi et al. (2023)</cell><cell>timal data augmentation strategies, while RandAugment</cell></row><row><cell>proposed using text-to-image fine-tuned diffusion models</cell><cell>Cubuk et al. (2020) employs a set of randomized aug-</cell></row><row><cell>to generate synthetic samples for ImageNet classification,</cell><cell>mentation operations to enhance model generalization and</cell></row><row><cell>demonstrating that incorporating these generated images</cell><cell>robustness. AdaAug Cheung and Yeung (2021) has been in-</cell></row><row><cell>into the training set can enhance classification performance.</cell><cell>troduced to efficiently learn adaptive augmentation policies</cell></row><row><cell>Similarly, Trabucco et al. Trabucco et al. (2024) utilized off-</cell><cell>that vary depending on the class or even the instance.</cell></row><row><cell>the-shelf diffusion models to create diverse and semantically</cell><cell></cell></row><row><cell>rich images via prompt engineering, aiming to improve</cell><cell></cell></row><row><cell>image classification on various datasets. Furthermore, Li et</cell><cell></cell></row><row><cell>al. Li et al. (2023) explored using diffusion models for data</cell><cell></cell></row><row><cell>augmentation in conjunction with knowledge distillation,</cell><cell></cell></row><row><cell>particularly in scenarios where real images are unavailable.</cell><cell></cell></row><row><cell>These efforts underscore the potential of diffusion models</cell><cell></cell></row><row><cell>to enrich data augmentation techniques.</cell><cell></cell></row><row><cell>Image Mixing for Augmentation. Image mixing has be-</cell><cell></cell></row><row><cell>come a widely employed category of data augmentation</cell><cell></cell></row><row><cell>techniques, enhancing the performance and robustness of</cell><cell></cell></row><row><cell>deep learning models Liang et al. (2023); Yan et al. (2023);</cell><cell></cell></row><row><cell>Mensink and Mettes (2023); Chen and Lu (2023). Notable</cell><cell></cell></row><row><cell>state-of-the-art methods in this category include CutMix,</cell><cell></cell></row><row><cell>AugMix and PuzzleMix. CutMix Yun et al. (2019a) improves</cell><cell></cell></row><row><cell>out-of-distribution generalization by randomly overlaying</cell><cell></cell></row><row><cell>a patch from a source image onto a target image. Aug-</cell><cell></cell></row><row><cell>Mix Hendrycks et al. (2019) stochastically combines aug-</cell><cell></cell></row><row><cell>mentation operations like equalize, posterize, and translate-</cell><cell></cell></row><row><cell>x to introduce semantic diversity. PuzzleMix Kim et al.</cell><cell></cell></row><row><cell>(2020a) refines mixup techniques by considering image</cell><cell></cell></row><row><cell>saliency and local statistics. Similarly, another technique</cell><cell></cell></row><row><cell>SaliencyMix Uddin et al. (2020) leverages saliency maps</cell><cell></cell></row><row><cell>to focus on the most important image regions, preserving</cell><cell></cell></row><row><cell>their integrity. Manifold Mixup Verma et al. (2019) blends</cell><cell></cell></row><row><cell>hidden network states during training, creating an inter-</cell><cell></cell></row><row><cell>polated state for improved feature representation. Another</cell><cell></cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_3"><head></head><label></label><figDesc>The data scarcity related experiments are conducted with Flower102<ref type="bibr" target="#b60">Nilsback and Zisserman (2008)</ref> dataset. Our experiments for domain adaption additionally use OfficeHome<ref type="bibr" target="#b63">Venkateswara et al. (2017)</ref> dataset. These datasets encompass a variety of scenarios, featuring images with a broad spectrum of objects like plants, animals, vehicles, human actions, and general objects across diverse scenes and textures.</figDesc><table><row><cell>Datasets. To enable comparisons with previous research on image augmentation Kim et al. (2020a); Huang et al. (2021); Kim et al. (2020b); Uddin et al. (2020); Kang and Kim (2023); Yun et al. (2019b); Zhang et al. (2018); Hendrycks et al. (2019); Verma et al. (2019); Cubuk et al. (2020); Cheung and Yeung (2021); Cubuk et al. (2019); Lim et al. (2019), we assess our approach using both general image classification and fine-grained image classification datasets. For general im-age classification, we use three datasets: ImageNet-1K Deng et al. Implementation Details. For image editing, we employed InstructPix2Pix pre-trained image editing diffusion model Brooks et al. (2023) utilizing our custom-built textual prompts. To create the Mask M u we used a fixed blending width of 20 pixels. We use λ = 0.20 for blending the fractal image in Eq. (4). Textual Prompt Selection. To ensure that only suitable prompts are used for classification, a custom textual library of filter-like global visual effects is predefined, comprising 'autumn', 'snowy', 'sunset', 'watercolor art', 'rainbow', 'aurora', 'mosaic', 'ukiyo-e' and 'a sketch with crayon'. For domain</cell></row></table><note><p><p><p><p><p><p><p><p><p><p><p><p><p><p><p><p><p><p>(2009)</p>, CIFAR100</p><ref type="bibr" target="#b58">Krizhevsky et al. (2009)</ref></p>, and Tiny-ImageNet-200</p><ref type="bibr" target="#b59">Le and Yang (2015)</ref></p>. For fine-grained image classification, we employ three datasets: CUB</p><ref type="bibr" target="#b60">Nilsback and Zisserman (2008)</ref></p>, Stanford Cars</p><ref type="bibr" target="#b61">Krause et al. (2013)</ref></p>, and Aircraft</p><ref type="bibr" target="#b62">Maji et al. (2013)</ref></p>. Moreover, we use Flower102 Nilsback and Zisserman (</p>2008</p>), Aircraft</p><ref type="bibr" target="#b62">Maji et al. (2013)</ref></p>, and Stanford Cars</p><ref type="bibr" target="#b61">Krause et al. (2013)</ref> </p>for evaluation related to Transfer Learning. adaptation, we introduce an additional set of bespoke conditional prompts, such as 'graffiti', 'retro comic', 'chalk drawing', 'watercolor painting', 'digital art' and 'cartoon style'. These prompts are designed to introduce a broader range of visual appearances, enhancing the model's adaptability to different domains ensuring their generic nature and wide applicability. These prompts do not significantly edit the image structure while introducing global visual effects. Each prompt in the textual library is appended with the template 'A transformed version of image into prompt' to form a specific input for the image editing diffusion model. Examples of images generated using these prompts are shown in Figure</p></note></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_4"><head></head><label></label><figDesc>Table 2 also showcases a comparison of performances on Tiny-ImageNet-200 with existing SOTA</figDesc><table><row><cell>Input Image</cell><cell>Watercolor art</cell><cell>Rainbow</cell><cell>Sunset</cell><cell>Aurora</cell><cell>Snowy</cell><cell>Autumn</cell><cell>Ukiyo-e</cell><cell>sketch w/ crayon</cell><cell>Mosaic</cell></row><row><cell>Flowers102</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>Stanford Cars</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>UCSD-Birds</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>Aircraft</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_6"><head>TABLE 3 :</head><label>3</label><figDesc>Top-1 (%) performance comparison on finegrained task of ResNet-50.</figDesc><table><row><cell>Method</cell><cell>Birds</cell><cell cols="2">Aircraft Cars</cell></row><row><cell>Vanilla He et al. (2016b)</cell><cell>65.50</cell><cell>80.29</cell><cell>85.52</cell></row><row><cell>Simple He et al. (2016b)</cell><cell>-</cell><cell>80.13</cell><cell>86.36</cell></row><row><cell>Auto Augment Cubuk et al. (2019)</cell><cell>-</cell><cell>82.28</cell><cell>88.04</cell></row><row><cell>Fast AutoAugment Lim et al. (2019)</cell><cell>-</cell><cell>82.20</cell><cell>87.19</cell></row><row><cell>DADA Li et al. (2020)</cell><cell>-</cell><cell>81.16</cell><cell>87.14</cell></row><row><cell>RandAugment Cubuk et al. (2020)</cell><cell>-</cell><cell>82.30</cell><cell>87.79</cell></row><row><cell>AdaAug Cheung and Yeung (2021)</cell><cell>-</cell><cell>82.50</cell><cell>88.49</cell></row><row><cell>Mixup Zhang et al. (2018)</cell><cell>71.33</cell><cell>82.38</cell><cell>88.14</cell></row><row><cell>CutMix Yun et al. (2019b)</cell><cell>72.58</cell><cell>82.45</cell><cell>89.22</cell></row><row><cell>SaliencyMix Uddin et al. (2020)</cell><cell>66.66</cell><cell>83.14</cell><cell>89.04</cell></row><row><cell>Guided-SR Kang and Kim (2023)</cell><cell>74.08</cell><cell>83.51</cell><cell>89.23</cell></row><row><cell>SnapMix Huang et al. (2021)</cell><cell>75.53</cell><cell>82.96</cell><cell>90.10</cell></row><row><cell>PuzzleMix Kim et al. (2020a)</cell><cell>74.85</cell><cell>82.66</cell><cell>89.68</cell></row><row><cell>Co-Mixup Kim et al. (2020b)</cell><cell>72.83</cell><cell>83.57</cell><cell>89.53</cell></row><row><cell>Guided-AP Kang and Kim (2023)</cell><cell>77.08</cell><cell>84.32</cell><cell>90.27</cell></row><row><cell>GenMix</cell><cell>79.42</cell><cell>85.84</cell><cell>91.30</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_7"><head>TABLE 4 :</head><label>4</label><figDesc>Top-1 (%) accuracy of GenMix on fine-tuning experiments using ImageNet pretrained ResNet-50.</figDesc><table><row><cell>Method</cell><cell cols="2">Flower102 Aircraft</cell><cell>Cars</cell></row><row><cell>Vanilla He et al. (2016b)</cell><cell>94.98</cell><cell>81.60</cell><cell>88.08</cell></row><row><cell>AA Cubuk et al. (2019)</cell><cell>93.88</cell><cell>83.39</cell><cell>90.82</cell></row><row><cell>RA Cubuk et al. (2020)</cell><cell>95.23</cell><cell>82.98</cell><cell>89.28</cell></row><row><cell>Fast AA Lim et al. (2019)</cell><cell>96.08</cell><cell>82.56</cell><cell>89.71</cell></row><row><cell>AdaAug Cheung and Yeung (2021)</cell><cell>97.19</cell><cell>83.97</cell><cell>91.18</cell></row><row><cell>GenMix</cell><cell>98.27</cell><cell>85.83</cell><cell>93.47</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_9"><head>TABLE 5 :</head><label>5</label><figDesc>Top-1 (%) accuracy of ResNet-18 on the data scarcity task using the Flower102 dataset, where only 10 images per class are present in the dataset.</figDesc><table><row><cell>Method</cell><cell>Valid</cell><cell>Test</cell></row><row><cell>Vanilla He et al. (2016b)</cell><cell>64.48</cell><cell>59.14</cell></row><row><cell>Mixup Zhang et al. (2018)</cell><cell>70.55</cell><cell>66.81</cell></row><row><cell>CutMix Yun et al. (2019b)</cell><cell>62.68</cell><cell>58.51</cell></row><row><cell>SaliencyMix Uddin et al. (2020)</cell><cell>63.23</cell><cell>57.45</cell></row><row><cell>Guided-SR Kang and Kim (2023)</cell><cell>72.84</cell><cell>69.31</cell></row><row><cell>SnapMix Huang et al. (2021)</cell><cell>65.71</cell><cell>59.79</cell></row><row><cell>PuzzleMix Kim et al. (2020a)</cell><cell>71.56</cell><cell>66.71</cell></row><row><cell>Co-Mixup Kim et al. (2020b)</cell><cell>68.17</cell><cell>63.20</cell></row><row><cell>GuidedMixup Kang and Kim (2023)</cell><cell>74.74</cell><cell>70.44</cell></row><row><cell>GenMix</cell><cell>77.23</cell><cell>74.35</cell></row><row><cell cols="3">Nevertheless, we evaluate our approach by fine-tuning the</cell></row><row><cell cols="3">baseline model on three datasets Flower102, Aircraft, and</cell></row><row><cell cols="3">Stanford Cars, utilizing ResNet-50 model pre-trained on</cell></row><row><cell cols="2">ImageNet. The results are summarized in Table</cell><cell></cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_10"><head>TABLE 6 :</head><label>6</label><figDesc>Comparison of H-score (%) in the Open Partial Domain Adaptation (OPDA) scenario on the Office-Home dataset, where Clipart (Cl), Art (Ar), Real (Re), and Product (Pr) are different domains. Unified (U) methods are applicable for all scenarios including OPDA, OSDA, and PDA. The SF denotes source data-free, and the CF indicates K-means clustering free model adaption. Our method is shown as +GenMix to imply LEAD+GenMix. Boldface represents performance gains of GenMixover LEAD.</figDesc><table><row><cell>Methods</cell><cell cols="3">U SF CF</cell><cell cols="13">Ar2Cl Ar2Pr Ar2Re Cl2Ar Cl2Pr Cl2Re Pr2Ar Pr2Cl Pr2Re Re2Ar Re2Cl Re2Pr Avg</cell></row><row><cell>CMU Fu et al. (2020)</cell><cell>✗</cell><cell>✗</cell><cell>✓</cell><cell>56.0</cell><cell>56.9</cell><cell>59.2</cell><cell>67.0</cell><cell>64.3</cell><cell>67.8</cell><cell>54.7</cell><cell>51.1</cell><cell>66.4</cell><cell>68.2</cell><cell>57.9</cell><cell>69.7</cell><cell>61.6</cell></row><row><cell>DANCE Saito et al. (2020a)</cell><cell>✓</cell><cell>✗</cell><cell>✓</cell><cell>61.0</cell><cell>60.4</cell><cell>64.9</cell><cell>65.7</cell><cell>58.8</cell><cell>61.8</cell><cell>73.1</cell><cell>61.2</cell><cell>66.6</cell><cell>67.7</cell><cell>62.4</cell><cell>63.7</cell><cell>63.9</cell></row><row><cell>DCC Li et al. (2021)</cell><cell>✓</cell><cell>✗</cell><cell>✗</cell><cell>58.0</cell><cell>54.1</cell><cell>58.0</cell><cell>74.6</cell><cell>70.6</cell><cell>77.5</cell><cell>64.3</cell><cell>73.6</cell><cell>74.9</cell><cell>81.0</cell><cell>75.1</cell><cell>80.4</cell><cell>70.2</cell></row><row><cell>OVANet Saito and Saenko (2021a)</cell><cell>✗</cell><cell>✗</cell><cell>✓</cell><cell>62.8</cell><cell>75.6</cell><cell>78.6</cell><cell>70.7</cell><cell>68.8</cell><cell>75.0</cell><cell>71.3</cell><cell>58.6</cell><cell>80.5</cell><cell>76.1</cell><cell>64.1</cell><cell>78.9</cell><cell>71.8</cell></row><row><cell>GATE Chen et al. (2022b)</cell><cell>✓</cell><cell>✗</cell><cell>✓</cell><cell>63.8</cell><cell>75.9</cell><cell>81.4</cell><cell>74.0</cell><cell>72.1</cell><cell>79.8</cell><cell>74.7</cell><cell>70.3</cell><cell>82.7</cell><cell>79.1</cell><cell>71.5</cell><cell>81.7</cell><cell>75.6</cell></row><row><cell>UniOT Chang et al. (2022)</cell><cell>✗</cell><cell>✗</cell><cell>✓</cell><cell>67.3</cell><cell>80.5</cell><cell>86.0</cell><cell>73.5</cell><cell>77.3</cell><cell>84.3</cell><cell>75.5</cell><cell>63.3</cell><cell>86.0</cell><cell>77.8</cell><cell>65.4</cell><cell>81.9</cell><cell>76.6</cell></row><row><cell>Source-only</cell><cell>-</cell><cell>-</cell><cell>-</cell><cell>47.3</cell><cell>71.6</cell><cell>81.9</cell><cell>51.5</cell><cell>57.2</cell><cell>69.4</cell><cell>56.0</cell><cell>40.3</cell><cell>76.6</cell><cell>61.4</cell><cell>44.2</cell><cell>73.5</cell><cell>60.9</cell></row><row><cell>SHOT-O Liang et al. (2020)</cell><cell>✗</cell><cell>✓</cell><cell>✓</cell><cell>32.9</cell><cell>29.5</cell><cell>39.6</cell><cell>56.8</cell><cell>30.1</cell><cell>41.1</cell><cell>54.9</cell><cell>35.4</cell><cell>42.3</cell><cell>58.5</cell><cell>33.5</cell><cell>33.3</cell><cell>40.7</cell></row><row><cell>LEAD Qu et al. (2024)</cell><cell>✓</cell><cell>✓</cell><cell>✓</cell><cell>62.7</cell><cell>78.1</cell><cell>86.4</cell><cell>70.6</cell><cell>76.3</cell><cell>83.4</cell><cell>75.3</cell><cell>60.6</cell><cell>86.2</cell><cell>75.4</cell><cell>60.7</cell><cell>83.7</cell><cell>75.0</cell></row><row><cell>+ GenMix</cell><cell>✓</cell><cell>✓</cell><cell>✓</cell><cell>63.9</cell><cell>83.0</cell><cell>85.9</cell><cell>76.8</cell><cell>78.9</cell><cell>85.3</cell><cell>78.1</cell><cell>62.2</cell><cell>86.9</cell><cell>79.8</cell><cell>62.9</cell><cell>83.0</cell><cell>77.2</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_11"><head>TABLE 7 :</head><label>7</label><figDesc>H-score (%) comparison in the Open-set Domain Adaptation (OSDA) scenario on the Office-Home dataset.</figDesc><table><row><cell>Methods</cell><cell cols="3">U SF CF</cell><cell cols="13">Ar2Cl Ar2Pr Ar2Re Cl2Ar Cl2Pr Cl2Re Pr2Ar Pr2Cl Pr2Re Re2Ar Re2Cl Re2Pr Avg</cell></row><row><cell>CMU Fu et al. (2020)</cell><cell>✗</cell><cell>✗</cell><cell>✓</cell><cell>55.0</cell><cell>57.0</cell><cell>59.0</cell><cell>59.3</cell><cell>58.2</cell><cell>60.6</cell><cell>59.2</cell><cell>51.3</cell><cell>61.2</cell><cell>61.9</cell><cell>53.5</cell><cell>55.3</cell><cell>57.6</cell></row><row><cell>DANCE Saito et al. (2020a)</cell><cell>✓</cell><cell>✗</cell><cell>✓</cell><cell>6.5</cell><cell>9.0</cell><cell>9.9</cell><cell>20.4</cell><cell>10.4</cell><cell>9.2</cell><cell>28.4</cell><cell>12.8</cell><cell>12.6</cell><cell>14.2</cell><cell>7.9</cell><cell>13.2</cell><cell>12.9</cell></row><row><cell>DCC Li et al. (2021)</cell><cell>✓</cell><cell>✗</cell><cell>✗</cell><cell>56.1</cell><cell>67.5</cell><cell>66.7</cell><cell>49.6</cell><cell>66.5</cell><cell>64.0</cell><cell>55.8</cell><cell>53.0</cell><cell>70.5</cell><cell>61.6</cell><cell>57.2</cell><cell>71.9</cell><cell>61.7</cell></row><row><cell>OVANet Saito and Saenko (2021a)</cell><cell>✗</cell><cell>✗</cell><cell>✓</cell><cell>58.6</cell><cell>66.3</cell><cell>69.9</cell><cell>62.0</cell><cell>65.2</cell><cell>68.6</cell><cell>59.8</cell><cell>53.4</cell><cell>69.3</cell><cell>68.7</cell><cell>59.6</cell><cell>66.7</cell><cell>64.0</cell></row><row><cell>Source-only</cell><cell>-</cell><cell>-</cell><cell>-</cell><cell>46.1</cell><cell>63.3</cell><cell>72.9</cell><cell>42.8</cell><cell>54.0</cell><cell>58.7</cell><cell>47.8</cell><cell>36.1</cell><cell>66.2</cell><cell>60.8</cell><cell>45.3</cell><cell>68.2</cell><cell>55.2</cell></row><row><cell>SHOT-O Liang et al. (2020)</cell><cell>✗</cell><cell>✓</cell><cell>✓</cell><cell>37.7</cell><cell>41.8</cell><cell>48.4</cell><cell>56.4</cell><cell>39.8</cell><cell>40.9</cell><cell>60.0</cell><cell>41.5</cell><cell>49.7</cell><cell>61.8</cell><cell>41.4</cell><cell>43.6</cell><cell>46.9</cell></row><row><cell>LEAD Qu et al. (2024)</cell><cell>✓</cell><cell>✓</cell><cell>✓</cell><cell>60.7</cell><cell>70.8</cell><cell>76.5</cell><cell>61.0</cell><cell>68.6</cell><cell>70.8</cell><cell>65.5</cell><cell>59.8</cell><cell>74.2</cell><cell>64.8</cell><cell>57.7</cell><cell>75.8</cell><cell>67.2</cell></row><row><cell>+ GenMix</cell><cell>✓</cell><cell>✓</cell><cell>✓</cell><cell>62.8</cell><cell>72.4</cell><cell>76.8</cell><cell>65.1</cell><cell>66.8</cell><cell>71.5</cell><cell>67.3</cell><cell>58.5</cell><cell>74.9</cell><cell>65.7</cell><cell>63.1</cell><cell>79.2</cell><cell>68.7</cell></row><row><cell cols="7">a transductive learning approach. We validate the effective-</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell cols="7">ness of GenMix using LEAD framework Qu et al. (2024)</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell cols="7">on OfficeHome Venkateswara et al. (2017) dataset. For a</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell cols="7">fair comparison, we access source-only and augment data</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell cols="7">with GenMix. We experiment with different settings includ-</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell cols="7">ing across partial-set domain adaptation (PDA), open-set</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell cols="7">domain adaptation (OSDA), and open-partial-set domain</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell cols="7">adaptation (OPDA). The OPDA results are reported in Ta-</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell cols="7">ble 6, while OSDA and PDA performance evaluations are</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell cols="5">summarized in Tables 7 and 8, respectively.</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell cols="7">Open-Partial Domain Adaptation (OPDA). OPDA Saito</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell cols="7">and Saenko (2021b); You et al. (2019) falls under the broader</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell cols="7">scope of universal domain adaptation, where there is no</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell cols="7">prior knowledge about the label shift, such as common</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell cols="7">classes or the number of categories in the target domain.</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell cols="7">Some existing approaches Saito et al. (2020b); Chen et al.</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell cols="7">(2022c) require simultaneous access to both source and</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell cols="7">target data which may become impractical due to data</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell cols="7">protection regulations Voigt and Von dem Bussche (2017).</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell cols="7">In Table 6, our baseline LEAD Qu et al. (2024) has an</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell cols="7">average H-score of 75.0%, while LEAD + GenMix achieves</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell cols="7">77.2%, representing a significant 2.2% improvement in the</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell cols="7">average H-score. Particularly, for Ar2Pr, addition of our</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell cols="7">augmentation strategy improved performance of LEAD Qu</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell cols="7">et al. (2024) by 4.9%, for CL2Ar the improvement is 6.2%</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell cols="7">and for Re2Ar improvement is 4.4%. The results affirm that</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell cols="7">GenMix is an effective data augmentation scheme for open</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell cols="4">partial domain adaptation scenarios.</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_12"><head>Table 9</head><label>9</label><figDesc></figDesc><table><row><cell>showcases the Top-1 accuracy of</cell></row><row><cell>self-supervised learning methods, comparing the perfor-</cell></row><row><cell>mance of MoCo v2 and SimSiam, both with and without</cell></row><row><cell>augmentation. On the Flower102, Stanford Cars, and Air-</cell></row><row><cell>craft datasets, the baseline MoCo v2 achieves accuracies</cell></row><row><cell>of 80.31%, 40.</cell></row></table><note><p>82%, and 51.36%, respectively. Incorporating GenMix delivers absolute gains of 2.05%, 1.45% and 2.21% on these datasets. Similarly, SimSiam baseline achieved accuracies of 86.93%, 48.34%, and 40.37% on the Flower102, Stanford Cars, and Aircraft datasets. Augmenting it with the proposed method gives absolute gains of 2.49%, 1.01% and 2.46%. These results illustrate the efficacy of GenMix, as it</p></note></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_13"><head>TABLE 8 :</head><label>8</label><figDesc>Accuracy comparison (%) in the Partial Domain Adaptation (PDA) scenario on the Office-Home dataset.</figDesc><table><row><cell>Methods</cell><cell cols="15">U SF CF Ar2Cl Ar2Pr Ar2Re Cl2Ar Cl2Pr Cl2Re Pr2Ar Pr2Cl Pr2Re Re2Ar Re2Cl Re2Pr Avg</cell></row><row><cell>CMU Fu et al. (2020)</cell><cell cols="2">✗ ✗</cell><cell>✓</cell><cell>50.9</cell><cell>74.2</cell><cell>78.4</cell><cell>62.2</cell><cell>64.1</cell><cell>72.5</cell><cell>63.5</cell><cell>47.9</cell><cell>78.3</cell><cell>72.4</cell><cell>54.7</cell><cell>78.9 66.5</cell></row><row><cell>DANCE Saito et al. (2020a)</cell><cell cols="2">✓ ✗</cell><cell>✓</cell><cell>53.6</cell><cell>73.2</cell><cell>84.9</cell><cell>70.8</cell><cell>67.3</cell><cell>82.6</cell><cell>70.0</cell><cell>50.9</cell><cell>84.8</cell><cell>77.0</cell><cell>55.9</cell><cell>81.8 71.1</cell></row><row><cell>DCC Li et al. (2021)</cell><cell cols="2">✓ ✗</cell><cell>✗</cell><cell>54.2</cell><cell>47.5</cell><cell>57.5</cell><cell>83.8</cell><cell>71.6</cell><cell>86.2</cell><cell>63.7</cell><cell>65.0</cell><cell>75.2</cell><cell>85.5</cell><cell>78.2</cell><cell>82.6 70.9</cell></row><row><cell cols="3">OVANet Saito and Saenko (2021a) ✗ ✗</cell><cell>✓</cell><cell>34.1</cell><cell>54.6</cell><cell>72.1</cell><cell>42.4</cell><cell>47.3</cell><cell>55.9</cell><cell>38.2</cell><cell>26.2</cell><cell>61.7</cell><cell>56.7</cell><cell>35.8</cell><cell>68.9 49.5</cell></row><row><cell>GATE Chen et al. (2022b)</cell><cell cols="2">✓ ✗</cell><cell>✓</cell><cell>55.8</cell><cell>75.9</cell><cell>85.3</cell><cell>73.6</cell><cell>70.2</cell><cell>83.0</cell><cell>72.1</cell><cell>59.5</cell><cell>84.7</cell><cell>79.6</cell><cell>63.9</cell><cell>83.8 74.0</cell></row><row><cell>Source-only</cell><cell>-</cell><cell>-</cell><cell>-</cell><cell>45.9</cell><cell>69.2</cell><cell>81.1</cell><cell>55.7</cell><cell>61.2</cell><cell>64.8</cell><cell>60.7</cell><cell>41.1</cell><cell>75.8</cell><cell>70.5</cell><cell>49.9</cell><cell>78.4 62.9</cell></row><row><cell>LEAD Qu et al. (2024)</cell><cell cols="3">✓ ✓ ✓</cell><cell>58.2</cell><cell>83.1</cell><cell>87.0</cell><cell>70.5</cell><cell>75.4</cell><cell>83.3</cell><cell>73.7</cell><cell>50.4</cell><cell>83.7</cell><cell>78.3</cell><cell>58.7</cell><cell>83.2 73.8</cell></row><row><cell>+ GenMix</cell><cell cols="3">✓ ✓ ✓</cell><cell>58.9</cell><cell>76.3</cell><cell>87.7</cell><cell>71.3</cell><cell>76.8</cell><cell>83.4</cell><cell>73.9</cell><cell>59.2</cell><cell>81.9</cell><cell>79.1</cell><cell>63.3</cell><cell>80.6 74.3</cell></row><row><cell cols="7">TABLE 9: Top-1 (%) accuracy of self-supervised learning</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell cols="6">methods. Adding GenMix yields better performance.</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>Method</cell><cell cols="6">Flower102 Stanford Cars Aircraft</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>MoCo v2 He et al. (2020)</cell><cell>80.31</cell><cell></cell><cell></cell><cell>40.82</cell><cell cols="2">51.36</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>+ GenMix</cell><cell>82.36</cell><cell></cell><cell></cell><cell>42.27</cell><cell cols="2">53.57</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>SimSiam Chen and He (2021)</cell><cell>86.93</cell><cell></cell><cell></cell><cell>48.34</cell><cell cols="2">40.37</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>+ GenMix</cell><cell>89.42</cell><cell></cell><cell></cell><cell>49.35</cell><cell cols="2">42.83</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_16"><head></head><label></label><figDesc>For the CutMix + GenMix approach, we substitute the concatenation step in GenMix with the random cropping technique from CutMix. Here, a patch is randomly cropped from the generated image and pasted onto the original image. In the Mixup + GenMix variant, we replace the concatenation with pixel-level blending of the original and generated images, as described in<ref type="bibr" target="#b23">Zhang et al. (2018)</ref>. The results are summarized in Table11. Using either CutMix</figDesc><table><row><cell>Stanford Cars</cell><cell>Aircraft</cell><cell>CUB-Birds</cell><cell>Flower102</cell><cell>CIFAR-100</cell></row><row><cell>Input Image</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>Image Editing</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell cols="5">GenMix with state-of-the-art image augmentation techniques Yun et al. (2019b); Zhang et al. (2018) at an appropriate component level to assess potential performance improvements. Specifically, we replace our seamless concatenation step with CutMix and Mixup, while keeping the rest of the GenMix pipeline un-changed. Sunset car photo that looks like it's taken with 1990s camera Seaplane in middle of a forest, but keep water and yacht background intact Add a perfect reflection of bird, standing on mirror, but keep natural ground unchanged A distorted, warped painting of a flower, keep the same structure Make the dolphin appear more ethereal, blending seamlessly into the water</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_17"><head>TABLE 11 :</head><label>11</label><figDesc>Combining GenMix with CutMix and Mixup image augmentation methods by replacing the seamless concatenation step of GenMix with the masking techniques CutMix &amp; Mixup.</figDesc><table><row><cell>Method</cell><cell>Top-1 (%)</cell></row><row><cell>ResNet50 He et al. (2016b)</cell><cell>78.73</cell></row><row><cell>+ CutMix Yun et al. (2019b)</cell><cell>79.22</cell></row><row><cell>+ CutMix Yun et al. (2019b) + GenMix</cell><cell>79.58</cell></row><row><cell>+ Mixup Zhang et al. (2018)</cell><cell>79.34</cell></row><row><cell>+ Mixup Zhang et al. (2018) + GenMix</cell><cell>80.20</cell></row><row><cell>+ GenMix</cell><cell>81.30</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_18"><head>TABLE 12 :</head><label>12</label><figDesc>Effects of masking in GenMix on Flower102 dataset. All variants yield notably superior results compared to the vanilla ResNet-50. However, the best results are achieved when horizontal (Hor) and vertical (Ver) masks are used with flipping.</figDesc><table><row><cell>Mask</cell><cell cols="2">Top-1 (%) Top-5 (%)</cell></row><row><cell>Vanilla He et al. (2016b)</cell><cell>89.74</cell><cell>94.38</cell></row><row><cell>Ver Mask ( )</cell><cell>94.02</cell><cell>98.42</cell></row><row><cell>Hor + Ver Masks ( , )</cell><cell>94.27</cell><cell>99.03</cell></row><row><cell>Hor + Ver + Flipping ( , , , )</cell><cell>95.37</cell><cell>99.39</cell></row></table></figure>
+		</body>
+		<back>
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0" />			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">An image is worth 16x16 words: Transformers for image recognition at scale</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Dosovitskiy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Beyer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Kolesnikov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Weissenborn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Zhai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Unterthiner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Dehghani</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Minderer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Heigold</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Gelly</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Learning Representations</title>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Deep residual learning for image recognition</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Ren</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Sun</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE conference on computer vision and pattern recognition</title>
+		<meeting>the IEEE conference on computer vision and pattern recognition</meeting>
+		<imprint>
+			<date type="published" when="2016">2016</date>
+			<biblScope unit="page" from="770" to="778" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Swin transformer v2: Scaling up capacity and resolution</title>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Hu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Lin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Yao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Xie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Wei</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Ning</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Cao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Dong</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition</title>
+		<meeting>the IEEE/CVF Conference on Computer Vision and Pattern Recognition</meeting>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page" from="12" to="19" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Efficientnet: Rethinking model scaling for convolutional neural networks</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Tan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Q</forename><surname>Le</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International conference on machine learning</title>
+		<imprint>
+			<publisher>PMLR</publisher>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="page" from="6105" to="6114" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">You only look at one sequence: Rethinking transformer in vision through object detection</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Fang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Liao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Fang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Qi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Niu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Liu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Advances in Neural Information Processing Systems</title>
+		<imprint>
+			<biblScope unit="volume">34</biblScope>
+			<biblScope unit="page" from="26" to="183" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Mask r-cnn</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Gkioxari</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Dollár</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Girshick</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE international conference on computer vision</title>
+		<meeting>the IEEE international conference on computer vision</meeting>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+			<biblScope unit="page" from="2961" to="2969" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Pyramid vision transformer: A versatile backbone for dense prediction without convolutions</title>
+		<author>
+			<persName><forename type="first">W</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Xie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D.-P</forename><surname>Fan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Liang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Lu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Luo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Shao</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF International Conference on Computer Vision</title>
+		<meeting>the IEEE/CVF International Conference on Computer Vision</meeting>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="page" from="568" to="578" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Deecap: dynamic early exiting for efficient image captioning</title>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Fei</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Yan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Q</forename><surname>Tian</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition</title>
+		<meeting>the IEEE/CVF Conference on Computer Vision and Pattern Recognition</meeting>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page" from="12" to="216" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Reflective decoding network for image captioning</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Ke</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Pei</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Shen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y.-W</forename><surname>Tai</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF international conference on computer vision</title>
+		<meeting>the IEEE/CVF international conference on computer vision</meeting>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="page" from="8888" to="8897" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Deep dual consecutive network for human pose estimation</title>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Feng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Ji</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Wang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF conference on computer vision and pattern recognition</title>
+		<meeting>the IEEE/CVF conference on computer vision and pattern recognition</meeting>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="page" from="525" to="534" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Rethinking the heatmap regression for bottom-up human pose estimation</title>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Luo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Tan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Zhou</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF conference on computer vision and pattern recognition</title>
+		<meeting>the IEEE/CVF conference on computer vision and pattern recognition</meeting>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="page" from="13" to="264" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Segnet: A deep convolutional encoder-decoder architecture for image segmentation</title>
+		<author>
+			<persName><forename type="first">V</forename><surname>Badrinarayanan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Kendall</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Cipolla</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE transactions on pattern analysis and machine intelligence</title>
+		<imprint>
+			<biblScope unit="volume">39</biblScope>
+			<biblScope unit="issue">12</biblScope>
+			<biblScope unit="page" from="2481" to="2495" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Segmenter: Transformer for semantic segmentation</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Strudel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Garcia</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Laptev</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Schmid</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF International Conference on Computer Vision</title>
+		<meeting>the IEEE/CVF International Conference on Computer Vision</meeting>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="page" from="7262" to="7272" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<monogr>
+		<title level="m" type="main">Improved regularization of convolutional neural networks with cutout</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Devries</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">W</forename><surname>Taylor</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1708.04552</idno>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">Cutmix: Regularization strategy to train strong classifiers with localizable features</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Yun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Han</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">J</forename><surname>Oh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Chun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Choe</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Yoo</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF international conference on computer vision</title>
+		<meeting>the IEEE/CVF international conference on computer vision</meeting>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="page" from="6023" to="6032" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">Puzzle mix: Exploiting saliency and local statistics for optimal mixup</title>
+		<author>
+			<persName><forename type="first">J.-H</forename><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Choo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">O</forename><surname>Song</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Machine Learning</title>
+		<imprint>
+			<publisher>PMLR</publisher>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="page" from="5275" to="5285" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">Snapmix: Semantically proportional mixing for augmenting fine-grained data</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Tao</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the AAAI Conference on Artificial Intelligence</title>
+		<meeting>the AAAI Conference on Artificial Intelligence</meeting>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="volume">35</biblScope>
+			<biblScope unit="page" from="1628" to="1636" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">Co-mixup: Saliency guided joint mixup with supermodular diversity</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Choo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Jeong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">O</forename><surname>Song</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Learning Representations</title>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<monogr>
+		<title level="m" type="main">Saliencymix: A saliency guided data augmentation strategy for better regularization</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Uddin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Monira</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Shin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Chung</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S.-H</forename><surname>Bae</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2006.01791</idno>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">Guidedmixup: an efficient mixup strategy guided by saliency maps</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Kang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Kim</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">AAAI</title>
+		<imprint>
+			<biblScope unit="volume">37</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="1096" to="1104" />
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">Mixpro: Data augmentation with maskmix and progressive attention labeling for vision transformer</title>
+		<author>
+			<persName><forename type="first">Q</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Hu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Liu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">The Eleventh International Conference on Learning Representations</title>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">Transmix: Attend to mix for vision transformers</title>
+		<author>
+			<persName><forename type="first">J.-N</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Sun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">H</forename><surname>Torr</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Yuille</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Bai</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition</title>
+		<meeting>the IEEE/CVF Conference on Computer Vision and Pattern Recognition</meeting>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page" from="12" to="135" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">Cutmix: Regularization strategy to train strong classifiers with localizable features</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Yun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Han</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">J</forename><surname>Oh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Chun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Choe</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Yoo</surname></persName>
+		</author>
+		<idno>abs/1905.04899</idno>
+	</analytic>
+	<monogr>
+		<title level="j">CoRR</title>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">mixup: Beyond empirical risk minimization</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Cissé</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><forename type="middle">N</forename><surname>Dauphin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Lopez-Paz</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ICLR</title>
+		<imprint>
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<analytic>
+		<title level="a" type="main">You only cut once: Boosting data augmentation with a single cut</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Han</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Fang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Hong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">A</forename><surname>Armin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Reid</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Petersson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Li</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Machine Learning (ICML)</title>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<monogr>
+		<author>
+			<persName><forename type="first">H</forename><surname>Qin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Jin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Jiang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">A</forename><surname>El-Yacoubi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Gao</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2312.11954</idno>
+		<title level="m">Adversarial automixup</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<monogr>
+		<title level="m" type="main">Recent advances in vision transformer: A survey and outlook of recent work</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>Islam</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2203.01536</idno>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<monogr>
+		<title level="m" type="main">Face pyramid vision transformer</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>Islam</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">Z</forename><surname>Zaheer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Mahmood</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2210.11974</idno>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<analytic>
+		<title level="a" type="main">Gridmix: Strong regularization through local context mapping</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>Baek</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Bang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Shim</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Pattern Recognition</title>
+		<imprint>
+			<biblScope unit="volume">109</biblScope>
+			<biblScope unit="page">107594</biblScope>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<analytic>
+		<title level="a" type="main">Smoothmix: a simple yet effective data augmentation to train robust classifiers</title>
+		<author>
+			<persName><forename type="first">J.-H</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">Z</forename><surname>Zaheer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Astrid</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S.-I</forename><surname>Lee</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF conference on computer vision and pattern recognition workshops</title>
+		<meeting>the IEEE/CVF conference on computer vision and pattern recognition workshops</meeting>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="page" from="756" to="757" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<monogr>
+		<title level="m" type="main">Resizemix: Mixing data with preserved object information and true labels</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Qin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Fang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Q</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Wang</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2012.11101</idno>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<monogr>
+		<author>
+			<persName><forename type="first">E</forename><surname>Harris</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Marcu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Painter</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Niranjan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Pr Ügel-Bennett</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Hare</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2002.12047</idno>
+		<title level="m">Fmix: Enhancing mixed sample data augmentation</title>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<analytic>
+		<title level="a" type="main">Augmix: A simple data processing method to improve robustness and uncertainty</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Hendrycks</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Mu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">D</forename><surname>Cubuk</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Zoph</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Gilmer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Lakshminarayanan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Learning Representations</title>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<analytic>
+		<title level="a" type="main">Pixmix: Dreamlike pictures comprehensively improve safety measures</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Hendrycks</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Zou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Mazeika</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Tang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Steinhardt</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition</title>
+		<meeting>the IEEE/CVF Conference on Computer Vision and Pattern Recognition</meeting>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page" from="16" to="783" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<analytic>
+		<title level="a" type="main">Ipmix: Label-preserving data augmentation method for training robust classifiers</title>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Bao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Q</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Tu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Yang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Neural Information Processing Systems</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<analytic>
+		<title level="a" type="main">High-resolution image reconstruction with latent diffusion models from human brain activity</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Takagi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Nishimoto</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition</title>
+		<meeting>the IEEE/CVF Conference on Computer Vision and Pattern Recognition</meeting>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page" from="14" to="453" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b36">
+	<monogr>
+		<title level="m" type="main">Stable diffusion is untable</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Du</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Qiu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Xu</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b37">
+	<monogr>
+		<title level="m" type="main">Camdiff: Camouflage image augmentation via diffusion model</title>
+		<author>
+			<persName><forename type="first">X.-J</forename><surname>Luo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Sakaridis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Cheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D.-P</forename><surname>Fan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Van Gool</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2304.05469</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b38">
+	<analytic>
+		<title level="a" type="main">Palette: Image-to-image diffusion models</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Saharia</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Chan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Chang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Ho</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Salimans</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Fleet</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Norouzi</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ACM SIGGRAPH 2022 Conference Proceedings</title>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page" from="1" to="10" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b39">
+	<analytic>
+		<title level="a" type="main">Diffusion models beat gans on image synthesis</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Dhariwal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Nichol</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Advances in neural information processing systems</title>
+		<imprint>
+			<biblScope unit="volume">34</biblScope>
+			<biblScope unit="page" from="8780" to="8794" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b40">
+	<analytic>
+		<title level="a" type="main">Effective data augmentation with diffusion models</title>
+		<author>
+			<persName><forename type="first">B</forename><surname>Trabucco</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Doherty</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Gurinas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Salakhutdinov</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ICLR</title>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b41">
+	<monogr>
+		<title level="m" type="main">Synthetic data from diffusion models improves imagenet classification</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Azizi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Kornblith</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Saharia</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Norouzi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">J</forename><surname>Fleet</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2304.08466</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b42">
+	<analytic>
+		<title level="a" type="main">Adding conditional control to text-to-image diffusion models</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Rao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Agrawala</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF International Conference on Computer Vision</title>
+		<meeting>the IEEE/CVF International Conference on Computer Vision</meeting>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page" from="3836" to="3847" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b43">
+	<analytic>
+		<title level="a" type="main">Ipmix: Label-preserving data augmentation method for training robust classifiers</title>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Bao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Q</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Tu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Yang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Advances in Neural Information Processing Systems</title>
+		<imprint>
+			<biblScope unit="volume">36</biblScope>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b44">
+	<analytic>
+		<title level="a" type="main">Diffusemix: Label-preserving data augmentation with diffusion models</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>Islam</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">Z</forename><surname>Zaheer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Mahmood</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Nandakumar</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition</title>
+		<meeting>the IEEE/CVF Conference on Computer Vision and Pattern Recognition</meeting>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+			<biblScope unit="page" from="27" to="621" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b45">
+	<monogr>
+		<title level="m" type="main">Is synthetic data from diffusion models ready for knowledge distillation?</title>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Yang</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2305.12954</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b46">
+	<monogr>
+		<title level="m" type="main">Miamix: Enhancing image classification through a multi-stage augmented mixied sample data augmentation method</title>
+		<author>
+			<persName><forename type="first">W</forename><surname>Liang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Liang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Jia</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2308.02804</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b47">
+	<analytic>
+		<title level="a" type="main">Locmix: local saliency-based data augmentation for image classification</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Yan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Ye</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Sun</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Signal, Image and Video Processing</title>
+		<imprint>
+			<biblScope unit="page" from="1" to="10" />
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b48">
+	<monogr>
+		<author>
+			<persName><forename type="first">T</forename><surname>Mensink</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Mettes</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2305.10293</idno>
+		<title level="m">Infinite class mixup</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b49">
+	<analytic>
+		<title level="a" type="main">Rankmix: Data augmentation for weakly supervised learning of classifying whole slide images with diverse sizes and imbalanced categories</title>
+		<author>
+			<persName><forename type="first">Y.-C</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C.-S</forename><surname>Lu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition</title>
+		<meeting>the IEEE/CVF Conference on Computer Vision and Pattern Recognition</meeting>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page" from="23" to="936" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b50">
+	<analytic>
+		<title level="a" type="main">Manifold mixup: Better representations by interpolating hidden states</title>
+		<author>
+			<persName><forename type="first">V</forename><surname>Verma</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Lamb</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Beckham</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Najafi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Mitliagkas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Lopez-Paz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Bengio</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International conference on machine learning</title>
+		<imprint>
+			<publisher>PMLR</publisher>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="page" from="6438" to="6447" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b51">
+	<monogr>
+		<title level="m" type="main">Autoaugment: Learning augmentation policies from data</title>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">D</forename><surname>Cubuk</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Zoph</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Mane</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Vasudevan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Q</forename><forename type="middle">V</forename><surname>Le</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1805.09501</idno>
+		<imprint>
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b52">
+	<analytic>
+		<title level="a" type="main">Randaugment: Practical automated data augmentation with a reduced search space</title>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">D</forename><surname>Cubuk</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Zoph</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Shlens</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Q</forename><forename type="middle">V</forename><surname>Le</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF conference on computer vision and pattern recognition workshops</title>
+		<meeting>the IEEE/CVF conference on computer vision and pattern recognition workshops</meeting>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="page" from="702" to="703" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b53">
+	<analytic>
+		<title level="a" type="main">Adaaug: Learning class-and instance-adaptive data augmentation policies</title>
+		<author>
+			<persName><forename type="first">T.-H</forename><surname>Cheung</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D.-Y</forename><surname>Yeung</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Learning Representations</title>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b54">
+	<monogr>
+		<title level="m" type="main">Unsolved problems in ml safety</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Hendrycks</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Carlini</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Schulman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Steinhardt</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2109.13916</idno>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b55">
+	<analytic>
+		<title level="a" type="main">Autoaugment: Learning augmentation strategies from data</title>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">D</forename><surname>Cubuk</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Zoph</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Mane</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Vasudevan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Q</forename><forename type="middle">V</forename><surname>Le</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">CVPR</title>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b56">
+	<analytic>
+		<title level="a" type="main">Fast autoaugment</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Lim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Kim</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Advances in Neural Information Processing Systems</title>
+		<imprint>
+			<biblScope unit="volume">32</biblScope>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b57">
+	<analytic>
+		<title level="a" type="main">Imagenet: A large-scale hierarchical image database</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Deng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Dong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Socher</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Li</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">CVPR</title>
+		<imprint>
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b58">
+	<monogr>
+		<title level="m" type="main">Learning multiple layers of features from tiny images</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Krizhevsky</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Hinton</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2009">2009</date>
+		</imprint>
+		<respStmt>
+			<orgName>Uni. Toronto</orgName>
+		</respStmt>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b59">
+	<analytic>
+		<title level="a" type="main">Tiny imagenet visual recognition challenge</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Le</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Yang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">CS 231N</title>
+		<imprint>
+			<biblScope unit="volume">7</biblScope>
+			<biblScope unit="issue">7</biblScope>
+			<biblScope unit="page">3</biblScope>
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b60">
+	<analytic>
+		<title level="a" type="main">Automated flower classification over a large number of classes</title>
+		<author>
+			<persName><forename type="first">M.-E</forename><surname>Nilsback</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Zisserman</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Sixth Indian conference on computer vision, graphics &amp; image processing</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2008">2008. 2008</date>
+			<biblScope unit="page" from="722" to="729" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b61">
+	<analytic>
+		<title level="a" type="main">3d object representations for fine-grained categorization</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Krause</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Stark</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Deng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Fei-Fei</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">CVPRw</title>
+		<imprint>
+			<biblScope unit="page" from="554" to="561" />
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b62">
+	<monogr>
+		<title level="m" type="main">Fine-grained visual classification of aircraft</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Maji</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Rahtu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Kannala</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Blaschko</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Vedaldi</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1306.5151</idno>
+		<imprint>
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b63">
+	<analytic>
+		<title level="a" type="main">Deep hashing network for unsupervised domain adaptation</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Venkateswara</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Eusebio</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Chakraborty</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Panchanathan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE conference on computer vision and pattern recognition</title>
+		<meeting>the IEEE conference on computer vision and pattern recognition</meeting>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+			<biblScope unit="page" from="5018" to="5027" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b64">
+	<analytic>
+		<title level="a" type="main">Instructpix2pix: Learning to follow image editing instructions</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Brooks</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Holynski</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">A</forename><surname>Efros</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition</title>
+		<meeting>the IEEE/CVF Conference on Computer Vision and Pattern Recognition</meeting>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page" from="18" to="392" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b65">
+	<analytic>
+		<title level="a" type="main">Deep residual learning for image recognition</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Ren</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Sun</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">CVPR</title>
+		<imprint>
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b66">
+	<analytic>
+		<title level="a" type="main">Stylemix: Separating content and style for enhanced data augmentation</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Hong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Choi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Kim</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF conference on computer vision and pattern recognition</title>
+		<meeting>the IEEE/CVF conference on computer vision and pattern recognition</meeting>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="page" from="14" to="862" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b67">
+	<monogr>
+		<title level="m" type="main">Fast is better than free: Revisiting adversarial training</title>
+		<author>
+			<persName><forename type="first">E</forename><surname>Wong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Rice</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">Z</forename><surname>Kolter</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+			<publisher>ICLR</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b68">
+	<monogr>
+		<title level="m" type="main">Dada: Differentiable automatic data augmentation</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Hu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Hospedales</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">M</forename><surname>Robertson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Yang</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2003.03780</idno>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b69">
+	<analytic>
+		<title level="a" type="main">Learning to detect open classes for universal domain adaptation</title>
+		<author>
+			<persName><forename type="first">B</forename><surname>Fu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Cao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Long</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Wang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ECCV</title>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b70">
+	<analytic>
+		<title level="a" type="main">Universal domain adaptation through self supervision</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>Saito</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Sclaroff</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Saenko</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">NeurIPS</title>
+		<imprint>
+			<biblScope unit="page" from="16" to="282" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b71">
+	<analytic>
+		<title level="a" type="main">Domain consensus clustering for universal domain adaptation</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Kang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Zhu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Wei</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Yang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">CVPR</title>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b72">
+	<analytic>
+		<title level="a" type="main">Ovanet: One-vs-all network for universal domain adaptation</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>Saito</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Saenko</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ICCV</title>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b73">
+	<analytic>
+		<title level="a" type="main">Geometric anchor correspondence mining with uncertainty modeling for universal domain adaptation</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Lou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Bai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Deng</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">CVPR</title>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b74">
+	<analytic>
+		<title level="a" type="main">Unified optimal transport framework for universal domain adaptation</title>
+		<author>
+			<persName><forename type="first">W</forename><surname>Chang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Shi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Tuan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Wang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">NeurIPS</title>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b75">
+	<analytic>
+		<title level="a" type="main">Do we really need to access the source data? source hypothesis transfer for unsupervised domain adaptation</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Liang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Hu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Feng</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ICML. PMLR</title>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b76">
+	<analytic>
+		<title level="a" type="main">Lead: Learning decomposition for source-free universal domain adaptation</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Qu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Zou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>R Öhrbein</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Knoll</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Jiang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition</title>
+		<meeting>the IEEE/CVF Conference on Computer Vision and Pattern Recognition</meeting>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+			<biblScope unit="page" from="23" to="334" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b77">
+	<analytic>
+		<title level="a" type="main">Domainadversarial training of neural networks</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Ganin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Ustinova</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Ajakan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Germain</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Larochelle</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Laviolette</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>March</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Lempitsky</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of machine learning research</title>
+		<imprint>
+			<biblScope unit="volume">17</biblScope>
+			<biblScope unit="issue">59</biblScope>
+			<biblScope unit="page" from="1" to="35" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b78">
+	<analytic>
+		<title level="a" type="main">A review of domain adaptation without target labels</title>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">M</forename><surname>Kouw</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Loog</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE transactions on pattern analysis and machine intelligence</title>
+		<imprint>
+			<biblScope unit="volume">43</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="766" to="785" />
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b79">
+	<analytic>
+		<title level="a" type="main">Ovanet: One-vs-all network for universal domain adaptation</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>Saito</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Saenko</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the ieee/cvf international conference on computer vision</title>
+		<meeting>the ieee/cvf international conference on computer vision</meeting>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="page" from="9000" to="9009" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b80">
+	<analytic>
+		<title level="a" type="main">Universal domain adaptation</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>You</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Long</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Cao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">I</forename><surname>Jordan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF conference on computer vision and pattern recognition</title>
+		<meeting>the IEEE/CVF conference on computer vision and pattern recognition</meeting>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="page" from="2720" to="2729" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b81">
+	<analytic>
+		<title level="a" type="main">Universal domain adaptation through self supervision</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>Saito</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Sclaroff</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Saenko</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Advances in neural information processing systems</title>
+		<imprint>
+			<biblScope unit="volume">33</biblScope>
+			<biblScope unit="page" from="16" to="282" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b82">
+	<analytic>
+		<title level="a" type="main">Geometric anchor correspondence mining with uncertainty modeling for universal domain adaptation</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Lou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Bai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Deng</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition</title>
+		<meeting>the IEEE/CVF Conference on Computer Vision and Pattern Recognition</meeting>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page" from="16" to="134" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b83">
+	<analytic>
+		<title level="a" type="main">The eu general data protection regulation (gdpr)</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Voigt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Von</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Bussche</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">A Practical Guide</title>
+		<imprint>
+			<biblScope unit="volume">10</biblScope>
+			<biblScope unit="issue">3152676</biblScope>
+			<biblScope unit="page" from="10" to="5555" />
+			<date type="published" when="2017">2017</date>
+			<publisher>Springer International Publishing</publisher>
+			<pubPlace>Cham</pubPlace>
+		</imprint>
+	</monogr>
+	<note>1st Ed</note>
+</biblStruct>
+
+<biblStruct xml:id="b84">
+	<analytic>
+		<title level="a" type="main">Momentum contrast for unsupervised visual representation learning</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Fan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Xie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Girshick</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF conference on computer vision and pattern recognition</title>
+		<meeting>the IEEE/CVF conference on computer vision and pattern recognition</meeting>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="page" from="9729" to="9738" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b85">
+	<analytic>
+		<title level="a" type="main">Exploring simple siamese representation learning</title>
+		<author>
+			<persName><forename type="first">X</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>He</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF conference on computer vision and pattern recognition</title>
+		<meeting>the IEEE/CVF conference on computer vision and pattern recognition</meeting>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="page" from="15" to="750" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b86">
+	<analytic>
+		<title level="a" type="main">Grad-cam: Visual explanations from deep networks via gradient-based localization</title>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">R</forename><surname>Selvaraju</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Cogswell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Das</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Vedantam</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Parikh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Batra</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE international conference on computer vision</title>
+		<meeting>the IEEE international conference on computer vision</meeting>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+			<biblScope unit="page" from="618" to="626" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

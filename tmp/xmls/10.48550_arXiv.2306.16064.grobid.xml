@@ -1,0 +1,2117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Federated Generative Learning with Foundation Models</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability  status="unknown">
+					<licence/>
+				</availability>
+				<date type="published" when="2024-05-31">31 May 2024</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Jie</forename><surname>Zhang</surname></persName>
+							<email>jie.zhang@inf.ethz.ch</email>
+							<affiliation key="aff0">
+								<orgName type="institution" key="instit1">ETH Zurich</orgName>
+								<orgName type="institution" key="instit2">USTC</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Xiaohua</forename><surname>Qi</surname></persName>
+							<email>xhqi@mail.ustc.edu.cn</email>
+							<affiliation key="aff0">
+								<orgName type="institution" key="instit1">ETH Zurich</orgName>
+								<orgName type="institution" key="instit2">USTC</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Bo</forename><surname>Zhao</surname></persName>
+							<email>zhaobo@baai.ac.cn</email>
+							<affiliation key="aff0">
+								<orgName type="institution" key="instit1">ETH Zurich</orgName>
+								<orgName type="institution" key="instit2">USTC</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Federated Generative Learning with Foundation Models</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date type="published" when="2024-05-31">31 May 2024</date>
+						</imprint>
+					</monogr>
+					<idno type="MD5">2B9B63BF5793D345C5BB8E6FBF91E8E5</idno>
+					<idno type="arXiv">arXiv:2306.16064v2[cs.LG]</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.2-SNAPSHOT" ident="GROBID" when="2025-01-21T07:33+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Existing approaches in Federated Learning (FL) mainly focus on sending model parameters or gradients from clients to a server. However, these methods are plagued by significant inefficiency, privacy, and security concerns. Thanks to the emerging foundation generative models, we propose a novel federated learning framework, namely Federated Generative Learning. In this framework, each client can create text embeddings that are tailored to their local data, and send embeddings to the server. Then the informative training data can be synthesized remotely on the server using foundation generative models with these embeddings, which can benefit FL tasks. Our proposed framework offers several advantages, including increased communication efficiency, robustness to data heterogeneity, substantial performance improvements, and enhanced privacy protection. We validate these benefits through extensive experiments conducted on 12 datasets. For example, on the ImageNet100 dataset with a highly skewed data distribution, our method outperforms FedAvg by 12% in a single communication round, compared to FedAvg's performance over 200 communication rounds. We have released the code for all experiments conducted in this study 1 .</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">Introduction</head><p>Recently, significant progress has been achieved in many learning fields by scaling up to large models, i.e., BERT [8], GPT3 [2], ViT [10], CLIP [39], Stable Diffusion [42], and Web-scale datasets i.e., YFCC100M [51], CC-12M [6], . Typically, large models are first pre-trained with massive low-quality web data for basic capability, then finetuned with a small number of high-quality data, especially manually labeled data, for evoking the desired capability. Although Web data are easily accessible, high-quality training data remains scarce due to the fact that high-quality datasets are typically private or unsuitable for public release. For example, the process of labeling medical data is often costly, and the release of such data is sensitive due to safety and privacy concerns. Furthermore, raw data itself are often considered a valuable asset for numerous companies, rendering its acquisition impractical. Consequently, there is a pressing need for collaborative machine learning <ref type="bibr" target="#b10">[11,</ref><ref type="bibr" target="#b33">34,</ref><ref type="bibr" target="#b32">33]</ref> that is efficient and privacy-preserving. Federated Learning (FL) <ref type="bibr" target="#b31">[32]</ref> has been gaining a lot of attention as a potential way to protect user privacy in distributed machine learning. When it comes to practical applications, FL systems face a few challenges that impede their real-world implementation:</p><p>1. High communication cost. Current FL solutions require the transmission of model parameters or gradients between clients and the server <ref type="bibr" target="#b31">[32,</ref><ref type="bibr" target="#b62">63]</ref>. However, in the era of large models, these parameters are often in the billions or trillions, making their communication costly and even prohibitively expensive.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Figure <ref type="figure">1</ref>: For datasets such as subsets of ImageNet or DomainNet, our proposed method can achieve superior accuracy with only a single round of communication. In scenarios involving inherently challenging domains, including medical datasets and satellite imagery, our approach can still attain comparable performance with only five rounds of communication.</p><p>2. Data heterogeneity. In FL, a fundamental challenge arises from the presence of statistical heterogeneity among local data distributions across distinct clients, which leads to performance degradation <ref type="bibr" target="#b53">[54,</ref><ref type="bibr" target="#b61">62]</ref>. 3. Privacy and security risks. Traditional FL involves the transmission of model parameters or gradients between clients and server. However, once these model parameters are leaked, attackers can carry out model extraction attacks <ref type="bibr" target="#b23">[24]</ref>, member inference attacks <ref type="bibr" target="#b22">[23]</ref>, and other malicious activities <ref type="bibr" target="#b66">[67,</ref><ref type="bibr" target="#b60">61]</ref>, posing significant security threats to FL system <ref type="bibr" target="#b33">[34,</ref><ref type="bibr" target="#b29">30]</ref>.</p><p>Recent advances in foundation generative models, i.e., Stable diffusion <ref type="bibr" target="#b42">[43]</ref>, DALL-E2 <ref type="bibr" target="#b39">[40]</ref>, Imagen <ref type="bibr" target="#b45">[46]</ref>, and GLIDE <ref type="bibr" target="#b34">[35]</ref>, have provided a high-quality conditional text image synthesis that can be used to train models. These foundation generative models have been applied in various fields, including Computer Vision <ref type="bibr" target="#b0">[1,</ref><ref type="bibr" target="#b43">44]</ref>, Speech <ref type="bibr" target="#b30">[31,</ref><ref type="bibr" target="#b21">22]</ref>, and have achieved remarkable results.</p><p>In this paper, we propose a novel framework called Federated Generative Learning (FGL), which leverages powerful foundation generative models, e.g., Stable Diffusion <ref type="bibr" target="#b41">[42]</ref>, to synthesize highquality training data on the server based on the text embeddings collected from clients. We propose two customized prompt generation methods based on the characteristics of the client's data, and these prompts are then used as inputs to a specific text encoder to obtain corresponding text embeddings.</p><p>Once all text embeddings are collected from the clients, the server performs embedding aggregation and then synthesizes a high-quality substitute training dataset. This public synthetic dataset serves as a proxy for the clients' private data and can be used to train a global model on the server. In Figure <ref type="figure">1</ref>(a), our trained model in a single round outperforms FedAvg with 200 communication rounds on 8 popular datasets. We further demonstrate the effectiveness of FGL by presenting results on more complex satellite dataset and three medical datasets in Figure <ref type="figure">1</ref>(b). In summary, there are multiple benefits of FGL:</p><p>1. Low Communication Cost. Compared to previous methods that rely on multi-round communication of model parameters or gradients, our method requires only one or a few communication rounds (e.g., 5 rounds) between clients and the server. Despite this efficiency, our method is able to achieve performance that is on par with the existing methods. 2. Robust to Data Heterogeneity. Since our method only requires clients <ref type="foot" target="#foot_1">2</ref> to upload text embeddings corresponding to their local training data, it allows the server to collect embeddings from all clients and synthesize all training data in one communication round. Based on the well-synthesised data, our method exhibits insensitivity to the data distribution. 3. Better privacy-preserving: Previous FL methods are vulnerable to various attacks because they always transmit model parameters/gradients during the learning process. In contrast, our method only transmits text embeddings in the first round <ref type="foot" target="#foot_2">3</ref> . In Section 3.4, we conduct a thorough privacy analysis on two aspects: (1) whether the synthetic data reveals private data information visually and (2) whether the model trained on the synthetic data is resilient against privacy attacks (e.g., membership inference attack <ref type="bibr" target="#b47">[48]</ref>).</p><p>2 Federated Generative Learning Notes: We implemented FGL in both a single communication round and five communication rounds.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Framework Overview</head><p>The overall framework of the proposed Federated Generative Learning framework is illustrated in Figure <ref type="figure" target="#fig_1">2</ref>. Unlike traditional FL methods that transmit features, parameters, or gradients, our approach transmits text embeddings corresponding to the private data in clients to the server, thus being better privacy-preserving and communication-efficient. Then the training data is synthesized based on the aggregated text embeddings in the server with the foundation diffusion model. The synthetic training data are jointly used to train models, thus can relieve data heterogeneity problem and improve performance. Our framework has the capability to execute one-shot FL, eliminating the need for clients to train models on their local devices. Additionally, we demonstrate an extension that incorporates five communication rounds, resulting in better results. Since the generative model has never seen any private data from clients, and all synthetic data is generated and stored on the server, FGL does not necessitate additional computation resources on the client-side and does not compromise clients' privacy. The Pytorch-like pseudocode of our method is presented in Algorithm 1.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.1">Federated Learning Setting</head><p>In FL, we have K clients with their private datasets</p><formula xml:id="formula_0">D k = {(x i , y i )} N k i=1</formula><p>, where x i is the training image, y i is its label, Y k is the label set, and N k is the number of training samples in k-th client.</p><p>Note that the label sets of different clients may be different. The objective of the federated learning framework is to learn a model parameterized with θ in the server that minimizes the loss on training data of all clients without access to original data: min θ</p><formula xml:id="formula_1">1 K K k=1 E x∼D k [l k (θ; x)],</formula><p>where, l k is the loss function for the k-th client. In this study, we explore the scenario wherein each client transfers text embeddings to the server. Subsequently, we leverage a foundational generative model on the server to generate a set of synthetic data, which can be utilized for pretraining a global model.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.2">Text Embedding Generation and Aggregation</head><p>We investigate two types of prompt generation: class-level prompt and instance-level prompt:</p><p>• The class-level prompts are generated based on class names, providing high-level guidance to the generative model. For example, for each client, we generate a prompt like 'A photo of a {class name}' for each data. Various images with different types of noise can be generated using each prompt at the class level. • The instance-level prompt strategy leverages prompts that are tailored for individual instances in the private dataset, which are more informative for training models. We use BLIP-v2 <ref type="bibr" target="#b24">[25]</ref> to generate captions for each real image as the instance-level prompt (see Figure <ref type="figure" target="#fig_1">2(b)</ref>).</p><p>Once the client generates all the prompts, these prompts can be used as inputs to a specific pretrained text encoder (e.g., from CLIP <ref type="bibr" target="#b38">[39]</ref>) to generate all the corresponding embeddings.</p><p>Basically, given a data point (x, y), we first generate its corresponding prompt, denoted as p. Then, we create the text embedding e based on the prompt p. After receiving all (e, y) from all clients, the server aggregates them for data synthesis with foundation generative models. By default, we use the Stable Diffusion as the generative model, and in Table <ref type="table" target="#tab_4">3</ref>, we present the results obtained using different generative models.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.3">Training Set Synthesis</head><p>After receiving all text embeddings, the server synthesizes every training sample s i by prompting the pre-trained Stable Diffusion with each e i as follows:</p><formula xml:id="formula_2">s i = G(z i , e i ) = β T t=1 1 -β t • G θt (z i , e i ) √ T ,<label>(1)</label></formula><p>where z i is a random noise vector, e i is the text embeddings, and G θt is the denoising network parameterized with θ t at time step t. The hyperparameter β controls the trade-off between image quality and diversity, and T is the number of diffusion steps. The inference process iteratively denoises the image then outputs the final synthetic training image. Finally, the server generates the synthetic training set S = {(s i , y i )} N i=1 . Note that it is easy to synthesize more diverse training samples by combining multiple random noises with the sample prompt, thus training better models. In practice, we can adjust the number of synthetic training samples to trade-off the computational cost and performance.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.4">Model Updating</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.4.1">One-shot Updating</head><p>We first show the efficacy of our approach in the context of one-shot federated learning <ref type="bibr" target="#b11">[12,</ref><ref type="bibr" target="#b59">60]</ref>. This involves a central server learning a global model over a network of federated devices in a single round of communication. Once the synthetic training set S = {(s i , y i )} N i=1 is obtained, we proceed to train a global model using only the synthetic data S on the server. Subsequently, the trained model is sent to each client as the initial model. Robust to heterogeneous data and improved initial model. Since collecting text embeddings during the initial round of communication is not affected by the varying data distribution. Therefore, our results remain consistent in different non-IID settings for one-shot FL. In Figure <ref type="figure" target="#fig_2">3</ref>, we have empirically demonstrated that FGL provides a well-trained initial model to each client at the first communication round. Consequently, in certain datasets, the performance of our method even exceeds that of central training after several rounds of communication (see Section 3.2 for the results).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.4.2">Multi-round Updating</head><p>Our method can also implement multi-round communication like traditional FL methods, which can bring further performance improvement. Since the one-shot results have already shown satisfactory performance, we assume that the multi-rounds of FGL with only 5 communication rounds will also be sufficient, as additional communication rounds are considered unnecessary. We further showcase the utility of server-side synthesized data in mitigating the forgetting problem that arises after model aggregation in highly non-IID scenarios <ref type="bibr" target="#b19">[20,</ref><ref type="bibr" target="#b61">62]</ref>. Thus, for the multi-round FGL, we have implemented two versions: (1) directly utilizing the averaged model parameters without synthesized data; and (2) employing synthesized data for fine-tuning at the server-side, which is particularly useful for highly skewed data distributions. Note that the initial model is trained on the synthetic training set in the first-round communication for both two versions.</p><p>Without Synthetic Data. After the first round communication, each client receives the updated model from the server and then locally fine-tuning on it on private real training data, i.e., θ k . After locally fine-tuning, the server collects updated models from all clients for model aggregation, which is formulated as θ = 1 K K k=1 θ k , same as FedAvg. In other words, the server only aggregates models after the first round of communication. This process is repeated until the model reaching the maximum communication rounds.</p><p>With Synthetic Data. In the context of few-round communication scenarios, we find that training the aggregated model on synthesized data at the server-side can effectively mitigate the issue of forgetting <ref type="bibr" target="#b19">[20]</ref> after aggregation, albeit at the expense of additional computational overhead. Specifically, fine-tuning the aggregated model on a synthetic training set in each communication round yields a substantial improvement in performance, particularly when dealing with highly imbalanced data distributions among clients. More results are provided in Figure <ref type="figure" target="#fig_3">4</ref>.</p><p>Limitations of FGL. FGL relies on powerful pretrained generative models. For FL tasks that have a similar data domains to the generative model's training data, FGL can yield decent performance in a single round. However, for very challenging data domains that may not be common in the generative model's training data, such as medical data, it requires a few more rounds to achieve satisfactory results. Further improvements can consider fine-tuning the generative model locally to better adapt to the specific data domain.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">Experimental Results</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1">Experimental Setups</head><p>Data Partition: Follow the setting in <ref type="bibr" target="#b17">[18,</ref><ref type="bibr" target="#b25">26]</ref>, we adopt two data partition settings, namely, label distribution skew and feature distribution skew:</p><p>• Label Distribution Skew: Following in <ref type="bibr" target="#b61">[62]</ref>, in which the label distributions varies on different clients, we employ the Dirichlet distribution p ∼ Dir(β) to simulate imbalanced label distributions. The hyper-parameter β controls the degree of label imbalance, where a smaller value of β indicates a more skewed label distribution. • Feature Distribution Skew: In this setting, clients share the same label space while having a different feature distribution, which has been extensively studied in previous work <ref type="bibr" target="#b27">[28,</ref><ref type="bibr" target="#b64">65,</ref><ref type="bibr" target="#b56">57,</ref><ref type="bibr" target="#b10">11]</ref>. We perform the classification task on natural images sourced from DomainNet <ref type="bibr" target="#b37">[38]</ref>, which consists of diverse distributions of natural images from six distinct data sources.</p><p>Baselines: In our experiments, we select the popular FedAvg <ref type="bibr" target="#b31">[32]</ref> method and centralized training as the baselines by default <ref type="foot" target="#foot_3">4</ref> . Assume that we have a total of 5 clients<ref type="foot" target="#foot_4">foot_4</ref> and that every client participates in communication. For both centralized training and federated learning, the local learning rate is set to 0.01, and we utilize the SGD optimizer with a momentum of 0.9. During the FedAvg training ). In the one-round communication scenario, we train the model for 120 epochs on the server. In the five-round communication scenario, we implement two variations: (1) Ours (5-round): based on the model trained in the first round, we perform four additional rounds of communication using the FedAvg algorithm. ( <ref type="formula">2</ref>) Ours (5-round-syn) : for extreme data distribution skew scenario, we further finetune the aggregated model using the synthetic dataset generated on the server during the first round for all five epochs. Please refer to Appendix 6.1 for more details on implementation and datasets.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2">Results for Label Distribution Skew</head><p>To evaluate the efficacy of our method on datasets with label distribution skew, we conduct experiments on five subsets of 224×224 ImageNet <ref type="bibr" target="#b44">[45]</ref>. Firstly, following <ref type="bibr" target="#b15">[16,</ref><ref type="bibr" target="#b4">5]</ref>, we do experiments on four datasets with 10 categories each, namely the coarse-grained ImageNette and ImageYellow, and the fine-grained ImageFruit and ImageSquawk. We further conducted experiments on ImageNet100, involving 100 categories. Also, we conducted experiments on two fine-grained image classification datasets, namely CUB-200 <ref type="bibr" target="#b52">[53]</ref>, Stanford Cars <ref type="bibr" target="#b18">[19]</ref>. We simulate three distinct dataset distributions, i.e., IID, non-IID (β = 0.5) and highly skewed distribution with β = 0.01.</p><p>The overall experimental results are shown in Table <ref type="table" target="#tab_1">1</ref>. It is evident that our method with one-round communication outperforms the FedAvg method with 200 rounds of communication, by 6.0%, 16.2%, 7.8% and 9.0% on the four 10-category datasets in IID setting. Notably, our method is completely insensitive to data distribution in the first round. Hence, under extreme data distribution, i.e., β = 0.01, our method surpasses FedAvg by 33.6%, 42.8%, 31.8% and 39.2% on the four 10-category ImageNet subsets respectively. Also, our method outperforms FedAvg by a minimum of 30% on ImageNet100, CUB-200, and Stanford Cars, after 5 rounds of communication, and even exceeds the performance of centralized training on these datasets.   Results on Highly Skewed Data. Table <ref type="table" target="#tab_1">1</ref> shows that when the data distribution is extremely skewed (β = 0.01), Ours (5-round) does not outperform Ours (one-shot) on Imagenette, ImageFruit, and ImageYellow datasets. We attribute this phenomenon to the fact that in case of highly skewed data distribution, more rounds of communication are required for the models to converge gradually <ref type="bibr" target="#b62">[63,</ref><ref type="bibr" target="#b53">54]</ref>. To achieve better results within five rounds, we perform finetuning on the aggregated model using the synthesized dataset from the first round on the server for 5 epochs before distributing the updated model. The results are presented in Figure <ref type="figure" target="#fig_3">4</ref>, which clearly demonstrate that fine-tuning on our synthesized dataset can significantly enhance model performance even with extreme data distribution.  Number of Synthetic Data. By comparing the results of 1.3k synthetic images per class in Appendix (Fig. <ref type="figure">11</ref>) and 20k synthetic images per class Table <ref type="table" target="#tab_1">1</ref>, we find the performance of our method can significantly improve by synthesizing more training samples, i.e., from 73.2% to 85.2% on the Imagenette dataset. We further study the influence of synthetic image number and model performance in Figure <ref type="figure" target="#fig_5">5</ref> on four 10-category datasets. We synthesize more images per class by integrating the prompts and more random noises. Obviously, as the number of images per class increases from 2k to 20k, the test accuracy improves consistently.</p><p>real data synthetic data </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results on Medical and Satellite Datasets</head><p>We further show the performance of our method on datasets with challenging domains such as medical datasets and satellite images to explore the limits of our approach. Figure <ref type="figure">1</ref>(b) illustrates the performance of Fe-dAvg and our proposed method on the EuroSAT <ref type="bibr" target="#b14">[15]</ref> satellite dataset as well as three medical datasets, namely COVID-19 X-rays <ref type="bibr" target="#b6">[7]</ref>, BloodMNIST and DermaMNIST <ref type="bibr" target="#b54">[55]</ref>. Our method demonstrates comparable performance to FedAvg (200-round) after 5 communication rounds on both medical and satellite datasets. Figure <ref type="figure" target="#fig_6">6</ref> presents the visualization of the synthetic and real data, highlighting the difficulties encountered in generating data for these challenging domains. The capability of the generative model is somewhat diminished in these scenarios. Please refer to the Appendix (Table <ref type="table">9</ref>) for more detailed results under different non-IID settings.</p><p>Takeaways: The quality of synthetic data may be influenced by the domain discrepancy between the local training data and the pretraining data used for the foundation model. This discrepancy ultimately limits the performance of FGL. One potential solution is to finetune the foundation model using local data, however, this could potentially raise privacy concerns. We leave it for future research.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.3">Results for Feature Distribution Skew</head><p>To simulate the scenario of feature distribution skew, we select 10 categories from the DomainNet dataset to conduct experiments . Each client is assigned a specific domain, and we have a total of 6 clients participating in FL. To ensure an adequate amount of data, we synthesize 3,500 samples for each class within each domain, resulting in a cumulative dataset of 210k samples. Table <ref type="table" target="#tab_3">2</ref> presents the performance of various methods on six domains respectively and their average accuracy. It shows that in the one-shot communication scenario, our method outperforms FedAvg by 2% to 19% in five domains, but exhibits notably poor performance in the Quickdraw domain. To investigate the underlying reason, we visualize the synthetic and real data in Appendix 6.2.1. It becomes apparent that this performance decline is attributed to the difficulty for diffusion model to synthesize images that align with Quickdraw domain when using the class-level prompt, i.e., "A black and white drawing of a {class name}". We present the results of the generative model on medical and satellite datasets in Figure <ref type="figure" target="#fig_6">6</ref>, which also demonstrate the limited synthetic capability of the generative model in challenging domains.</p><p>However, when implementing a five-round communication experiment, our method demonstrates a 2.2% performance improvement over FedAvg specifically on the Quickdraw domain, and an overall performance improvement of 11.75%. Interestingly, our method even surpasses the performance of the centralized training models by 5.95%. We provide further results on each domain in Appendix 6.2.2, and more visualizations of synthetic data on DomainNet and ImageNet are shown in Appendix 6.2.3.  Membership Inference Attack (MIA). The objective of MIA is to examine whether a specific data point belongs to the training set used to train a machine learning model. Given that Ours (one-shot) does not depend on real training data, it is reasonable to assume that it may not encounter any privacy leakage. However, since Ours (5-round) and FedAvg both utilize private data for training, we present the MIA results on ImageNette using the low false-positive rate regime, as recommended by the state-of-the-art Likelihood Ratio Attack (LiRA) <ref type="bibr" target="#b2">[3]</ref>. As show in Figure <ref type="figure" target="#fig_8">7</ref>, when employing the LiRA against models trained using private data (i.e., FedAvg) and synthetic data (i.e., Ours (5-round)), the latter exhibits a stronger defense against membership inference attacks. This can be attributed to the fact that our model, trained on synthetic data, exhibits minimal information leakage.  from each of the four datasets. These images exhibit no noteworthy similarities in background and foreground, which verifies FGL doesn't compromise privacy of the client's private data.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.4">Privacy Analysis</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.5">Ablation Study</head><p>Varying the Generative Models. To investigate the impact of various generative models on the results, we followed the setting in <ref type="bibr" target="#b28">[29]</ref>. Our experiments primarily focus on three prevalent conditional diffusion models: DiT <ref type="bibr" target="#b36">[37]</ref>, GLIDE <ref type="bibr" target="#b35">[36]</ref>, and Stable Diffusion. We use these off-the-shelf models to generate synthetic images. Specifically, for GLIDE and Stable Diffusion, the prompt was configured as "a photo of {label name}, real-world images, high resolution". For DiT, the input comprised the label ID corresponding to the ImageNet1k dataset. The images synthesized by DiT and GLIDE are of dimensions 256x256, whereas those produced by Stable Diffusion are of dimensions 512x512. As shown in Table <ref type="table" target="#tab_4">3</ref>, even when we vary the foundation models used in our method, FGL consistently outperforms FedAvg by a significant margin.</p><p>Results on more clients and more baselines To demonstrate the scalability of our method to a larger number of clients, we extended our analysis to include the results obtained from the Im-ageNette dataset with 50 and 100 clients. As depicted in Table <ref type="table" target="#tab_5">4</ref> (see the appendix), our method continues to exhibit superior performance compared to FedAvg across all scenarios. Additionally, the improvements achieved by our method remain significant. Also, we have compared the two popular FL methods, Moon <ref type="bibr" target="#b26">[27]</ref> and Fedopt <ref type="bibr" target="#b40">[41]</ref>. We conducted experiments on the ImageNette and ImageNet100 datasets, considering a scenario with 50 clients under non-IID settings (β = 0.5). As shown in the Table <ref type="table">8</ref> (see the appendix), our method still outperforms other FL approaches.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">Related Work</head><p>Foundation Generative Models. Large generative models, such as Stable Diffusion <ref type="bibr" target="#b42">[43]</ref>, DALL-E2 <ref type="bibr" target="#b39">[40]</ref>, Imagen <ref type="bibr" target="#b45">[46]</ref>, and GLIDE <ref type="bibr" target="#b34">[35]</ref>, have recently emerged as an off-the-shelf tool for high-quality and real-looking image generation conditioned on text prompts. A few works have explored the usage of synthetic images as training data. For example, He et al. <ref type="bibr" target="#b13">[14]</ref> show that synthetic data generated by diffusion models can improve pretraining, zero-shot, and few-shot image classification performance. Li <ref type="bibr" target="#b28">[29]</ref> demonstrate that synthetic data generated by conditional diffusion models can be used for knowledge distillation without original data. Zhou <ref type="bibr" target="#b63">[64]</ref> synthesize better images for model training with stable diffusion by implementing diffusion inversion.</p><p>Foundation Models in FL. The foundation generative models are still under-explored in federated learning, though there exist a few related works that study foundation models in federated learning.</p><p>The most similar one is <ref type="bibr" target="#b55">[56]</ref>, which takes advantage of the diffusion model in the server to synthesize training samples that complied to the distributions of domain-specific features from clients. Yu et al. <ref type="bibr" target="#b57">[58]</ref> introduce federated learning into foundation model training for training foundation models collaboratively with private data. Like traditional FL methods, they also transmit model parameters between servers and clients. Based on the shared CLIP model, Guo et al. <ref type="bibr" target="#b12">[13]</ref> transmit the small number of updated parameters of the prompt learner from clients to the server to reduce the communication cost.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">Conclusion</head><p>In this work, we introduce a pioneering framework, named Federated Generative Learning, which transmits prompts associated with distributed training data between clients and the server. By leveraging foundation generative models, informative training data can be synthesized remotely using received prompts that contain minimal privacy. The proposed framework exhibits several noteworthy advantages, including improved communication efficiency, better resilience to distribution shift, substantial performance gains, and enhanced privacy protection. In this section, we present the configurations for prompt generation when synthesizing data for the ImageNet and DomainNet datasets. As depicted in Table <ref type="table" target="#tab_6">5</ref>, for class-level prompt generation on ImageNet-like datasets, the prompt template consists of the label followed by ", real-world images, high resolution." Examples of generated prompts include "tench, real world images, high resolution" and "English springer, real world images, high resolution." On DomainNet Subset datasets, the prompt template comprises the label and style, where the label represents the category name, and the style describes the domain. Examples of generated prompts in this context are "an airplane, Sketch drawing with only one object in the picture" and "an airplane, real world images, high resolution, with only one object in the picture."</p><p>For instance-level prompt generation on ImageNet Subset datasets, the prompt template consists of the label followed by ", " and the image caption followed by ", real-world images, high resolution." Here, the label represents the category name, and image caption corresponds to the textual description of the image generated by BLIPv2. Examples of generated prompts include "tench, Tinca tinca, a man kneeling down holding a fish in the grass" and "tench, Tinca tinca, a man kneeling down holding a large fish in the water."</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.1.2">Dataset Description</head><p>In this section, we provide a detailed description of the datasets used in our experiments. The datasets include the DomainNet Subset, lmageNette, lmageFruit, lmageYellow, lmageSquawk, ImageNet100, Eurosat, COVID-19 X-rays, BloodMNIST and DermaMNIST. DomainNet Subset: This subset is selected from the DomainNet dataset and consists of ten categories spanning six different domains. Refer to Table <ref type="table" target="#tab_7">6</ref> for detailed class and domain names. ImageNet Subset: These datasets are subsets extracted from ImageNet, including lmageNette, lmageFruit, lmageYellow, lmageSquawk, and ImageNet100. Refer to Table <ref type="table" target="#tab_8">7</ref> for details on class names and class IDs.   <ref type="bibr" target="#b54">[55]</ref>, a comprehensive MNIST-like compilation of standardized biomedical images.The DermaMNIST dataset originates from HAM10000, a vast collection of dermatoscopic images of common pigmented skin lesions from multiple sources. The dataset comprises 10,015 dermatoscopic images categorized into seven different diseases, structured as a multi-class classification task. We follow the official partitioning of training, validation, and test sets with a ratio of 7:1:2. The image dimensions are uniform at 3 × 28 × 28, and for synthesized data, we resize to 3 × 28 × 28 for training.The BloodMNIST dataset is derived from individual normal cells captured from individuals devoid of infection, hematologic or oncologic diseases, and without any pharmacologic treatment at the time of blood collection. Comprising a total of 17,092 images distributed across eight classes, we adopt the official partitioning with a ratio of 7:1:2 for training, validation, and test sets. The image dimensions are consistently 3 × 28 × 28, and for synthesized data, we resize to 3 × 28 × 28 during training.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.2">Additional Experiments</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.2.1">Synthetic Data Visualization on Quickdraw Domain</head><p>To investigate the reasons behind the notably poor performance in the Quickdraw domain, we visualize both synthetic and real data for the Painting and QuickDraw domains of the DomainNet dataset in Figure <ref type="figure" target="#fig_10">9</ref>. The first and second rows correspond to real data and synthetic data for the Painting Domain, respectively. It is evident that the synthetic data closely resembles the real data in style, which results in the model performing well in this domain. The third and fourth rows represent real data and synthetic data for the Quickdraw Domain, respectively. Notably, there is a substantial stylistic difference between the synthetic data and real data in this domain, providing an explanation for the poor model performance. In this section, we compare the performance of the "Centralized" and "Ours (One-shot)" methods on the DomainNet dataset across different domains during the training process. The experimental results, as shown in Figure <ref type="figure">10</ref>, demonstrate that, except for the "Quickdraw" domain, Ours (One-shot) outperforms the Centralized Training in five domains. Particularly, in the "Painting" domain, our method achieves a significant performance improvement. We provide further explanation about the performance gap in "Quickdraw" domain through visualization in the following section. </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head></head><label></label><figDesc>Results on satellite datasets and medical datasets.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 2 :</head><label>2</label><figDesc>Figure 2: Training pipeline of FGL. Firstly, the text embeddings from clients are uploaded and then aggregated on the server. Then, stable diffusion is used to generate synthetic data to train the global model. Finally, the updated model are distributed to all clients. In the subfigure on the right, we present a detailed process of generating text embeddings.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 3 :</head><label>3</label><figDesc>Figure 3: Accuracy gap when loading a pretrained model or training from scratch.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 4 :</head><label>4</label><figDesc>Figure 4: Accuracy on highly skewed data.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Figure 5 :</head><label>5</label><figDesc>Figure 5: Varying synthetic data volume.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>Figure 6 :</head><label>6</label><figDesc>Figure 6: Visualization of real data and synthetic data, where the datasets EuroSAT, BloodMNIST, COVID-19 X-rays, and Der-maMNIST are displayed from top to bottom.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_8"><head>Figure 7 :</head><label>7</label><figDesc>Figure 7: Attack results under LiRA for models trained on real data and synthetic data. A total of 32 shadow models were trained, ensuring that each sample was trained on half of these models.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_9"><head>Figure 8 :</head><label>8</label><figDesc>Figure 8: Retrieving similar real images for each synthetic image.Detecting Content Replication and Memorization.Previous research<ref type="bibr" target="#b3">[4,</ref><ref type="bibr" target="#b58">59,</ref><ref type="bibr" target="#b51">52,</ref><ref type="bibr" target="#b49">50,</ref><ref type="bibr" target="#b48">49]</ref> has indicated that diffusion models store and reproduce specific images from their training dataset during the generation process. Although our training process (with class-level prompts) does not access the private data of clients, we still discuss the potential privacy risks that may arise. Follow the setting in<ref type="bibr" target="#b48">[49]</ref>, we conduct image retrieval experiments, which allows us to compare the synthetic images with the original training images and detect any instances of content duplication. We perform a quantitative analysis on 1000 synthetic images across four datasets. For each synthetic image, we search the training set by computing the Cosine similarity between its feature and features of real training images. Figure8showcases the top 2 most similar images</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_10"><head>Figure 9 :</head><label>9</label><figDesc>Figure 9: Visualization of original and synthetic data on the Painting and QuickDraw domains of DomainNet dataset. Obviously, it is easy for diffusion model to synthesize painting-like images, while challenging to synthesize images with QuickDraw style.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_11"><head>Figure 13 :</head><label>13</label><figDesc>Figure 13: Visualization of synthetic images of six domains from DomainNet dataset.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1"><head>Table 1 :</head><label>1</label><figDesc>Performance comparison among different methods on 7 datasets. The improvement ↑ is compared to FedAvg IID results. We employ the class-level prompt by default, which does not directly utilize local data information, thus providing enhanced privacy protection. We use Stable Diffusion v2-1-base model to construct synthetic data. We evaluate the performance of our method in scenarios of</figDesc><table><row><cell>Dataset</cell><cell cols="3">FedAvg β = 0.01 β = 0.5 IID</cell><cell>Ours (one-shot)</cell><cell cols="3">Ours (5-round) β = 0.01 β = 0.5</cell><cell>IID</cell><cell>Centralized</cell></row><row><cell>ImageNette</cell><cell>51.6</cell><cell>75.0</cell><cell>79.2</cell><cell>85.2 ↑6.0</cell><cell>82.8</cell><cell>94.0</cell><cell cols="2">95.6 ↑16.4</cell><cell>92.2</cell></row><row><cell>ImageFruit</cell><cell>29.0</cell><cell>51.2</cell><cell>55.6</cell><cell>71.8 ↑16.2</cell><cell>67.2</cell><cell>80.2</cell><cell cols="2">83.2 ↑27.6</cell><cell>78.2</cell></row><row><cell>ImageYellow</cell><cell>50.6</cell><cell>70.2</cell><cell>74.6</cell><cell>82.4 ↑7.8</cell><cell>79.4</cell><cell>91.0</cell><cell cols="2">94.8 ↑20.2</cell><cell>90.8</cell></row><row><cell>ImageSquawk</cell><cell>49.6</cell><cell>73.2</cell><cell>79.8</cell><cell>88.8 ↑9.0</cell><cell>90.0</cell><cell>95.0</cell><cell cols="2">95.6 ↑15.8</cell><cell>92.4</cell></row><row><cell>ImageNet100</cell><cell>36.3</cell><cell>44.6</cell><cell>49.4</cell><cell>48.4 ↓1.0</cell><cell>70.1</cell><cell>74.9</cell><cell cols="2">80.1 ↑30.7</cell><cell>77.0</cell></row><row><cell>CUB-200</cell><cell>35.0</cell><cell>36.6</cell><cell>36.6</cell><cell>44.6 ↑8.0</cell><cell>67.7</cell><cell>71.9</cell><cell cols="2">73.3 ↑37.3</cell><cell>48.3</cell></row><row><cell>Stanford Cars</cell><cell>-</cell><cell>42.4</cell><cell>44.5</cell><cell>54.23 ↑9.7</cell><cell>85.4</cell><cell>88.0</cell><cell cols="2">88.8 ↑44.3</cell><cell>64.7</cell></row><row><cell cols="10">process, each client performs local updates for 5 epochs, and the communication round is set to 200.</cell></row><row><cell cols="6">The centralized training consists of 120 rounds of iterations.</cell><cell></cell><cell></cell><cell></cell></row><row><cell>Implementation:</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row></table><note><p><p>one-round (i.e., Ours (one-shot)) and five-round communications (i.e., Ours</p>(5-round)</p></note></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2"><head></head><label></label><figDesc>In the first round of communication, FGL generates a set of synthetic data to train a model, which serves as an excellent initial model. Unlike 'out-of-domain' datasets such as ImageNet, this smaller 'in-domain' synthetic data exhibits remarkable performance in FL tasks.</figDesc><table><row><cell></cell><cell></cell><cell>Non-IID (0.01)</cell></row><row><cell></cell><cell>80</cell></row><row><cell>Test Accuracy</cell><cell>20 40 60</cell></row><row><cell></cell><cell>0</cell><cell>ImageNette ImageFruit ImageYellow ImageSquawk FedAvg Ours (5-round) Ours (5-round-syn)</cell></row><row><cell>Why does training with synthetic data yield bet-</cell><cell></cell></row><row><cell>ter results? CUB-200 is a challenging dataset con-</cell><cell></cell></row><row><cell>sisting of 200 bird species with 11,788 images, and</cell><cell></cell></row><row><cell>Cars contains 16,185 images belonging to 196 classes</cell><cell></cell></row><row><cell>of cars. The size of these fine-grained recognition</cell><cell></cell></row><row><cell>datasets is typically smaller compared to general im-</cell><cell></cell></row><row><cell>age classification datasets. In previous work [66, 9],</cell><cell></cell></row><row><cell>a common practice is to utilize a pretrained model</cell><cell></cell></row><row><cell>that has been trained on the ImageNet dataset. In this</cell><cell></cell></row></table><note><p><p><p><p>study, we present two approaches: training the model from scratch and loading a pretrained ResNet34 model. Note that ImageNet has approximately 1.2M training data, but we only use about 0.18M images. We present the accuracy gap between FGL and FedAvg in Figure</p>3</p>. It is evident that by directly loading a model pre-trained on ImageNet, the accuracy gap can be significantly reduced.</p>Takeaways:</p></note></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_3"><head>Table 2 :</head><label>2</label><figDesc>Performance for feature distribution skew. Each client hosts data from a specific domain of DomainNet dataset. 83.40 ↑2.43 49.58 ↑7.68 76.88 ↑19.55 51.80 ↓27.13 87.06 ↑6.5 81.10 ↑11.04 71.59 ↓0.71 Ours (5-round) 90.89 ↑9.92 61.61 ↑19.71 79.52 ↑22.19 81.13 ↑2.2 91.13 ↑10.57 90.20 ↑20.14 84.05 ↑11.75</figDesc><table><row><cell>Method</cell><cell>Clipart</cell><cell>Infograph</cell><cell>Painting</cell><cell>Quickdraw</cell><cell>Real</cell><cell>Sketch</cell><cell>Average</cell></row><row><cell>FedAvg</cell><cell>80.97</cell><cell>41.90</cell><cell>57.33</cell><cell>78.93</cell><cell>80.56</cell><cell>70.06</cell><cell>72.30</cell></row><row><cell>Centralized</cell><cell>81.37</cell><cell>50.82</cell><cell>60.63</cell><cell>92.46</cell><cell>82.20</cell><cell>73.93</cell><cell>78.10</cell></row><row><cell>Ours (one-shot)</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_4"><head>Table 3 :</head><label>3</label><figDesc>Ablation study on the generative model used in FGL.</figDesc><table><row><cell>Method</cell><cell>one-shot</cell><cell>5-round, β = 0.01</cell><cell>5-round, β = 0.5</cell><cell cols="2">IID Centralized</cell></row><row><cell>Ours w/ SD</cell><cell>85.2</cell><cell>82.8</cell><cell>94.1</cell><cell>95.6</cell><cell>92.2</cell></row><row><cell>Ours w/ Glide</cell><cell>79.0</cell><cell>76.2</cell><cell>89.4</cell><cell>89.4</cell><cell>92.2</cell></row><row><cell>Ours w/ Dit</cell><cell>76.2</cell><cell>74.6</cell><cell>90.2</cell><cell>92.8</cell><cell>92.2</cell></row><row><cell>FedAvg (120-round)</cell><cell>-</cell><cell>51.6</cell><cell>75.1</cell><cell>79.2</cell><cell>92.2</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_5"><head>Table 4 :</head><label>4</label><figDesc>Results on more clients.</figDesc><table><row><cell></cell><cell></cell><cell>FedAvg</cell><cell cols="4">Ours (one-shot) Ours (5-round) Centralized</cell></row><row><cell cols="3">Client β = 0.5 FedAvg (IID)</cell><cell></cell><cell cols="2">β = 0.5 IID</cell><cell></cell></row><row><cell>5</cell><cell>75</cell><cell>79.2</cell><cell>85.2</cell><cell>94</cell><cell>95.6</cell><cell>92.2</cell></row><row><cell>50</cell><cell>72</cell><cell>77.0</cell><cell>85.2</cell><cell>93.8</cell><cell>91.2</cell><cell>92.2</cell></row><row><cell>100</cell><cell>70.0</cell><cell>67.2</cell><cell>85.2</cell><cell>92.8</cell><cell>93.2</cell><cell>92.2</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_6"><head>Table 5 :</head><label>5</label><figDesc>Examples of prompt generation patterns for Class-Level and Instance-Level prompting</figDesc><table><row><cell>Prompt Type</cell><cell>Dataset</cell><cell>Prompt Template</cell><cell>Prompt Example</cell></row><row><cell>Class Level</cell><cell>ImageNet Subset</cell><cell>label + ', real world images</cell><cell>tench, real world images,</cell></row><row><cell></cell><cell></cell><cell>, high resolution'</cell><cell>high resolution</cell></row><row><cell>Class Level</cell><cell>DomainNet Subset</cell><cell>label + style</cell><cell>an airplane, Sketch drawing</cell></row><row><cell></cell><cell></cell><cell></cell><cell>with only one object in the picture</cell></row><row><cell>Instance Level</cell><cell>ImageNet Subset</cell><cell>label + ', ' + image caption + ',</cell><cell>tench, Tinca tinca, a man</cell></row><row><cell></cell><cell></cell><cell cols="2">real world images, high resolution.' kneeling down holding a fish in the grass</cell></row><row><cell cols="2">6 Appendix</cell><cell></cell><cell></cell></row><row><cell cols="2">6.1 Experiments Setting</cell><cell></cell><cell></cell></row><row><cell cols="4">6.1.1 Prompt Generation for Synthetic Data in ImageNet and DomainNet</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_7"><head>Table 6 :</head><label>6</label><figDesc>Detailed description of the DomainNet Subset Dataset</figDesc><table><row><cell>Description</cell><cell># class</cell><cell>Class name</cell><cell>Domain name</cell></row><row><cell>10 classes from DomainNet</cell><cell>10</cell><cell>airplane, clock, axe, basketball, bicycle, bird, strawberry, flower, pizza, bracelet</cell><cell>Clipart, Infograph, Painting, Quickdraw, Real, Sketch</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_8"><head>Table 7 :</head><label>7</label><figDesc>Detailed description of the ImageNet Subset Dataset The Eurosat dataset<ref type="bibr" target="#b14">[15]</ref>, derived from Sentinel-2 satellite images with 13 spectral bands, consists of 10 classes, totaling 27,000 labeled and geo-referenced images. Official images are of size 64 × 64, whereas our synthesized data is 512 × 512. To enhance diversity, we randomly crop the synthesized data to 64 × 64, 128 × 128, or 224 × 224, followed by resizing to 64 × 64 for training. COVID-19 X-rays: The COVID-19 X-rays dataset<ref type="bibr" target="#b6">[7]</ref>, categorized into COVID-19, normal, and viral pneumonia classes, follows the COVIDx-8A version with 5,585 training images and 400 test images. During training, images are resized to 256 × 256 and subjected to random resized cropping to 224 × 224. MedMNIST v2 Subset: Both the BloodMNIST and DermaMNIST datasets are constituents of MedMNIST v2</figDesc><table><row><cell>Dataset</cell><cell>Description</cell><cell># Class</cell><cell>Class name</cell><cell>Class id</cell></row><row><cell>lmageNette</cell><cell>10 class</cell><cell>10</cell><cell>(tench, English springer,</cell><cell>(0, 217, 482, 491, 497,</cell></row><row><cell></cell><cell>from ImageNet</cell><cell></cell><cell cols="2">cassetteplayer, chain saw, 566, 569,571, 574, 701)</cell></row><row><cell></cell><cell></cell><cell></cell><cell>church, Frenchhorn,</cell><cell></cell></row><row><cell></cell><cell></cell><cell></cell><cell>garbage truck, gas pump,</cell><cell></cell></row><row><cell></cell><cell></cell><cell></cell><cell>golfball, parachute)</cell><cell></cell></row><row><cell>lmageFruit</cell><cell>10 class</cell><cell>10</cell><cell>(pineapple, banana,</cell><cell>(953, 954, 949, 950, 951,</cell></row><row><cell></cell><cell>from ImageNet</cell><cell></cell><cell>strawberry, orange,</cell><cell>957, 952, 945, 943, 948)</cell></row><row><cell></cell><cell></cell><cell></cell><cell>lemon, pomegranate,</cell><cell></cell></row><row><cell></cell><cell></cell><cell></cell><cell>fig, bell pepper,</cell><cell></cell></row><row><cell></cell><cell></cell><cell></cell><cell>cucumber, green apple)</cell><cell></cell></row><row><cell>lmageYellow</cell><cell>10 class</cell><cell>10</cell><cell>(bee, ladys slipper,</cell><cell>(309,986, 954, 951, 987,</cell></row><row><cell></cell><cell>from ImageNet</cell><cell></cell><cell>banana, lemon,</cell><cell>779, 599, 291, 72, 11)</cell></row><row><cell></cell><cell></cell><cell></cell><cell>corn, school bus,</cell><cell></cell></row><row><cell></cell><cell></cell><cell></cell><cell>honeycomb, lion,</cell><cell></cell></row><row><cell></cell><cell></cell><cell></cell><cell>garden spider, goldfinch)</cell><cell></cell></row><row><cell>lmageSquawk</cell><cell>10 class</cell><cell>10</cell><cell>(peacock, flamingo,</cell><cell>(84, 130, 88, 144, 145,</cell></row><row><cell></cell><cell>from ImageNet</cell><cell></cell><cell>macaw, pelican,</cell><cell>22, 96, 9, 100, 89)</cell></row><row><cell></cell><cell></cell><cell></cell><cell>king penguin, bald eagle,</cell><cell></cell></row><row><cell></cell><cell></cell><cell></cell><cell>toucan, ostrich,</cell><cell></cell></row><row><cell></cell><cell></cell><cell></cell><cell>black swan, cockatoo)</cell><cell></cell></row><row><cell>ImageNet100</cell><cell>100 class</cell><cell>100</cell><cell>--</cell><cell>--</cell></row><row><cell></cell><cell>from ImageNet</cell><cell></cell><cell></cell><cell></cell></row><row><cell>Eurosat:</cell><cell></cell><cell></cell><cell></cell><cell></cell></row></table></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="1" xml:id="foot_0"><p>https://github.com/zj-jayzhang/Federated_Generative_Learning Preprint. Under review.</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="2" xml:id="foot_1"><p>FGL requires all clients to participate in the initial round to get all text embedding first on the server. It is more suitable for cross-silo FL<ref type="bibr" target="#b16">[17]</ref> scenarios, where the clients represent organizations or companies, and the number of clients is typically small.</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="3" xml:id="foot_2"><p>In subsequent rounds, FGL also transmits model parameters or gradients. However, the model memorizes very little private information after only a few rounds, which mitigates privacy risks compared to conventional FL methods based on multi-round communications. See detailed experiments on privacy analysis in Section 3.4.</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="4" xml:id="foot_3"><p>We also compared FGL with other baselines, e.g., Moon<ref type="bibr" target="#b26">[27]</ref>, Fedopt<ref type="bibr" target="#b40">[41]</ref>, as shown in Appendix Table8.</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="5" xml:id="foot_4"><p>Further results on 50 and 100 clients can be found in Table4. Varying the number of clients does not have a significant impact on our method, as long as the server can obtain all the text embeddings and subsequently synthesize well-generated data.</p></note>
+		</body>
+		<back>
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.2.3">Visualization on DomainNet and ImageNet</head><p>In this section, we provide comprehensive visualizations of the synthetic data generated from the ImageNet and DomainNet datasets. Figure <ref type="figure">12</ref> showcases visualizations of synthetic data from four distinct subsets of the ImageNet dataset. Each pair of rows corresponds to one of these subsets,   </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.2.4">Results on more challenging datasets</head><p>Even for particularly challenging domains such as remote sensing images or fine-grained classification datasets, our method can easily adapt to these scenarios. We conducted experiments on several finegrained image classification datasets, namely CUB-200 <ref type="bibr" target="#b52">[53]</ref>, Stanford Cars <ref type="bibr" target="#b18">[19]</ref>, and also the satellite image dataset EuroSAT <ref type="bibr" target="#b14">[15]</ref>. CUB-200 is a challenging dataset consisting of 200 bird species, while Stanford Cars contains 16,185 images belonging to 196 classes of cars. The size of fine-grained recognition datasets is typically smaller compared to general image classification datasets. In previous work <ref type="bibr" target="#b65">[66,</ref><ref type="bibr" target="#b8">9]</ref>, a common practice is to utilize a pretrained model that has been trained on the ImageNet dataset. In this study, we present two approaches: training the model from scratch and loading a pretrained ResNet34 model. As shown in Table <ref type="table">9</ref>, our method achieves excellent performance even in these challenging domains. Additionally, in the cross-silo federated learning scenario, when clients have strong computational capabilities, one can simply finetune the foundation models on these domains, achieving better performance than normal federated learning methods.</p><p>Class-level Prompts versus Instance-level Prompts. In main experiments, we synthesize a number of samples based on class-level prompts, e.g., A photo of a [class name]. Then following <ref type="bibr" target="#b20">[21]</ref>, we caption individual images with foundation models, e.g., BLIP-2 <ref type="bibr" target="#b24">[25]</ref>, and synthesize new images based on the individual caption. These prompts provide more precise guidance to the generative model by considering the specific characteristics and context of each sample. Note that <ref type="bibr" target="#b63">[64]</ref> also produce instance-level prompts by diffusion inversion, while the inverted samples will leak data privacy and it is very expensive to implement diffusion inversion on large datasets for clients. In Figure <ref type="figure">11</ref> (Appendix), we present the performances of two kinds of prompts, where we synthesize 1300 images per class, the same number as the real training set. It is evident that employing a more precise instance-level prompt leads to higher accuracy, e.g., achieving 78.62% on ImageNette, compared to class-level prompt, which achieves 73.20%. This result clearly highlights the importance of considering more detailed instance-level information in prompt design.</p></div>			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Align your latents: High-resolution video synthesis with latent diffusion models</title>
+		<author>
+			<persName><forename type="first">Andreas</forename><surname>Blattmann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Robin</forename><surname>Rombach</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Huan</forename><surname>Ling</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tim</forename><surname>Dockhorn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Seung</forename><forename type="middle">Wook</forename><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sanja</forename><surname>Fidler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Karsten</forename><surname>Kreis</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition</title>
+		<meeting>the IEEE/CVF Conference on Computer Vision and Pattern Recognition</meeting>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page" from="22563" to="22575" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Language models are few-shot learners</title>
+		<author>
+			<persName><forename type="first">Tom</forename><surname>Brown</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Benjamin</forename><surname>Mann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Nick</forename><surname>Ryder</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Melanie</forename><surname>Subbiah</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jared</forename><forename type="middle">D</forename><surname>Kaplan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Prafulla</forename><surname>Dhariwal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Arvind</forename><surname>Neelakantan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pranav</forename><surname>Shyam</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Girish</forename><surname>Sastry</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Amanda</forename><surname>Askell</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Advances in neural information processing systems</title>
+		<imprint>
+			<biblScope unit="volume">33</biblScope>
+			<biblScope unit="page" from="1877" to="1901" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Membership inference attacks from first principles</title>
+		<author>
+			<persName><forename type="first">Nicholas</forename><surname>Carlini</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Steve</forename><surname>Chien</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Milad</forename><surname>Nasr</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shuang</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andreas</forename><surname>Terzis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Florian</forename><surname>Tramer</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">2022 IEEE Symposium on Security and Privacy (SP)</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page" from="1897" to="1914" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+		<title level="m" type="main">Extracting training data from diffusion models</title>
+		<author>
+			<persName><forename type="first">Nicholas</forename><surname>Carlini</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jamie</forename><surname>Hayes</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Milad</forename><surname>Nasr</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Matthew</forename><surname>Jagielski</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Vikash</forename><surname>Sehwag</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Florian</forename><surname>Tramer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Borja</forename><surname>Balle</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Daphne</forename><surname>Ippolito</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Eric</forename><surname>Wallace</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2301.13188</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Dataset distillation by matching training trajectories</title>
+		<author>
+			<persName><forename type="first">George</forename><surname>Cazenavette</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tongzhou</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Antonio</forename><surname>Torralba</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alexei</forename><forename type="middle">A</forename><surname>Efros</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jun-Yan</forename><surname>Zhu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition</title>
+		<meeting>the IEEE/CVF Conference on Computer Vision and Pattern Recognition</meeting>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page" from="4750" to="4759" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Conceptual 12M: Pushing web-scale image-text pre-training to recognize long-tail visual concepts</title>
+		<author>
+			<persName><forename type="first">Soravit</forename><surname>Changpinyo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Piyush</forename><surname>Sharma</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Nan</forename><surname>Ding</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Radu</forename><surname>Soricut</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">CVPR</title>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Can ai help in screening viral and covid-19 pneumonia?</title>
+		<author>
+			<persName><forename type="first">Tawsifur</forename><surname>Muhammad Eh Chowdhury</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Amith</forename><surname>Rahman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Rashid</forename><surname>Khandakar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Muhammad</forename><surname>Mazhar</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Abdul Kadir</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Khandakar Reajul</forename><surname>Zaid Bin Mahbub</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Muhammad</forename><surname>Islam</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Atif</forename><surname>Salman Khan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Nasser</forename><surname>Iqbal</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Al Emadi</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Ieee Access</title>
+		<imprint>
+			<biblScope unit="volume">8</biblScope>
+			<biblScope unit="page" from="132665" to="132676" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<monogr>
+		<title level="m" type="main">Bert: Pre-training of deep bidirectional transformers for language understanding</title>
+		<author>
+			<persName><forename type="first">Jacob</forename><surname>Devlin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ming-Wei</forename><surname>Chang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kenton</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kristina</forename><surname>Toutanova</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1810.04805</idno>
+		<imprint>
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<monogr>
+		<title level="m" type="main">Metaformer: A unified meta framework for fine-grained recognition</title>
+		<author>
+			<persName><forename type="first">Qishuai</forename><surname>Diao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yi</forename><surname>Jiang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bin</forename><surname>Wen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jia</forename><surname>Sun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zehuan</forename><surname>Yuan</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2203.02751</idno>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<monogr>
+		<title level="m" type="main">An image is worth 16x16 words: Transformers for image recognition at scale</title>
+		<author>
+			<persName><forename type="first">Alexey</forename><surname>Dosovitskiy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lucas</forename><surname>Beyer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alexander</forename><surname>Kolesnikov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dirk</forename><surname>Weissenborn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiaohua</forename><surname>Zhai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Thomas</forename><surname>Unterthiner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mostafa</forename><surname>Dehghani</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Matthias</forename><surname>Minderer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Georg</forename><surname>Heigold</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sylvain</forename><surname>Gelly</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2010.11929</idno>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Preserving privacy in federated learning with ensemble cross-domain knowledge distillation</title>
+		<author>
+			<persName><forename type="first">Xuan</forename><surname>Gong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Abhishek</forename><surname>Sharma</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Srikrishna</forename><surname>Karanam</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ziyan</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Terrence</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">David</forename><surname>Doermann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Arun</forename><surname>Innanje</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the AAAI Conference on Artificial Intelligence</title>
+		<meeting>the AAAI Conference on Artificial Intelligence</meeting>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="volume">36</biblScope>
+			<biblScope unit="page" from="11891" to="11899" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<monogr>
+		<title level="m" type="main">One-shot federated learning</title>
+		<author>
+			<persName><forename type="first">Neel</forename><surname>Guha</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ameet</forename><surname>Talwalkar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Virginia</forename><surname>Smith</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1902.11175</idno>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<monogr>
+		<title level="m" type="main">Promptfl: Let federated participants cooperatively learn prompts instead of models-federated learning in age of foundation model</title>
+		<author>
+			<persName><forename type="first">Tao</forename><surname>Guo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Song</forename><surname>Guo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Junxiao</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wenchao</forename><surname>Xu</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2208.11625</idno>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<monogr>
+		<title level="m" type="main">Is synthetic data from generative models ready for image recognition</title>
+		<author>
+			<persName><forename type="first">Ruifei</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shuyang</forename><surname>Sun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xin</forename><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chuhui</forename><surname>Xue</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wenqing</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Philip</forename><surname>Torr</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Song</forename><surname>Bai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiaojuan</forename><surname>Qi</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2210.07574</idno>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">Eurosat: A novel dataset and deep learning benchmark for land use and land cover classification</title>
+		<author>
+			<persName><forename type="first">Patrick</forename><surname>Helber</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Benjamin</forename><surname>Bischke</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andreas</forename><surname>Dengel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Damian</forename><surname>Borth</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Journal of Selected Topics in Applied Earth Observations and Remote Sensing</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="issue">7</biblScope>
+			<biblScope unit="page" from="2217" to="2226" />
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<monogr>
+		<author>
+			<persName><forename type="first">Jeremy</forename><surname>Howard</surname></persName>
+		</author>
+		<ptr target="https://github.com/fastai/imagenette" />
+		<title level="m">A smaller subset of 10 easily classified classes from imagenet, and a little more french</title>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<monogr>
+		<author>
+			<persName><forename type="first">Chao</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jianwei</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xin</forename><surname>Liu</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2206.12949</idno>
+		<title level="m">Cross-silo federated learning: Challenges and opportunities</title>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">Advances and open problems in federated learning</title>
+		<author>
+			<persName><forename type="first">Peter</forename><surname>Kairouz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Brendan</forename><surname>Mcmahan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Brendan</forename><surname>Avent</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Aurélien</forename><surname>Bellet</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mehdi</forename><surname>Bennis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Nitin</forename><surname>Arjun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kallista</forename><surname>Bhagoji</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zachary</forename><surname>Bonawitz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Graham</forename><surname>Charles</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Rachel</forename><surname>Cormode</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Cummings</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Foundations and Trends® in Machine Learning</title>
+		<imprint>
+			<biblScope unit="volume">14</biblScope>
+			<biblScope unit="issue">1-2</biblScope>
+			<biblScope unit="page" from="1" to="210" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">3d object representations for finegrained categorization</title>
+		<author>
+			<persName><forename type="first">Jonathan</forename><surname>Krause</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Michael</forename><surname>Stark</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jia</forename><surname>Deng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Li</forename><surname>Fei-Fei</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE international conference on computer vision workshops</title>
+		<meeting>the IEEE international conference on computer vision workshops</meeting>
+		<imprint>
+			<date type="published" when="2013">2013</date>
+			<biblScope unit="page" from="554" to="561" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<monogr>
+		<title level="m" type="main">Preservation of the global knowledge by not-true distillation in federated learning</title>
+		<author>
+			<persName><forename type="first">Gihun</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Minchan</forename><surname>Jeong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yongjin</forename><surname>Shin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sangmin</forename><surname>Bae</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Se-Young</forename><surname>Yun</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2106.03097</idno>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<monogr>
+		<author>
+			<persName><forename type="first">Shiye</forename><surname>Lei</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hao</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sen</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bo</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dacheng</forename><surname>Tao</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2307.08526</idno>
+		<title level="m">Image captions are natural prompts for text-to-image models</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<monogr>
+		<title level="m" type="main">Zero-shot voice conditioning for denoising diffusion tts models</title>
+		<author>
+			<persName><forename type="first">Alon</forename><surname>Levkovitch</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Eliya</forename><surname>Nachmani</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lior</forename><surname>Wolf</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2206.02246</idno>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">Effective passive membership inference attacks in federated learning against overparameterized models</title>
+		<author>
+			<persName><forename type="first">Jiacheng</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ninghui</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bruno</forename><surname>Ribeiro</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">The Eleventh International Conference on Learning Representations</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<monogr>
+		<title level="m" type="main">Model extraction attacks on split federated learning</title>
+		<author>
+			<persName><forename type="first">Jingtao</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Adnan</forename><surname>Siraj Rakin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xing</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Li</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhezhi</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Deliang</forename><surname>Fan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chaitali</forename><surname>Chakrabarti</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2303.08581</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<monogr>
+		<title level="m" type="main">Blip-2: Bootstrapping languageimage pre-training with frozen image encoders and large language models</title>
+		<author>
+			<persName><forename type="first">Junnan</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dongxu</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Silvio</forename><surname>Savarese</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Steven</forename><surname>Hoi</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2301.12597</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<title level="a" type="main">Federated learning on non-iid data silos: An experimental study</title>
+		<author>
+			<persName><forename type="first">Qinbin</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yiqun</forename><surname>Diao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Quan</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bingsheng</forename><surname>He</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">2022 IEEE 38th International Conference on Data Engineering (ICDE)</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page" from="965" to="978" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<analytic>
+		<title level="a" type="main">Model-contrastive federated learning</title>
+		<author>
+			<persName><forename type="first">Qinbin</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bingsheng</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dawn</forename><surname>Song</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF conference on computer vision and pattern recognition</title>
+		<meeting>the IEEE/CVF conference on computer vision and pattern recognition</meeting>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="page" from="10713" to="10722" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<monogr>
+		<title level="m" type="main">Fedbn: Federated learning on non-iid features via local batch normalization</title>
+		<author>
+			<persName><forename type="first">Xiaoxiao</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Meirui</forename><surname>Jiang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiaofei</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Michael</forename><surname>Kamp</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qi</forename><surname>Dou</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2102.07623</idno>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<monogr>
+		<title level="m" type="main">Is synthetic data from diffusion models ready for knowledge distillation?</title>
+		<author>
+			<persName><forename type="first">Zheng</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yuxuan</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Penghai</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Renjie</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiang</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jian</forename><surname>Yang</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2305.12954</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<analytic>
+		<title level="a" type="main">Threats, attacks and defenses to federated learning: issues, taxonomy and perspectives</title>
+		<author>
+			<persName><forename type="first">Pengrui</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiangrui</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wei</forename><surname>Wang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Cybersecurity</title>
+		<imprint>
+			<biblScope unit="volume">5</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="1" to="19" />
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<analytic>
+		<title level="a" type="main">Diffvoice: Text-to-speech with latent diffusion</title>
+		<author>
+			<persName><forename type="first">Zhijun</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yiwei</forename><surname>Guo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kai</forename><surname>Yu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ICASSP 2023-2023 IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP)</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page" from="1" to="5" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<analytic>
+		<title level="a" type="main">Communication-efficient learning of deep networks from decentralized data</title>
+		<author>
+			<persName><forename type="first">Brendan</forename><surname>Mcmahan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Eider</forename><surname>Moore</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Daniel</forename><surname>Ramage</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Seth</forename><surname>Hampson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Blaise</forename><surname>Aguera Y Arcas</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Artificial intelligence and statistics</title>
+		<imprint>
+			<publisher>PMLR</publisher>
+			<date type="published" when="2017">2017</date>
+			<biblScope unit="page" from="1273" to="1282" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<analytic>
+		<title level="a" type="main">A survey on security and privacy of federated learning</title>
+		<author>
+			<persName><forename type="first">Reza</forename><forename type="middle">M</forename><surname>Viraaji Mothukuri</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Seyedamin</forename><surname>Parizi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yan</forename><surname>Pouriyeh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ali</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Gautam</forename><surname>Dehghantanha</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Srivastava</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Future Generation Computer Systems</title>
+		<imprint>
+			<biblScope unit="volume">115</biblScope>
+			<biblScope unit="page" from="619" to="640" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<monogr>
+		<title level="m" type="main">Preserving privacy and security in federated learning</title>
+		<author>
+			<persName><forename type="first">Truc</forename><surname>Nguyen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">My</forename><forename type="middle">T</forename><surname>Thai</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2202.03402</idno>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<monogr>
+		<title level="m" type="main">Glide: Towards photorealistic image generation and editing with text-guided diffusion models</title>
+		<author>
+			<persName><forename type="first">Alex</forename><surname>Nichol</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Prafulla</forename><surname>Dhariwal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Aditya</forename><surname>Ramesh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pranav</forename><surname>Shyam</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pamela</forename><surname>Mishkin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bob</forename><surname>Mcgrew</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ilya</forename><surname>Sutskever</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mark</forename><surname>Chen</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2112.10741</idno>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<analytic>
+		<title level="a" type="main">Glide: Towards photorealistic image generation and editing with text-guided diffusion models</title>
+		<author>
+			<persName><forename type="first">Alexander</forename><surname>Quinn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Nichol</forename></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Prafulla</forename><surname>Dhariwal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Aditya</forename><surname>Ramesh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pranav</forename><surname>Shyam</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pamela</forename><surname>Mishkin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bob</forename><surname>Mcgrew</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ilya</forename><surname>Sutskever</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mark</forename><surname>Chen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Machine Learning</title>
+		<imprint>
+			<publisher>PMLR</publisher>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page" from="16784" to="16804" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b36">
+	<analytic>
+		<title level="a" type="main">Scalable diffusion models with transformers</title>
+		<author>
+			<persName><forename type="first">William</forename><surname>Peebles</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Saining</forename><surname>Xie</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF International Conference on Computer Vision</title>
+		<meeting>the IEEE/CVF International Conference on Computer Vision</meeting>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page" from="4195" to="4205" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b37">
+	<analytic>
+		<title level="a" type="main">Moment matching for multi-source domain adaptation</title>
+		<author>
+			<persName><forename type="first">Xingchao</forename><surname>Peng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qinxun</forename><surname>Bai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xide</forename><surname>Xia</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zijun</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kate</forename><surname>Saenko</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bo</forename><surname>Wang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE International Conference on Computer Vision</title>
+		<meeting>the IEEE International Conference on Computer Vision</meeting>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="page" from="1406" to="1415" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b38">
+	<analytic>
+		<title level="a" type="main">Learning transferable visual models from natural language supervision</title>
+		<author>
+			<persName><forename type="first">Alec</forename><surname>Radford</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jong</forename><forename type="middle">Wook</forename><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chris</forename><surname>Hallacy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Aditya</forename><surname>Ramesh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Gabriel</forename><surname>Goh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sandhini</forename><surname>Agarwal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Girish</forename><surname>Sastry</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Amanda</forename><surname>Askell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pamela</forename><surname>Mishkin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jack</forename><surname>Clark</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International conference on machine learning</title>
+		<imprint>
+			<publisher>PMLR</publisher>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="page" from="8748" to="8763" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b39">
+	<monogr>
+		<author>
+			<persName><forename type="first">Aditya</forename><surname>Ramesh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Prafulla</forename><surname>Dhariwal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alex</forename><surname>Nichol</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Casey</forename><surname>Chu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mark</forename><surname>Chen</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2204.06125</idno>
+		<title level="m">Hierarchical text-conditional image generation with clip latents</title>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b40">
+	<monogr>
+		<title level="m" type="main">Adaptive federated optimization</title>
+		<author>
+			<persName><forename type="first">Sashank</forename><surname>Reddi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zachary</forename><surname>Charles</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Manzil</forename><surname>Zaheer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zachary</forename><surname>Garrett</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Keith</forename><surname>Rush</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jakub</forename><surname>Konečnỳ</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sanjiv</forename><surname>Kumar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Brendan</forename><surname>Mcmahan</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2003.00295</idno>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b41">
+	<analytic>
+		<title level="a" type="main">Highresolution image synthesis with latent diffusion models</title>
+		<author>
+			<persName><forename type="first">Robin</forename><surname>Rombach</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andreas</forename><surname>Blattmann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dominik</forename><surname>Lorenz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Patrick</forename><surname>Esser</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Björn</forename><surname>Ommer</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)</title>
+		<meeting>the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)</meeting>
+		<imprint>
+			<date type="published" when="2022-06">June 2022</date>
+			<biblScope unit="page" from="10684" to="10695" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b42">
+	<analytic>
+		<title level="a" type="main">Highresolution image synthesis with latent diffusion models</title>
+		<author>
+			<persName><forename type="first">Robin</forename><surname>Rombach</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andreas</forename><surname>Blattmann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dominik</forename><surname>Lorenz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Patrick</forename><surname>Esser</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Björn</forename><surname>Ommer</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition</title>
+		<meeting>the IEEE/CVF Conference on Computer Vision and Pattern Recognition</meeting>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page" from="10684" to="10695" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b43">
+	<analytic>
+		<title level="a" type="main">Dreambooth: Fine tuning text-to-image diffusion models for subject-driven generation</title>
+		<author>
+			<persName><forename type="first">Nataniel</forename><surname>Ruiz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yuanzhen</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Varun</forename><surname>Jampani</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yael</forename><surname>Pritch</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Michael</forename><surname>Rubinstein</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kfir</forename><surname>Aberman</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition</title>
+		<meeting>the IEEE/CVF Conference on Computer Vision and Pattern Recognition</meeting>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page" from="22500" to="22510" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b44">
+	<analytic>
+		<title level="a" type="main">ImageNet Large Scale Visual Recognition Challenge</title>
+		<author>
+			<persName><forename type="first">Olga</forename><surname>Russakovsky</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jia</forename><surname>Deng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hao</forename><surname>Su</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jonathan</forename><surname>Krause</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sanjeev</forename><surname>Satheesh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sean</forename><surname>Ma</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhiheng</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andrej</forename><surname>Karpathy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Aditya</forename><surname>Khosla</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Michael</forename><surname>Bernstein</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alexander</forename><forename type="middle">C</forename><surname>Berg</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Li</forename><surname>Fei-Fei</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">International Journal of Computer Vision (IJCV)</title>
+		<imprint>
+			<biblScope unit="volume">115</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="211" to="252" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b45">
+	<analytic>
+		<title level="a" type="main">Photorealistic text-to-image diffusion models with deep language understanding</title>
+		<author>
+			<persName><forename type="first">Chitwan</forename><surname>Saharia</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">William</forename><surname>Chan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Saurabh</forename><surname>Saxena</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lala</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jay</forename><surname>Whang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Emily</forename><forename type="middle">L</forename><surname>Denton</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kamyar</forename><surname>Ghasemipour</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Raphael</forename><forename type="middle">Gontijo</forename><surname>Lopes</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Burcu</forename><surname>Karagol Ayan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tim</forename><surname>Salimans</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Advances in Neural Information Processing Systems</title>
+		<imprint>
+			<biblScope unit="volume">35</biblScope>
+			<biblScope unit="page" from="36479" to="36494" />
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b46">
+	<monogr>
+		<author>
+			<persName><forename type="first">Christoph</forename><surname>Schuhmann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Romain</forename><surname>Beaumont</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Richard</forename><surname>Vencu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Cade</forename><surname>Gordon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ross</forename><surname>Wightman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mehdi</forename><surname>Cherti</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Theo</forename><surname>Coombes</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Aarush</forename><surname>Katta</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Clayton</forename><surname>Mullis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mitchell</forename><surname>Wortsman</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2210.08402</idno>
+		<title level="m">Laion-5b: An open large-scale dataset for training next generation image-text models</title>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b47">
+	<analytic>
+		<title level="a" type="main">Membership inference attacks against machine learning models</title>
+		<author>
+			<persName><forename type="first">Reza</forename><surname>Shokri</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Marco</forename><surname>Stronati</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Congzheng</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Vitaly</forename><surname>Shmatikov</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">IEEE symposium on security and privacy</title>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b48">
+	<analytic>
+		<title level="a" type="main">Diffusion art or digital forgery? investigating data replication in diffusion models</title>
+		<author>
+			<persName><forename type="first">Gowthami</forename><surname>Somepalli</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Vasu</forename><surname>Singla</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Micah</forename><surname>Goldblum</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jonas</forename><surname>Geiping</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tom</forename><surname>Goldstein</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition</title>
+		<meeting>the IEEE/CVF Conference on Computer Vision and Pattern Recognition</meeting>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page" from="6048" to="6058" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b49">
+	<monogr>
+		<title level="m" type="main">Understanding and mitigating copying in diffusion models</title>
+		<author>
+			<persName><forename type="first">Gowthami</forename><surname>Somepalli</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Vasu</forename><surname>Singla</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Micah</forename><surname>Goldblum</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jonas</forename><surname>Geiping</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tom</forename><surname>Goldstein</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2305.20086</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b50">
+	<analytic>
+		<title level="a" type="main">Yfcc100m: The new data in multimedia research</title>
+		<author>
+			<persName><forename type="first">Bart</forename><surname>Thomee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">David</forename><forename type="middle">A</forename><surname>Shamma</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Gerald</forename><surname>Friedland</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Benjamin</forename><surname>Elizalde</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Karl</forename><surname>Ni</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Douglas</forename><surname>Poland</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Damian</forename><surname>Borth</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Li-Jia</forename><surname>Li</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Communications of the ACM</title>
+		<imprint>
+			<biblScope unit="volume">59</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="64" to="73" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b51">
+	<analytic>
+		<title level="a" type="main">On memorization in probabilistic deep generative models</title>
+		<author>
+			<persName><forename type="first">Gerrit</forename><surname>Van Den Burg</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chris</forename><surname>Williams</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Advances in Neural Information Processing Systems</title>
+		<imprint>
+			<biblScope unit="volume">34</biblScope>
+			<biblScope unit="page" from="27916" to="27928" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b52">
+	<monogr>
+		<title level="m" type="main">The caltech-ucsd birds-200-2011 dataset</title>
+		<author>
+			<persName><forename type="first">Catherine</forename><surname>Wah</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Steve</forename><surname>Branson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Peter</forename><surname>Welinder</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pietro</forename><surname>Perona</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Serge</forename><surname>Belongie</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b53">
+	<analytic>
+		<title level="a" type="main">Tackling the objective inconsistency problem in heterogeneous federated optimization</title>
+		<author>
+			<persName><forename type="first">Jianyu</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qinghua</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hao</forename><surname>Liang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Gauri</forename><surname>Joshi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Vincent Poor</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Advances in neural information processing systems</title>
+		<imprint>
+			<biblScope unit="volume">33</biblScope>
+			<biblScope unit="page" from="7611" to="7623" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b54">
+	<analytic>
+		<title level="a" type="main">Medmnist v2-a large-scale lightweight benchmark for 2d and 3d biomedical image classification</title>
+		<author>
+			<persName><forename type="first">Jiancheng</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Rui</forename><surname>Shi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Donglai</forename><surname>Wei</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zequan</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lin</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bilian</forename><surname>Ke</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hanspeter</forename><surname>Pfister</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bingbing</forename><surname>Ni</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Scientific Data</title>
+		<imprint>
+			<biblScope unit="volume">10</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page">41</biblScope>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b55">
+	<monogr>
+		<author>
+			<persName><forename type="first">Mingzhao</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shangchao</forename><surname>Su</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bin</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiangyang</forename><surname>Xue</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2305.04063</idno>
+		<title level="m">Exploring one-shot semi-supervised federated learning with a pre-trained diffusion model</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b56">
+	<analytic>
+		<title level="a" type="main">Federated multi-target domain adaptation</title>
+		<author>
+			<persName><forename type="first">Chun-Han</forename><surname>Yao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Boqing</forename><surname>Gong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hang</forename><surname>Qi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yin</forename><surname>Cui</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yukun</forename><surname>Zhu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ming-Hsuan</forename><surname>Yang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF Winter Conference on Applications of Computer Vision</title>
+		<meeting>the IEEE/CVF Winter Conference on Applications of Computer Vision</meeting>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page" from="1424" to="1433" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b57">
+	<monogr>
+		<title level="m" type="main">Federated foundation models: Privacy-preserving and collaborative learning for large models</title>
+		<author>
+			<persName><forename type="first">Sixing</forename><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pablo</forename><surname>Muñoz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ali</forename><surname>Jannesari</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2305.11414</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b58">
+	<monogr>
+		<author>
+			<persName><forename type="first">Eric</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kai</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xingqian</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhangyang</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Humphrey</forename><surname>Shi</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2303.17591</idno>
+		<title level="m">Forget-me-not: Learning to forget in text-to-image diffusion models</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b59">
+	<analytic>
+		<title level="a" type="main">Dense: Data-free one-shot federated learning</title>
+		<author>
+			<persName><forename type="first">Jie</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chen</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bo</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lingjuan</forename><surname>Lyu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shuang</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shouhong</forename><surname>Ding</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chunhua</forename><surname>Shen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chao</forename><surname>Wu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Advances in Neural Information Processing Systems</title>
+		<imprint>
+			<biblScope unit="volume">35</biblScope>
+			<biblScope unit="page" from="21414" to="21428" />
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b60">
+	<analytic>
+		<title level="a" type="main">Delving into the adversarial robustness of federated learning</title>
+		<author>
+			<persName><forename type="first">Jie</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bo</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chen</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lingjuan</forename><surname>Lyu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shuang</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shouhong</forename><surname>Ding</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chao</forename><surname>Wu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the Thirty-Seventh AAAI Conference on Artificial Intelligence and Thirty-Fifth Conference on Innovative Applications of Artificial Intelligence and Thirteenth Symposium on Educational Advances in Artificial Intelligence, AAAI&apos;23/IAAI&apos;23/EAAI&apos;23</title>
+		<meeting>the Thirty-Seventh AAAI Conference on Artificial Intelligence and Thirty-Fifth Conference on Innovative Applications of Artificial Intelligence and Thirteenth Symposium on Educational Advances in Artificial Intelligence, AAAI&apos;23/IAAI&apos;23/EAAI&apos;23</meeting>
+		<imprint>
+			<publisher>AAAI Press</publisher>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b61">
+	<analytic>
+		<title level="a" type="main">Federated learning with label distribution skew via logits calibration</title>
+		<author>
+			<persName><forename type="first">Jie</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhiqi</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bo</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jianghe</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shuang</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shouhong</forename><surname>Ding</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chao</forename><surname>Wu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Machine Learning</title>
+		<imprint>
+			<publisher>PMLR</publisher>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page" from="26311" to="26329" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b62">
+	<monogr>
+		<author>
+			<persName><forename type="first">Yue</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Meng</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Liangzhen</forename><surname>Lai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Naveen</forename><surname>Suda</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Damon</forename><surname>Civin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Vikas</forename><surname>Chandra</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1806.00582</idno>
+		<title level="m">Federated learning with non-iid data</title>
+		<imprint>
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b63">
+	<monogr>
+		<author>
+			<persName><forename type="first">Yongchao</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hshmat</forename><surname>Sahak</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jimmy</forename><surname>Ba</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2305.15316</idno>
+		<title level="m">Training on thin air: Improve image classification with generated data</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b64">
+	<analytic>
+		<title level="a" type="main">Aligning before aggregating: Enabling cross-domain federated learning via consistent feature extraction</title>
+		<author>
+			<persName><forename type="first">Guogang</forename><surname>Zhu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xuefeng</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shaojie</forename><surname>Tang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jianwei</forename><surname>Niu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">2022 IEEE 42nd International Conference on Distributed Computing Systems (ICDCS)</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page" from="809" to="819" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b65">
+	<analytic>
+		<title level="a" type="main">Dual cross-attention learning for fine-grained visual categorization and object re-identification</title>
+		<author>
+			<persName><forename type="first">Haowei</forename><surname>Zhu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wenjing</forename><surname>Ke</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dong</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ji</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lu</forename><surname>Tian</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yi</forename><surname>Shan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition</title>
+		<meeting>the IEEE/CVF Conference on Computer Vision and Pattern Recognition</meeting>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page" from="4692" to="4702" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b66">
+	<analytic>
+		<title level="a" type="main">Deep leakage from gradients</title>
+		<author>
+			<persName><forename type="first">Ligeng</forename><surname>Zhu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhijian</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Song</forename><surname>Han</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Advances in neural information processing systems</title>
+		<imprint>
+			<biblScope unit="volume">32</biblScope>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

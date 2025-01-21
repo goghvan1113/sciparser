@@ -1,0 +1,2265 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">DGInStyle: Domain-Generalizable Semantic Segmentation with Image Diffusion Models and Stylized Semantic Control</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability  status="unknown">
+					<licence/>
+				</availability>
+				<date type="published" when="2024-07-31">31 Jul 2024</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Yuru</forename><surname>Jia</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution">ETH Zürich</orgName>
+								<address>
+									<country key="CH">Switzerland</country>
+								</address>
+							</affiliation>
+							<affiliation key="aff1">
+								<orgName type="institution">KU Leuven</orgName>
+								<address>
+									<country key="BE">Belgium</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Lukas</forename><surname>Hoyer</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution">ETH Zürich</orgName>
+								<address>
+									<country key="CH">Switzerland</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Shengyu</forename><surname>Huang</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution">ETH Zürich</orgName>
+								<address>
+									<country key="CH">Switzerland</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Tianfu</forename><surname>Wang</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution">ETH Zürich</orgName>
+								<address>
+									<country key="CH">Switzerland</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Luc</forename><forename type="middle">Van</forename><surname>Gool</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution">ETH Zürich</orgName>
+								<address>
+									<country key="CH">Switzerland</country>
+								</address>
+							</affiliation>
+							<affiliation key="aff1">
+								<orgName type="institution">KU Leuven</orgName>
+								<address>
+									<country key="BE">Belgium</country>
+								</address>
+							</affiliation>
+							<affiliation key="aff2">
+								<orgName type="institution">INSAIT Sofia</orgName>
+								<address>
+									<country key="BG">Bulgaria</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Konrad</forename><surname>Schindler</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution">ETH Zürich</orgName>
+								<address>
+									<country key="CH">Switzerland</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Anton</forename><surname>Obukhov</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution">ETH Zürich</orgName>
+								<address>
+									<country key="CH">Switzerland</country>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">DGInStyle: Domain-Generalizable Semantic Segmentation with Image Diffusion Models and Stylized Semantic Control</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date type="published" when="2024-07-31">31 Jul 2024</date>
+						</imprint>
+					</monogr>
+					<idno type="MD5">442BC34ED96888A6230EC393294BE2B9</idno>
+					<idno type="arXiv">arXiv:2312.03048v3[cs.CV]</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.2-SNAPSHOT" ident="GROBID" when="2025-01-21T07:32+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<textClass>
+				<keywords>Semantic Domain Generalization • Image Latent Diffusion</keywords>
+			</textClass>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Fig. 1: Crossing domain boundaries with DGInStyle. We propose a data-centric generative pipeline for domain generalization. It is derived from Stable Diffusion and augmented with a novel high-precision style-preserving semantic control. DGInStyle combines semantic masks (Query) with style prompts (e.g., Night or Rain) to generate training data for semantic segmentation networks with widely varying appearance. It achieves state-of-the-art semantic segmentation across domains in autonomous driving.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">Introduction</head><p>The rise of generative image modeling has been a game changer for AI-assisted creativity. Moreover, it also paves the way for improvements beyond artistic generation, particularly in computer vision. In this paper, we investigate one such avenue and use a powerful text-to-image generative diffusion model to improve the robustness of semantic segmentation with respect to domain shifts.</p><p>Segmenting images into semantically defined categories requires large annotated datasets of images and associated label maps, as a basis for supervised training. Manual annotation for obtaining those label maps is time-consuming and expensive <ref type="bibr" target="#b10">[11,</ref><ref type="bibr" target="#b55">56]</ref>, which is where image generation comes into play. Synthetic datasets are annotated by construction and therefore cheap to collect, but they invariably suffer from a domain gap <ref type="bibr" target="#b15">[16]</ref>, meaning that a network trained on such data (the source domain) will perform poorly on the real images of interest (the target domain). When the characteristics of the target domain are known in advance through (labeled or unlabeled) samples, the domain gap can be addressed with Domain Adaptation techniques <ref type="bibr" target="#b15">[16,</ref><ref type="bibr" target="#b25">26]</ref>. A more challenging, arguably equally important setting is Domain Generalization (DG) <ref type="bibr" target="#b13">[14,</ref><ref type="bibr" target="#b27">28,</ref><ref type="bibr" target="#b76">77]</ref>, where a model is deployed in a new environment without the chance to first collect data and adapt. I.e., the target domain is unknown except for the high-level application context (such as "autonomous driving").</p><p>In the DG semantic segmentation literature, the role of the prior domain is often overlooked. In end-to-end pipelines, that prior typically remains implicit; for instance, it could stem from pretrained backbone weights used in most segmentation DG methods (often from ImageNet <ref type="bibr" target="#b11">[12]</ref>) or loss functions that depend on feature space distances <ref type="bibr" target="#b27">[28,</ref><ref type="bibr" target="#b76">77]</ref>. Therefore, we take a closer look at the prior domain and study how we can utilize the rich prior that emerges in modern foundational models trained on internet-scale datasets <ref type="bibr">[58]</ref> to improve domain generalization of semantic segmentation.</p><p>To this end, we design DGInStyle, a novel data generation pipeline with a pretrained foundational text-to-image LDM <ref type="bibr" target="#b50">[51]</ref> at its core, fine-tuned with data from the source domain, with conditioning on the associated dense label maps. Such a pipeline can automatically generate images with characteristics of the prior domain and equipped with pixel-aligned label maps (Fig. <ref type="figure">1</ref>). Armed with such a pipeline, we approach DG differently from other methods by focusing on synthesizing data instead of model architectures or training techniques. The idea is that a model trained on such data will offer improved domain generalization, drawing on the prior knowledge embedded in the LDM.</p><p>This comes with two important new challenges: The LDM needs to learn how to produce images that match semantic segmentation masks. This can only be learned on the labeled source domain. However, during the process, the LDM must not overfit to the source domain style. Additionally, the generated images must exactly align with segmentation masks, even for very small instances. Therefore, several fundamental modifications are necessary to turn an off-the-shelf LDM <ref type="bibr" target="#b50">[51]</ref> into a data generation pipeline for domain-generalizable semantic segmentation, which would otherwise suffer from source domain style bleeding and ignoring +2.5 +4.3 Fig. <ref type="figure">2</ref>: A historical view of domain generalization (DG) in semantic segmentation. The y-axis shows average mIoU values over three autonomous driving benchmarks: Cityscapes <ref type="bibr" target="#b10">[11]</ref>, BDD100K <ref type="bibr" target="#b69">[70]</ref>, and Mapillary Vistas <ref type="bibr" target="#b40">[41]</ref>. Our data generation pipeline markedly raises the performance of high-performing DG methods like DAFormer <ref type="bibr" target="#b25">[26,</ref><ref type="bibr" target="#b27">28]</ref> or HRDA <ref type="bibr" target="#b26">[27,</ref><ref type="bibr" target="#b27">28]</ref>.</p><p>small instances. Our Contributions address these issues: First we propose a novel Style Swap technique inspired by modern fine-tuning and semantic style control mechanisms, to achieve the necessary level of control and diversity over the outputs. It is based on the novel finding that the semantic control and the underlying (stylized) diffusion model can be decoupled and swapped. This enables our simple yet efficient Style Swap, which allows to learn dense semantic control on the source domain while removing the undesired source domain style. Second, we present a novel Multi-Resolution Latent Fusion technique, which helps us to go beyond the limited resolution of the LDM generator. It is an essential step to achieve conditioned generation of small instances, which is crucial for learning semantic segmentation on generated data. Without it, a segmentation model trained on it would struggle with inconsistent generated images and segmentation masks. Lastly, we use the resulting generative pipeline to create a diversified dataset to train semantic segmentation networks, including methods to mitigate the impact of domain shifts. Due to its complementary design, DGInStyle achieves major performance improvements when combined with existing DG methods. In particular, it significantly boosts the state-of-the-art domain generalization in autonomous driving, as shown in Fig. <ref type="figure">2</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">Related Work</head><p>Deep neural networks require extensive training data, which can be costly and time-consuming to acquire. Data access and usage scenarios are severely regulated in some domains, such as medical imaging. To mitigate this, there has been a growing interest in synthetic datasets. Due to the inevitable domain gap between synthetic datasets and application scopes, domain adaptation methods focusing on a single target domain, or domain generalization, focusing on the wider taskspecific domain, come to the rescue. Creating a realistic synthetic dataset often involves physically-based simulators (e.g., renderers <ref type="bibr" target="#b49">[50]</ref>), which also turns out expensive, and a challenge in its own right. Thus, the recent trend of leveraging generative models for realistic data generation is winning in cost efficiency.</p><p>Generative Models. Early advancements in deep learning techniques led to a surge in deep generative models, namely GANs and VAEs <ref type="bibr" target="#b6">[7,</ref><ref type="bibr" target="#b18">19,</ref><ref type="bibr" target="#b33">34,</ref><ref type="bibr" target="#b47">48]</ref>. While GANs exhibited training challenges such as instability and mode collapse <ref type="bibr" target="#b4">[5]</ref>, VAEs struggled with output quality and artifacts.</p><p>Diffusion Models (DMs) <ref type="bibr" target="#b5">[6,</ref><ref type="bibr" target="#b12">13,</ref><ref type="bibr" target="#b23">24,</ref><ref type="bibr" target="#b38">39,</ref><ref type="bibr" target="#b58">59,</ref><ref type="bibr" target="#b59">60]</ref> have recently demonstrated stateof-the-art image generation quality, which happened thanks to the simplified training objective, enabling training on large-scale datasets. These models involve a forward diffusion process that adds noise into data and a learned reverse process that recovers the original data. To reduce the computational requirements, latent diffusion models (LDMs) <ref type="bibr" target="#b50">[51]</ref> operate in the latent space, thus enabling absorption of internet-scale data <ref type="bibr">[58]</ref>. Additionally, advances in image captioning and language conditioning, such as CLIP <ref type="bibr" target="#b46">[47]</ref>, enabled text-guided control of the generation process. These advancements suggest the emergence of strong scene-understanding prior, which can be utilized for in-domain data generation.</p><p>Despite their large size, DreamBooth <ref type="bibr" target="#b52">[53]</ref> demonstrated that LDMs can be efficiently fine-tuned. To further enhance the controllability beyond text prompts, a variety of diffusion models <ref type="bibr" target="#b16">[17,</ref><ref type="bibr" target="#b19">20,</ref><ref type="bibr" target="#b24">25,</ref><ref type="bibr" target="#b29">30,</ref><ref type="bibr" target="#b39">40,</ref><ref type="bibr" target="#b72">73,</ref><ref type="bibr" target="#b75">76]</ref> integrate additional inputs of condition signals to provide more granular control. As demonstrated in <ref type="bibr" target="#b31">[32]</ref>, LDMs can be repurposed to learn new tasks through fine-tuning and extra conditioning. The usage of segmentation masks to guide generation has been a focal point of research, with methodologies primarily falling into condition-based <ref type="bibr" target="#b29">[30,</ref><ref type="bibr" target="#b39">40,</ref><ref type="bibr" target="#b72">73]</ref> and guidance-based categories <ref type="bibr" target="#b1">[2,</ref><ref type="bibr" target="#b8">9,</ref><ref type="bibr" target="#b67">68,</ref><ref type="bibr" target="#b70">71]</ref>. When using pretrained off-the-shelf models, the limited resolution of LDMs can be an obstacle to large-scale high-resolution data generation. Yet, it can also be worked around, as studied in panorama generation literature <ref type="bibr" target="#b2">[3]</ref>. These techniques offer precise pixel-wise control and, subsequently, a means of generating image-label pairs for downstream tasks.</p><p>Dataset Generation. The pioneering work DatasetGAN <ref type="bibr" target="#b74">[75]</ref> automatically generates labeled images by manipulating feature maps from StyleGAN and outperforms semi-supervised baselines in object-part segmentation. Recent techniques have utilized state-of-the-art DMs to create training data for downstream tasks such as image classification <ref type="bibr" target="#b0">[1,</ref><ref type="bibr" target="#b14">15,</ref><ref type="bibr" target="#b21">22,</ref><ref type="bibr" target="#b35">36,</ref><ref type="bibr" target="#b56">57,</ref><ref type="bibr" target="#b60">61]</ref>, object detection <ref type="bibr" target="#b7">[8,</ref><ref type="bibr" target="#b64">65,</ref><ref type="bibr" target="#b73">74]</ref>, semantic segmentation <ref type="bibr" target="#b17">[18,</ref><ref type="bibr" target="#b34">35,</ref><ref type="bibr" target="#b43">44,</ref><ref type="bibr" target="#b62">63,</ref><ref type="bibr" target="#b63">64,</ref><ref type="bibr" target="#b68">69]</ref>.</p><p>Approaches to paired image-mask dataset generation can be categorized into three groups. The first approach falls into the category of grounded generation <ref type="bibr" target="#b17">[18,</ref><ref type="bibr" target="#b34">35,</ref><ref type="bibr" target="#b36">37,</ref><ref type="bibr" target="#b62">63,</ref><ref type="bibr" target="#b66">67]</ref>, which generates masks with the help of a separate segmentation decoder. This often involves a pretrained off-the-shelf network, and the domain it is trained on introduces additional biases bleeding into the overall generation process. The second approach falls under the umbrella of image-to-image translation techniques. <ref type="bibr" target="#b43">[44]</ref> use a DM to progressively transform images from the synthetic source domain into images resembling the target domain, guided by the source domain masks. The third approach uses semantic masks to guide the image generation (Semantic guidance) <ref type="bibr" target="#b39">[40,</ref><ref type="bibr" target="#b68">69,</ref><ref type="bibr" target="#b72">73]</ref>. While arguably cleaner, it also comes with caveats: the unknown distribution of masks and the degree of agreement between the generation result and the mask condition. DGInStyle follows into the last category. We use masks from the source domain and enforce the generation fidelity using the proposed Multi-Resolution Latent Fusion technique. Domain Generalization. Unsupervised Domain Adaptation (UDA) <ref type="bibr" target="#b15">[16]</ref> focuses on learning to perform a task in a target domain through supervised learning on labeled data from a similar source domain. Only unannotated data from the target domain is available in this setting. This task received much attention due to the simplicity of the formulation; several approaches <ref type="bibr" target="#b26">[27,</ref><ref type="bibr" target="#b53">54]</ref> were proposed to efficiently bridge the domain gap.</p><p>Domain Generalization (DG) aims to enhance the robustness of models trained on source domains and enable them to perform well on unseen domains belonging to the same task group. Compared to UDA, no data from the target domain is available along with the domain itself; it is defined through a union of task-specific proxy evaluation datasets. To improve domain generalization in semantic segmentation, prior methods utilize transformations such as instance normalization <ref type="bibr" target="#b42">[43]</ref> or whitening <ref type="bibr" target="#b9">[10]</ref> to align various source domain data with a standardized feature space. Another line of research <ref type="bibr" target="#b30">[31,</ref><ref type="bibr" target="#b32">33,</ref><ref type="bibr" target="#b45">46,</ref><ref type="bibr" target="#b71">72,</ref><ref type="bibr" target="#b76">77,</ref><ref type="bibr" target="#b77">78]</ref> focuses on domain randomization, which augments the source domain with diverse styles. For instance, <ref type="bibr" target="#b76">[77]</ref> selects basis styles from the source distribution, enabling the model to generate diverse samples during training. HGFormer <ref type="bibr" target="#b13">[14]</ref> improves the robustness of networks by introducing a hierarchical grouping mechanism that groups pixels to form part-level and whole-level masks for class label prediction. Fig. <ref type="figure">2</ref> shows the progress in domain generalization over recent years measured on the task of autonomous driving scene segmentation. Improvements achieved with our approach and SOTA techniques are clearly demonstrated.</p><p>Diffusion Models for Domain Generalization. Beyond the aforementioned approaches, recent works have explored the use of diffusion models for domain generalization in semantic segmentation. Gong et al . <ref type="bibr" target="#b17">[18]</ref> investigate how well diffusion-pretrained representations generalize to new domains and introduce a prompt randomization strategy to enhance cross-domain performance. DatasetDM <ref type="bibr" target="#b62">[63]</ref> presents a generic dataset generation model capable of producing diverse images and corresponding annotations using diffusion models. These methods implement grounded generation by training a segmentation decoder to achieve image-mask alignment. Our approach takes a different semantic guidance route, exhibiting higher controllability and generating consistent image-label pairs that qualify as training datasets.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">Methods</head><p>Domain generalization for semantic segmentation aims to learn a model that is robust to unseen task domains using only annotated source domain data. In this work, given the labeled source domain represented as</p><formula xml:id="formula_0">D S = x S i , y S i N S</formula><p>i=1 , the goal is to generalize the semantic segmentation model f θ to unseen target domains D T from the same task group, by utilizing the generated labeled dataset</p><formula xml:id="formula_1">D G = x G i , y G i N G</formula><p>i=1 in style of the prior domain P (hence DGInStyle), thus maximizing the overlap with the target domain. In these notations, x and y stand for the images and their corresponding labels, respectively, whereas N S and N G are the total number of images in each dataset. The set {y G i } N G i=1 is a subset of {y S i } N S i=1 in our case, although other labels are possible.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1">Label Conditioned Image Generation</head><p>The success of pretrained text-to-image latent diffusion models, e.g., Stable Diffusion <ref type="bibr" target="#b50">[51]</ref>, provides opportunities for generating additional data to train deep neural networks. An LDM contains a U-Net <ref type="bibr" target="#b51">[52]</ref> denoiser and a variational auto-encoder (VAE) <ref type="bibr" target="#b33">[34]</ref> to represent images in a low-resolution latent space, significantly reducing computational cost during training. However, the generated images have no corresponding semantic segmentation mask, which is necessary for DG training. We use existing semantic masks and conditional image generation to obtain pairs of pixel-aligned images and masks. Specifically, we employ the recent work ControlNet <ref type="bibr" target="#b72">[73]</ref> due to its efficient guidance and accessible computational requirements. ControlNet injects conditional inputs into the denoising process through an additional module that directly reuses the encoding layers and their weights from the base LDM. It connects the neural architecture via zero convolutions to enable fast fine-tuning.</p><p>During training, we convert segmentation masks into one-hot encodings, pass them as inputs to ControlNet, and supervise it with the corresponding images from the source domain. We also pass the unique class names extracted from the segmentation mask as a text prompt. Once trained, we condition the generation process on source domain masks and thus construct the new training data.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2">Preserving Style Prior with Style Swap</head><p>When training ControlNet starting from the base LDM pretrained on the prior domain, we observe that the model not only learns the mask-image alignment but also tends to overfit to the style of the domain it is fine-tuned on, as shown in Fig. <ref type="figure" target="#fig_0">3 (c</ref>). This is undesirable as it restricts the diversity of styles in the generated images, which is critical to domain generalization.</p><p>To mitigate this issue, we develop a Style Swap technique to remove the domain-specific style and achieve diverse stylization by retrieving the prior knowledge baked in the pretrained LDMs in three steps, shown in Fig. <ref type="figure" target="#fig_3">5</ref>.    DreamBooth <ref type="bibr" target="#b52">[53]</ref> was originally proposed as an efficient protocol for fewshot fine-tuning of a pretrained LDM to learn a new concept, represented in the training images and unavailable in the prior domain. We employ its reconstruction loss as an efficient means for fine-tuning the LDM towards whole domains.</p><p>As a first step of our Style Swap technique, we fine-tune the base LDM's U-Net U P encapsulating the prior domain P with the Dreambooth protocol <ref type="bibr" target="#b52">[53]</ref> using all images in the source domain S. The resulting U-Net is denoted as U S . Second, we use U S as the base model instead of U P to initialize ControlNet. The idea is to allow U S to absorb the domain style and let the ControlNet focus primarily on the task-specific yet style-agnostic layout control, thereby reducing the domain style bleeding into its weights. Finally, in the third step, we perform inference with the trained ControlNet, except that we switch the base LDM generator to U P while keeping the ControlNet trained for U S . This enables us to apply semantic control learned from the source domain to the original LDM. The overall procedure endows the original LDM with task-specific semantic control, allowing us to generate diverse images adhering to the semantic segmentation masks. This result is shown in Fig. <ref type="figure" target="#fig_0">3 (d</ref>).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.3">Style Prompting</head><p>Text prompting is a powerful technique for style mining. To better guide Con-trolNet generation, we concatenate unique class names present in the semantic mask into a list and pass it to the text encoder. We further enrich the diversity of the generated data by fusing randomized task-specific qualifiers into the text conditioning. These can be obtained from the task definition with a query to a domain expert or an LLM, and sometimes are known in advance, e.g., from the source data simulator, such as GTA <ref type="bibr" target="#b48">[49]</ref>. For the autonomous driving segmentation, we use a range of adverse weather conditions (e.g., foggy, snowy, rainy, Fig. <ref type="figure">6</ref>: MRLF module. We generate a first-pass image I using low-resolution conditioning. In the subsequent high-resolution pass, we partition the canvas into overlapping tiles at each generation step, concurrently apply denoising to each with its respective conditioning, and fuse them with a tile diffusion technique. Finally, we preserve the quality of large objects in the mask M with inpainting conditioned on the first pass image. The color gradient represents the path from noise to clean data.</p><p>overcast, and night scenarios). An example text prompt can be: A city street scene photo with car, road, sky, rider, bicycle, vegetation, building, in foggy weather. This approach, especially when integrated with the Style Swap technique, allows producing images with semantic control and varied natural styles from the prior domain P, as shown in Fig. <ref type="figure" target="#fig_2">4</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.4">Multi-Resolution Latent Fusion</head><p>While ControlNet effectively integrates condition masks into the generation process, it struggles with generating small objects due to the low-resolution latent space. We propose a two-stage Multi-Resolution Latent Fusion pipeline to improve the adherence to semantic masks in the generated dataset. During the first lowresolution pass (Fig. <ref type="figure">6</ref>, bottom-left), we perform a regular ControlNet generation at the original LDM resolution. This generation serves as a reference for the second, high-resolution generation pass. Therein, we keep the large segments generated initially and refine everything else. To overcome the problem of low resolution of the latent space, we perform the second pass in the upsampled latent space, followed by downsizing the generated image to the original size. Such a two-stage pipeline makes use of two other techniques, specifically, the Controlled Tiled MultiDiffusion (Fig. <ref type="figure">6</ref>, top-left), and the Latent Inpainting Diffusion, seen on the right side of the figure.</p><p>Controlled Tiled MultiDiffusion. We choose an upscaling factor s and initialize the high-resolution latent code Z ∈ R sw×sw×d with Gaussian noise, where w × h × d is the resolution of the denoiser U-Net input. The condition mask y is upsampled to Y by the same factor s using nearest-neighbor interpolation.</p><p>Next, the latent canvas Z is divided into a grid of regularly spaced overlapping tiles of size w × h × d for subsequent diffusion.</p><p>To perform a single diffusion update step t over the whole canvas, we crop tuples of intermediate latent codes and their corresponding spatially-aligned conditions (Z i,t , Y i ), i = 1, . . . , n and perform the standard controlled denoising step update with ControlNet discussed previously for each of them independently. As with the low-resolution pass, we condition each crop denoising step on the relevant set of semantic classes and the style prompt. Next, we paste the updated latent codes back into the canvas. The overlapping tiles are fused by averaging overlapping areas following MultiDiffusion <ref type="bibr" target="#b2">[3]</ref>.</p><p>Such a controlled generation in the upsampled space overcomes the lowresolution bias of the pretrained LDM and results in higher-quality small objects. Nevertheless, this procedure alone leads to a noticeable degradation of large objects due to the reduced field of view of the denoiser. We address this shortcoming by taking large objects from the first low-resolution pass and fusing them into the high-resolution pass using the Latent Inpainting Diffusion technique.</p><p>Latent Inpainting Diffusion. To detect large areas to keep from the first pass, we perform connected component analysis of the original segmentation masks. Large components with a relative area over a certain threshold contribute to the binary mask M ∈ R sh×sw , compatible in dimensions with the latent canvas Z. After extracting these large component regions, we generate the high-resolution image using a modified diffusion pipeline, similar to <ref type="bibr" target="#b37">[38,</ref><ref type="bibr" target="#b61">62]</ref>. First, we perform Controlled Tiled MultiDiffusion at each step to deal with the latent canvas. Second, we compose the final latents on step t -1 from the denoised latents Zt-1 (from Z t ) and the low-resolution outcome. Specifically, we upsample the low-resolution image, encode it into the enlarged latent space using VAE to get L 0 , and apply the forward diffusion process to obtain the latent code at step L t-1 . The resulting latent canvases of compatible dimensions are blended using the mask M :</p><formula xml:id="formula_2">Z t-1 = (1 -M ) ⊗ Zt-1 + M ⊗ L t-1 .</formula><p>As a result, our multi-resolution latent fusion scheme overcomes the resolutionspecific limitations of the LDM. It unlocks controlled arbitrary-resolution generation through processing tiles. At the same time, it preserves trusted regions with the latent inpainting diffusion scheme.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.5">Rare Class Generation</head><p>Perception models trained on imbalanced datasets tend to be biased towards common classes and perform poorly on rare classes. We address this challenge by considering class distribution at both the ControlNet training and final dataset generation phases.</p><p>Specifically, for each class c with frequency f c in the source domain, its sampling probability is P (c) = e (1-fc)/T / C c ′ =1 e (1-f c ′ )/T , where C is the total number of classes, and T controls the smoothness of the class distribution. During the training phase of ControlNet, we prioritize and sample more frequently those image-mask pairs featuring rare classes. This helps ControlNet recognize and handle these challenging classes. During the dataset generation phase, we increase the frequency of choosing semantic masks containing rare classes to boost the proportion of rare classes in the generated dataset.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">Experiments</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1">Datasets</head><p>Following the common practice in domain generalization literature <ref type="bibr" target="#b25">[26,</ref><ref type="bibr" target="#b27">28]</ref>, we use GTA <ref type="bibr" target="#b48">[49]</ref> with a total of 24966 images as the synthetic source dataset. To evaluate our method's domain generalization capability, we employ five real-world datasets within the context of autonomous driving. Cityscapes (CS) <ref type="bibr" target="#b10">[11]</ref> is an urban street scene dataset collected in several cities in and around Germany. BDD100K (BDD) <ref type="bibr" target="#b69">[70]</ref> contains images of urban scenes captured at different locations in the United States. Mapillary Vistas (MV) <ref type="bibr" target="#b40">[41]</ref> includes the worldwide street scenes and is diverse in terms of weather conditions, seasons, and daytime variations. Specifically for adverse conditions, we also utilize ACDC <ref type="bibr" target="#b55">[56]</ref> and Dark Zurich (DZ) <ref type="bibr" target="#b54">[55]</ref>, both of which contain images captured under challenging weather conditions and during nighttime.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2">Implementation Details</head><p>Our model is based on Stable Diffusion 1.5 <ref type="bibr" target="#b50">[51]</ref> and requires a single consumergrade GPU for training. We first conduct DreamBooth <ref type="bibr" target="#b52">[53]</ref> fine-tuning using GTA images to obtain U S . The images are randomly resized and cropped to a resolution of 512×512. The fine-tuning takes 10k iterations with a constant learning rate of 2×10 -6 .</p><p>The ControlNet <ref type="bibr" target="#b72">[73]</ref> training is initialized with the source style U S . For input conditions, we use one-hot encoded GTA segmentation masks and crop them to the size of 512×512. These crops are guided by input text containing semantic classes in each crop. During ControlNet inference, we perform the Style Swap as discussed in Sec. 3.2 and integrate the multi-resolution latent fusion module with s=2. Our tiling strategy uses a 16-pixel stride between neighbor crops. We use T =0.01 for rare class sampling probability. The constructed dataset comprises an equal mix of images with basic text inputs and those with randomized adverse weather prompts. Extra examples are shown in the supplement.</p><p>To assess the efficacy of our DGInStyle, we train a semantic segmentation model on a combination of the GTA source dataset and our generated dataset. Specifically, we generate N G = 6000 images and select N S = 6000 images based on the rare class criteria. The training is performed under the aligned domain generalization framework as detailed in <ref type="bibr" target="#b27">[28]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.3">Comparison with State-of-the-Art DG</head><p>In Tab. 1, we benchmark several DG methods trained using either the GTA dataset alone or augmented with our DGInStyle and subsequently evaluated Comparison of Domain Generalization (DG) methods for semantic segmentation in autonomous driving scenes w/ and w/o integrating our generated dataset (mIoU ↑ in %) with GTA as source domain, using either ResNet-101 or MiT-B5 as the backbone. As seen, leveraging our proposed data generation pipeline, which exploits rich generative priors and semantic conditioning, provides a substantial boost in performance across various configurations.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>DG Method</head><p>DGInStyle CS <ref type="bibr" target="#b10">[11]</ref> BDD <ref type="bibr" target="#b69">[70]</ref> MV <ref type="bibr" target="#b40">[41]</ref> Avg3 ACDC <ref type="bibr" target="#b55">[56]</ref> DZ <ref type="bibr" target="#b54">[55]</ref>  across five real-world datasets to measure their generalization from GTA to other domains. Specifically, we integrate DGInStyle into IBN-Net <ref type="bibr" target="#b42">[43]</ref>, RobustNet <ref type="bibr" target="#b9">[10]</ref>,</p><p>Color-Aug (random brightness, contrast, saturation, and hue), DAFormer <ref type="bibr" target="#b25">[26,</ref><ref type="bibr" target="#b27">28]</ref>, and HRDA <ref type="bibr" target="#b26">[27,</ref><ref type="bibr" target="#b27">28]</ref> covering CNN-based ResNet-101 <ref type="bibr" target="#b20">[21]</ref> and Transformer-based MiT-B5 <ref type="bibr" target="#b65">[66]</ref> network architectures.</p><p>The results in Tab. 1 indicate that DGInStyle significantly enhances the DG performance across various DG methods and network architectures. The improvements range from +2.5 mIoU up to +7.2 mIoU on the average over 5 datasets. In particular, DGInStyle improves the overall state-of-the-art performance by a significant gain of +2.5 mIoU. These results confirms the efficacy of our method in generating diverse, style-varied image-label pairs for semantic segmentation, thereby significantly contributing to robust domain generalization across different network architectures and training strategies.</p><p>We gauge the impact of our generated dataset on class-wise IoU scores using DAFormer, as shown in Fig. <ref type="figure">7</ref>. The heatmap affirms the capability of our data   generation process across a wide range of classes. Notably, there is a strong improvement in classes such as pole, traffic light, and traffic sign, highlighting the effectiveness of our conditioning approach, which specifically targets these small classes. Additionally, we observe a significant improvement in the sky class, especially in evaluations with the DarkZurich dataset. This suggests that our DGInStyle is adept at bridging major domain gaps, such as transitioning to night scenes, as further exemplified in Fig. <ref type="figure">8</ref>.</p><p>To broaden the scope of our evaluation, we set an experiment with Cityscapes <ref type="bibr" target="#b10">[11]</ref> as a source domain, generalizing to other real-world domains in Tab. 2. As a real-world dataset, Cityscapes has a smaller domain gap to the other real-world target datasets than the synthetic GTA dataset. When using Cityscapes as a source, the baseline performance without DGInStyle is therefore naturally higher, which reduces the potential for improvement. Yet, even in this more saturated setting, DGInStyle achieves significant average improvements. These findings affirm the versatility and robustness of our method.</p><p>Qualitative Analysis. Fig. <ref type="figure">8</ref> provides visual examples of semantic segmentation results obtained from HRDA trained with or without the use of DGInStyle. It shows that our generated dataset improves the predictions, even for difficult classes (e.g., truck and pole) and lighting conditions (e.g., day and night). </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.4">Ablation Studies</head><p>We conduct ablation studies to evaluate the contribution of each component of our method. The results are shown in Tab. 3. All models are based on the DAFormer <ref type="bibr" target="#b25">[26]</ref> framework but trained on datasets generated under varying conditions. We observe that incorporating Multi-Resolution Latent Fusion (MRLF) enhances the generation of small objects in our dataset, boosting the segmentation model's performance by +0.96 on average of the five datasets. As a vital part of the style diversification module, the Style Swap technique significantly improves model performance by another +1.57, demonstrating the effectiveness Table <ref type="table">3</ref>: Ablation studies on different components for our data generation pipeline. All models use DAFormer <ref type="bibr" target="#b25">[26]</ref> and are trained with GTA and our generated dataset. MRLF: our multi-resolution latent fusion module; RCG: using rare class sampling in the ControlNet training and dataset generation phases.  We additionally present the ablations by excluding each component during the dataset generation to evaluate their role in the combined framework. Tab. 3 shows that removing the Style Swap component significantly degrades performance, underscoring its effectiveness in leveraging prior knowledge to diversify the generated data. Similarly, removing other components also leads to a decline in the model's performance, which reveals that each component adds value to our data generation pipeline.</p><p>To gain further insights on MRLF, we ablate its two passes while incorporating all other components during dataset generation. As shown in Tab. 4, both the Controlled Tiled MultiDiffusion (CTMD) and the Latent Inpainting Diffusion (LID) contribute to the overall performance of our method. This is also exemplified in Fig. <ref type="figure" target="#fig_6">9</ref>, where it becomes evident that the MRLF module not only refines local details but also minimizes artifacts in larger objects.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">Conclusion</head><p>We have explored the potential of generative data augmentation using pretrained LDMs in the challenging context of domain generalization for semantic segmentation. We propose DGInStyle, a novel and efficient data generation pipeline that crafts diverse task-specific images by sampling the rich prior of a pretrained latent diffusion model, while ensuring precise adherence of the generation to semantic layout condition. DGInStyle has demonstrated its capability to enhance the generalizability of semantic segmentation models through extensive experiments across various domains. It consistently improves the performance of several domain generalization methods for both CNN and Transformer architectures, notably enhancing the state of the art. Newly demonstrating the power of LDMs as data generators for domain-robust segmentation, DGInStyle is one more step towards domain-independent semantic segmentation. We hope that it can lay the foundation for future work on how to best utilize generative models for improving domain generalization of dense scene understanding.</p><p>In this supplementary document, we first present additional information about the diversity of the generated dataset in Sec. A. We then provide a scale analysis of the dataset in Sec. B. In Sec. C, detailed class-wise results of the proposed RCG are provided. The limitations of our approach are discussed in Sec. D. Further example predictions are showcased in Sec. E, followed by additional examples of the MRLF module in Sec. F and samples in adverse weather conditions in Sec. G.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A Diversity of the Generated Dataset</head><p>Our DGInStyle approach leverages the Style Swap and Style Prompting techniques to diversify the generated images. The diversity of training data is critical for the trained segmentation model's domain generalization. To further evaluate the diversity of the generated dataset, we employ the Frechet Inception Distance (FID) <ref type="bibr" target="#b22">[23]</ref> and Kernel Inception Distance (KID) <ref type="bibr" target="#b3">[4]</ref>, which measure the distributional distance between two datasets. Specifically, we ablate the Style Swap and Style Prompting modules by assessing the similarity between our generated and five real-world datasets. The FID and KID scores are computed with <ref type="bibr" target="#b41">[42]</ref> and presented in Tab. S1 and Tab. S2, respectively. A lower score indicates a smaller domain gap between the considered pair of datasets. Thus, a lower average score suggests a better coverage of the union of diverse datasets and, thus, better diversity of the generated data. The results demonstrate that both components enhance the diversity of the generated data, with the highest quality attained when both are enabled. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B Dataset scale analysis</head><p>Tab. S3 studies the DG performance of DAFormer relative to the number of synthetic images. More generated images improve the mIoU up to around 6000 images, after which it reaches a plateau.  </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>D Limitations</head><p>Diffusion models exhibit a primary drawback of prolonged sampling times. As our model is based on diffusion models, it naturally inherits this slow inference property. Moreover, the proposed MRLF module operates on multiple tiles cropped from the upscaled latents, and the sampling process of all these tiles further extends the image generation duration. However, it is important to note that this extended diffusion time does not impact the inference time of the deployed segmentation networks. Furthermore, much ongoing research aims to expedite diffusion model sampling, and we believe that this issue can be alleviated through architectural advancements.           </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>G Adverse Weather Samples</head><p>In Fig. <ref type="figure" target="#fig_19">S10</ref>, we show more examples of the generated content under different weather conditions given the same semantic label condition. By encompassing a wide range of weather scenarios, DGInStyle ensures that the models are wellequipped to handle real-world variations, thereby improving their applicability and reliability in diverse operational environments. </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Fig. 3 :</head><label>3</label><figDesc>Fig. 3: ControlNet learns the source domain style. This effect hinders varied data generation for domain generalization. Our Style Swap mitigates the effect and preserves the style prior.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head></head><label></label><figDesc>Foggy (c) Rainy (d) Snowy</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Fig. 4 :</head><label>4</label><figDesc>Fig. 4: Style variations. DGInStyle can generate images under various scene conditions through style prompting, while maintaining consistent dense semantic control from (a).</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Fig. 5 :</head><label>5</label><figDesc>Fig. 5: Overview of our proposed Style Swap technique. ControlNet learns segmentation-conditioned image generation on the source domain. To avoid ControlNet steering the generated style, it is trained on top of a source domain fine-tuned LDM. Later, this source domain LDM can be replaced with the original LDM to restore the rich style prior. As discussed in Sec. 4, this technique leads to state-of-the-art results in domain generalization for semantic segmentation.</figDesc><graphic coords="7,134.77,115.84,345.81,112.88" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Fig. 7 :Fig. 8 :</head><label>78</label><figDesc>Fig. 7: Class-wise IoU averaged over the five datasets using DAFormer with and without our dataset integration. The color visualizes the difference to the first row. Image w/o Ours w/ Ours Ground Truth</figDesc><graphic coords="12,139.04,218.34,92.73,52.16" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>Fig. 9 :</head><label>9</label><figDesc>Fig. 9: Qualitative examples of MRLF. (a) When zooming in on the mask crop, which contains small objects such as cars and traffic poles, the initial generation fails to create recognizable content for these instances. (b) This is addressed by conducting Controlled Tiled MultiDiffusion, which enhances the generation quality of fine details. However, it can lead to artifacts of large objects. (c) When adding Latent Inpainting Diffusion, the generated image not only improves the local details but also reduces artifacts in large objects.</figDesc><graphic coords="13,314.60,412.15,165.97,71.16" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_7"><head>Fig. S1 :</head><label>S1</label><figDesc>Fig. S1: Comparison of the class-wise IoU averaged over the five datasets with and without RCG while keeping the other components of DGInStyle coupled with DAFormer. The color visualizes the difference to the first row.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_8"><head></head><label></label><figDesc>road sidew. build. wall fence pole tr. light tr. sign veget. terrain sky person rider car truck bus train m.bike bike n/a.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_9"><head>Fig. S3 :</head><label>S3</label><figDesc>Fig. S3: Example predictions from HRDA trained with and w/o our DGInStyle on the BDD100K dataset, showing a better recognition of difficult classes such as truck and bus.</figDesc><graphic coords="23,169.35,402.63,276.64,187.14" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_11"><head>Fig. S4 :</head><label>S4</label><figDesc>Fig. S4: Example predictions from HRDA trained with and w/o our DGInStyle on the Mapillary Vistas showing an improved performance of sidewalk, traffic sign, bus and fence.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_12"><head>Fig. S5 :</head><label>S5</label><figDesc>Fig. S5: Example predictions from HRDA trained with and w/o our DGInStyle on the ACDC dataset, demonstrating improved performance in rainy and snowy conditions for classes such as sidewalk, bus, vegetation and sky.</figDesc><graphic coords="24,169.35,146.63,276.67,187.53" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_14"><head>Fig. S6 :</head><label>S6</label><figDesc>Fig. S6: Example predictions from HRDA trained with and w/o our DGInStyle on the Dark Zurich dataset, demonstrating superior generalization for dark scenes in the sky and vegetation classes.</figDesc><graphic coords="24,169.35,468.51,276.64,98.85" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_15"><head>F</head><label></label><figDesc>Multi-Resolution Latent Fusion ModuleIn Fig.S7-S9, we provide additional qualitative examples showing how the MRLF module mitigates issues of the base Stable Diffusion LDM related to the poor quality of small objects generation. For instance, in Fig.S7 (a), the motorcycle and rider are initially indistinct and poorly rendered. However, after applying the MRLF module, these elements become clearly recognizable and well-defined. Similarly, the fine-grained poles' details show a marked improvement in Fig.S8. Additionally, the quality of the person depicted in Fig.S9also benefits significantly from the MRLF module, demonstrating its overall effectiveness in refining and improving the quality of small-scale features in generated images.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_16"><head>Fig. S7 :</head><label>S7</label><figDesc>Fig. S7: Qualitative example of MRLF: improved generation for small distant objects like rider and motorcycle when zooming in on the mask crop.</figDesc><graphic coords="25,169.35,271.57,276.65,140.23" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_17"><head>Fig. S8 :</head><label>S8</label><figDesc>Fig. S8: Qualitative example of MRLF: improved generation for small distant objects like pole and traffic light when zooming in on the mask crop.</figDesc><graphic coords="25,169.35,489.72,276.66,141.33" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_18"><head>Fig. S9 :</head><label>S9</label><figDesc>Fig. S9: Qualitative example of MRLF: improved generation for small distant objects like person when zooming in on the mask crop.</figDesc><graphic coords="26,169.35,115.84,276.64,140.63" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_19"><head>Fig. S10 :</head><label>S10</label><figDesc>Fig. S10: Examples generated by our DGInStyle approach under varying weather conditions, all based on the same semantic label condition.</figDesc><graphic coords="26,134.77,408.61,345.79,250.77" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0"><head></head><label></label><figDesc></figDesc><graphic coords="22,169.35,334.72,276.67,186.38" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head>Table 1 :</head><label>1</label><figDesc>DG with GTA source domain and ResNet-101/MiT-B5 backbone.</figDesc><table /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2"><head></head><label></label><figDesc>76 26 68 25 27 33 45 26 64 29 70 52 34 75 33 34 17 35 22 42 84 34 77 34 30 38 51 31 67 28 82 51 36 79 41 46 17 36 22 47</figDesc><table /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_3"><head>Table 2 :</head><label>2</label><figDesc>DG with Cityscapes source domain and MiT-B5<ref type="bibr" target="#b65">[66]</ref> backbone. Cityscapes to other datasets domain generalization w/ and w/o integrating our generated dataset (mIoU ↑ in %).</figDesc><table><row><cell>DG Method</cell><cell cols="7">DGInStyle BDD [70] MV [41] ACDC [56] DZ [55] Average ∆Average</cell></row><row><cell>Color-Aug</cell><cell>✘ ✔</cell><cell>53.33 55.18</cell><cell>60.06 59.95</cell><cell>52.38 55.19</cell><cell>23.00 26.83</cell><cell>47.19 49.29</cell><cell>↑ 2.1</cell></row><row><cell>DAFormer [26, 28]</cell><cell>✘ ✔</cell><cell>54.19 56.26</cell><cell>61.67 62.67</cell><cell>55.15 57.74</cell><cell>28.28 28.55</cell><cell>49.82 51.31</cell><cell>↑ 1.5</cell></row><row><cell>HRDA [27, 28]</cell><cell>✘ ✔</cell><cell>58.49 58.84</cell><cell>68.32 67.99</cell><cell>59.70 61.00</cell><cell>31.07 32.60</cell><cell>54.40 55.11</cell><cell>↑ 0.7</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_5"><head>Table 4 :</head><label>4</label><figDesc>MRLF Ablation. Ablation studies on multi-resolution components with Controlled Tiled MultiDiffusion (CTMD) and Latent Inpainting Diffusion (LID). Numbers are reported in mIoU (higher is better).</figDesc><table><row><cell>CTMD</cell><cell>LID</cell><cell>Avg3</cell><cell>Avg5</cell></row><row><cell>✘</cell><cell>✘</cell><cell>53.07</cell><cell>45.19</cell></row><row><cell>✔</cell><cell>✘</cell><cell>54.05</cell><cell>45.60</cell></row><row><cell>✔</cell><cell>✔</cell><cell>54.25</cell><cell>46.47</cell></row><row><cell cols="4">of utilizing the prior domain to generate diverse samples. The Style Prompts</cell></row><row><cell cols="4">module further elevates the model performance by +0.32, especially in adverse</cell></row><row><cell cols="4">weather scenarios [55, 56]. Combined with Rare Class Generation (RCG), which</cell></row><row><cell cols="4">adds another +0.31, our complete data generation pipeline achieves an average</cell></row><row><cell cols="3">mIoU of 46.47% over the five real-world datasets.</cell><cell></cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_6"><head>Table S1 :</head><label>S1</label><figDesc>Quantitative evaluation of the generated data diversity using Frechet Inception Distance (↓) between the generated data and real-world datasets. Evidently, both Style Swap and Style Prompting play important roles in bridging the gap between the generated data and each of the real datasets, a union of which represents the task-specific domain of autonomous driving.</figDesc><table><row><cell>Swap</cell><cell>Prompting</cell><cell>CS</cell><cell>BDD</cell><cell>MV</cell><cell>ACDC</cell><cell>DZ</cell><cell>Average</cell></row><row><cell>✘</cell><cell>✘</cell><cell>124.28</cell><cell>98.57</cell><cell>81.31</cell><cell>141.07</cell><cell>238.18</cell><cell>136.68</cell></row><row><cell>✔</cell><cell>✘</cell><cell>121.07</cell><cell>88.64</cell><cell>79.57</cell><cell>133.53</cell><cell>235.76</cell><cell>129.71</cell></row><row><cell>✘</cell><cell>✔</cell><cell>121.98</cell><cell>95.25</cell><cell>80.02</cell><cell>136.21</cell><cell>233.97</cell><cell>133.48</cell></row><row><cell>✔</cell><cell>✔</cell><cell>117.05</cell><cell>88.46</cell><cell>74.81</cell><cell>128.39</cell><cell>227.69</cell><cell>127.37</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_7"><head>Table S2 :</head><label>S2</label><figDesc>Quantitative evaluation of the generated data diversity using Kernel Inception Distance (KID × 0.01 ↓) between the generated data and real-world datasets. The standard deviation is part of the metric computation protocol and has also been scaled down by a factor of 0.01.</figDesc><table><row><cell cols="2">Swap Prompting</cell><cell>CS</cell><cell>BDD</cell><cell>MV</cell><cell>ACDC</cell><cell>DZ</cell><cell>Average</cell></row><row><cell>✘</cell><cell>✘</cell><cell cols="6">8.54 ± 0.15 5.62 ± 0.08 4.99 ± 0.14 7.95 ± 0.18 15.66 ± 0.54 8.55 ± 0.22</cell></row><row><cell>✔</cell><cell>✘</cell><cell cols="6">8.19 ± 0.19 4.98 ± 0.09 5.00 ± 0.15 7.40 ± 0.16 15.38 ± 0.53 8.19 ± 0.23</cell></row><row><cell>✘</cell><cell>✔</cell><cell cols="6">8.24 ± 0.20 5.41 ± 0.08 5.04 ± 0.13 7.50 ± 0.18 14.93 ± 0.64 8.23 ± 0.24</cell></row><row><cell>✔</cell><cell>✔</cell><cell cols="6">7.86 ± 0.22 4.90 ± 0.09 4.98 ± 0.17 7.16 ± 0.18 14.36 ± 0.67 7.85 ± 0.27</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_8"><head>Table S3 :</head><label>S3</label><figDesc>Performance of DAFormer Using DGInStyle wrt. the unmber of generated images (mIoU ↑ in %).</figDesc><table><row><cell></cell><cell>NG</cell><cell>0</cell><cell>1000</cell><cell>2000</cell><cell>4000</cell><cell>6000</cell><cell>8000</cell></row><row><cell></cell><cell>Avg3</cell><cell>51.73</cell><cell>53.57</cell><cell>53.86</cell><cell>54.1</cell><cell>54.25</cell><cell>54.28</cell></row><row><cell></cell><cell>Avg5</cell><cell>42.18</cell><cell>44.95</cell><cell>45.86</cell><cell>46.22</cell><cell>46.47</cell><cell>46.39</cell></row><row><cell cols="5">C Class-wise results of RCG</cell><cell></cell><cell></cell></row><row><cell>w/o RCG w/ RCG</cell><cell cols="7">86.3 32.7 77.2 32.1 31.0 34.2 48.1 30.5 68.4 27.9 82.8 51.0 37.0 78.0 40.4 44.0 16.9 35.7 22.9 46.2 83.9 33.9 77.2 34.3 29.9 38.5 51.4 31.3 67.4 27.9 82.5 51.4 36.0 79.0 40.6 46.4 17.4 36.2 21.6 46.7</cell></row><row><cell cols="8">R o a d S . w a l k B u i l d . W a l l F e n c e P o l e T . l i g h t T . s i g n V e g e t . T e r r a i n S k y P e r s o n R i d e r C a r T r u c k B u s T r a i n M . c y l e B i k e m I o U</cell></row></table><note><p><p><p>In Fig.</p>S1</p>, we show the effectiveness of RCG for difficult classes, such as pole, traffic light and bus that have a low pixel count in the source data.</p></note></figure>
+		</body>
+		<back>
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>E Further Example Predictions</head><p>We present a comprehensive qualitative comparison between the predicted semantic segmentation results of HRDA trained with GTA-only data and the model trained with our DGInStyle approach. We evaluate these models on real-world datasets, including Cityscapes (cf . Fig. <ref type="figure">S2</ref>), BDD100K (cf . Fig. <ref type="figure">S3</ref>), Mapillary Vistas (cf . Fig. <ref type="figure">S4</ref>), ACDC (cf . Fig. <ref type="figure">S5</ref>), and Dark Zurich (cf . Fig. <ref type="figure">S6</ref>). The model trained with our DGInStyle can better segment truck and bus (as seen in Fig. <ref type="figure">S2-S5</ref>). It also exhibits a correct segmentation of sidewalk, effectively identifying areas that were previously overlooked by the GTA-only trained model (as seen in Fig. <ref type="figure">S2</ref>, Fig. <ref type="figure">S4</ref>). Furthermore, it enhances performance for rare classes, such as fence and traffic sign (as seen in Fig. <ref type="figure">S4</ref>). In challenging conditions, such as nighttime scenes, our DGInStyle approach significantly improves the segmentation of sky and vegetation (as seen in Fig. <ref type="figure">S5</ref> and Fig. <ref type="figure">S6</ref>).  </p></div>			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">Synthetic data from diffusion models improves ImageNet classification</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Azizi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Kornblith</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Saharia</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Norouzi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">J</forename><surname>Fleet</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2304.08466</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<title level="m" type="main">Universal guidance for diffusion models</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Bansal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">M</forename><surname>Chu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Schwarzschild</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Sengupta</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Goldblum</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Geiping</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Goldstein</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2302.07121</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<title level="m" type="main">MultiDiffusion: Fusing diffusion paths for controlled image generation</title>
+		<author>
+			<persName><forename type="first">O</forename><surname>Bar-Tal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Yariv</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Lipman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Dekel</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2302.08113</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+		<author>
+			<persName><forename type="first">M</forename><surname>Bińkowski</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">J</forename><surname>Sutherland</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Arbel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Gretton</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1801.01401</idno>
+		<title level="m">Demystifying mmd gans</title>
+		<imprint>
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+		<title level="m" type="main">Large scale GAN training for high fidelity natural image synthesis</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Brock</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Donahue</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Simonyan</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1809.11096</idno>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Diffdreamer: Towards consistent unsupervised single-view scene extrapolation with conditional diffusion models</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Cai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">R</forename><surname>Chan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Peng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Shahbazi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Obukhov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Van Gool</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Wetzstein</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF International Conference on Computer Vision</title>
+		<meeting>the IEEE/CVF International Conference on Computer Vision</meeting>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Pix2nerf: Unsupervised conditional p-gan for single image to neural radiance fields translation</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Cai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Obukhov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Dai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Van Gool</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF conference on computer vision and pattern recognition</title>
+		<meeting>the IEEE/CVF conference on computer vision and pattern recognition</meeting>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<monogr>
+		<title level="m" type="main">GeoDiffusion: Text-prompted geometric control for object detection data generation</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Xie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Hong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">Y</forename><surname>Yeung</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2306.04607</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<monogr>
+		<author>
+			<persName><forename type="first">M</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Laina</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Vedaldi</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2304.03373</idno>
+		<title level="m">Training-free layout control with cross-attention guidance</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Robustnet: Improving domain generalization in urban-scene segmentation via instance selective whitening</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Choi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Jung</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Yun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">T</forename><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Choo</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">IEEE/CVF Conference on Computer Vision and Pattern Recognition</title>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">The cityscapes dataset for semantic urban scene understanding</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Cordts</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Omran</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Ramos</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Rehfeld</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Enzweiler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Benenson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">U</forename><surname>Franke</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Roth</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Schiele</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">IEEE Conference on Computer Vision and Pattern Recognition</title>
+		<imprint>
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Imagenet: A large-scale hierarchical image database</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Deng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Dong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Socher</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">J</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Fei-Fei</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">IEEE Conference on Computer Vision and Pattern Recognition</title>
+		<imprint>
+			<publisher>Ieee</publisher>
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<monogr>
+		<title level="m" type="main">Diffusion models beat GANs on image synthesis</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Dhariwal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Nichol</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2105.05233</idno>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">HGFormer: Hierarchical grouping transformer for domain generalized semantic segmentation</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Ding</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Xue</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">S</forename><surname>Xia</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Schiele</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Dai</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">IEEE/CVF Conference on Computer Vision and Pattern Recognition</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<monogr>
+		<title level="m" type="main">Diversify your vision datasets with automatic diffusion-based augmentation</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Dunlap</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Umino</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">E</forename><surname>Gonzalez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Darrell</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2305.16289</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">Unsupervised domain adaptation by backpropagation</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Ganin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Lempitsky</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Machine Learning</title>
+		<imprint>
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<monogr>
+		<author>
+			<persName><forename type="first">V</forename><surname>Goel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Peruzzo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Jiang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Sebe</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Darrell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Shi</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2303.17546</idno>
+		<title level="m">PAIR-Diffusion: Object-level image editing with structure-and-appearance paired diffusion models</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<monogr>
+		<title level="m" type="main">Prompting diffusion representations for cross-domain semantic segmentation</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Gong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Danelljan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Sun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">D</forename><surname>Mangas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">V</forename><surname>Gool</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2307.02138</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<monogr>
+		<title level="m" type="main">Generative adversarial networks</title>
+		<author>
+			<persName><forename type="first">I</forename><forename type="middle">J</forename><surname>Goodfellow</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Pouget-Abadie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Mirza</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Warde-Farley</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Ozair</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Courville</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Bengio</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1406.2661</idno>
+		<imprint>
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<monogr>
+		<title level="m" type="main">Modulating pretrained diffusion models for multimodal image synthesis</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Ham</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Hays</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Lu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">K</forename><surname>Singh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Hinz</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2302.12764</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">Deep residual learning for image recognition</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Ren</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Sun</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">IEEE Conference on Computer Vision and Pattern Recognition</title>
+		<imprint>
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<monogr>
+		<title level="m" type="main">Is synthetic data from generative models ready for image recognition</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Sun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Xue</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Torr</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Bai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Qi</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2210.07574</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">Gans trained by a two time-scale update rule converge to a local nash equilibrium</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Heusel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Ramsauer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Unterthiner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Nessler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Hochreiter</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Advances in Neural Information Processing Systems</title>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">Denoising diffusion probabilistic models</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Ho</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Jain</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Abbeel</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Advances in Neural Information Processing Systems</title>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<monogr>
+		<title level="m" type="main">Classifier-free diffusion guidance</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Ho</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Salimans</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2207.12598</idno>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<title level="a" type="main">Daformer: Improving network architectures and training strategies for domain-adaptive semantic segmentation</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Hoyer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Dai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Van Gool</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">IEEE/CVF Conference on Computer Vision and Pattern Recognition</title>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<monogr>
+		<title level="m" type="main">HRDA: Context-aware high-resolution domainadaptive semantic segmentation</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Hoyer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Dai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Van Gool</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2204.13132</idno>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<title level="a" type="main">Domain adaptive and generalizable network architectures and training strategies for semantic image segmentation</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Hoyer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Dai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Van Gool</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE TPAMI</title>
+		<imprint>
+			<biblScope unit="volume">46</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="220" to="235" />
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<analytic>
+		<title level="a" type="main">Fsdr: Frequency space domain randomization for domain generalization</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Guan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Xiao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Lu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">IEEE/CVF Conference on Computer Vision and Pattern Recognition</title>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<monogr>
+		<title level="m" type="main">Composer: Creative and controllable image synthesis with composable conditions</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Shen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Zhou</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2302.09778</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<analytic>
+		<title level="a" type="main">Style projected clustering for domain generalized semantic segmentation</title>
+		<author>
+			<persName><forename type="first">W</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Yan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Xiong</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">IEEE/CVF Conference on Computer Vision and Pattern Recognition</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<monogr>
+		<title level="m" type="main">Repurposing diffusion-based image generators for monocular depth estimation</title>
+		<author>
+			<persName><forename type="first">B</forename><surname>Ke</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Obukhov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Metzger</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">C</forename><surname>Daudt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Schindler</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<monogr>
+		<title level="m" type="main">Texture learning domain randomization for domain generalized segmentation</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">H</forename><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Kim</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2303.11546</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<monogr>
+		<title level="m" type="main">Auto-encoding variational bayes</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">P</forename><surname>Kingma</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Welling</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1312.6114</idno>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<monogr>
+		<author>
+			<persName><forename type="first">N</forename><surname>Kondapaneni</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Marks</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Knott</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Guimarães</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Perona</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2310.00031</idno>
+		<title level="m">Text-image alignment for diffusion-based perception</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<monogr>
+		<title level="m" type="main">Is synthetic data from diffusion models ready for knowledge distillation?</title>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Yang</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2305.12954</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b36">
+	<monogr>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Q</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Xie</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2301.05221</idno>
+		<title level="m">Guiding text-to-image diffusion model towards grounded generation</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b37">
+	<analytic>
+		<title level="a" type="main">Repaint: Inpainting using denoising diffusion probabilistic models</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Lugmayr</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Danelljan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Romero</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Timofte</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Van Gool</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">IEEE/CVF Conference on Computer Vision and Pattern Recognition</title>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b38">
+	<monogr>
+		<title level="m" type="main">Sdedit: Image synthesis and editing with stochastic differential equations</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Meng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">Y</forename><surname>Zhu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Ermon</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2108.01073</idno>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b39">
+	<monogr>
+		<author>
+			<persName><forename type="first">C</forename><surname>Mou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Xie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Qi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Shan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Qie</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2302.08453</idno>
+		<title level="m">T2I-Adapter: Learning adapters to dig out more controllable ability for text-to-image diffusion models</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b40">
+	<analytic>
+		<title level="a" type="main">The mapillary vistas dataset for semantic understanding of street scenes</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Neuhold</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Ollmann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Rota Bulo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Kontschieder</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">IEEE International Conference on Computer Vision</title>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b41">
+	<monogr>
+		<title level="m" type="main">High-fidelity performance metrics for generative models in pytorch</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Obukhov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Seitzer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">W</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Zhydenko</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Kyl</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">Y J</forename><surname>Lin</surname></persName>
+		</author>
+		<idno type="DOI">10.5281/zenodo.4957738</idno>
+		<idno>10.5281/zenodo.4957738</idno>
+		<ptr target="https://github.com/toshas/torch-fidelity,version:0.3.0" />
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b42">
+	<analytic>
+		<title level="a" type="main">Two at once: Enhancing learning and generalization capacities via IBN-Net</title>
+		<author>
+			<persName><forename type="first">X</forename><surname>Pan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Luo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Shi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Tang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">European Conference on Computer Vision</title>
+		<imprint>
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b43">
+	<analytic>
+		<title level="a" type="main">Diffusion-based image translation with label guidance for domain adaptive semantic segmentation</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Peng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Hu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Q</forename><surname>Ke</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Liu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">IEEE/CVF International Conference on Computer Vision</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b44">
+	<analytic>
+		<title level="a" type="main">Semantic-aware domain generalized segmentation</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Peng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Lei</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Hayat</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Guo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Li</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">IEEE/CVF Conference on Computer Vision and Pattern Recognition</title>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b45">
+	<analytic>
+		<title level="a" type="main">Global and local texture randomization for synthetic-to-real semantic segmentation</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Peng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Lei</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Liu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Transactions on Image Processing</title>
+		<imprint>
+			<biblScope unit="volume">30</biblScope>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b46">
+	<monogr>
+		<title level="m" type="main">Learning transferable visual models from natural language supervision</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Radford</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">W</forename><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Hallacy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Ramesh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Goh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Agarwal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Sastry</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Askell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Mishkin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Clark</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Krueger</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Sutskever</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2103.00020</idno>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b47">
+	<monogr>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">J</forename><surname>Rezende</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Mohamed</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1505.05770</idno>
+		<title level="m">Variational inference with normalizing flows</title>
+		<imprint>
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b48">
+	<analytic>
+		<title level="a" type="main">Playing for data: Ground truth from computer games</title>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">R</forename><surname>Richter</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Vineet</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Roth</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Koltun</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">European Conference on Computer Vision</title>
+		<imprint>
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b49">
+	<analytic>
+		<title level="a" type="main">Hypersim: A photorealistic synthetic dataset for holistic indoor scene understanding</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Roberts</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Ramapuram</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Ranjan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Kumar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">A</forename><surname>Bautista</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Paczan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Webb</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">M</forename><surname>Susskind</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Computer Vision (ICCV)</title>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b50">
+	<analytic>
+		<title level="a" type="main">High-resolution image synthesis with latent diffusion models</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Rombach</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Blattmann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Lorenz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Esser</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Ommer</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">IEEE/CVF Conference on Computer Vision and Pattern Recognition</title>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b51">
+	<monogr>
+		<title level="m" type="main">U-net: Convolutional networks for biomedical image segmentation</title>
+		<author>
+			<persName><forename type="first">O</forename><surname>Ronneberger</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Fischer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Brox</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1505.04597</idno>
+		<imprint>
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b52">
+	<monogr>
+		<author>
+			<persName><forename type="first">N</forename><surname>Ruiz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Jampani</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Pritch</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Rubinstein</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Aberman</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2208.12242</idno>
+		<title level="m">Dream-Booth: Fine tuning text-to-image diffusion models for subject-driven generation</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b53">
+	<analytic>
+		<title level="a" type="main">Edaps: Enhanced domainadaptive panoptic segmentation</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Saha</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Hoyer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Obukhov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Dai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Van Gool</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF International Conference on Computer Vision (ICCV)</title>
+		<meeting>the IEEE/CVF International Conference on Computer Vision (ICCV)</meeting>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b54">
+	<analytic>
+		<title level="a" type="main">Guided curriculum model adaptation and uncertainty-aware evaluation for semantic nighttime image segmentation</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Sakaridis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Dai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Van Gool</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">IEEE International Conference on Computer Vision</title>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b55">
+	<analytic>
+		<title level="a" type="main">ACDC: The adverse conditions dataset with correspondences for semantic driving scene understanding</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Sakaridis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Dai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Van Gool</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">IEEE/CVF International Conference on Computer Vision</title>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b56">
+	<monogr>
+		<title level="m" type="main">Fake it till you make it: Learning transferable representations from synthetic imagenet clones</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">B</forename><surname>Sariyildiz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Alahari</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Larlus</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Kalantidis</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2212.08420</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b57">
+	<analytic>
+		<title level="a" type="main">Laion-5b: An open large-scale dataset for training next generation image-text models</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Jia</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Advances in Neural Information Processing Systems</title>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b58">
+	<monogr>
+		<title level="m" type="main">Denoising diffusion implicit models</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Meng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Ermon</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2010.02502</idno>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b59">
+	<monogr>
+		<title level="m" type="main">Score-based generative modeling through stochastic differential equations</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Sohl-Dickstein</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">P</forename><surname>Kingma</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Kumar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Ermon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Poole</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2011.13456</idno>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b60">
+	<monogr>
+		<author>
+			<persName><forename type="first">B</forename><surname>Trabucco</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Doherty</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Gurinas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Salakhutdinov</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2302.07944</idno>
+		<title level="m">Effective data augmentation with diffusion models</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b61">
+	<analytic>
+		<title level="a" type="main">Breathing new life into 3d assets with generative repainting</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Kanakis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Schindler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Van Gool</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Obukhov</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">British Machine Vision Conference</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b62">
+	<monogr>
+		<title level="m" type="main">DatasetDM: Synthesizing data with perception annotations using diffusion models</title>
+		<author>
+			<persName><forename type="first">W</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Gu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">Z</forename><surname>Shou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Shen</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2308.06160</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b63">
+	<monogr>
+		<title level="m" type="main">Diffumask: Synthesizing images with pixel-level annotations for semantic segmentation using diffusion models</title>
+		<author>
+			<persName><forename type="first">W</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">Z</forename><surname>Shou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Shen</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2303.11681</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b64">
+	<analytic>
+		<title level="a" type="main">Synthetic data supervised salient object detection</title>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Shi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Hao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Li</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ACM International Conference on Multimedia</title>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b65">
+	<analytic>
+		<title level="a" type="main">SegFormer: Simple and efficient design for semantic segmentation with transformers</title>
+		<author>
+			<persName><forename type="first">E</forename><surname>Xie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Anandkumar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">M</forename><surname>Alvarez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Luo</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Advances in Neural Information Processing Systems</title>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b66">
+	<monogr>
+		<author>
+			<persName><forename type="first">J</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Vahdat</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Byeon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">D</forename><surname>Mello</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2303.04803</idno>
+		<title level="m">Open-vocabulary panoptic segmentation with text-to-image diffusion models</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b67">
+	<monogr>
+		<author>
+			<persName><forename type="first">H</forename><surname>Xue</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Q</forename><surname>Sun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Zhang</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2303.14412</idno>
+		<title level="m">Freestyle layout-to-image synthesis</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b68">
+	<monogr>
+		<title level="m" type="main">Freemask: Synthetic images with dense annotations make stronger segmentation models</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Kang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Shi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Zhao</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2310.15160</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b69">
+	<analytic>
+		<title level="a" type="main">Bdd100k: A diverse driving dataset for heterogeneous multitask learning</title>
+		<author>
+			<persName><forename type="first">F</forename><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Xian</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Madhavan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Darrell</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">IEEE/CVF Conference on Computer Vision and Pattern Recognition</title>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b70">
+	<monogr>
+		<author>
+			<persName><forename type="first">J</forename><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Ghanem</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Zhang</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2303.09833</idno>
+		<title level="m">FreeDoM: Training-free energyguided conditional diffusion model</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b71">
+	<analytic>
+		<title level="a" type="main">Domain randomization and pyramid consistency: Simulation-to-real generalization without accessing target domain data</title>
+		<author>
+			<persName><forename type="first">X</forename><surname>Yue</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Sangiovanni-Vincentelli</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Keutzer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Gong</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">IEEE/CVF International Conference on Computer Vision</title>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b72">
+	<monogr>
+		<author>
+			<persName><forename type="first">L</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Agrawala</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2302.05543</idno>
+		<title level="m">Adding conditional control to text-to-image diffusion models</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b73">
+	<monogr>
+		<title level="m" type="main">DiffusionEngine: Diffusion model is scalable data engine for object detection</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Ren</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Qin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Xiao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Zheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">J</forename><surname>Ma</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2309.03893</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b74">
+	<monogr>
+		<title level="m" type="main">DatasetGAN: Efficient labeled data factory with minimal human effort</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Ling</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Gao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Yin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">F</forename><surname>Lafleche</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Barriuso</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Torralba</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Fidler</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2104.06490</idno>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b75">
+	<monogr>
+		<author>
+			<persName><forename type="first">S</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><forename type="middle">C</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Bao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Hao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Yuan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">Y K</forename><surname>Wong</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2305.16322</idno>
+		<title level="m">Unicontrolnet: All-in-one control to text-to-image diffusion models</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b76">
+	<analytic>
+		<title level="a" type="main">Style-hallucinated dual consistency learning for domain generalized semantic segmentation</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Zhong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Sebe</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">H</forename><surname>Lee</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">European Conference on Computer Vision</title>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b77">
+	<analytic>
+		<title level="a" type="main">Adversarial style augmentation for domain generalized urban-scene segmentation</title>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Zhong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">H</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Sebe</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Advances in Neural Information Processing Systems</title>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

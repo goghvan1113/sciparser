@@ -1,0 +1,2393 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">DAKD: Data Augmentation and Knowledge Distillation using Diffusion Models for SAR Oil Spill Segmentation</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability  status="unknown">
+					<licence/>
+				</availability>
+				<date type="published" when="2024-12-11">11 Dec 2024</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Jaeho</forename><surname>Moon</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution">Korea Advanced Institute of Science and Technology</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Jeonghwan</forename><surname>Yun</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution">Korea Advanced Institute of Science and Technology</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Jaehyun</forename><surname>Kim</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution">Korea Advanced Institute of Science and Technology</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Jaehyup</forename><surname>Lee</surname></persName>
+							<affiliation key="aff1">
+								<orgName type="department">DAKD-site</orgName>
+								<orgName type="institution">Kyungpook National University https</orgName>
+								<address>
+									<addrLine>kaist-viclab</addrLine>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Munchurl</forename><surname>Kim</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution">Korea Advanced Institute of Science and Technology</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">DAKD: Data Augmentation and Knowledge Distillation using Diffusion Models for SAR Oil Spill Segmentation</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date type="published" when="2024-12-11">11 Dec 2024</date>
+						</imprint>
+					</monogr>
+					<idno type="MD5">07BFE8A1F894867CD8E127134FAB7C98</idno>
+					<idno type="arXiv">arXiv:2412.08116v1[cs.CV]</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.2-SNAPSHOT" ident="GROBID" when="2025-01-21T07:31+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Oil spills in the ocean pose severe environmental risks, making early detection essential. Synthetic aperture radar (SAR) based oil spill segmentation offers robust monitoring under various conditions but faces challenges due to the limited labeled data and inherent speckle noise in SAR imagery. To address these issues, we propose (i) a diffusion-based Data Augmentation and Knowledge Distillation (DAKD) pipeline and (ii) a novel SAR oil spill segmentation network, called SAROSS-Net. In our DAKD pipeline, we present a diffusion-based SAR-JointNet that learns to generate realistic SAR images and their labels for segmentation, by effectively modeling joint distribution with balancing two modalities. The DAKD pipeline augments the training dataset and distills knowledge from SAR-JointNet by utilizing generated soft labels (pixel-wise probability maps) to supervise our SAROSS-Net. The SAROSS-Net is designed to selectively transfer high-frequency features from noisy SAR images, by employing novel Context-Aware Feature Transfer blocks along skip connections. We demonstrate our SAR-JointNet can generate realistic SAR images and well-aligned segmentation labels, providing the augmented data to train SAROSS-Net with enhanced generalizability. Our SAROSS-Net trained with the DAKD pipeline significantly outperforms existing SAR oil spill segmentation methods with large margins.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.">Introduction</head><p>Oil spills, caused by offshore drilling, shipping accidents, and natural seepage, lead to the release of vast amounts of oil into oceans, posing severe, often irreversible threats to marine ecosystems and coastal economies. This requires early detection and accurate damage assessment. Synthetic Aperture Radar (SAR) stands out among remote sensing modalities, as it acquires data in all weather and light- ing conditions by emitting microwave signals and measuring the reflected backscatter from the Earth's surface <ref type="bibr">[16,</ref><ref type="bibr">21,</ref><ref type="bibr">35,</ref><ref type="bibr">38]</ref>. So, the analysis of SAR imagery is essential for the detection and estimation of oil spill areas in the ocean. Additionally, oil spills result in reduced surface roughness, causing the affected areas to appear as dark spots in SAR images <ref type="bibr" target="#b54">[54,</ref><ref type="bibr" target="#b63">63]</ref>. By detecting these dark regions, SAR-based methods can accurately identify and delineate the extent of an oil spill <ref type="bibr" target="#b25">[26,</ref><ref type="bibr" target="#b48">48,</ref><ref type="bibr" target="#b56">56]</ref>.</p><p>However, a major challenge in SAR-based oil spill segmentation is in two folds: (i) The lack of oil spill data and their precise labels -SAR oil spill data is limited due to the rarity of oil spill events and the complexity of label annotation; (ii) The inherent speckle noise in SAR images -this is caused from random interference among elementary reflectors, which obscures essential features and complicates the differentiation between targets and background <ref type="bibr">[43,</ref><ref type="bibr">57,</ref><ref type="bibr" target="#b64">64]</ref>.</p><p>These limitations underscore the difficulties of applying traditional segmentation models to SAR imagery, especially for oil spill detection.</p><p>In this paper, to tackle the scarcity of labeled SAR oil spill data, we firstly propose a diffusion-based Data Augmentation and Knowledge Distillation (DAKD) technique for oil spill segmentation. The success of generative models, particularly diffusion models <ref type="bibr" target="#b30">[31]</ref>, has led to their increasing use in data augmentation <ref type="bibr" target="#b0">[1,</ref><ref type="bibr" target="#b2">23,</ref><ref type="bibr">36,</ref><ref type="bibr">40,</ref><ref type="bibr" target="#b68">68,</ref><ref type="bibr">69]</ref>. Here, we further extend the capability of diffusion models to knowledge distillation by generating SAR images and logit values for the corresponding labels for knowledge distillation. To achieve this, we propose a SAR-JointNet which jointly models the distribution of SAR images and segmentation maps by accounting for different information retainment in the diffusion process across modalities. Also, to faithfully produce pixel-wise class probabilities (soft label) with rich information from logits, the label generation is optimized using a cross-entropy loss. By leveraging the augmented data with soft labels from the SAR-JointNet, our teacher model, we can induce robust training for the student network, called SAR Oil Spill Segmentation Network (SAROSS-Net). Compared to one-hot encoded hard labels, these soft labels, containing richer probability information for each class, allow SAROSS-Net to learn more effectively and improve segmentation performance.</p><p>Unlike natural images, SAR imagery contains excessively abundant high-frequency noise, making selective feature extraction among noisy features critical for precise segmentation. To address this, we introduce Context-Aware Feature Transfer (CAFT) blocks in the skip connections to selectively transfer the encoded features from the MambaVision encoder <ref type="bibr">[28]</ref> to the decoder for our SAROSS-Net. Our CAFT block facilitates effective referencing of semantic features to prioritize essential high-frequency features, enhancing the segmentation accuracy under noisy conditions. Fig. <ref type="figure" target="#fig_0">1</ref> illustrates our DAKD pipeline. Our SAR-JointNet is trained to generate SAR images and their corresponding logits for segmentation using the original training dataset D. After training, our SAR-JointNet synthesizes an augmented dataset D a including the SAR images and their logits. Leveraging both D and D a , we train our proposed SAROSS-Net with knowledge distillation from SAR-JointNet. Our SAROSS-Net trained with the DAKD pipeline demonstrates superior performance on the SAR oil spill datasets <ref type="bibr">[37,</ref><ref type="bibr">81]</ref>, achieving notable improvements in accuracy and robustness compared to previous approaches. Our contributions are summarized as follows:</p><p>• To the best of our knowledge, we firstly propose a Data Augmentation and Knowledge Distillation (DAKD) pipeline, which leverages a diffusion-based teacher model trained for data generation to augment data (DA) and enables knowledge distillation to a student model (KD).</p><p>• By leveraging SAR-JointNet that can effectively learn the joint distribution of the SAR images and segmentation mask for data augmentation, we handle the data scarcity in SAR 'oil-spill' segmentation. • We introduce a SAR oil-spill segmentation network, SAROSS-Net, with Context-Aware Feature Transfer (CAFT) blocks in skip connections, to selectively transfer high-frequency features from noisy SAR images to the decoder blocks for better segmentation accuracy. • Our pipeline significantly outperforms existing state-ofthe-art methods on the SAR oil spill detection dataset <ref type="bibr">[37]</ref> and the SOS dataset [81]. However, these models still struggle to handle remote sensing modalities like SAR imagery <ref type="bibr" target="#b64">[64]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.">Related Work</head><p>In remote sensing, deep learning-based semantic segmentation models have also been studied for satellite Electro-Optical and SAR images <ref type="bibr" target="#b78">[78]</ref><ref type="bibr" target="#b8">[79]</ref><ref type="bibr" target="#b80">[80]</ref>. Specifically, for SAR oil spill segmentation, various models such as U-Net, LinkNet, and Deeplab are widely used <ref type="bibr">[3,</ref><ref type="bibr" target="#b14">15,</ref><ref type="bibr">37,</ref><ref type="bibr">81]</ref>. Krestenitis et al. <ref type="bibr">[37]</ref> utilized Deeplabv3+ [11] model on the oil spill detection dataset consisting of five classes such as 'land', 'sea-surface', 'ship', 'look-alike' and 'oil spill'. In addition, <ref type="bibr">Zhu et al. [81]</ref> proposed a SAR oil spill (SOS) dataset and a new architecture, CBD-Net. More recently, SAM-OIL <ref type="bibr" target="#b66">[66]</ref> proposed a two-stage approach: first detecting oil spills with a YOLOv8 <ref type="bibr" target="#b17">[18]</ref> network, then applying large-scale SAM [34] inference based on bounding boxes predicted from the first stage. However, the scarcity of publicly available oil spill data continues to hinder the development and generalization of these methods, limiting their robustness across different real-world scenarios.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.2.">Data Augmentation with Diffusion Models</head><p>Data augmentation increases the diversity and amount of data in situations with limited data to improve the performance of several tasks. Recent studies utilize the power of diffusion models to generate diverse images and corresponding label pairs for data augmentation. For image clas-sification, <ref type="bibr" target="#b0">[1,</ref><ref type="bibr">25,</ref><ref type="bibr">40,</ref><ref type="bibr" target="#b61">61</ref>] used text as both the class label and the condition, generating image-class label pairs and improved performance. In image captioning, <ref type="bibr" target="#b16">[17]</ref> addressed limited artistic data by generating image-caption pairs. Object detection benefits from models like <ref type="bibr">[7,</ref><ref type="bibr" target="#b2">23]</ref>, which generate images based on bounding boxes, while <ref type="bibr" target="#b73">[73]</ref> creates image-bounding box pairs jointly from diffusion features. For semantic segmentation, <ref type="bibr" target="#b55">[55]</ref> generates image-scribble pairs to enhance scribble-supervised segmentation, while [69] generates medical image-segmentation mask pairs using masks as conditions. For remote sensing images, Sat-Synth <ref type="bibr" target="#b60">[60]</ref> jointly synthesizes Electro-optical images and corresponding segmentation masks by simply using concatenated images and labels as inputs of a diffusion model.</p><p>Our diffusion-based SAR-JointNet synthesizes SAR images and segmentation masks to address the scarcity of labeled SAR oil spill data. In the training of the diffusionbased joint generation of images and labels, balancing the differences between modalities is critical for downstream tasks such as semantic segmentation. Our SAR-JointNet introduces a balancing factor to effectively model the joint distribution of SAR images and segmentation masks.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.3.">Knowledge Distillation</head><p>Knowledge distillation (KD) has emerged as a prominent technique for transferring information from a larger or more complex model (teacher model) to a smaller and simpler model (student model). Initially introduced by Hinton et al.</p><p>[30], KD allows the student model to learn from the softened output predictions of the teacher, capturing both the correct class and the relative probabilities of other classes, which are often useful for learning generalizable features. KD has been actively studied <ref type="bibr" target="#b49">[49,</ref><ref type="bibr">74]</ref> and useful across a variety of computer vision tasks <ref type="bibr">[39,</ref><ref type="bibr">44,</ref><ref type="bibr" target="#b65">65,</ref><ref type="bibr">71]</ref>.</p><p>KD has also been studied to address data dependency during the training of neural networks. The data-free knowledge distillation approaches <ref type="bibr" target="#b5">[6,</ref><ref type="bibr">22,</ref><ref type="bibr">46]</ref> enable knowledge transfer from teachers to student models by generating synthetic data that mimic the training distribution, even when the original dataset is unavailable due to privacy concerns. Recently, diffusion-based distillation techniques leverage pretrained large-scale 2D diffusion models to transfer knowledge to new tasks such as 3D novel view synthesis <ref type="bibr">[42,</ref><ref type="bibr">50]</ref>. In addition, DiffKD <ref type="bibr" target="#b31">[32]</ref> is proposed to align denoised student features to teacher features, enhancing the performance of image classification and semantic segmentation. In our proposed Data Augmentation and Knowledge Distillation (DAKD) pipeline, our diffusionbased SAR-JointNet not only learns to generate realistic SAR images and their corresponding labels that mimic the training data distribution but also provides logit values containing the teacher's knowledge. This allows the student model to effectively learn from the augmented data.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.">Method</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1.">DAKD Pipeline</head><p>Our Data Augmentation and Knowledge Distillation (DAKD) framework to effectively handle the scarcity of labeled data for SAR oil spill segmentation is depicted in Figure <ref type="figure" target="#fig_0">1</ref>. Our DAKD pipeline consists of two stages.</p><p>In the first stage of the DAKD pipeline, our SAR-JointNet is trained to generate an augmented dataset, D a , including SAR images along with their corresponding logits. Unlike one-hot segmentation maps (hard labels), logits (soft labels) provide probabilistic information that contains class predictions of our SAR-JointNet. This richer supervision can offer stable learning for the student model by leveraging pixel-level certainty, which helps accurate segmentation and strengthens the model's generalization during training. Our SAR-JointNet is trained to ensure that the generated SAR images and labels closely resemble the original data distribution, allowing them to effectively supplement the existing dataset.</p><p>In the second stage, our SAROSS-Net, a SAR oil spill segmentation network, is trained using the combination of the original training dataset (D) and the augmented dataset (D a ) synthesized by our SAR-JointNet. From a knowledge distillation perspective, the synthesized soft labels in D a offer improved training stability and guide robust segmentation learning, compared to hard labels.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2.">SAR-JointNet</head><p>Our SAR-JointNet takes advantage of the JointNet [72] that diffuses two modalities into their respective networks: (i) The usage of separate networks for two modalities (SAR images and segmentation masks in our case) enables the utilization of one single modality (SAR images only) to improve its generation ability even when the labels (segmentation masks) are unavailable; (ii) By making the two networks focus on their own modalities, they can be specialized in learning the unique features of their own. Therefore, in our SAR-JointNet, we implemented two networks: SAR-Net for SAR image generation and Label-Net for the corresponding logit generation. SAR-Net and Label-Net interact with each other to exchange their essential features across different modalities, enabling cross-modality reinforcement and well-aligned SAR and logit pair generation. Fig. <ref type="figure" target="#fig_1">2</ref> shows the overall architecture of SAR-JointNet consisting of SAR-Net and Label-Net.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2.1">Balancing Diffusion between Two Modalities</head><p>Diffusion-based joint generation of the natural images and their pixel-wise labels has been explored <ref type="bibr" target="#b60">[60,</ref><ref type="bibr">72]</ref>, but the different characteristics across modalities are overlooked. In generating noisy SAR images x and segmentation masks y simultaneously, the information level in each modality can vary significantly. Therefore, balancing the retained information level between the two modalities is essential for stable training. To address this issue, Chen et al. <ref type="bibr" target="#b11">[12,</ref><ref type="bibr">14]</ref> applied a predefined scale factor to the images in the diffusion process to adjust the information level of noise corrupted images between different image resolutions or modalities.</p><p>We extend this approach by introducing a balancing factor b based on the signal-to-noise ratio (SNR). For input SAR x 0 ∈ R H×W ×1 and the normalized segmentation masks y 0 ∈ {-1, 1} H×W ×C where C is the number of classes, b is multiplied to y 0 , to control information levels between x t and y t , expressed as:</p><formula xml:id="formula_0">y ′ 0 = by 0 .<label>(1)</label></formula><p>Using x 0 and y ′ 0 ∈ {-b, b} H×W ×C , forward diffusion process at timestep t is expressed as follows:</p><formula xml:id="formula_1">x t = α t x 0 + σ t ϵ, y ′ t = α t y ′ 0 + σ t ϵ,<label>(2)</label></formula><p>where α t and σ t are the degrees of signals and noise, respectively. The SNR of x t and y ′ t are formulated as follows: SNR(x t ) = P(α t x 0 )/P(σ t ϵ)</p><formula xml:id="formula_2">= α 2 t P(x 0 )/σ 2 t P(ϵ), SNR(y ′ t ) = α 2 t b 2 P(y 0 )/σ 2 t P(ϵ) = b 2 SNR(y t ),<label>(3)</label></formula><p>where P(•) denotes the mean power of frequency components, obtained from the 2D discrete FT. The balancing factor b that matches SNR(x t ) to SNR(y ′ t ) is defined as: b = SNR(x t )/ SNR(y t ) = P(x 0 )/ P(y 0 ).</p><p>(4)</p><p>In our experiments, we calculate b by averaging the mean power of the frequency component from the entire training dataset, which is shared across whole training samples.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2.2">Training Strategy of SAR-JointNet</head><p>Our SAR-JointNet leverages a three-stage training strategy, to progressively enhance the capability of SAR images and their labels (segmentation masks). In Stage 1 of training, SAR-Net θ is trained to denoise the noise-corrupted SAR image x t by minimizing L x between the original SAR image x 0 and the denoised SAR image xθ , expressed as:</p><formula xml:id="formula_3">L x = E x0 ∥x 0 -xθ ∥ 2 2 . (<label>5</label></formula><formula xml:id="formula_4">)</formula><p>In Stage 2 of training, Label-Net ϕ is initialized with the pretrained weights of SAR-Net from Stage 1, while the input and output layers are reinitialized to match the channel number of the labels. To enhance label generation capability, SAR-Net is frozen except for the layers interacting with Label-Net such as zero-convolution layers. To guide Label-Net training, we employ a cross-entropy (CE) loss that has been demonstrated to be effective for accurate label generation in prior work <ref type="bibr">[13,</ref><ref type="bibr">14]</ref>. Label-Net learns to generate logits (pixel-wise probability map) ŷϕ , by minimizing L y , defined as:</p><formula xml:id="formula_5">L y = - 1 N N j=1 C i=1 ỹ0 (i, j) log(ŷ ϕ (i, j)),<label>(6)</label></formula><p>where N = H × W and ỹ0 ∈ {0, 1} H×W ×C denotes the one-hot encoded segmentation mask, while SAR-Net is trained by minimizing L x . The combined loss L joint for SAR-JointNet training is formulated as:</p><formula xml:id="formula_6">L joint = L x + L y . (<label>7</label></formula><formula xml:id="formula_7">)</formula><p>In Stage 3, all layers of our SAR-JointNet are finetuned with a reduced learning rate by minimizing L joint in Eq. 7. After training, our SAR-JointNet jointly synthesizes realistic SAR images and their logit values for our DAKD pipeline, with the label inference process following the approach of Chen et al. [14].</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.3.">SAR Oil Spill Segmentation Network</head><p>By leveraging the proposed DAKD pipeline, our SAR-JointNet transfers knowledge to our proposed SAR oil spill segmentation network (SAROSS-Net). Fig. <ref type="figure">3</ref> illustrates the architecture of our SAROSS-Net based on a MambaVision [28] encoder. A key to achieving accurate segmentation from noisy SAR oil spill images is to filter out noise features while retaining the features for segmentation boundaries. We introduce Context-Aware Feature Transfer (CAFT) blocks to selectively transfer high-frequency features from encoded features to decoder blocks. Along UNet++ <ref type="bibr" target="#b76">[76]</ref> architecture-based skip-connection, each CAFT block transfers high-resolution (HR) features to the next CAFT block or the convolutional decoder block, by referring to the lower-resolution (LR) features. </p><formula xml:id="formula_8">� 𝑯𝑯 × � 𝑾𝑾 × � 𝑪𝑪 � 𝑯𝑯 𝟐𝟐 × � 𝑾𝑾 𝟐𝟐 × � 𝑪𝑪 � 𝑪𝑪 × � 𝑯𝑯� 𝑾𝑾 � 𝑯𝑯� 𝑾𝑾 × � 𝑪𝑪 � 𝑯𝑯� 𝑾𝑾 × � 𝑪𝑪 � 𝑯𝑯� 𝑾𝑾 × � 𝑪𝑪 𝑸𝑸 𝑻𝑻 Trans- pose ⊕ C C C C � 𝑯𝑯 × � 𝑾𝑾 × � 𝑪𝑪 × 𝟒𝟒 CD CD CD ×2 ×2 ×2 Figure 3</formula><p>. Overall architecture of our SAR Oil Spill Segmentation Network (SAROSS-Net).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.3.1">Context-Aware Feature Transfer Block</head><p>As illustrated in Fig. <ref type="figure">3</ref>, our proposed Context-Aware Feature Transfer (CAFT) block leverages the core principles of cross-attention, where LR feature maps contain semantic information as the Query, while HR feature maps as the Key and Value. This allows the CAFT block to effectively transfer only essential high-frequency spatial details from noisy SAR images guided by the abstract semantics from LR features. For the CAFT block, we adopt transposed-attention <ref type="bibr" target="#b70">[70]</ref> to reduce the computational and memory burdens of the conventional attention mechanism <ref type="bibr">[62]</ref>. By constructing the attention map in the channel dimension, the transposedattention lowers the complexity from O(H 2 W 2 ) to O(C 2 ), where H × W denotes the spatial resolution and C is the number of channels in the feature map. In our CAFT block, we use (i) the upsampled low-resolution features F LR as Query features containing global semantic information, and (ii) the HR features F HR as both Key and Value, capturing finer spatial details essential for precise segmentation. This enables the CAFT block to effectively integrate high-level semantics with detailed spatial information, enhancing the overall performance of the segmentation task.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.3.2">Loss Functions for Training SAROSS-Net</head><p>To leverage the augmented SAR images and corresponding logits (ŷ ϕ ) from SAR-JointNet, we employ a knowledge distillation loss <ref type="bibr">[30]</ref> to transfer knowledge to our SAROSS-Net. For class i, the soft label q t (i) is defined as:</p><formula xml:id="formula_9">q t (i) = exp(ŷ ϕ (i)/T ) C j=1 exp(ŷ ϕ (j)/T ) , (<label>8</label></formula><formula xml:id="formula_10">)</formula><p>where T is a hyperparameter that softens class probability distribution and C is the number of classes. Then, the knowledge distillation loss L kd is defined as a scaled sum of cross-entropy losses between soft label q t and predicted logit p s from our SAROSS-Net, which is expressed as:</p><formula xml:id="formula_11">L kd = T 2 N N j=1 L ce (q t , p s ).<label>(9)</label></formula><p>This knowledge distillation process allows our SAROSS-Net to learn from the richer and softened outputs (pixelwise probability maps for predicted segmentation masks) of SAR-JointNet, improving the model's generalizability.</p><p>Our SAROSS-Net is trained with a composite loss function including a cross-entropy loss L ce , a knowledge distillation loss L kd , and a soft dice loss L dice <ref type="bibr" target="#b59">[59]</ref> that mitigates the class imbalance between foreground (oil-spilled sea surface) and background (clean sea surface). The total loss function is expressed as:</p><formula xml:id="formula_12">L total = λ ce L ce + λ dice L dice + λ kd L kd ,<label>(10)</label></formula><p>where λ ce , λ dice , and λ kd are empirically set as 1, 0.5, and 0.1, respectively.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.">Experiments</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1.">Datasets</head><p>Oil Spill Detection (OSD) dataset <ref type="bibr">[37]</ref>    Our SAROSS-Net is based on the MambaVision-B encoder [28] and trained for 200 epochs with a batch size of 16, a learning rate of 5e -5 , and the AdamW [47] optimizer. For the OSD dataset <ref type="bibr">[37]</ref> the SAROSS-Net with input images of 256 × 256.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2.">Implementation Details</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.3.">Data Generation Results from SAR-JointNet</head><p>We compare the generation qualities of SAR images and segmentation masks generated by our SAR-JointNet against other diffusion models, DDPM <ref type="bibr" target="#b30">[31]</ref> and JointNet <ref type="bibr">[72]</ref>. For training DDPM <ref type="bibr" target="#b30">[31]</ref>, we adopt the methodology from Sat-Synth <ref type="bibr" target="#b60">[60]</ref>, where SAR images and segmentation masks are simply concatenated as input. Our baseline model, JointNet</p><p>[72], is trained without utilizing the balancing factor b and the cross entropy loss for label generation, making it a direct comparison point to highlight the improvements introduced by our approach. In Tab. 1, we compare the qualities of generated SAR images by measuring the Frechet inception distance (FID) and the inception score (IS) between SAR images from the original training datasets and augmented SAR images. For this analysis, we use 4, 480 SAR images from the OSD dataset <ref type="bibr">[37]</ref> and 3, 200 from the SOS dataset [81]. Our SAR-JointNet achieves superior results in all metrics, especially with significantly large margins of 18.78 (38%) and 15.82 (32%) improvements in FID, compared to DDPM <ref type="bibr" target="#b30">[31]</ref> and JoinNet [72], respectively, for the OSD dataset <ref type="bibr">[37]</ref>. Fig. <ref type="figure" target="#fig_3">4</ref> shows the generated SAR images and their corresponding segmentation masks (labels). In the first row, we compare generated SAR image and label pairs, containing 'oil-spill' and 'ship' class information. DDPM <ref type="bibr" target="#b30">[31]</ref> misclassified the ship class with irrelevant land information, and JointNet [72] mismatched ship shapes. In contrast, our SAR-JointNet generates bright and star-shaped ships with precise segmentation mask alignment, closely matching the original training dataset. In the second row, DDPM <ref type="bibr" target="#b30">[31]</ref> synthesizes unclear boundaries for the land, and JointNet [72] yields labels to include 'look-alike' (small-sized isolated red area) in the land region (green region). However, our SAR-JointNet accurately generates the SAR image with clear and accurate boundaries of the land and a precise segmentation mask. In the third row, DDPM <ref type="bibr" target="#b30">[31]</ref> and Joint-Net [72] generate SAR and segmentation masks with poor correspondences, while SAR-JointNet successfully generates hazy dark areas representing 'look-alike', similar to the original datasets, and generates relatively distinct and elongated dark areas for 'oil-spill', which is not contained in the generated SAR images by the other two models.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.4.">SAR Oil Spill Segmentation Results</head><p>In Tab. 2, we compare the segmentation quality of our SAROSS-Net to other methods [8, 67, 81]. On the OSD dataset <ref type="bibr">[37]</ref>, our method consistently outperforms other approaches across all evaluation metrics, specifically achieving 11.66% mIoU improvement over SegFormer <ref type="bibr" target="#b67">[67]</ref>. Also, for the SOS dataset, originally released by CBD-Net [81], our method achieves superior results for both ALOS and Sentinel-1A satellite images, with improvements of 2.99% and 3.61% in mIoU over . This highlights the superiority of our method across different sensor modalities, further validating its robustness and effectiveness in various remote sensing scenarios.</p><p>Tab. 3 further provides the IoU scores for each class. Specifically, for the 'sea surface', 'look-alike', 'oil-spill', and 'land' classes, our method surpasses the previous SOTA Table <ref type="table">3</ref>. Oil spill segmentation performance comparison on the OSD dataset <ref type="bibr">[37]</ref>, showing IoU (%) for 5 classes and mIoU (%).</p><p>method, SAM-OIL <ref type="bibr" target="#b66">[66]</ref>, with a significant improvement of 9.47% for the 'oil-spill' class. As shown in Fig. <ref type="figure" target="#fig_5">5</ref>, CBD-Net does not effectively capture small objects such as 'ship,' while our SAROSS-Net precisely identifies these objects in alignment with the ground truth. Additionally, our model accurately distinguishes 'oil-spill' regions, even those with shapes similar to 'look-alike' areas, demonstrating its ro- Table <ref type="table">4</ref>. Ablation analysis on SAR-JointNet: FID and IS reflect SAR image generation quality on the OSD dataset <ref type="bibr">[37]</ref>, while mIoU and F1 scores denote segmentation performance when SAROSS-Net is trained on each augmented dataset.  <ref type="formula">4</ref>)). Noisecorrupted segmentation masks with applying the balancing factor contain a similar level of information to the noise-corrupted SAR images, compared to segmentation masks without applying it.</p><p>bustness in handling challenging classes.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.">Ablation Study</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.1.">SAR Oil Spill Segmentation Network</head><p>Ablation studies were performed to show the effect of key components in our approach. First, we demonstrate the effect of employing the CE loss and the balancing factor b in Tab. 4 for training SAR-JointNet. With CE loss, SAR-JointNet provides soft label information that contains richer information than hard labels, yielding better segmentation performance in both mIoU and F1 scores, compared to the baseline model without CE loss. The balancing factor b effectively adjusts the information levels of masks with respect to their corresponding SAR images, leading to a significant improvement in both FID and IS for the generated SAR images, compared to the baseline. As shown in Fig. <ref type="figure" target="#fig_6">6</ref>, the noise-corrupted segmentation masks scaled with the balancing factor maintain similar levels of information with the corresponding SAR image across all timesteps t. Especially at t = 0.9, the noise-corrupted segmentation mask without applying the balancing factor still contains the overall location of the oil spill, which can predefine the shape of the SAR image, potentially limiting the learning of joint distribution. Our SAR-JointNet, with both components applied, generates realistic SAR images and segmentation masks with strong correspondences, making it suitable for train- Table <ref type="table">5</ref>. Ablation analysis on OSD dataset <ref type="bibr">[37]</ref>. CAFT indicates the usage of CAFT blocks. HL and SL denote the use of hard labels and soft labels synthesized from our SAR-JointNet.</p><p>ing SAROSS-Net within the DAKD pipeline.</p><p>Next, in Tab. 5, we validate the effect of our CAFT block and DAKD pipeline, by utilizing the ResNet-34 <ref type="bibr" target="#b28">[29]</ref> encoder with 21.8M parameters and the MambaVision-B [28] encoder with 97.7M parameters. As shown, simply incorporating CAFT blocks into skip connections improves performance for both encoders. Specifically, the mIoU increases by 1.78% and 1.39% for the ResNet-34 <ref type="bibr" target="#b28">[29]</ref> and the MambaVision-B [28] encoders respectively, indicating that our CAFT blocks effectively handle encoded features from noisy SAR images, regardless of the encoder. Next, we compare the effect of the label type generated from our SAR-JointNet for segmentation. One-hot encoded segmentation masks (hard labels) improve the segmentation performance of both models due to the increased training data. The usage of logit values (soft labels) generated by our SAR-JointNet further improves the performance, as the logits carry richer information for transferring knowledge to student models. These results demonstrate that our DAKD pipeline effectively augments the dataset and enhances the generalizability of student models.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.">Conclusion</head><p>In this paper, a novel DAKD pipeline was introduced to enhance SAR image-based oil spill segmentation performance by addressing data scarcity and limited label availability. Our diffusion-based SAR-JointNet jointly generates image-label pairs efficiently with the introduction of a balancing factor, which ensures that information levels across modalities are effectively harmonized during the diffusion process. Additionally, we not only used image-label pairs from the SAR-JointNet for data augmentation but also firstly incorporated knowledge distillation. Logit-based labels generated by SAR-JointNet enable effective knowledge transfer to the segmentation model, SAROSS-Net. Lastly, we proposed the SAROSS-Net using Context-Aware Feature Transfer blocks, enabling robust segmentation even in SAR images with inherent speckle noises. Through this approach, we achieved state-of-the-art performance in SAR oil spill segmentation with significantly large margins.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>DAKD: Data Augmentation and Knowledge Distillation using Diffusion Models for SAR Oil Spill Segmentation</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Supplementary Material</head><p>In this supplementary material, we present a comprehensive analysis of our Data Augmentation and Knowledge Distillation (DAKD) pipeline for SAR oil spill segmentation. First, we provide a detailed derivation of the balancing factor b and describe the process of the training and inference of SAR-JointNet. We further present additional experimental results, showing the effectiveness of the proposed balancing factor b, CAFT blocks, and the impact of augmented dataset scale on segmentation performance. We also discuss a limitation of our DAKD pipeline. Lastly, we present additional qualitative results of the generated data from our SAR-JointNet, along with comparisons between our SAROSS-Net with DAKD pipeline and other SAR oil spill segmentation and natural image segmentation methods, such as CBD-Net [81], SegFormer <ref type="bibr" target="#b67">[67]</ref>, and DeepLabV3+ [11].</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A. Detailed Derivation of the Balancing Factor</head><p>In Sec. 3.2.1, we introduce a balancing factor b to handle the retained information levels across modalities, specifically between SAR images and segmentation masks. To quantify the retained information level, we utilize signal-to-noise ratio (SNR), calculated via the 2D Discrete Fourier Transform (DFT). For image x ∈ R H×W , the 2D DFT is defined as:</p><formula xml:id="formula_13">F x (u, v) = H-1 h=0 W -1 w=0 x(h, w) • e -i2π( uh H + vw W ) ,<label>(11)</label></formula><p>where F x (u, v) represents the complex frequency component of x at the spatial frequency (u, v). Each complex frequency component of a scaled image a • x can be expressed as:</p><formula xml:id="formula_14">F ax (u, v) = a • F x (u, v).<label>(12)</label></formula><p>The mean power of image x in frequency domain is defined as:</p><formula xml:id="formula_15">P(x) = E[F x (u, v) • F * x (u, v)],<label>(13)</label></formula><p>where * denotes the complex conjugate. For the scaled image a • x, its mean power is given as:</p><formula xml:id="formula_16">P(ax) = E[F ax (u, v) • F * ax (u, v)] = E[aF x (u, v) • aF * x (u, v)] = a 2 • E[F x (u, v) • F * x (u, v)] = a 2 • P(x). (<label>14</label></formula><formula xml:id="formula_17">)</formula><p>Using this property, we derive the balancing factor b. In the forward diffusion process, the noise-corrupted SAR image x t and its corresponding segmentation mask y t at timestep t are expressed as follows:</p><formula xml:id="formula_18">x t = α t x 0 + σ t ϵ, y t = α t y 0 + σ t ϵ. (<label>15</label></formula><formula xml:id="formula_19">)</formula><p>where α t and σ t are scalars determined by the noise scheduler, representing the degree of signal and noise at timestep t, respectively. The SNR is defined as the ratio of the mean power of the signal to the mean power of the noise. So, the SNRs for x t and y t are given by:</p><formula xml:id="formula_20">SNR(x t ) = α 2 t P(x 0 ) σ 2 t P(ϵ) , SNR(y t ) = α 2 t P(y 0 ) σ 2 t P(ϵ) .<label>(16)</label></formula><p>To balance the levels of retained information for a SAR image and its corresponding mask, we scale the original segmentation mask y 0 by the balancing factor b, resulting in a scaled noise-corrupted segmentation mask y ′ t , which is given by:</p><formula xml:id="formula_21">y ′ t = α t by 0 + σ t ϵ.<label>(17)</label></formula><p>The SNR for y ′ t is then given by: SNR(y ′ t ) = P(α t by 0 )</p><formula xml:id="formula_22">P(σ t ϵ) = α 2 t b 2 P(y 0 ) σ 2 t P(ϵ) = b 2 • SNR(y t ).<label>(18)</label></formula><p>The ratio of the retained information levels between x t and y ′ t is expressed as follows:</p><formula xml:id="formula_23">SNR(x t ) SNR(y ′ t ) = SNR(x t ) b 2 • SNR(y t ) .<label>(19)</label></formula><p>To make this ratio equal to 1, we obtain the balancing factor b as follows:</p><formula xml:id="formula_24">b = SNR(x t ) SNR(y t ) = P(x 0 ) P(y 0 ) .<label>(20)</label></formula><p>This balancing factor ensures maintaining balanced information levels of different modalities between SAR images and masks in the forward diffusion process, which is critical for the successful training of SAR-JointNet. That is, this adjustment helps SAR-JointNet to focus equally on the features extracted from SAR images and segmentation masks, enabling more enhanced joint generation.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Algorithm 1 SAR-JointNet Training Algorithm</head><p>Input: x 0 ∈ R H×W ×1 , ỹ0 ∈ {0, 1} H×W ×C Output: loss Function train loss(x 0 , ỹ0 ):</p><p># Normalize one-hot encoded segmentation mask</p><formula xml:id="formula_25">y 0 ← ỹ0 • 2 -1 # Scale with balancing factor b y ′ 0 ← y 0 • b # Add noise t ∼ Uniform(1, T ) ϵ ∼ N (0, I) (xt, y ′ t ) ← αt • (x 0 , y ′ 0 ) + σt • ϵ # Predict xθ , ŷϕ xθ , ŷϕ ← SAR-JointNet((xt, y ′ t ), t) # Compute loss Lx ← L2(x θ , x 0 )</formula><p>Ly ← cross entropy(ŷ ϕ , ỹ0 )</p><formula xml:id="formula_26">L joint ← Lx + Ly return L joint B.</formula><p>Training and Inference of SAR-JointNet</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B.1. Training of SAR-JointNet</head><p>Algorithm 1 summarizes the joint learning of our SAR-JointNet, specifically our training stages 2 and 3. As we described, an one-hot encoded segmentation mask ỹ0 is normalized and scaled by the proposed balancing factor b. Then, we add noise to the scaled segmentation mask y ′ 0 and a SAR image x 0 with respect to a randomly sampled timestep t. Our SAR-JointNet jointly predicts the denoised output xθ for SAR image reconstructions and logits ŷϕ for segmentation mask generations. For SAR image generation learning, we use an L2 loss between xθ and x 0 . For segmentation mask generation learning, we use a cross-entropy loss between ŷϕ and ỹ0 , following [14].</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B.2. Inference of SAR-JointNet</head><p>Algorithm 2 illustrates the inference process of our SAR-JointNet. From the initial noise sampled from the Gaussian distribution, our SAR-JointNet predicts denoised output, xθ and ŷϕ . To match the range of the predicted logits for segmentation masks to that of y ′ 0 ∈ {-b, b}, we rescale ŷϕ as follows:</p><formula xml:id="formula_27">y pred = (softmax(ŷ ϕ ) • 2 -1) • b.<label>(21)</label></formula><p>Using the step function of DDIM scheduler [58], we compute the previous sample x t-1 and y ′ t-1 using xθ , y pred , x t , y ′ t , and timestep t. After completing the reverse diffusion process, our SAR-JointNet outputs x 0 that is a gener- Table <ref type="table">6</ref>. Ablation analysis on the balancing factor b. We assess the quality of generated SAR images and the segmentation performance of our SAROSS-Net on the OSD dataset <ref type="bibr">[37]</ref>.</p><p>ated SAR image, and ŷϕ that serves as a knowledge distillation signal for training SAROSS-Net.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>C. Effect of the Balancing Factor</head><p>In this section, we verify the effectiveness of the balancing factor b derived from the ratio of SNR between the SAR image and its corresponding segmentation mask in SAR-JointNet. We compare the quality of generated data from SAR-JointNet trained using b = 0.528, derived from Eq. (20) and using other values 0.3, 0.7, and 1 on the OSD dataset <ref type="bibr">[37]</ref>.</p><p>As shown in Fig. <ref type="figure" target="#fig_6">6</ref>, noise-corrupted segmentation masks without applying b retain significantly more information than noise-corrupted SAR images at the same timestep t. As discussed earlier, smaller values of b reduce the retained information in the noise-corrupted segmentation masks. This encourages SAR-Net within SAR-JointNet to generate SAR images without heavily relying on the mask features transferred through the interconnection layers between SAR-Net and Mask-Net. Consequently, smaller b values lead to improved SAR image quality, as evidenced by better FID and IS in Tab. 6. However, excessively small b values overly suppress the information in the segmentation masks, resulting in information levels even lower than those of the SAR images. This imbalance makes it difficult for Mask-Net to learn effectively.</p><p>Using the predefined value b = 0.3, smaller than the </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>D. Effect of CAFT Blocks</head><p>In this section, we conduct an ablation study to validate the performance and effectiveness of our proposed Context-Aware Feature Transfer (CAFT) blocks in skip connection layers. Specifically, we compare our model incorporating CAFT blocks against two baselines with: (i) no additional module in each skip connection, and (ii) 3 × 3 convolution blocks that replace all CAFT blocks in the skip connections Fig. <ref type="figure">3</ref>. For all three models, we leverage the pretrained MambaVision-B [28] as the encoder backbone. To evaluate effectiveness, we compare the number of parameters, FLOPs, inference time, and memory allocation, which are measured using a single 512 × 512 image input (batch size of 1), while the inference time is calculated as the average over 300 runs. All evaluations are conducted on an NVIDIA RTX 2080 GPU. Additionally, we assess segmentation performance using the mIoU metric on the OSD dataset <ref type="bibr">[37]</ref>.</p><p>As shown in Tab. 7, our full model with CAFT blocks (SAROSS-Net) achieves a higher mIoU while maintaining a lower parameter count, reduced FLOPs, shorter inference time, and lower memory consumption, compared to the 3 × 3 convolution-based baseline. This highlights the efficiency and superior performance of our proposed CAFT blocks in enhancing the capability to selectively transfer high-frequency features to the decoder. As demonstrated in Fig. <ref type="figure" target="#fig_7">7</ref>, our SAROSS-Net performs more precise segmentation, which highlights the capability to selectively transfer high-frequency features from noisy SAR images. It effectively captures and refines crucial information, significantly improving segmentation performance.  </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>G. Additional Experimental Results</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>G.1. Data Generation Results from SAR-JointNet</head><p>We provide additional generated pairs of SAR images and their segmentation masks from our SAR-JointNet, comparing to the original training dataset (OSD dataset <ref type="bibr">[37]</ref>) in Fig. <ref type="figure" target="#fig_9">8</ref>. Furthermore, Fig. <ref type="figure">9</ref> and Fig. <ref type="figure" target="#fig_0">10</ref> show SAR images and segmentation masks from the original training dataset of SOS-Sentinel-1A and SOS-ALOS [81], as well as the respective pairs generated by SAR-JointNet. Our results demonstrate that SAR-JointNet generates realistic SAR images and segmentation masks with high correspondences, effectively capturing the characteristics of the original datasets.   </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>G.2. Segmentation Results</head></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 .</head><label>1</label><figDesc>Figure 1. Overview of our Data Augmentation and Knowledge Distillation (DAKD) pipeline. The diffusion-based SAR-JointNet learns to generate SAR images and their soft labels for data augmentation and knowledge distillation to our student SAROSS-Net.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 2 .</head><label>2</label><figDesc>Figure 2. Overall architecture of our SAR-JointNet.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head></head><label></label><figDesc>𝐿𝐿 𝑡𝑡𝑡𝑡𝑡𝑡𝑡𝑡𝑡𝑡 = 𝐿𝐿 𝑐𝑐𝑐𝑐 + 𝐿𝐿 𝑘𝑘𝑘𝑘 + 𝐿𝐿 𝑘𝑘𝑑𝑑𝑐𝑐𝑐𝑐 𝑭𝑭</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 4 .</head><label>4</label><figDesc>Figure 4. Joint generation results: Qualitative comparison of SAR images and corresponding segmentation masks generated by: (a) DDPM [31], (b) JointNet [72], and (c) SAR-JointNet (ours) to the samples from (d) the Original OSD dataset [37].</figDesc><graphic coords="6,58.50,72.00,495.00,179.40" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head></head><label></label><figDesc>Our SAR-JoinNet is a pixel-domain diffusion model designed for realistic SAR image generation, whereas the original JointNet [72] is latent-based. We train SAR-JointNet in three stages. In Stage 1, we train SAR-Net for 50K iterations for both datasets[37, 81]. In Stage 2, SAR-JointNet is trained for 250K iterations on the OSD dataset[37]  and 150K on the SOS dataset [81]. Lastly, in Stage 3, we finetune SAR-JointNet with 100K and 50K iterations on the OSD dataset [37] and the SOS dataset [81], respectively. We use AdamW optimizer [47] with a learning rate of 1e -4 for Stage 1 and 2, and 1e -5 for Stage 3. The training image and segmentation mask pairs are randomly cropped to a resolution of 256 × 256 on the OSD dataset [37]. We utilize a squared cosine DDPM beta scheduler with 1,000 steps for training, while we use the DDIM [58] scheduler with 200 steps for data generation. Training is conducted on two Nvidia A6000 GPUs with a batch size of 16 per GPU. The balancing factor b is set to 0.528 for OSD dataset [37], 0.447 for SOS-ALOS [81], and 0.466 for SOS-Sentinel [81]. For DAKD, we generate 4, 480 and 6, 400 pairs of image and labels, each in a resolution of 256 × 256, for OSD [37], SOS dataset (ALOS &amp; Sentinel) [81], respectively.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Figure 5 .</head><label>5</label><figDesc>Figure 5. Oil spill segmentation results: Qualitative comparison of SAR oil spill segmentation on the OSD dataset [37]. (a) SAR Images, (b) CBD-Net [81], (c) SAROSS-Net (ours), and (d) Ground Truth.</figDesc><graphic coords="7,58.50,72.00,494.95,153.65" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>Figure 6 .</head><label>6</label><figDesc>Figure 6. Effect of the balancing factor b (Eq. (4)). Noisecorrupted segmentation masks with applying the balancing factor contain a similar level of information to the noise-corrupted SAR images, compared to segmentation masks without applying it.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_7"><head>Figure 7 .</head><label>7</label><figDesc>Figure7. Qualitative comparison of segmentation results on SAR images for the OSD dataset[37]  to see the effectiveness of CAFT blocks. The results demonstrate that our full model with CAFT blocks (SAROSS-Net) effectively captures high-frequency features based on the semantic features, producing more accurate and visually consistent segmentation, particularly in noisy SAR images.</figDesc><graphic coords="12,257.66,394.12,97.70,50.11" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_8"><head>Fig. 11 ,</head><label>11</label><figDesc>Fig. 11, Fig. 12, and Fig. 13 present qualitative results on the OSD dataset [37], SOS-ALOS, and SOS-Sentinel-1A dataset [81], respectively. The compared models include CBD-Net [81], SegFormer [67], and DeepLabV3+ [11]. Our proposed SAROSS-Net outperforms these models, achieving the highest performance on the noisy SOS dataset [81]. Notably, SAROSS-Net demonstrates a superior ability to identify oil spill regions, effectively handling the challenges posed by noisy data and selectively capturing high-frequency features crucial for accurate segmentation. These results emphasize the robustness and effectiveness of SAROSS-Net in addressing oil spill detection tasks.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_9"><head>Figure 8 .</head><label>8</label><figDesc>Figure 8. Qualitative results of generated SAR images and their corresponding generated segmentation masks. (a) shows several original training samples (SAR images and their associated segmentation masks) of the OSD dataset [37], (b) shows several generated samples from our SAR-JointNet.</figDesc><graphic coords="13,493.25,547.91,58.83,58.83" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_10"><head>Figure 10 .Figure 11 .Figure 12 .Figure 13 .</head><label>10111213</label><figDesc>Figure 10. Qualitative results of generated SAR images and their corresponding generated segmentation masks. (a) shows several original training samples (SAR images and their associated segmentation masks) of SOS-ALOS dataset [81], (b) shows several generated samples from our SAR-JointNet.</figDesc><graphic coords="14,283.72,625.80,56.93,56.93" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2"><head>Table 1 .</head><label>1</label><figDesc>, input images are set to a resolution of 512 × 512. From the original training dataset, SAR images are randomly cropped to 512 × 512, while four randomly selected 256 × 256 synthetic SAR images are combined to form 512×512, similar to the mosaic augmentation used in YOLOv4 [4]. For testing, the original resolution (650 × 1, 250) is used. For the SOS dataset [81], we train OSD -Sentinel [37] SOS -Sentinel [81] SOS -ALOS [81] Quality comparison of generated SAR images between our SAR-JointNet and other diffusion-based generative models.</figDesc><table><row><cell></cell><cell>FID (↓)</cell><cell>IS (↑)</cell><cell>FID (↓)</cell><cell>IS (↑)</cell><cell cols="2">FID (↓) IS (↑)</cell></row><row><cell>DDPM [31]</cell><cell>49.42</cell><cell>2.149</cell><cell>47.71</cell><cell>1.754</cell><cell>45.74</cell><cell>1.822</cell></row><row><cell>JointNet [72]</cell><cell>46.46</cell><cell>1.929</cell><cell>30.47</cell><cell>1.632</cell><cell>47.61</cell><cell>1.828</cell></row><row><cell>SAR-JointNet</cell><cell>30.64</cell><cell>2.186</cell><cell>19.88</cell><cell>1.809</cell><cell>21.23</cell><cell>1.948</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_6"><head></head><label></label><figDesc>Algorithm 2 SAR-JointNet Inference Algorithm</figDesc><table><row><cell cols="2"># Initialize</cell><cell></cell><cell></cell><cell></cell></row><row><cell cols="2">x T , y ′ T ∼ N (0, I)</cell><cell></cell><cell></cell><cell></cell></row><row><cell cols="2">for t = T to 1 do</cell><cell></cell><cell></cell><cell></cell></row><row><cell cols="2"># Predict xθ , ŷϕ</cell><cell></cell><cell></cell><cell></cell></row><row><cell cols="4">xθ , ŷϕ ← SAR-JointNet((xt, y ′ t ), t)</cell><cell></cell></row><row><cell cols="4"># Rescale the predicted logit ŷϕ</cell><cell></cell></row><row><cell cols="4">y pred ← (softmax(ŷ ϕ ) • 2 -1) • b</cell><cell></cell></row><row><cell cols="4"># Compute deterministic next step</cell><cell></cell></row><row><cell cols="4">x t-1 , y ′ t-1 ← ddim step((x θ , y pred ), (xt, y ′ t ), t)</cell><cell></cell></row><row><cell>end for</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell cols="4"># Return denoised SAR image and logits</cell><cell></cell></row><row><cell>return x 0 , ŷϕ</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>b</cell><cell>FID (↓)</cell><cell>IS (↑)</cell><cell>mIoU (%)</cell><cell>F1 (%)</cell></row><row><cell>0.3</cell><cell>27.84</cell><cell>2.196</cell><cell>74.18</cell><cell>83.78</cell></row><row><cell>0.528</cell><cell>30.64</cell><cell>2.186</cell><cell>74.86</cell><cell>84.27</cell></row><row><cell>0.7</cell><cell>35.53</cell><cell>2.158</cell><cell>74.42</cell><cell>83.98</cell></row><row><cell>1</cell><cell>44.81</cell><cell>2.158</cell><cell>74.08</cell><cell>83.76</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_7"><head>Table 7 .</head><label>7</label><figDesc>Ablation analysis on the usage of CAFT blocks in skip connection of SAROSS-Net on the OSD dataset[37].derived value of b = 0.528, has improved the quality of generated SAR images in terms of FID and IS, but has led to lower segmentation performance in terms of mIoU and F1 scores of 74.18% and 83.78%, respectively on the OSD dataset[37]. The balancing factor b with the value of 0.528, derived from Eq. (20), demonstrates strong generation quality and achieves the best segmentation performance with 74.86% and 84.27% in mIoU and F1 scores, respectively, for oil spill segmentation on OSD dataset[37].</figDesc><table><row><cell>Methods</cell><cell cols="2">Params. FLOPs</cell><cell>Time</cell><cell cols="2">Memory mIoU</cell></row><row><cell></cell><cell>(M)</cell><cell>(G)</cell><cell>(ms)</cell><cell>(MB)</cell><cell>(%)</cell></row><row><cell>No module</cell><cell>-</cell><cell>-</cell><cell>39.52</cell><cell>-</cell><cell>71.99</cell></row><row><cell>3x3 Conv</cell><cell>+6.95</cell><cell>+37.06</cell><cell>48.36</cell><cell>+37</cell><cell>70.95</cell></row><row><cell>CAFT</cell><cell>+0.89</cell><cell>+11.45</cell><cell>45.28</cell><cell>+11</cell><cell>73.38</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_8"><head></head><label></label><figDesc>To address this limitation, we adopt a technique inspired by mosaic augmentation used in YOLOv4[4], where four randomly selected 256 × 256 generated images and combine them to form a 512 × 512 composite image. While this method is practical, it does not fully resolve the challenge of high-resolution SAR image synthesis. Future work should aim to develop efficient models capable of generating high-resolution SAR images while preserving their unique noise characteristics.</figDesc><table><row><cell>SAR image</cell><cell>Aug. Data mIoU (%) F1 (%) R (%) P (%) A (%) 0 73.38 83.25 81.93 84.70 98.82 1× 73.81 83.54 84.35 82.90 98.79 2× 74.65 84.13 81.85 86.75 99.00 4× 74.86 84.27 83.24 85.50 99.03 Table 8. Segmentation performance on the impact of the amount of the augmented dataset for training of oil spill segmentation on the OSD dataset [37]. E. Impact of the Amount of Augmented Dataset We further evaluate the impact of the amount of the aug-mented dataset from SAR-JointNet on segmentation per-formance. By systematically varying the amount of the augmented samples for the training of SAROSS-Net, we aim to analyze how additional generated data contributes to the model's learning ability to generalize and accurately segment target regions. Tab. 8 shows the segmentation performance on the usage amounts of augmented samples generated by SAR-JointNet. Note that the original OSD dataset [37] contains 1, 002 samples, while the numbers of generated samples are 1,120 (1×), 2,240 (2×), and 4,480 (4×), corresponding to the number of original training sam-ples. Both the original training dataset and generated aug-mented datasets are used together to train SAROSS-Net. As demonstrated, the segmentation performance consistently improves as the size (number) of the augmented samples increases, highlighting the importance of generative data augmentation in enhancing the segmentation performance. F. Limitations While our DAKD pipeline successfully generates SAR im-ages and their corresponding segmentation masks using our SAR-JointNet, it is currently constrained to a resolution of 256 × 256. Extending SAR-JointNet, a pixel-domain dif-fusion model, to generate spatially larger images, such as 512 × 512, requires significantly more computational re-sources. Although the latent diffusion model (LDM) [52] has demonstrated successful generation capability for high-resolution natural images, we observed that LDM struggles to synthesize speckle noise of SAR images in the latent do-main, which is typically reduced to 1/8 or 1/4 of the origi-Look-alike Sea Surface nal image size. Oil Spill Ship Land GT CAFT blocks (Ours) No module 3x3 Conv</cell></row></table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">Synthetic data from diffusion models improves imagenet classification</title>
+		<author>
+			<persName><forename type="first">Shekoofeh</forename><surname>Azizi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Simon</forename><surname>Kornblith</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chitwan</forename><surname>Saharia</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mohammad</forename><surname>Norouzi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">David</forename><forename type="middle">J</forename><surname>Fleet</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2304.08466</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page">3</biblScope>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Segnet: A deep convolutional encoder-decoder architecture for image segmentation</title>
+		<author>
+			<persName><forename type="first">Vijay</forename><surname>Badrinarayanan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alex</forename><surname>Kendall</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Roberto</forename><surname>Cipolla</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE transactions on pattern analysis and machine intelligence</title>
+		<imprint>
+			<biblScope unit="volume">39</biblScope>
+			<biblScope unit="issue">12</biblScope>
+			<biblScope unit="page" from="2481" to="2495" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Large-scale detection and categorization of oil spills from sar images with deep learning</title>
+		<author>
+			<persName><forename type="first">F</forename><forename type="middle">M</forename><surname>Bianchi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">M</forename><surname>Espeseth</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Borch</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Remote Sensing</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="issue">14</biblScope>
+			<biblScope unit="page">2260</biblScope>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+		<title level="m" type="main">Yolov4: Optimal speed and accuracy of object detection</title>
+		<author>
+			<persName><forename type="first">Alexey</forename><surname>Bochkovskiy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chien-Yao</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hong-Yuan Mark</forename><surname>Liao</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2004.10934</idno>
+		<idno>. 6</idno>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="page">11</biblScope>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Linknet: Exploiting encoder representations for efficient semantic segmentation</title>
+		<author>
+			<persName><forename type="first">Abhishek</forename><surname>Chaurasia</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Eugenio</forename><surname>Culurciello</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">2017 IEEE Visual Communications and Image Processing (VCIP)</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Data-free learning of student networks</title>
+		<author>
+			<persName><forename type="first">Hanting</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yunhe</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chang</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhaohui</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chuanjian</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Boxin</forename><surname>Shi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chunjing</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chao</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qi</forename><surname>Tian</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF International Conference on Computer Vision (ICCV)</title>
+		<meeting>the IEEE/CVF International Conference on Computer Vision (ICCV)</meeting>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<monogr>
+		<title level="m" type="main">Geodiffusion: Textprompted geometric control for object detection data generation</title>
+		<author>
+			<persName><forename type="first">Kai</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Enze</forename><surname>Xie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhe</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yibo</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lanqing</forename><surname>Hong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhenguo</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dit-Yan</forename><surname>Yeung</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2306.04607</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<monogr>
+		<title level="m" type="main">Rethinking atrous convolution for semantic image segmentation</title>
+		<author>
+			<persName><forename type="first">Liang-Chieh</forename><surname>Chen</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1706.05587</idno>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Deeplab: Semantic image segmentation with deep convolutional nets, atrous convolution, and fully connected crfs</title>
+		<author>
+			<persName><forename type="first">Liang-Chieh</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">George</forename><surname>Papandreou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Iasonas</forename><surname>Kokkinos</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kevin</forename><surname>Murphy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alan</forename><surname>Yuille</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Transactions on Pattern Analysis and Machine Intelligence</title>
+		<imprint>
+			<biblScope unit="issue">2</biblScope>
+			<date type="published" when="2016">2016</date>
+			<publisher>PP</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Deeplab: Semantic image segmentation with deep convolutional nets, atrous convolution, and fully connected crfs</title>
+		<author>
+			<persName><forename type="first">Liang-Chieh</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">George</forename><surname>Papandreou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Iasonas</forename><surname>Kokkinos</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kevin</forename><surname>Murphy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alan</forename><forename type="middle">L</forename><surname>Yuille</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE transactions on pattern analysis and machine intelligence</title>
+		<imprint>
+			<biblScope unit="volume">40</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="834" to="848" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Encoder-decoder with atrous separable convolution for semantic image segmentation</title>
+		<author>
+			<persName><forename type="first">Liang-Chieh</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yukun</forename><surname>Zhu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">George</forename><surname>Papandreou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Florian</forename><surname>Schroff</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hartwig</forename><surname>Adam</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the European conference on computer vision (ECCV)</title>
+		<meeting>the European conference on computer vision (ECCV)</meeting>
+		<imprint>
+			<date type="published" when="2018-09-12">2018. 9, 12, 15, 16</date>
+			<biblScope unit="page">17</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<monogr>
+		<title level="m" type="main">On the importance of noise scheduling for diffusion models</title>
+		<author>
+			<persName><forename type="first">Ting</forename><surname>Chen</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2301.10972</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<monogr>
+		<title level="m" type="main">Analog bits: Generating discrete data using diffusion models with self-conditioning</title>
+		<author>
+			<persName><forename type="first">Ting</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ruixiang</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Geoffrey</forename><surname>Hinton</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2208.04202</idno>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">A generalist framework for panoptic segmentation of images and videos</title>
+		<author>
+			<persName><forename type="first">Ting</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lala</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Saurabh</forename><surname>Saxena</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Geoffrey</forename><surname>Hinton</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">David</forename><forename type="middle">J</forename><surname>Fleet</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF international conference on computer vision</title>
+		<meeting>the IEEE/CVF international conference on computer vision</meeting>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page">10</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">An end-to-end oil-spill monitoring method for multisensory satellite images based on deep semantic segmentation</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Wang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Sensors</title>
+		<imprint>
+			<biblScope unit="volume">20</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page">725</biblScope>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">Speckle noise reduction technique for sar images using statistical characteristics of speckle noise and discrete wavelet transform</title>
+		<author>
+			<persName><forename type="first">Hyunho</forename><surname>Choi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jechang</forename><surname>Jeong</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Remote Sensing</title>
+		<imprint>
+			<biblScope unit="volume">11</biblScope>
+			<biblScope unit="issue">10</biblScope>
+			<biblScope unit="page">1</biblScope>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">Diffusion based augmentation for captioning and retrieval in cultural heritage</title>
+		<author>
+			<persName><forename type="first">Dario</forename><surname>Cioni</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lorenzo</forename><surname>Berlincioni</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Federico</forename><surname>Becattini</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alberto</forename><forename type="middle">Del</forename><surname>Bimbo</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">IEEE/CVF International Conference on Computer Vision Workshops (ICCVW)</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2023">2023. 2023</date>
+			<biblScope unit="page">3</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<monogr>
+		<author>
+			<persName><surname>Mmyolo Contributors</surname></persName>
+		</author>
+		<ptr target="https://github.com/open-mmlab/mmyolo,2022.2" />
+		<title level="m">MMYOLO: OpenMMLab YOLO series toolbox and benchmark</title>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<monogr>
+		<author>
+			<persName><forename type="first">Jean-Baptiste</forename><surname>Cordonnier</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andreas</forename><surname>Loukas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Martin</forename><surname>Jaggi</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2006.16362</idno>
+		<title level="m">Multi-head attention: Collaborate instead of concatenate</title>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<monogr>
+		<title level="m" type="main">An image is worth 16x16 words: Transformers for image recognition at scale</title>
+		<author>
+			<persName><forename type="first">Alexey</forename><surname>Dosovitskiy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lucas</forename><surname>Beyer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alexander</forename><surname>Kolesnikov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dirk</forename><surname>Weissenborn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiaohua</forename><surname>Zhai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Thomas</forename><surname>Unterthiner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mostafa</forename><surname>Dehghani</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Matthias</forename><surname>Minderer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Georg</forename><surname>Heigold</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sylvain</forename><surname>Gelly</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jakob</forename><surname>Uszkoreit</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Neil</forename><surname>Houlsby</surname></persName>
+		</author>
+		<idno>CoRR, abs/2010.11929</idno>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">Oil-spill-response-oriented information products derived from a rapid-repeat time series of sar images</title>
+		<author>
+			<persName><forename type="first">Martine</forename><surname>Espeseth</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Cathleen</forename><surname>Jones</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Benjamin</forename><surname>Holt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Camilla</forename><surname>Brekke</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Stine</forename><surname>Skrunes</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Journal of Selected Topics in Applied Earth Observations and Remote Sensing</title>
+		<imprint>
+			<biblScope unit="page" from="1" to="1" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<monogr>
+		<author>
+			<persName><forename type="first">Gongfan</forename><surname>Fang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kanya</forename><surname>Mo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xinchao</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jie</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shitao</forename><surname>Bei</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Haofei</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mingli</forename><surname>Song</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2112.06253</idno>
+		<title level="m">Up to 100× faster data-free knowledge distillation</title>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">Data augmentation for object detection via controllable diffusion models</title>
+		<author>
+			<persName><forename type="first">Haoyang</forename><surname>Fang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Boran</forename><surname>Han</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shuai</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Su</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Cuixiong</forename><surname>Hu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wen-Ming</forename><surname>Ye</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF Winter Conference on Applications of Computer Vision (WACV)</title>
+		<meeting>the IEEE/CVF Winter Conference on Applications of Computer Vision (WACV)</meeting>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+			<biblScope unit="page">3</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">Dual attention network for scene segmentation</title>
+		<author>
+			<persName><forename type="first">Jun</forename><surname>Fu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jing</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Haijie</forename><surname>Tian</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yong</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yongjun</forename><surname>Bao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhiwei</forename><surname>Fang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hanqing</forename><surname>Lu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF conference on computer vision and pattern recognition</title>
+		<meeting>the IEEE/CVF conference on computer vision and pattern recognition</meeting>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="page" from="3146" to="3154" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<monogr>
+		<title level="m" type="main">Dreamda: Generative data augmentation with diffusion models</title>
+		<author>
+			<persName><forename type="first">Yunxiang</forename><surname>Fu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chaoqi</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yu</forename><surname>Qiao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yizhou</forename><surname>Yu</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2403.12803</idno>
+		<idno>. 3</idno>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<title level="a" type="main">An automatic data-driven method for sar image segmentation in sea surface analysis</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Gemme</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">G</forename><surname>Dellepiane</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Transactions on Geoscience and Remote Sensing</title>
+		<imprint>
+			<biblScope unit="volume">56</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="2633" to="2646" />
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<monogr>
+		<title level="m" type="main">Efficiently modeling long sequences with structured state spaces</title>
+		<author>
+			<persName><forename type="first">Albert</forename><surname>Gu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Karan</forename><surname>Goel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Christopher</forename><surname>Ré</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2111.00396</idno>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<monogr>
+		<title level="m" type="main">Mambavision: A hybrid mamba-transformer vision backbone</title>
+		<author>
+			<persName><forename type="first">Ali</forename><surname>Hatamizadeh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jan</forename><surname>Kautz</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2407.08083</idno>
+		<imprint>
+			<date type="published" when="2024">2024. 6, 8, 11</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<analytic>
+		<title level="a" type="main">Deep residual learning for image recognition</title>
+		<author>
+			<persName><forename type="first">Kaiming</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiangyu</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shaoqing</forename><surname>Ren</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jian</forename><surname>Sun</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE conference on computer vision and pattern recognition</title>
+		<meeting>the IEEE conference on computer vision and pattern recognition</meeting>
+		<imprint>
+			<date type="published" when="2016">2016</date>
+			<biblScope unit="page" from="770" to="778" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<monogr>
+		<title level="m" type="main">Distilling the knowledge in a neural network</title>
+		<author>
+			<persName><forename type="first">Geoffrey</forename><surname>Hinton</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Oriol</forename><surname>Vinyals</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jeff</forename><surname>Dean</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1503.02531</idno>
+		<idno>. 3</idno>
+		<imprint>
+			<date type="published" when="2015">2015</date>
+			<biblScope unit="page">5</biblScope>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<analytic>
+		<title level="a" type="main">Denoising diffusion probabilistic models</title>
+		<author>
+			<persName><forename type="first">Jonathan</forename><surname>Ho</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ajay</forename><surname>Jain</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pieter</forename><surname>Abbeel</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Advances in neural information processing systems</title>
+		<imprint>
+			<biblScope unit="volume">33</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page">7</biblScope>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<analytic>
+		<title level="a" type="main">Knowledge diffusion for distillation</title>
+		<author>
+			<persName><forename type="first">Tao</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yuan</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mingkai</forename><surname>Zheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shan</forename><surname>You</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Fei</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chen</forename><surname>Qian</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chang</forename><surname>Xu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Advances in Neural Information Processing Systems</title>
+		<imprint>
+			<biblScope unit="page" from="65299" to="65316" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<monogr>
+		<title/>
+		<author>
+			<persName><surname>Curran Associates</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Inc</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<analytic>
+		<title level="a" type="main">Segment anything in high quality</title>
+		<author>
+			<persName><forename type="first">Lei</forename><surname>Ke</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mingqiao</forename><surname>Ye</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Martin</forename><surname>Danelljan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yu-Wing</forename><surname>Tai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chi-Keung</forename><surname>Tang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Fisher</forename><surname>Yu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Advances in Neural Information Processing Systems</title>
+		<imprint>
+			<biblScope unit="volume">36</biblScope>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<analytic>
+		<title level="a" type="main">Segment anything</title>
+		<author>
+			<persName><forename type="first">Alexander</forename><surname>Kirillov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Eric</forename><surname>Mintun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Nikhila</forename><surname>Ravi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hanzi</forename><surname>Mao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chloe</forename><surname>Rolland</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Laura</forename><surname>Gustafson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tete</forename><surname>Xiao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Spencer</forename><surname>Whitehead</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alexander</forename><forename type="middle">C</forename><surname>Berg</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wan-Yen</forename><surname>Lo</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF International Conference on Computer Vision</title>
+		<meeting>the IEEE/CVF International Conference on Computer Vision</meeting>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page" from="4015" to="4026" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<analytic>
+		<title level="a" type="main">Object-oriented approach to oil spill detection using envisat asar images</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Konik</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Bradtke</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">ISPRS Journal of Photogrammetry and Remote Sensing</title>
+		<imprint>
+			<biblScope unit="volume">118</biblScope>
+			<biblScope unit="page" from="37" to="52" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b36">
+	<analytic>
+		<title level="a" type="main">Anatomically-controllable medical image generation with segmentation-guided diffusion models</title>
+		<author>
+			<persName><forename type="first">Nicholas</forename><surname>Konz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yuwen</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Haoyu</forename><surname>Dong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Maciej</forename><forename type="middle">A</forename><surname>Mazurowski</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Medical Image Computing and Computer-Assisted Intervention</title>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2024">2024</date>
+			<biblScope unit="page">2</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b37">
+	<analytic>
+		<title level="a" type="main">Oil spill identification from satellite images using deep neural networks</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Krestenitis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Orfanidis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Ioannidis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Avgerinakis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Vrochidis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Kompatsiaris</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Remote Sensing</title>
+		<imprint>
+			<biblScope unit="volume">11</biblScope>
+			<biblScope unit="issue">15</biblScope>
+			<biblScope unit="page">1762</biblScope>
+			<date type="published" when="2019">2019. 6, 7, 8, 10, 11, 12, 13, 15</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b38">
+	<analytic>
+		<title level="a" type="main">Extracting hurricane eye morphology from spaceborne sar images using morphological analysis</title>
+		<author>
+			<persName><forename type="first">I</forename><forename type="middle">K</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Shamsoddini</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">C</forename><surname>Trinder</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Li</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">ISPRS Journal of Photogrammetry and Remote Sensing</title>
+		<imprint>
+			<biblScope unit="volume">117</biblScope>
+			<biblScope unit="page" from="115" to="125" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b39">
+	<analytic>
+		<title level="a" type="main">Online knowledge distillation for efficient pose estimation</title>
+		<author>
+			<persName><forename type="first">Zheng</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jingwen</forename><surname>Ye</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mingli</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ying</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhigeng</forename><surname>Pan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF international conference on computer vision</title>
+		<meeting>the IEEE/CVF international conference on computer vision</meeting>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="page" from="11740" to="11750" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b40">
+	<monogr>
+		<title level="m" type="main">Is synthetic data from diffusion models ready for knowledge distillation?</title>
+		<author>
+			<persName><forename type="first">Zheng</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yuxuan</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Penghai</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Renjie</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiang</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jian</forename><surname>Yang</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2305.12954</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page">3</biblScope>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b41">
+	<analytic>
+		<title level="a" type="main">Feature pyramid networks for object detection</title>
+		<author>
+			<persName><forename type="first">Tsung-Yi</forename><surname>Lin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Piotr</forename><surname>Dollár</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ross</forename><surname>Girshick</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kaiming</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bharath</forename><surname>Hariharan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Serge</forename><surname>Belongie</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE conference on computer vision and pattern recognition</title>
+		<meeting>the IEEE conference on computer vision and pattern recognition</meeting>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+			<biblScope unit="page" from="2117" to="2125" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b42">
+	<analytic>
+		<title level="a" type="main">Zero-1-to-3: Zero-shot one image to 3d object</title>
+		<author>
+			<persName><forename type="first">Ruoshi</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Rundi</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Basile</forename><surname>Van Hoorick</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pavel</forename><surname>Tokmakov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sergey</forename><surname>Zakharov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Carl</forename><surname>Vondrick</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF international conference on computer vision</title>
+		<meeting>the IEEE/CVF international conference on computer vision</meeting>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page" from="9298" to="9309" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b43">
+	<analytic>
+		<title level="a" type="main">Sar despeckling via classificationbased nonlocal and local sparse representation</title>
+		<author>
+			<persName><forename type="first">Shujun</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Guoqing</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xinzheng</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kui</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pin</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yongming</forename><surname>Li</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Neurocomputing</title>
+		<imprint>
+			<biblScope unit="volume">219</biblScope>
+			<biblScope unit="page" from="174" to="185" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b44">
+	<analytic>
+		<title level="a" type="main">Structured knowledge distillation for semantic segmentation</title>
+		<author>
+			<persName><forename type="first">Yifan</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ke</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chris</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zengchang</forename><surname>Qin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhenbo</forename><surname>Luo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jingdong</forename><surname>Wang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF conference on computer vision and pattern recognition</title>
+		<meeting>the IEEE/CVF conference on computer vision and pattern recognition</meeting>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="page" from="2604" to="2613" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b45">
+	<analytic>
+		<title level="a" type="main">Fully convolutional networks for semantic segmentation</title>
+		<author>
+			<persName><forename type="first">Jonathan</forename><surname>Long</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Evan</forename><surname>Shelhamer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Trevor</forename><surname>Darrell</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE conference on computer vision and pattern recognition</title>
+		<meeting>the IEEE conference on computer vision and pattern recognition</meeting>
+		<imprint>
+			<date type="published" when="2015">2015</date>
+			<biblScope unit="page" from="3431" to="3440" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b46">
+	<monogr>
+		<title level="m" type="main">Data-free knowledge distillation for deep neural networks</title>
+		<author>
+			<persName><forename type="first">Gontijo</forename><surname>Raphael</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Stefano</forename><surname>Lopes</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Thad</forename><surname>Fenu</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Starner</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1710.07535</idno>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b47">
+	<monogr>
+		<title level="m" type="main">Decoupled weight decay regularization</title>
+		<author>
+			<persName><surname>Loshchilov</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1711.05101</idno>
+		<idno>2017. 6</idno>
+		<imprint/>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b48">
+	<analytic>
+		<title level="a" type="main">Twostage convolutional neural network for ship and spill detection using slar images</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Nieto-Hidalgo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">J</forename><surname>Gallego</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Gil</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Pertusa</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Transactions on Geoscience and Remote Sensing</title>
+		<imprint>
+			<biblScope unit="volume">56</biblScope>
+			<biblScope unit="issue">9</biblScope>
+			<biblScope unit="page" from="5217" to="5230" />
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b49">
+	<analytic>
+		<title level="a" type="main">Relational knowledge distillation</title>
+		<author>
+			<persName><forename type="first">Wonpyo</forename><surname>Park</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dongju</forename><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yan</forename><surname>Lu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Minsu</forename><surname>Cho</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF conference on computer vision and pattern recognition</title>
+		<meeting>the IEEE/CVF conference on computer vision and pattern recognition</meeting>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="page" from="3967" to="3976" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b50">
+	<monogr>
+		<author>
+			<persName><forename type="first">Ben</forename><surname>Poole</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ajay</forename><surname>Jain</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jonathan</forename><forename type="middle">T</forename><surname>Barron</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ben</forename><surname>Mildenhall</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2209.14988</idno>
+		<title level="m">Dreamfusion: Text-to-3d using 2d diffusion</title>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b51">
+	<analytic>
+		<title level="a" type="main">Vision transformers for dense prediction</title>
+		<author>
+			<persName><forename type="first">René</forename><surname>Ranftl</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alexey</forename><surname>Bochkovskiy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Vladlen</forename><surname>Koltun</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF international conference on computer vision</title>
+		<meeting>the IEEE/CVF international conference on computer vision</meeting>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="page" from="12179" to="12188" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b52">
+	<analytic>
+		<title level="a" type="main">High-resolution image synthesis with latent diffusion models</title>
+		<author>
+			<persName><forename type="first">Robin</forename><surname>Rombach</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andreas</forename><surname>Blattmann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dominik</forename><surname>Lorenz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Patrick</forename><surname>Esser</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Björn</forename><surname>Ommer</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF conference on computer vision and pattern recognition</title>
+		<meeting>the IEEE/CVF conference on computer vision and pattern recognition</meeting>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page">11</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b53">
+	<analytic>
+		<title level="a" type="main">Unet: Convolutional networks for biomedical image segmentation</title>
+		<author>
+			<persName><forename type="first">Olaf</forename><surname>Ronneberger</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Philipp</forename><surname>Fischer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Thomas</forename><surname>Brox</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Medical image computing and computer-assisted intervention-MICCAI 2015: 18th international conference</title>
+		<meeting><address><addrLine>Munich, Germany</addrLine></address></meeting>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2015">October 5-9, 2015. 2015</date>
+			<biblScope unit="page">7</biblScope>
+		</imprint>
+	</monogr>
+	<note>proceedings, part III 18</note>
+</biblStruct>
+
+<biblStruct xml:id="b54">
+	<analytic>
+		<title level="a" type="main">Oil spill detection in hybrid-polarimetric sar images</title>
+		<author>
+			<persName><forename type="first">A.-B</forename><surname>Salberg</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">O</forename><surname>Rudjord</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">H S</forename><surname>Solberg</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Transactions on Geoscience and Remote Sensing</title>
+		<imprint>
+			<biblScope unit="volume">52</biblScope>
+			<biblScope unit="issue">10</biblScope>
+			<biblScope unit="page" from="6521" to="6533" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b55">
+	<analytic>
+		<title level="a" type="main">Generative data augmentation improves scribble-supervised semantic segmentation</title>
+		<author>
+			<persName><forename type="first">Jacob</forename><surname>Schnell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jieke</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lu</forename><surname>Qi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Vincent</forename><forename type="middle">Tao</forename><surname>Hu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Meng</forename><surname>Tang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">CVPR 2024 Workshop SyntaGen: Harnessing Generative Models for Synthetic Visual Datasets</title>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b56">
+	<analytic>
+		<title level="a" type="main">Dark-spot detection from sar intensity imagery with spatial density thresholding for oil-spill monitoring</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Shu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Yousif</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Gomes</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Remote Sensing of Environment</title>
+		<imprint>
+			<biblScope unit="volume">114</biblScope>
+			<biblScope unit="issue">9</biblScope>
+			<biblScope unit="page" from="2026" to="2035" />
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b57">
+	<analytic>
+		<title level="a" type="main">Analysis and effects of speckle noise in sar images</title>
+		<author>
+			<persName><forename type="first">Prabhishek</forename><surname>Singh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Raj</forename><surname>Shree</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">2016 2nd International Conference on Advances in Computing, Communication, &amp; Automation (ICACCA) (Fall)</title>
+		<imprint>
+			<date type="published" when="2016">2016</date>
+			<biblScope unit="page" from="1" to="5" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b58">
+	<monogr>
+		<title level="m" type="main">Denoising diffusion implicit models</title>
+		<author>
+			<persName><forename type="first">Jiaming</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chenlin</forename><surname>Meng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Stefano</forename><surname>Ermon</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2010.02502</idno>
+		<idno>. 6</idno>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="page">10</biblScope>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b59">
+	<monogr>
+		<title level="m" type="main">Generalised Dice Overlap as a Deep Learning Loss Function for Highly Unbalanced Segmentations</title>
+		<author>
+			<persName><forename type="first">Carole</forename><forename type="middle">H</forename><surname>Sudre</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wenqi</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tom</forename><surname>Vercauteren</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sebastien</forename><surname>Ourselin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">Jorge</forename><surname>Cardoso</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+			<publisher>Springer International Publishing</publisher>
+			<biblScope unit="page">5</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b60">
+	<analytic>
+		<title level="a" type="main">Satsynth: Augmenting image-mask pairs through diffusion models for aerial semantic segmentation</title>
+		<author>
+			<persName><forename type="first">Aysim</forename><surname>Toker</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Marvin</forename><surname>Eisenberger</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Daniel</forename><surname>Cremers</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Laura</forename><surname>Leal-Taixé</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition</title>
+		<meeting>the IEEE/CVF Conference on Computer Vision and Pattern Recognition</meeting>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+			<biblScope unit="page">6</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b61">
+	<monogr>
+		<title level="m" type="main">Effective data augmentation with diffusion models</title>
+		<author>
+			<persName><forename type="first">Brandon</forename><surname>Trabucco</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kyle</forename><surname>Doherty</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Max</forename><surname>Gurinas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ruslan</forename><surname>Salakhutdinov</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2302.07944</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b62">
+	<monogr>
+		<title level="m" type="main">Attention is all you need</title>
+		<author>
+			<persName><forename type="first">Ashish</forename><surname>Vaswani</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Noam</forename><surname>Shazeer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Niki</forename><surname>Parmar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jakob</forename><surname>Uszkoreit</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Llion</forename><surname>Jones</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Aidan</forename><forename type="middle">N</forename><surname>Gomez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lukasz</forename><surname>Kaiser</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Illia</forename><surname>Polosukhin</surname></persName>
+		</author>
+		<idno>CoRR, abs/1706.03762</idno>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+			<biblScope unit="page">5</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b63">
+	<analytic>
+		<title level="a" type="main">Sar image quality assessment and indicators for vessel and oil spill detection</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Vespe</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Greidanus</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Transactions on Geoscience and Remote Sensing</title>
+		<imprint>
+			<biblScope unit="volume">50</biblScope>
+			<biblScope unit="issue">11</biblScope>
+			<biblScope unit="page" from="4726" to="4734" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b64">
+	<analytic>
+		<title level="a" type="main">An edge-preserving active contour model with bilateral filter based on hyperspectral image spectral information for oil spill segmentation</title>
+		<author>
+			<persName><forename type="first">W</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Sheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Wan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Mao</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the Workshop on Hyperspectral Image and Signal Processing: Evolution in Remote Sensing (WHISPERS)</title>
+		<meeting>the Workshop on Hyperspectral Image and Signal Processing: Evolution in Remote Sensing (WHISPERS)</meeting>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="page">2</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b65">
+	<analytic>
+		<title level="a" type="main">Intra-class feature variation distillation for semantic segmentation</title>
+		<author>
+			<persName><forename type="first">Yukang</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wei</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tao</forename><surname>Jiang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiang</forename><surname>Bai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yongchao</forename><surname>Xu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Computer Vision-ECCV 2020: 16th European Conference</title>
+		<meeting><address><addrLine>Glasgow, UK</addrLine></address></meeting>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2020">August 23-28, 2020. 2020</date>
+			<biblScope unit="volume">16</biblScope>
+			<biblScope unit="page">3</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b66">
+	<analytic>
+		<title level="a" type="main">Compositional oil spill detection based on object detector and adapted segment anything model from sar images</title>
+		<author>
+			<persName><forename type="first">Wenhui</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Man</forename><forename type="middle">Sing</forename><surname>Wong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xinyu</forename><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Guoqiang</forename><surname>Shi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Coco</forename><surname>Yin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tung</forename><surname>Kwok</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kang</forename><surname>Zou</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Geoscience and Remote Sensing Letters</title>
+		<imprint>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="page">7</biblScope>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b67">
+	<analytic>
+		<title level="a" type="main">Segformer: Simple and efficient design for semantic segmentation with transformers</title>
+		<author>
+			<persName><forename type="first">Enze</forename><surname>Xie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wenhai</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhiding</forename><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Anima</forename><surname>Anandkumar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jose</forename><forename type="middle">M</forename><surname>Alvarez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ping</forename><surname>Luo</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Advances in neural information processing systems</title>
+		<imprint>
+			<biblScope unit="volume">34</biblScope>
+			<biblScope unit="page">17</biblScope>
+			<date type="published" when="2021-09-12">2021. 9, 12, 15, 16</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b68">
+	<analytic>
+		<title level="a" type="main">Mosaicfusion: Diffusion models as data augmenters for large vocabulary instance segmentation</title>
+		<author>
+			<persName><forename type="first">Jiahao</forename><surname>Xie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wei</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiangtai</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ziwei</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yew</forename></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Soon</forename><surname>Ong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chen</forename><forename type="middle">Change</forename><surname>Loy</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">International Journal of Computer Vision</title>
+		<imprint>
+			<biblScope unit="page" from="1" to="20" />
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b69">
+	<analytic>
+		<title level="a" type="main">Diffusion-based data augmentation for nuclei image segmentation</title>
+		<author>
+			<persName><forename type="first">Xinyi</forename><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Guanbin</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wei</forename><surname>Lou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Siqi</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiang</forename><surname>Wan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yan</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Haofeng</forename><surname>Li</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Medical Image Computing and Computer-Assisted Intervention</title>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="page">3</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b70">
+	<analytic>
+		<title level="a" type="main">Restormer: Efficient transformer for high-resolution image restoration</title>
+		<author>
+			<persName><forename type="first">Aditya</forename><surname>Syed Waqas Zamir</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Salman</forename><surname>Arora</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Munawar</forename><surname>Khan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Fahad</forename><surname>Hayat</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ming-Hsuan</forename><surname>Shahbaz Khan</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Yang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF conference on computer vision and pattern recognition</title>
+		<meeting>the IEEE/CVF conference on computer vision and pattern recognition</meeting>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page" from="5728" to="5739" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b71">
+	<analytic>
+		<title level="a" type="main">Fast human pose estimation</title>
+		<author>
+			<persName><forename type="first">Feng</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiatian</forename><surname>Zhu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mao</forename><surname>Ye</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF conference on computer vision and pattern recognition</title>
+		<meeting>the IEEE/CVF conference on computer vision and pattern recognition</meeting>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="page" from="3517" to="3526" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b72">
+	<analytic>
+		<title level="a" type="main">Jointnet: Extending text-to-image diffusion for dense distribution modeling</title>
+		<author>
+			<persName><forename type="first">Jingyang</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shiwei</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yuanxun</forename><surname>Lu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tian</forename><surname>Fang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">David</forename><surname>Mckinnon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yanghai</forename><surname>Tsin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Long</forename><surname>Quan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yao</forename><surname>Yao</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Learning Representations (ICLR)</title>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="page">7</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b73">
+	<monogr>
+		<title level="m" type="main">Diffusionengine: Diffusion model is scalable data engine for object detection</title>
+		<author>
+			<persName><forename type="first">Manlin</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jie</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yuxi</forename><surname>Ren</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ming</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jie</forename><surname>Qin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xuefeng</forename><surname>Xiao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wei</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Rui</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Min</forename><surname>Zheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andy</forename><forename type="middle">J</forename><surname>Ma</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2309.03893</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b74">
+	<analytic>
+		<title level="a" type="main">Decoupled knowledge distillation</title>
+		<author>
+			<persName><forename type="first">Borui</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Quan</forename><surname>Cui</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Renjie</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yiyu</forename><surname>Qiu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jiajun</forename><surname>Liang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)</title>
+		<meeting>the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)</meeting>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page" from="11953" to="11962" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b75">
+	<analytic>
+		<title level="a" type="main">Pyramid scene parsing network</title>
+		<author>
+			<persName><forename type="first">Hengshuang</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jianping</forename><surname>Shi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiaojuan</forename><surname>Qi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiaogang</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jiaya</forename><surname>Jia</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE conference on computer vision and pattern recognition</title>
+		<meeting>the IEEE conference on computer vision and pattern recognition</meeting>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+			<biblScope unit="page">7</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b76">
+	<analytic>
+		<title level="a" type="main">Unet++: A nested u-net architecture for medical image segmentation</title>
+		<author>
+			<persName><forename type="first">Zongwei</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Md</forename><surname>Mahfuzur Rahman Siddiquee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Nima</forename><surname>Tajbakhsh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jianming</forename><surname>Liang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Deep Learning in Medical Image Analysis and Multimodal Learning for Clinical Decision Support: 4th International Workshop, DLMIA 2018, and 8th International Workshop, ML-CDS 2018, Held in Conjunction with MICCAI 2018</title>
+		<meeting><address><addrLine>Granada, Spain</addrLine></address></meeting>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2018-09-20">September 20, 2018. 2018</date>
+			<biblScope unit="volume">4</biblScope>
+			<biblScope unit="page">4</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b77">
+	<monogr>
+		<title level="m" type="main">Vision mamba: Efficient visual representation learning with bidirectional state space model</title>
+		<author>
+			<persName><forename type="first">Lianghui</forename><surname>Zhu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bencheng</forename><surname>Liao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qian</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xinlong</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wenyu</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xinggang</forename><surname>Wang</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2401.09417</idno>
+		<idno>. 2</idno>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b78">
+	<analytic>
+		<title level="a" type="main">Building extraction from high spatial resolution remote sensing images via multiscale-aware and segmentation-prior conditional random fields</title>
+		<author>
+			<persName><forename type="first">Qiqi</forename><surname>Zhu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhen</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yanan</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qingfeng</forename><surname>Guan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Remote Sensing</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="issue">23</biblScope>
+			<biblScope unit="page">3983</biblScope>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b79">
+	<analytic>
+		<title level="a" type="main">A spectral-spatial-dependent global learning framework for insufficient and imbalanced hyperspectral image classification</title>
+		<author>
+			<persName><forename type="first">Qiqi</forename><surname>Zhu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Weihuan</forename><surname>Deng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhuo</forename><surname>Zheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yanfei</forename><surname>Zhong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qingfeng</forename><surname>Guan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Weihua</forename><surname>Lin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Liangpei</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Deren</forename><surname>Li</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Transactions on Cybernetics</title>
+		<imprint>
+			<biblScope unit="volume">52</biblScope>
+			<biblScope unit="issue">11</biblScope>
+			<biblScope unit="page" from="11709" to="11723" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b80">
+	<analytic>
+		<title level="a" type="main">A global context-aware and batch-independent network for road extraction from vhr satellite imagery</title>
+		<author>
+			<persName><forename type="first">Qiqi</forename><surname>Zhu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yanan</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lizeng</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yanfei</forename><surname>Zhong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qingfeng</forename><surname>Guan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiaoyan</forename><surname>Lu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Liangpei</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Deren</forename><surname>Li</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">ISPRS Journal of Photogrammetry and Remote Sensing</title>
+		<imprint>
+			<biblScope unit="volume">175</biblScope>
+			<biblScope unit="page" from="353" to="365" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b81">
+	<analytic>
+		<title level="a" type="main">Oil spill contextual and boundary-supervised detection network based on marine sar images</title>
+		<author>
+			<persName><forename type="first">Qiqi</forename><surname>Zhu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yanan</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ziqi</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiaorui</forename><surname>Yan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qingfeng</forename><surname>Guan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yanfei</forename><surname>Zhong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Liangpei</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Deren</forename><surname>Li</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Transactions on Geoscience and Remote Sensing</title>
+		<imprint>
+			<biblScope unit="volume">60</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page">17</biblScope>
+			<date type="published" when="2022">2022. 6, 7, 9, 12, 14, 15, 16</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

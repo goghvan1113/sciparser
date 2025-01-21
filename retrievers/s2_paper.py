@@ -37,6 +37,16 @@ class CachedSemanticScholarWrapper:
                            doi TEXT,
                            paper_id TEXT,
                            timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)''')
+            # 创建作者搜索缓存表
+            conn.execute('''CREATE TABLE IF NOT EXISTS author_search_cache
+                          (name TEXT PRIMARY KEY,
+                           data TEXT,
+                           timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)''')
+            # 创建作者论文缓存表
+            conn.execute('''CREATE TABLE IF NOT EXISTS author_papers_cache
+                          (author_id TEXT PRIMARY KEY,
+                           data TEXT,
+                           timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)''')
             
     def get_paper_citations(self, paper_id, fields=None, limit=100, use_cache=None, override_cache=False):
         """
@@ -360,59 +370,115 @@ class CachedSemanticScholarWrapper:
         """获取没有DOI的文献索引列表"""
         return self._no_doi_indices
 
+    def search_author(self, name: str, fields=None, limit=10, use_cache=True) -> list:
+        """搜索作者并缓存结果"""
+        self.last_request_cached = False
+        use_cache = self.use_cache if use_cache is None else use_cache
+        
+        if use_cache:
+            # 尝试从缓存获取
+            cached_data = self._get_author_from_cache(name)
+            if cached_data:
+                self.last_request_cached = True
+                print(f"Author search 使用缓存: {name}")
+                return cached_data
+        
+        # 发送API请求
+        print(f"Author search 发送请求: {name}")
+        results = self.sch.search_author(name, fields=fields, limit=limit)
+        
+        # 保存到缓存
+        if use_cache:
+            self._save_author_to_cache(name, results.items)
+        
+        return results.items
+
+    def get_author_papers(self, author_id: str, fields=None, limit=None, use_cache=None) -> list:
+        """获取作者的论文列表并缓存"""
+        self.last_request_cached = False
+        use_cache = self.use_cache if use_cache is None else use_cache
+        
+        if use_cache:
+            cached_data = self._get_author_papers_from_cache(author_id)
+            if cached_data:
+                self.last_request_cached = True
+                print(f"Author papers 使用缓存: {author_id}")
+                return cached_data
+        
+        print(f"Author papers 发送请求: {author_id}")
+        results = self.sch.get_author(author_id, fields=fields)
+        
+        if use_cache:
+            self._save_author_papers_to_cache(author_id, results.papers)
+        
+        return results.papers
+
+    def _get_author_from_cache(self, name: str):
+        """从缓存中获取作者搜索结果"""
+        try:
+            with sqlite3.connect(self.db_path) as conn:
+                cursor = conn.cursor()
+                cursor.execute(
+                    "SELECT data FROM author_search_cache WHERE name = ?",
+                    (name.lower(),)
+                )
+                result = cursor.fetchone()
+                if result:
+                    return json.loads(result[0])
+                return None
+        except Exception as e:
+            print(f"从缓存读取作者数据时出错: {str(e)}")
+            return None
+
+    def _save_author_to_cache(self, name: str, authors: list):
+        """保存作者搜索结果到缓存"""
+        try:
+            with sqlite3.connect(self.db_path) as conn:
+                data = json.dumps([author.__dict__ for author in authors])
+                conn.execute(
+                    "INSERT OR REPLACE INTO author_search_cache (name, data) VALUES (?, ?)",
+                    (name.lower(), data)
+                )
+                print(f"Successfully cached author search results for: {name}")
+        except Exception as e:
+            print(f"保存作者数据到缓存时出错: {str(e)}")
+
+    def _get_author_papers_from_cache(self, author_id: str):
+        """从缓存中获取作者论文列表"""
+        try:
+            with sqlite3.connect(self.db_path) as conn:
+                cursor = conn.cursor()
+                cursor.execute(
+                    "SELECT data FROM author_papers_cache WHERE author_id = ?",
+                    (author_id,)
+                )
+                result = cursor.fetchone()
+                if result:
+                    return json.loads(result[0])
+                return None
+        except Exception as e:
+            print(f"从缓存读取作者论文时出错: {str(e)}")
+            return None
+
+    def _save_author_papers_to_cache(self, author_id: str, papers: list):
+        """保存作者论文列表到缓存"""
+        try:
+            with sqlite3.connect(self.db_path) as conn:
+                data = json.dumps([paper.__dict__ for paper in papers])
+                conn.execute(
+                    "INSERT OR REPLACE INTO author_papers_cache (author_id, data) VALUES (?, ?)",
+                    (author_id, data)
+                )
+                print(f"Successfully cached papers for author: {author_id}")
+        except Exception as e:
+            print(f"保存作者论文到缓存时出错: {str(e)}")
+
 
 # 使用示例
 if __name__ == "__main__":
     # 创建带缓存的包装器实例
     sch = CachedSemanticScholarWrapper(timeout=3, use_cache=True)
     
-    # 测试标题
-    test_titles = [
-        "Is synthetic data from diffusion models ready for knowledge distillation?",
-        "Exploring graph pre-training for aspect-based sentiment analysis"
-    ]
-    
-    print("="*50)
-    print("测试通过标题获取DOI:")
-    print("="*50)
-    
-    for title in test_titles:
-        print(f"\n查询标题: {title}")
-        # 第一次查询
-        doi, paper_id = sch.get_doi_by_title(title)
-        print(f"DOI: {doi}")
-        print(f"PaperId: {paper_id}")
-        print(f"是否使用缓存: {sch.was_last_request_cached()}")
-        
-        # 第二次查询（应该使用缓存）
-        print("\n再次查询相同标题:")
-        doi, paper_id = sch.get_doi_by_title(title)
-        print(f"DOI: {doi}")
-        print(f"PaperId: {paper_id}")
-        print(f"是否使用缓存: {sch.was_last_request_cached()}")
-        print("-"*50)
-    
-    print("\n"+"="*50)
-    print("测试获取引用信息:")
-    print("="*50)
-    
-    # 使用找到的DOI测试引用查询
-    paper_id = '10.48550/arXiv.2305.12954'
-    print(f"\n查询论文DOI: {paper_id}")
-    results = sch.get_paper_citations(paper_id, fields=['title','externalIds'])
-    
-    # 检查是否使用了缓存
-    print(f"是否使用缓存: {sch.was_last_request_cached()}")
-    
-    # 打印引用信息
-    print("\n引用论文列表:")
-    for i, item in enumerate(results.items, 1):
-        paper = item['citingPaper']
-        print(f"\n{i}. 标题: {paper['title']}")
-        if 'DOI' in paper['externalIds']:
-            print(f"   DOI: {paper['externalIds']['DOI']}")
-    
-    # 保存DOIs到文件
-    doi_file = "test_citing_papers.txt"
-    save_result = sch.save_dois_to_file(doi_file)
-    print(f"\n{save_result}")
+    test_author = 'PengHai Zhao'
+    results = sch.search_author(test_author)
+    print(results)

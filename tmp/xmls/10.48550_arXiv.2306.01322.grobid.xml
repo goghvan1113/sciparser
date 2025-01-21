@@ -1,0 +1,1679 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Privacy Distillation: Reducing Re-identification Risk of Multimodal Diffusion Models</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability  status="unknown">
+					<licence/>
+				</availability>
+				<date type="published" when="2023-06-02">2 Jun 2023</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author role="corresp">
+							<persName><forename type="first">Virginia</forename><surname>Fernandez</surname></persName>
+							<email>&lt;virginia.fernandez@kcl.ac.uk&gt;.</email>
+							<affiliation key="aff0">
+								<orgName type="department">Equal contribution</orgName>
+							</affiliation>
+							<affiliation key="aff1">
+								<orgName type="institution">King&apos;s College London</orgName>
+								<address>
+									<settlement>Strand</settlement>
+									<region>Lon- don</region>
+									<country key="GB">United Kingdom</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Pedro</forename><surname>Sanchez</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Equal contribution</orgName>
+							</affiliation>
+							<affiliation key="aff2">
+								<orgName type="institution">The University of Edinburgh</orgName>
+								<address>
+									<addrLine>Old College</addrLine>
+									<settlement>South Bridge Edinburgh</settlement>
+									<country key="GB">United Kingdom</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Walter</forename><surname>Hugo Lopez Pinaya</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Equal contribution</orgName>
+							</affiliation>
+							<affiliation key="aff1">
+								<orgName type="institution">King&apos;s College London</orgName>
+								<address>
+									<settlement>Strand</settlement>
+									<region>Lon- don</region>
+									<country key="GB">United Kingdom</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Grzegorz</forename><surname>Jacenków</surname></persName>
+							<affiliation key="aff2">
+								<orgName type="institution">The University of Edinburgh</orgName>
+								<address>
+									<addrLine>Old College</addrLine>
+									<settlement>South Bridge Edinburgh</settlement>
+									<country key="GB">United Kingdom</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Sotirios</forename><surname>Tsaftaris</surname></persName>
+							<affiliation key="aff2">
+								<orgName type="institution">The University of Edinburgh</orgName>
+								<address>
+									<addrLine>Old College</addrLine>
+									<settlement>South Bridge Edinburgh</settlement>
+									<country key="GB">United Kingdom</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Jorge</forename><surname>Cardoso</surname></persName>
+							<affiliation key="aff1">
+								<orgName type="institution">King&apos;s College London</orgName>
+								<address>
+									<settlement>Strand</settlement>
+									<region>Lon- don</region>
+									<country key="GB">United Kingdom</country>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Privacy Distillation: Reducing Re-identification Risk of Multimodal Diffusion Models</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date type="published" when="2023-06-02">2 Jun 2023</date>
+						</imprint>
+					</monogr>
+					<idno type="MD5">02656DE0C456A11ADB734E5B9A1BD27B</idno>
+					<idno type="arXiv">arXiv:2306.01322v1[cs.LG]</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.2-SNAPSHOT" ident="GROBID" when="2025-01-21T07:33+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Knowledge distillation in neural networks refers to compressing a large model or dataset into a smaller version of itself. We introduce Privacy Distillation, a framework that allows a text-toimage generative model to teach another model without exposing it to identifiable data. Here, we are interested in the privacy issue faced by a data provider who wishes to share their data via a multimodal generative model. A question that immediately arises is "How can a data provider ensure that the generative model is not leaking identifiable information about a patient?". Our solution consists of ( <ref type="formula">1</ref>) training a first diffusion model on real data (2) generate a synthetic dataset using this model and filter it to exclude images with a re-identifiability risk (3) train a second diffusion model on the filtered synthetic data only. We showcase that datasets sampled from models trained with Privacy Distillation can effectively reduce re-identification risk whilst maintaining downstream performance.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.">Introduction</head><p>Synthetic data have emerged as a promising solution for sharing sensitive medical image data <ref type="bibr" target="#b23">(Jordon et al., 2020)</ref>. By utilising generative models, artificial data can be created with statistical characteristics similar to the original training data, thereby overcoming privacy, ethical, and legal issues that data providers face when sharing healthcare data <ref type="bibr" target="#b23">(Jordon et al., 2020;</ref><ref type="bibr" target="#b46">Yoon et al., 2020;</ref><ref type="bibr" target="#b30">Murtaza et al., 2023)</ref>. Recent advancements have made text-to-image generative models such as Stable Diffusion <ref type="bibr" target="#b38">(Rombach et al., 2022)</ref>, DALL-E <ref type="bibr">(Ramesh et al., 2021b;</ref><ref type="bibr">2022)</ref> and Imagen <ref type="bibr" target="#b40">(Saharia et al., 2022)</ref> achieve sufficient quality to accurately repre-sent the original data in terms of both realism and diversity. Beyond text conditioning, they also cope well with various other modalities such as segmentation masks, contours and other spatial information <ref type="bibr" target="#b48">(Zhang &amp; Agrawala, 2023)</ref>. Sharing trained generative models, in particular, can be useful<ref type="foot" target="#foot_0">foot_0</ref> for fine-tuning in smaller datasets <ref type="bibr" target="#b39">(Ruiz et al., 2022;</ref><ref type="bibr" target="#b5">Chambon et al., 2022)</ref>, anomaly detection <ref type="bibr">(Pinaya et al., 2022b;</ref><ref type="bibr" target="#b41">Sanchez et al., 2022)</ref>, or even leveraging synthetic data for downstream tasks such as segmentation <ref type="bibr" target="#b12">(Fernandez et al., 2022)</ref> or classification <ref type="bibr" target="#b28">(Li et al., 2023;</ref><ref type="bibr" target="#b2">Azizi et al., 2023)</ref>.</p><p>However, generating high quality synthetic data which are useful for downstream tasks is not enough to diminish the privacy risks on medical data. There is a growing concern on whether deep generative models preserve privacy <ref type="bibr" target="#b17">(Hitaj et al.;</ref><ref type="bibr" target="#b7">Chen et al., 2021)</ref>. Deep generative models are prone to leak information about their training datasets <ref type="bibr" target="#b21">(Jegorova et al., 2023)</ref>.</p><p>A major risk in healthcare is the potential for patient reidentification from the training dataset <ref type="bibr" target="#b46">(Yoon et al., 2020)</ref>, especially when sharing models derived from private or protected datasets. Re-identification in the context of generative modelling refers to a synthetic image which contains identifiable information about a patient in the training set. Identifiable information is any information that can be used to identify an individual 2 . The notion of what constitutes a person's identity might be ambiguous in the context of synthetic, anonymised data. However, it has been shown that it's possible for deep learning models to determine whether two images belong to the same patient <ref type="bibr" target="#b31">(Packhäuser et al., 2022)</ref>, even when these images were acquired at different times and when the patient's clinical condition has changed. A potential attacker, with incomplete information about a patient, who manages to trace a synthetic image back to this patient, could learn sensitive clinical information from the image or from the selection criteria of the dataset used to train the generative model <ref type="bibr" target="#b49">(Zhang et al., 2022)</ref>.</p><p>In this work, we propose a distillation procedure where two diffusion models are trained sequentially. The first model is trained on real data and used to generate a synthetic dataset. Subsequently, the synthetic dataset is filtered by a re-identification network to eliminate images that could potentially be used to re-identify real patients. A second model is then trained on the filtered synthetic dataset, thus avoiding the risk of memorisation of the real images and subsequent potential re-identification of patients. The efficacy of the distilled model is evaluated by assessing the performance of a downstream classifier on the synthetic data generated by the distilled model. Our main contributions are:</p><p>1. We train a conditional latent diffusion model (LDM) on text-image pairs from a Chest X-ray dataset, following the strategy in RoentGen <ref type="bibr" target="#b5">(Chambon et al., 2022)</ref>;</p><p>2. We assess re-identification risk of LDMs trained with different dataset sizes as well as how risk varies when the model is trained from scratch as opposed to finetuned;</p><p>3. We propose a distillation procedure which improves privacy and verify that the distilled model has lower reidentification risk, whilst retaining information about the original dataset useful for classifiers on its generated data.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.">Background and Related Works</head><p>2.1. Diffusion models for medical images synthesis.</p><p>Diffusion probabilistic models <ref type="bibr" target="#b19">(Ho et al., 2020;</ref><ref type="bibr" target="#b44">Song et al.;</ref><ref type="bibr" target="#b9">Dhariwal et al., 2021)</ref> (DPMs) learn to reverse a sequential image noising process, thus learning to map a pure noise image into a target data distribution. Diffusion models can, therefore, be used as a generative model. A particular type of DPM that has been successfully <ref type="bibr" target="#b24">(Kazerouni et al., 2022)</ref> applied to medical imaging <ref type="bibr" target="#b5">(Chambon et al., 2022;</ref><ref type="bibr">Pinaya et al., 2022a)</ref> are latent diffusion models <ref type="bibr">(Rombach et al., 2022) (LDMs)</ref>. LDMs allow the generation of highdimensional high-resolution images by having a diffusion model over the latent space of a variational autoencoder. Generative modelling in a lower dimensional space allows better conditioning on text <ref type="bibr" target="#b5">(Chambon et al., 2022)</ref> and scale particularly well to high resolution and 3D images <ref type="bibr">(Pinaya et al., 2022a)</ref>.</p><p>In this paper, we follow RoentGen <ref type="bibr" target="#b5">(Chambon et al., 2022)</ref> in fine-tuning a LDM <ref type="bibr" target="#b38">(Rombach et al., 2022)</ref> pre-trained<ref type="foot" target="#foot_2">foot_2</ref> on a subset of the LAION-5B database <ref type="bibr" target="#b42">(Schuhmann et al., 2022)</ref>. The latent diffusion model is conditioned on a text c which is passed through a text encoder τ ϕ . τ ϕ is a pretrained CLIP text encoder <ref type="bibr" target="#b34">(Radford et al., 2021)</ref>. The image latent space is obtained from a encoder z = E ψ (x) which is pretrained along with a decoder D ψ using kullback-leibler (KL) divergence, LPIPS perceptual loss and patch discriminator as described in <ref type="bibr" target="#b38">Rombach et al. (2022)</ref>. The latent diffusion model can be implemented with a conditional denoising U-Net ϵ θ (z t , τ ϕ (c), t) which allows controlling the synthesis process through inputs c.</p><p>Here, we only train the parameters θ from the diffusion model, leaving the weights ψ and ϕ from the autoencoder and text encoder respectively as pre-trained <ref type="bibr" target="#b5">(Chambon et al., 2022)</ref>. Whenever we mention samples from an unconditional model, we refer to images generated with prompts from empty strings. The training procedure is done by learning a θ * such that</p><formula xml:id="formula_0">θ * = arg min θ E x0,t,ϵ ∥ϵ θ (x t , c, t) -ϵ∥ 2 2 ,<label>(1)</label></formula><p>where</p><formula xml:id="formula_1">z t = √ α t z 0 + √ 1 -α t ϵ, with z 0 = E ψ (x)</formula><p>, t ∼ U (0, T ) and ϵ ∼ N (0, I) is the noise. We generate images using classifier-free guidance <ref type="bibr">(Ho &amp; Salimans)</ref> with the PNDM sampling strategy <ref type="bibr" target="#b29">(Liu et al., 2022)</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.2.">Sample-level Metrics for Synthetic Data</head><p>As detailed in Section 3, our method involves a filtering procedure. Evaluating the quality of synthetic examples is challenging task and numerous methods such as Inception Score (IS) <ref type="bibr" target="#b16">(Hinz et al., 2021)</ref>, Frechet Inception Distance (FID) <ref type="bibr">(Heusel et al., 2017a;</ref><ref type="bibr" target="#b27">Kynkäänniemi et al., 2023)</ref>, and Precision/Recall (PR) <ref type="bibr" target="#b26">(Kynkäänniemi et al., 2019)</ref>. IS, FID and PR are methods that compute characteristics of the distribution of the synthetic data. If the downstream use case for the synthetic data is defined, one might use downstream performance to evaluate the dataset.</p><p>However, in certain scenarios, one is interested in evaluating the qualities of individual synthetic samples such that requirements (such as privacy) over the generated dataset can be enforced post-hoc (after training). Therefore, a <ref type="bibr" target="#b1">Alaa et al. (2022)</ref> explored α-precision, β-recall and authenticity that characterizes the fidelity, diversity and generalisation per sample. <ref type="bibr" target="#b13">Han et al. (2023)</ref> proposed the "rarity score" which measures the uncommonness of generated images using the nearest-neighbor distance in the latent space from other real and synthetic data points. In the multimodal test-toimage setting, a common metric is the CLIP score <ref type="bibr">(Ramesh et al., 2021b)</ref> which measures the alignment between the conditioning and the generated image.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.3.">Diffusion Models and Privacy</head><p>DPMs have shown to be particularly susceptible to attacks extracting its training data <ref type="bibr" target="#b4">(Carlini et al., 2023;</ref><ref type="bibr" target="#b43">Somepalli et al., 2023)</ref>, exceeding the number of images extracted from other architectures such as generative adversarial networks (GANs) <ref type="bibr" target="#b4">(Carlini et al., 2023)</ref>. Few publications have tackled solutions for privacy preservation in diffusion models. <ref type="bibr" target="#b4">Carlini et al. (2023)</ref> did a thorough analysis of the impact of model hyperparameters, duplicates and training dataset size on the extraction of training samples of two state-ofthe-art diffusion models. <ref type="bibr" target="#b4">Carlini et al. (2023)</ref>, however, only measured memorisation via pixel-level similarity (a modified version of l 2 loss). They retrieve the samples from the training dataset that were closer to a specific synthetic image.</p><p>A popular solution to tackle privacy in deep learning models is the use of differential privacy (DP) <ref type="bibr" target="#b11">(Dwork et al., 2014;</ref><ref type="bibr" target="#b0">Abadi et al., 2016)</ref> training. DP in deep learning is performed via differentially private stochastic gradient descent (DP-SGD) <ref type="bibr" target="#b0">(Abadi et al., 2016)</ref>. DP-SGD preserves privacy by clipping and noising the parameter gradients during training. <ref type="bibr" target="#b10">Dockhorn et al. (2022)</ref> show how DP-diffusion models generate images of substantially better quality than DP-GAN counterparts and have a much more stable training regime. Nonetheless, the paper showcases that, at present, this approach is limited to models with a small number of parameters, which leaves out its application to large, stateof-the-art models. In addition, despite obtaining outstanding results compared to other DP generative models, the visual quality of these samples is still far from that obtained with non-DP models.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.">Privacy Distillation</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1.">Problem Statement</head><p>Consider a real dataset D real = {(x i , c i ) | ∀i ∈ (1, 2, . . . , N )} of images x i and text c i belonging to a patient p i . We are interested in training a generative model ϵ θ which is able to synthesise images xi such that xi does not contain information that can be used to identify a data point</p><formula xml:id="formula_2">x i , ∀i ∈ (1, 2, . . . , N ).</formula><p>Following the literature <ref type="bibr" target="#b4">(Carlini et al., 2023;</ref><ref type="bibr" target="#b46">Yoon et al., 2020)</ref>, we hypothesise that synthetic images can enable re-identification due to model memorisation.</p><p>Definition 3.1 (ℓ, δ-Memorisation, adapted from <ref type="bibr" target="#b4">(Carlini et al., 2023)</ref></p><formula xml:id="formula_3">). A x i is considered (ℓ, δ)-memorised by ϵ θ if ℓ(x i , x i ) ≥ δ,</formula><p>where ℓ is a similarity function, δ is a threshold, and A is an algorithm which can extract an image xi from a generative model ϵ θ without access to the original x i , xi = A(ϵ θ ). In the case of LDMs, A is a sampling algorithm.</p><p>We assume that c i does not contain identifiable information about p i , therefore, we only focus on xi for identifiable information. This is a reasonable assumption since iden-tifiable information in text, such as demographics, can be easily recognised whereas images can have more subtle details. In the next sections, we will consider two cases where we perform (i) conditional sampling xi = A(ϵ θ , c i ); (ii) unconditional sampling xi = A(ϵ θ ).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2.">Distillation Procedure</head><p>As we are interested in safely sharing the weights θ of generative models in a privacy-preserving manner, a major concern is that synthetic images generated by a model can be used to re-identify a patient from the real training dataset. Therefore, we propose an algorithm for training a diffusion model over filtered synthetic images, minimising the model's exposure to re-identifiable data.</p><p>The procedure for Privacy Distillation, as depicted in Figure <ref type="figure" target="#fig_1">1</ref>, consists of the following steps: </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.3.">Filtering for privacy</head><p>Defining an appropriate ℓ(x, x) allows controlling which aspects of the original data one wishes to measure for memorisation. Previous work <ref type="bibr" target="#b4">(Carlini et al., 2023)</ref> searches nearidentical images utilising a Euclidean distance or pixel-bypixel correspondence. Measuring identity, however, can be challenging and specific to certain modalities or organs <ref type="bibr" target="#b25">(Kumar et al., 2017)</ref>, limiting the validity of such approaches.</p><p>Assessing re-identification. Instead of pixel-based <ref type="bibr" target="#b4">(Carlini et al., 2023)</ref> or structural-based <ref type="bibr" target="#b25">(Kumar et al., 2017)</ref> similarities, we measure identity with a deep model ℓ = f re-id θ , introduced by Packhäuser et al. <ref type="bibr" target="#b31">(Packhäuser et al., 2022)</ref>. The model is trained to classify images as belonging to the same patient or not. This model, devised for X-ray images, consists of a siamese neural network with a ResNet-50 backbone. The model takes in two images, fuses the representation of the two branches and outputs a re-identification score (after a sigmoid) that we will note as s re-id . The model is trained on real images.</p><p>When performing filtering, we compare a real image to a synthetic image. If s re-id ≥ δ for a pair of synthetic and real images (x i , x i ), we consider that xi contains identifiable information about x i . For a set of synthetic images, we call re-identification ratio R re-id the number of synthetic samples containing identifiable information about real samples divided by the total number of synthetic samples generated.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Data provider User</head><p>We train f re-id θ from scratch on our training set, sampling positive (images from the same patient) and negative pairs, which are randomly sampled. To avoid data imbalance, positive pairs, which were on average ten times less frequent, were oversampled, resulting in an effective dataset size of 472,992. We tested it on a set of even 101,592 non-repeated pairs, achieving a 99.16% accuracy (AUC 0.9994).</p><p>Retrieval. In a scenario where the text conditioning is not available, we need to search for the most similar real image in the training dataset before computing the re-identification score s re-id . Therefore, for data sampled without conditioning, we utilised a retrieval model f retrieval θ which was also proposed in <ref type="bibr" target="#b31">(Packhäuser et al., 2022)</ref>. The model works as a feature extractor for computing the nearest neighbours in the embedding space. The model is a siamese neural network with an architecture similar to f re-id θ . The f retrieval θ excludes the layers from the merging point onwards, to function solely as a feature extractor. f retrieval θ is trained with a contrastive loss function.</p><p>During filtering, f retrieval θ identifies the closest image in terms of identity by computing the Euclidean distance between the embeddings of the query synthetic image and the embedding of every real image in our training set. When evaluating pairs of the test set from the real dataset, our trained model obtained high mean average precision at R (mAP@R) of about 95% and a high Precision@1 (the precision when evaluating how many times the top-1 images in the retrieved lists are relevant) of 97%. This way, approach enabled us to analyze and evaluate the unconditioned synthetic data accurately.</p><p>Constrative Reranking. We also need to ensure that the images in D f iltered used for training ϵ θ distill correspond to their conditioning. Therefore, we rerank the synthetic images in D f iltered based on the image alignment with the conditioning, similar to DALL-E <ref type="bibr">(Ramesh et al., 2021a)</ref>.</p><p>We leverage CXR-BERT <ref type="bibr" target="#b3">(Boecking et al., 2022)</ref> for the text encoder which is a chest X-ray (CXR) language model that utilises an improved vocabulary, pretraining procedure and text augmentations tailored to medical text. The model is fine-tuned with a contrastive text-image loss, together with an image encoder <ref type="bibr" target="#b3">(Boecking et al., 2022</ref>). An alignment score s align = f im2tex θ (x i , c i ) is computed between an image and a text prompt by passing them through an image and text encoder respectively and taking the cosine similarity between their latent spaces.</p><p>Filtering strategy. We generate N c synthetic images for each prompt c i in D real . We generally choose N c = 10. Therefore, D synth has N c * N elements. We compute s align between all generated images and corresponding conditioning using f im2tex θ ; and s re-id between the generated images and the real image corresponding to its prompt. For unconditional models, we use f retrieval θ to find the strongest candidate in the dataset before computing s re-id . We remove all re-identified images s re-id ≥ δ and choose, for each c i , the synthetic image with the highest s align .</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.">Experiments</head><p>First, we evaluate how/when identity memorisation happens and the effect of training the model and sampling under different conditions and dataset sizes. Then we showcase that our model trained under Privacy Distillation can be used to train a downstream classification model while reducing re-identification risk.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1.">Data</head><p>We use images and radiological reports from the MIMIC-CXR 2.0.0 database <ref type="bibr" target="#b22">(Johnson et al., 2019)</ref>. As text, we use each report's "impression" section, which corresponds to an interpretative summary of the findings for supporting medical decisions. Following RoentGen <ref type="bibr" target="#b5">(Chambon et al., 2022)</ref>, we filter the data used in this study based on the length of impression in tokens, which should not exceed 76 tokens due to the text encoder limit.</p><p>Ultimately we obtained a set of 45,453 images belonging to 25,852 patients, each associated with an impression of the original radiological report. We split these into a train set of 23,268 patients (40,960 images) and a test set of 2,132 patients (3,101 images). 10% of the patients left for testing had half of their images and report pairs moved to the training dataset to allow us to assess re-identification when the patient, but not the query (image, text) pair, is part of the training dataset.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2.">Metrics</head><p>Beyond using the re-identification score s re-id and the textto-image similarity s align for measuring the quality of our synthetic dataset, we also measured image fidelity and downstream performance. We evaluate the fidelity of the synthetic images using the distribution-based metric Fréchet Inception Distance (FID) score <ref type="bibr">(Heusel et al., 2017b)</ref>. We utilise features extracted by the pre-trained DenseNet-121 from the torchxrayvision package <ref type="bibr" target="#b8">(Cohen et al., 2022)</ref>.</p><p>To assess the quality of synthetic datasets, we train a classifier f class θ of 5 different pathologies (Cardiomegaly, Edema, Consolidation, Atelectasis, Pleural Effusion) based on the model ranked first in the CheXpert Stanford ML leaderboard <ref type="bibr">(Yuan et al.)</ref>. <ref type="foot" target="#foot_3">4</ref> We trained a DenseNet-121 on our datasets and tested it in the real hold-out test set. The network is pre-trained for 5 epochs on cross-entropy loss, then trained for another 5 epochs on an AUC loss, as per <ref type="bibr">(Yuan et al.)</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.3.">Measuring Re-identification Risk of Latent Diffusion Models</head><p>Effect of varying the δ. We explored how δ threshold for the s re-id score impact the decision if a synthetic data point contains identifiable information of not. We explored the effect of varying δ and found no relevant difference in the resulting score for thresholds between 0.05 and 0.90, as can be seen by Figure <ref type="figure" target="#fig_2">2</ref>. Therefore, we set δ = 0.5 for the rest of the experiments.</p><p>Effect of fine-tuning. We explored the differences in terms of s align between fine-tuning the model pre-trained on LAION-5B or training from scratch, and between sampling using conditioning or not. For the conditioned generation, we sample 100 instances for each of the first 400 prompts of the training dataset, resulting in 40,000 samples. For the unconditional generation, we sample 40,000 images and use the retrieval network to get the closest images in the  training dataset. We calculate the re-identification ratio and FID as shown in Table <ref type="table" target="#tab_0">1</ref>. The lowest re-identification ratio was achieved for the data sampled from a model trained from scratch using conditioning. Unconditionally-generated datasets have higher re-identification ratios but achieve a better FID score. Nonetheless, their usability is limited, as conditional sampling allows the user to guide the generation process.</p><p>Effect of training dataset size on memorisation. We trained one model on our full training dataset, and three models on 1%, 10% and 50% of the training dataset, respectively. Then, we calculated the R re-id of a set of samples inferred using 100 instances of 400 training prompts (40,000 images in total). Figure <ref type="figure" target="#fig_3">3</ref> shows the re-identification ratio, defined as the average number of times a sample was reidentified divided by the total of generated samples.</p><p>As opposed to findings in the literature, where bigger training set sizes result in less leakage <ref type="bibr" target="#b4">(Carlini et al., 2023)</ref>, the re-identification ratio was lowest for the model trained on only 1% of the data. The TSNE plots of Figure <ref type="figure" target="#fig_3">3</ref> suggest that re-identification tends to happen in specific clusters, which aligns with the findings in <ref type="bibr" target="#b45">(Su et al., 2022)</ref>. We looked at the radiological reports of the top 10 most re-identified prompts, and 90% of them were associated with similar embeddings of the first 400 prompts used to test this experiment, for the model trained on 1% and 100% of the data, respectively. Orange dots correspond to prompts for which none of the generated 100 instances was re-identified, whereas blue dots are associated with prompts re-identified to some extent, the size being proportional to the re-identification ratio. pathological phenotypes: atelectasis, pleural effusion, and lung opacity. In parallel, we observed that the proportion of images associated with these pathologies is less frequent in the first 1% of the data than it is in the whole dataset, which suggests that generated data from models trained on the full dataset might be more re-identifiable due to overfitting to subject-specific pathological features. This hypothesis is corroborated by using the Grad-CAM activations of the verification network; we observed that, in patients with pleural effusion or atelectasis, the most salient regions matched the areas with evidence for these pathologies. This, combined with the potential overfitting, likely explains the increase in the average memorisation ratio.</p><p>Effect of filtering. We compare the impact of our filtering strategy on the synthetic datasets D synth and D f iltered . We sample 10 instances for each of the 40,959 training prompts from the proposed privacy-preserving model. We then filter by s re-id , and pick the sample with the better s align score, resulting in a filtered dataset of 40,959 images (Figure <ref type="figure" target="#fig_5">4</ref>). We found that filtering improves the s align and reduces the number of memorised (re-identifiable) samples to 0, given a δ.</p><p>Visualising of How Synthetic Examples are Memorised. We now focus on analysing Grad-CAM++ <ref type="bibr" target="#b6">(Chattopadhay et al., 2018)</ref> heatmaps of the f re-id θ network in Figure <ref type="figure">5a</ref> and some samples of synthetic images and their associated conditioning information in Figure <ref type="figure">5b</ref>. For the explainability heatmap, we used the second-order gradients of the fourth layer of the ResNet-50 (which is a common choice for this architecture<ref type="foot" target="#foot_4">foot_4</ref> ).  </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.4.">Privacy Distillation</head><p>We now show empirically that ϵ θ distill indeed reduces reidentification risk. We also assess whether ϵ θ distill is able to produce useful synthetic datasets for downstream tasks. We train classifiers f class θ (see section 4.2) on D real , D synth , capped at 40,000 images, and a dataset D distill of 40,000 images sampled from ϵ θ distill , our distilled model, using</p><p>Real Synthetic We display several synthetic images along with their prompt and real image associated with the prompt. We show below the synthetic images the re-identification score and text-to-image similarity in the format (s re-id ; s align ). In the first row, the synthetic images do not contain any identifiable information about the real image while corresponding fairly well to the text description. In the second row, all synthetic images contain identifiable information, despite having a different style/contrast. The bottom row displays synthetic images with good text alignment but some contain identifiable information and some do not.</p><p>Figure <ref type="figure">5</ref>: Illustration showing how synthetic images, obtained by using the same prompt of the real image as conditioning, relates to the real image as well as the prompt. We try to mitigate privacy risks in these illustrations because the license of MIMIC-CXR 6 does not allow sharing data. In 5a, the "Real" image is actually a synthetic image that is very similar to the original image. In 5b, we blurred the real images. Training a model on synthetic data slightly affects performance (AUC and s align decrease), but the resulting value is still comparable to the literature <ref type="bibr" target="#b20">(Jacenkow et al., 2022)</ref>. Nonetheless, the re-identification ratio between the initial and the distilled models is decreased by more than 3-fold.</p><p>We hypothesise that filtering re-identifiable data might also filter out unique phenotypes, more prone to be memorised <ref type="bibr" target="#b4">(Carlini et al., 2023)</ref>, resulting in reduced model generalisability and performance.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.">Discussion and conclusion</head><p>This study has demonstrated that the application of privacy distillation can effectively reduce the risk of re-identification and leakage in latent diffusion models without excessively compromising the downstream task performance. In line with other approaches, such as differential privacy <ref type="bibr" target="#b10">(Dockhorn et al., 2022)</ref>, there is a trade-off between privacy and quality. In our proposed method, the trade-off is between the degree of filtering (more privacy) and downstream model utility (less privacy). Additionally, privacy distillation can be applied iteratively by adding more filtering-samplingtraining steps, an approach that should be the subject of future experiments.</p><p>This approach has the potential to facilitate the sharing of medical imaging generative models for fine-tuning and subsequent use. Other downstream tasks, such as segmentation, which we could not do due to the absence of ground truth masks, should also be contemplated to further explore the impact of the filtering. While in this paper, we use a textto-image synthesis network and rely on a re-identification metric devised specifically for X-ray imaging, our approach could be applied to other imaging modalities and conditioning types, replacing the data, model and re-identification metric.</p><p>Please note that while the proposed method requires training a second model on a filtered dataset, the filtering approach can be applied alone to reduce the re-identification risk of synthetic datasets (in the case where realising a synthetic dataset instead of a model is enough). This post hoc filtering procedure acts as a model auditor <ref type="bibr" target="#b1">(Alaa et al., 2022)</ref> and can be used to improve any generative model. This is of particular interest when retraining a model is expensive or imposing certain properties is impractical.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.1.">Limitations</head><p>While privacy distillation significantly reduces reidentifiability, it is important to note that some minor risks may still exist. We highlight that the ability to measure these risks is bounded by the accuracy and generalisation capabilities of the chosen measure of re-identification s re-id . Ensuring privacy preservation is a task that depends on various assumptions, such as the definition of "re-identifiability", which is limited by the choice of the metric and threshold. Further research should explore alternatives with a combination of metrics, such as the Kullback-Leibler distance or a loss-based score, as proposed by Hu et al. <ref type="bibr">(Hu &amp; Pang)</ref>.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head></head><label></label><figDesc>1. train a diffusion model ϵ θ real on real data D real 2. generate a synthetic dataset D synth 3. filter D synth , ensuring that none of the images are re-identifiable, to obtain D f iltered 4. train a diffusion model ϵ θ distill on D f iltered 5. share ϵ θ distill .</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 1 :</head><label>1</label><figDesc>Figure 1: Privacy Distillation Pipeline.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 2 :</head><label>2</label><figDesc>Figure 2: Effect of varying threshold δ on the reidentification score s re-id .</figDesc><graphic coords="5,307.44,67.06,234.00,180.38" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 3 :</head><label>3</label><figDesc>Figure 3: Left: violin plots showing the distribution of the average re-identification ratio for the models fine-tuned in different portions of the training dataset; the middle and right plots are TSNE plots of the f im2tex θ</figDesc><graphic coords="6,57.87,67.06,481.16,157.03" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Figure 4 :</head><label>4</label><figDesc>Figure 4: Top: s re-id distribution ; Bottom: s align distribution. Comparing distribution of the non-filtered D synth and filtered D f iltered dataset.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head></head><label></label><figDesc>(a) Grad-CAM++ heatmaps over the f re-id θ . From left to right, the first synthetic image contains identifiable information about the real image in the areas towards the bottom of the lungs. The other two images do not contain identifiable information as defined by the re-identification score s re-id .</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head>Table 1 :</head><label>1</label><figDesc>Evaluating the influence of pre-training and conditioning on ϵ θ real .</figDesc><table><row><cell cols="2">Pre-trained Conditional</cell><cell>R re-id ↓</cell><cell>FID ↓</cell></row><row><cell>-</cell><cell>-</cell><cell cols="2">0.057 ± 0.232 54.56</cell></row><row><cell>-</cell><cell>✓</cell><cell cols="2">0.015 ± 0.124 81.95</cell></row><row><cell>✓</cell><cell>-</cell><cell cols="2">0.034 ± 0.181 97.91</cell></row><row><cell>✓</cell><cell>✓</cell><cell cols="2">0.022 ± 0.232 79.27</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1"><head>Table 2 :</head><label>2</label><figDesc>Privacy Distillation performance: memorisation ratio, predicted AUC for the classifier on the real test set and s align score. We measure the AUC on the 3,101 images of our test set. The results are reported in table 2, in addition to the re-identification ratio R re-id and the s align score.</figDesc><table><row><cell cols="3">Dataset R re-id ↓ f class θ</cell><cell>AUC ↑</cell><cell>s align ↑</cell></row><row><cell>D real</cell><cell>-</cell><cell cols="2">0.863</cell><cell>0.698 0.259</cell></row><row><cell>D synth</cell><cell>4.24%</cell><cell cols="2">0.830</cell><cell>0.645 0.219</cell></row><row><cell>D distill</cell><cell>1.34%</cell><cell cols="2">0.810</cell><cell>0.611 0.272</cell></row><row><cell cols="2">the training set prompts.</cell><cell></cell><cell></cell></row></table></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="1" xml:id="foot_0"><p>As seen in Stable Diffusion's successful public release followed by over 6 million downloads (by March</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" xml:id="foot_1"><p>2023) of its weights by the community https://stability.ai/blog/ stable-diffusion-public-release 2 The specific definition of "identifiable information" can differ between laws and countries.</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="3" xml:id="foot_2"><p>https://huggingface.co/runwayml/ stable-diffusion-v1-5</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="4" xml:id="foot_3"><p>We used their code, available at https://github.com/ Optimization-AI/LibAUC</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="5" xml:id="foot_4"><p>https://github.com/jacobgil/ pytorch-grad-cam#chosing-the-target-layer</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" xml:id="foot_5"><p>Privacy Distillation:Reducing Re-identification Risk of Multimodal Diffusion Models</p></note>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Deep learning with differential privacy</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Abadi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Chu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Goodfellow</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">B</forename><surname>Mcmahan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Mironov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Talwar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Zhang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2016 ACM SIGSAC conference on computer and communications security</title>
+		<meeting>the 2016 ACM SIGSAC conference on computer and communications security</meeting>
+		<imprint>
+			<date type="published" when="2016">2016</date>
+			<biblScope unit="page" from="308" to="318" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">How faithful is your synthetic data? Samplelevel metrics for evaluating and auditing generative models</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Alaa</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Van Breugel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">S</forename><surname>Saveliev</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Van Der Schaar</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 39th International Conference on Machine Learning</title>
+		<meeting>the 39th International Conference on Machine Learning</meeting>
+		<imprint>
+			<publisher>PMLR</publisher>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<title level="m" type="main">Synthetic data from diffusion models improves imagenet classification</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Azizi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Kornblith</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Saharia</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Norouzi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">J</forename><surname>Fleet</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Making the most of text semantics to improve biomedical vision-language processing</title>
+		<author>
+			<persName><forename type="first">B</forename><surname>Boecking</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Usuyama</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Bannur</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Coelho De Castro</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Schwaighofer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Hyland</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">T</forename><surname>Wetscherek</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Naumann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Nori</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Alvarez-Valle</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Poon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">O</forename><surname>Oktay</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ECCV</title>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+		<title level="m" type="main">Extracting training data from diffusion models</title>
+		<author>
+			<persName><forename type="first">N</forename><surname>Carlini</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Hayes</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Nasr</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Jagielski</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Sehwag</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Tramèr</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Balle</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Ippolito</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Wallace</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv</note>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<monogr>
+		<author>
+			<persName><forename type="first">P</forename><surname>Chambon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Bluethgen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J.-B</forename><surname>Delbrouck</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Van Der Sluijs</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Połacin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">M Z</forename><surname>Chaves</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">M</forename><surname>Abraham</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Purohit</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">P</forename><surname>Langlotz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Chaudhari</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2211.12737</idno>
+		<title level="m">Roentgen: Vision-language foundation model for chest x-ray generation</title>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Grad-cam++: Generalized gradient-based visual explanations for deep convolutional networks</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Chattopadhay</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Sarkar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Howlader</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><forename type="middle">N</forename><surname>Balasubramanian</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">IEEE winter conference on applications of computer vision (WACV)</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2018">2018. 2018</date>
+			<biblScope unit="page" from="839" to="847" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Synthetic data in machine learning for medicine and healthcare</title>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">J</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">Y</forename><surname>Lu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">Y</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">F</forename><surname>Williamson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Mahmood</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nature Biomedical Engineering</title>
+		<imprint>
+			<biblScope unit="volume">5</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<date type="published" when="2021">2021. 2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<monogr>
+		<title level="m" type="main">TorchXRayVision: A library of chest X-ray datasets and models</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">P</forename><surname>Cohen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">D</forename><surname>Viviano</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Bertin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Morrison</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Torabian</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Guarrera</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">P</forename><surname>Lungren</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Chaudhari</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Brooks</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Hashir</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Bertrand</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+			<publisher>MIDL</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Diffusion models beat gans on image synthesis</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Dhariwal</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Openai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Nichol</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Advances in Neural Information Processing Systems</title>
+		<imprint>
+			<biblScope unit="volume">34</biblScope>
+			<biblScope unit="page" from="8780" to="8794" />
+			<date type="published" when="2021">12 2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<monogr>
+		<author>
+			<persName><forename type="first">T</forename><surname>Dockhorn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Cao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Vahdat</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Kreis</surname></persName>
+		</author>
+		<title level="m">Differentially private diffusion models</title>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">The algorithmic foundations of differential privacy</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Dwork</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Roth</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Foundations and Trends® in Theoretical Computer Science</title>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<biblScope unit="issue">3-4</biblScope>
+			<biblScope unit="page" from="211" to="407" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<monogr>
+		<title level="m" type="main">Can segmentation models be trained with fully synthetically generated data?</title>
+		<author>
+			<persName><forename type="first">V</forename><surname>Fernandez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">H L</forename><surname>Pinaya</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Borges</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P.-D</forename><surname>Tudosiu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">S</forename><surname>Graham</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Vercauteren</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">J</forename><surname>Cardoso</surname></persName>
+		</author>
+		<editor>SASHIMI</editor>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+			<publisher>Springer</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">Rarity score : A new metric to evaluate the uncommonness of synthesized images</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Han</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Choi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Choi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J.-W</forename><surname>Ha</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Choi</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">The Eleventh International Conference on Learning Representations</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">Gans trained by a two time-scale update rule converge to a local nash equilibrium</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Heusel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Ramsauer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Unterthiner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Nessler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Hochreiter</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 31st International Conference on Neural Information Processing Systems</title>
+		<meeting>the 31st International Conference on Neural Information Processing Systems</meeting>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">Gans trained by a two time-scale update rule converge to a local nash equilibrium</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Heusel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Ramsauer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Unterthiner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Nessler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Hochreiter</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">NeurIPs</title>
+		<imprint>
+			<biblScope unit="volume">30</biblScope>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">Improved techniques for training single-image gans</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Hinz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Fisher</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">O</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Wermter</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">2021 IEEE Winter Conference on Applications of Computer Vision (WACV)</title>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<monogr>
+		<title level="m" type="main">Deep models under the gan: Information leakage from collaborative deep learning</title>
+		<author>
+			<persName><forename type="first">B</forename><surname>Hitaj</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Ateniese</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Perez-Cruz</surname></persName>
+		</author>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">Classifier-free diffusion guidance</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Ho</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Salimans</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">NeurIPS 2021 Workshop on Deep Generative Models and Downstream Applications</title>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">Denoising diffusion probabilistic models</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Ho</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Jain</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Abbeel</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">NeurIPS</title>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<monogr>
+		<title level="m" type="main">Indication as Prior Knowledge for Multimodal Disease Classification in Chest Radiographs with Transformers</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Hu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Pang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Jacenkow</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">Q</forename><surname>O'neil</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">A</forename><surname>Tsaftaris</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+			<publisher>IEEE ISBI</publisher>
+		</imprint>
+	</monogr>
+	<note>Membership inference of diffusion models</note>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">Survey: Leakage and privacy at inference time</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Jegorova</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Kaul</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Mayor</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">Q</forename><surname>O'neil</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Weir</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Murray-Smith</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">A</forename><surname>Tsaftaris</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Transactions on Pattern Analysis &amp; Machine Intelligence</title>
+		<imprint>
+			<biblScope unit="page" from="1" to="20" />
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">MIMIC-CXR, a de-identified publicly available database of chest radiographs with free-text reports</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">E</forename><surname>Johnson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">J</forename><surname>Pollard</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">J</forename><surname>Berkowitz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">R</forename><surname>Greenbaum</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">P</forename><surname>Lungren</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Ying Deng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">G</forename><surname>Mark</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Horng</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Scientific Data</title>
+		<imprint>
+			<biblScope unit="volume">6</biblScope>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<monogr>
+		<title level="m" type="main">Synthetic data: Opening the data floodgates to enable faster, more directed development of machine learning methods</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Jordon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Wilson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Van Der Schaar</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2012.04580</idno>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<monogr>
+		<title level="m" type="main">Diffusion models for medical image analysis: A comprehensive survey</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Kazerouni</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">K</forename><surname>Aghdam</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Heidari</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Azad</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Fayyaz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Hacihaliloglu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Merhof</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2211.07804</idno>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<title level="a" type="main">Fiberprint: A subject fingerprint based on sparse code pooling for white matter fiber analysis</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>Kumar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Desrosiers</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Siddiqi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">O</forename><surname>Colliot</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Toews</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Neu-roImage</title>
+		<idno type="ISSN">1053-8119</idno>
+		<imprint>
+			<biblScope unit="volume">158</biblScope>
+			<biblScope unit="page" from="242" to="259" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<analytic>
+		<title level="a" type="main">Improved precision and recall metric for assessing generative models</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Kynkäänniemi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Karras</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Laine</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Lehtinen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Aila</forename></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Advances in Neural Information Processing Systems</title>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<title level="a" type="main">The role of imagenet classes in fréchet inception distance</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Kynkäänniemi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Karras</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Aittala</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Aila</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Lehtinen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">The Eleventh International Conference on Learning Representations</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<monogr>
+		<title level="m" type="main">Is synthetic data from diffusion models ready for knowledge distillation?</title>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Yang</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<analytic>
+		<title level="a" type="main">Pseudo numerical methods for diffusion models on manifolds</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Ren</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Lin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Zhao</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ICLR</title>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<analytic>
+		<title level="a" type="main">Synthetic data generation: State of the art in health care domain</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Murtaza</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Ahmed</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">F</forename><surname>Khan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Murtaza</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Zafar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Bano</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Computer Science Review</title>
+		<imprint>
+			<biblScope unit="volume">48</biblScope>
+			<biblScope unit="page">100546</biblScope>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<analytic>
+		<title level="a" type="main">Deep learning-based patient re-identification is able to exploit the biometric nature of medical chest X-ray data</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>Packhäuser</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Gündel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Münster</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Syben</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Christlein</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Maier</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Scientific Reports</title>
+		<idno type="ISSN">2045-2322</idno>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="1" to="13" />
+			<date type="published" when="2022-09">2022. sep 2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<analytic>
+		<title level="a" type="main">Brain imaging generation with latent diffusion models</title>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">H</forename><surname>Pinaya</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P.-D</forename><surname>Tudosiu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Dafflon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">F</forename><surname>Da Costa</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Fernandez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Nachev</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Ourselin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">J</forename><surname>Cardoso</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Deep Generative Models MICCAI</title>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<analytic>
+		<title level="a" type="main">Fast unsupervised brain anomaly detection and segmentation with diffusion models</title>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">H L</forename><surname>Pinaya</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">S</forename><surname>Graham</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Gray</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">F</forename><surname>Da Costa</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P.-D</forename><surname>Tudosiu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Wright</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><forename type="middle">H</forename><surname>Mah</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">D</forename><surname>Mackinnon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">T</forename><surname>Teo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Jager</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Werring</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Rees</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Nachev</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Ourselin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">J</forename><surname>Cardoso</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">MICCAI</title>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<analytic>
+		<title level="a" type="main">Learning transferable visual models from natural language supervision</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Radford</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">W</forename><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Hallacy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Ramesh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Goh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Agarwal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Sastry</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Askell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Mishkin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Clark</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ICML</title>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<analytic>
+		<title level="a" type="main">Zero-shot text-toimage generation</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Ramesh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Pavlov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Goh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Gray</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Voss</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Radford</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Sutskever</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ICML</title>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b36">
+	<analytic>
+		<title level="a" type="main">Zero-shot text-toimage generation</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Ramesh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Pavlov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Goh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Gray</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Voss</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Radford</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Sutskever</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 38th International Conference on Machine Learning</title>
+		<meeting>the 38th International Conference on Machine Learning</meeting>
+		<imprint>
+			<publisher>PMLR</publisher>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b37">
+	<monogr>
+		<author>
+			<persName><forename type="first">A</forename><surname>Ramesh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Dhariwal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Nichol</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Chu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Chen</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2204.06125</idno>
+		<title level="m">Hierarchical text-conditional image generation with clip latents</title>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b38">
+	<analytic>
+		<title level="a" type="main">High-resolution image synthesis with latent diffusion models</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Rombach</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Blattmann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Lorenz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Esser</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Ommer</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition</title>
+		<meeting>the IEEE/CVF Conference on Computer Vision and Pattern Recognition</meeting>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page" from="10684" to="10695" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b39">
+	<monogr>
+		<author>
+			<persName><forename type="first">N</forename><surname>Ruiz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Jampani</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Pritch</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Rubinstein</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Aberman</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2208.12242</idno>
+		<title level="m">Dreambooth: Fine tuning text-to-image diffusion models for subject-driven generation</title>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b40">
+	<analytic>
+		<title level="a" type="main">Photorealistic text-to-image diffusion models with deep language understanding</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Saharia</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Chan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Saxena</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Whang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">L</forename><surname>Denton</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Ghasemipour</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Gontijo Lopes</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Karagol Ayan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Salimans</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Ho</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">J</forename><surname>Fleet</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Norouzi</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Advances in Neural Information Processing Systems</title>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b41">
+	<analytic>
+		<title level="a" type="main">What is healthy? generative counterfactual diffusion for lesion localization</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Sanchez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Kascenas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">Q</forename><surname>O'neil</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">A</forename><surname>Tsaftaris</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">MICCAI Workshop on Deep Generative Models</title>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b42">
+	<analytic>
+		<title level="a" type="main">LAION-5b: An open large-scale dataset for training next generation image-text models</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Schuhmann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Beaumont</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Vencu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">W</forename><surname>Gordon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Wightman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Cherti</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Coombes</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Katta</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Mullis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Wortsman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Schramowski</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">R</forename><surname>Kundurthy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Crowson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Schmidt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Kaczmarczyk</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Jitsev</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">NeurIPS Datasets and Benchmarks Track</title>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b43">
+	<analytic>
+		<title level="a" type="main">Diffusion art or digital forgery? investigating data replication in diffusion models</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Somepalli</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Singla</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Goldblum</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Geiping</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Goldstein</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">CVPR</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b44">
+	<analytic>
+		<title level="a" type="main">Score-based generative modeling through stochastic differential equations</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Sohl-Dickstein</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">P</forename><surname>Kingma</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Kumar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Ermon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Poole</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Learning Representations</title>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b45">
+	<analytic>
+		<title level="a" type="main">Why patient data cannot be easily forgotten?</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Su</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">A</forename><surname>Tsaftaris</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Medical Image Computing and Computer Assisted Intervention -MICCAI 2022</title>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b46">
+	<analytic>
+		<title level="a" type="main">Anonymization through data synthesis using generative adversarial networks (ads-gan)</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Yoon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">N</forename><surname>Drumright</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Van Der Schaar</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Journal of Biomedical and Health Informatics</title>
+		<imprint>
+			<biblScope unit="volume">24</biblScope>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b47">
+	<monogr>
+		<title level="m" type="main">Large-scale Robust Deep AUC Maximization: A New Surrogate Loss and Empirical Studies on Medical Image Classification</title>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Yuan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Yan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Sonka</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Yang</surname></persName>
+		</author>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b48">
+	<monogr>
+		<title level="m" type="main">Adding Conditional Control to Text-to-Image Diffusion Models</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Agrawala</surname></persName>
+		</author>
+		<ptr target="https://arxiv.org/abs/2302.05543v1" />
+		<imprint>
+			<date type="published" when="2023-02">feb 2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b49">
+	<analytic>
+		<title level="a" type="main">Membership inference attacks against synthetic health data</title>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Yan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">A</forename><surname>Malin</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/J.JBI.2021.103977</idno>
+		<ptr target="https://pubmed.ncbi.nlm.nih.gov/34920126/" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of biomedical informatics</title>
+		<idno type="ISSN">1532- 0480</idno>
+		<imprint>
+			<biblScope unit="volume">125</biblScope>
+			<date type="published" when="2022-01">jan 2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

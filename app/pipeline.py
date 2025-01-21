@@ -438,6 +438,137 @@ class ResearchPipeline:
             return False
         return title1.lower().replace(' ', '') == title2.lower().replace(' ', '')
 
+    def process_author(self, author_name: str) -> dict:
+        """处理作者搜索请求"""
+        try:
+            print(f"\n开始搜索作者: {author_name}")
+            
+            # 1. 搜索作者
+            s2 = CachedSemanticScholarWrapper(timeout=3, use_cache=True)
+            author_results = s2.search_author(
+                author_name,
+                fields=['name', 'url', 'affiliations', 'homepage', 'paperCount', 'citationCount', 'papers', 'h_index']
+            )
+            
+            if not author_results:
+                raise ValueError(f"未找到作者: {author_name}")
+            
+            # 保存结果为类属性
+            self._last_author_results = {
+                'authors': author_results,
+                's2_wrapper': s2
+            }
+            
+            return self._last_author_results
+            
+        except Exception as e:
+            raise Exception(f"处理作者搜索时出错: {str(e)}")
+        
+    def process_author_papers(self, author_index: int, top_n: int = 10) -> dict:
+        """处理作者论文解析请求
+        
+        Args:
+            author_index: 作者序号(1-10)
+            
+        Returns:
+            dict: 包含解析结果的字典
+        """
+        try:
+            if not hasattr(self, '_last_author_results'):
+                raise ValueError("请先搜索作者信息")
+            
+            authors = self._last_author_results['authors']
+            if not 1 <= author_index <= len(authors):
+                raise ValueError(f"作者序号无效: {author_index}")
+            
+            # 获取指定作者的论文列表
+            author = authors[author_index - 1]
+            papers = sorted(author.get('papers', []), 
+                          key=lambda x: x.get('citationCount', 0), 
+                          reverse=True)
+            
+            papers = papers[:top_n]
+
+            print(f"\n开始解析作者 {author.get('name')} 的论文...")
+            print(f"共找到 {len(papers)} 篇论文")
+            
+            # 存储所有论文的引用分析结果
+            all_papers_results = []
+            
+            # 为每篇论文执行引用分析
+            for i, paper in enumerate(papers, 1):
+                print(f"\n处理第 {i} 篇论文: {paper.get('title')}")
+                try:
+                    # 使用现有的process_paper函数处理每篇论文
+                    paper_result = self.process_paper(paper.get('title'))
+                    all_papers_results.append({
+                        'title': paper.get('title'),
+                        'year': paper.get('year'),
+                        'citationCount': paper.get('citationCount'),
+                        'venue': paper.get('venue'),
+                        'analysis_result': paper_result
+                    })
+                except Exception as e:
+                    print(f"处理论文时出错: {str(e)}")
+                    continue
+            
+            # 生成Markdown文件
+            md_content = self._generate_author_papers_markdown(author, all_papers_results)
+            md_file = os.path.join(self.cache_dir, f"author_{author.get('name', 'unknown').replace(' ', '_')}_analysis.md")
+            
+            with open(md_file, 'w', encoding='utf-8') as f:
+                f.write(md_content)
+            
+            return {
+                'author': author,
+                'papers_results': all_papers_results,
+                'markdown_file': md_file
+            }
+            
+        except Exception as e:
+            raise Exception(f"处理作者论文时出错: {str(e)}")
+
+    def _generate_author_papers_markdown(self, author: dict, papers_results: list) -> str:
+        """生成作者论文分析的Markdown内容"""
+        md = f"# {author.get('name')} 论文引用分析报告\n\n"
+        
+        # 作者基本信息
+        md += "## 作者信息\n\n"
+        md += f"- 机构: {', '.join(author.get('affiliations', ['未知']))}\n"
+        md += f"- 总引用次数: {author.get('citationCount')}\n"
+        md += f"- h指数: {author.get('hIndex')}\n"
+        md += f"- 论文总数: {author.get('paperCount')}\n\n"
+        
+        # 论文分析结果
+        md += "## 论文引用分析\n\n"
+        
+        for i, result in enumerate(papers_results, 1):
+            md += f"### {i}. {result['title']}\n\n"
+            md += f"- 发表年份: {result.get('year', '未知')}\n"
+            md += f"- 发表venue: {result.get('venue', '未知')}\n"
+            md += f"- 引用次数: {result.get('citationCount', 0)}\n\n"
+            
+            analysis = result.get('analysis_result', {})
+            citing_papers = analysis.get('citing_papers', [])
+            
+            if citing_papers:
+                md += "#### 引用论文分析\n\n"
+                for j, paper in enumerate(citing_papers, 1):
+                    md += f"##### {j}. 引用论文\n"
+                    md += f"DOI: {paper.doi}\n\n"
+                    md += "引用上下文:\n\n"
+                    for k, context in enumerate(paper.citation_contexts, 1):
+                        md += f"- 上下文 {k}:\n"
+                        md += f"  - 章节: {context['section']}\n"
+                        md += f"  - 内容: {context['full_context']}\n\n"
+            else:
+                md += "暂无引用分析结果\n\n"
+            
+            md += "---\n\n"
+        
+        return md
+
+
 class CachedGrobidParser:
     def __init__(self, cache_dir=None):
         """初始化Grobid解析器
@@ -493,48 +624,60 @@ class CachedGrobidParser:
         final_text = f"{title_text}{abstract_text}{result[2]}"
         return final_text
 
-def main():
-    """测试主函数"""
-    # 测试论文标题
-    test_title = "Graph Meets LLMs: Towards Large Graph Models"
-    
+def test_author_papers_analysis():
+    """测试作者论文分析流程"""
     try:
         # 初始化pipeline
         pipeline = ResearchPipeline()
         
-        print(f"开始处理论文: {test_title}")
+        # 1. 测试作者名
+        test_author = "PengHai Zhao"
+        print(f"\n开始测试作者论文分析流程: {test_author}")
         print("="*50)
         
-        # result = pipeline.process_paper_from_pdf("tmp/papers/10.48550_arXiv.2308.14522.pdf")
-        # 处理论文
-        result = pipeline.process_paper(test_title)
+        # 2. 搜索作者
+        print("\n1. 搜索作者信息...")
+        result = pipeline.process_author(test_author)
+        authors = result['authors']
+        print(f"找到 {len(authors)} 位作者")
         
-        # 打印结果
-        print(f"原始论文:")
-        print(f"标题: {result['original_paper'].title}")
-        print(f"DOI: {result['original_paper'].doi}")
-        print("-"*50)
+        # 3. 选择第一个作者进行分析
+        print("\n2. 选择第一个作者进行分析...")
+        author_index = 1
+        print(f"选择作者 {authors[0].get('name')}")
         
-        print(f"引用论文数量: {len(result['citing_papers'])}")
-        print(f"DOI文件保存在: {result['doi_file']}")
-        print("-"*50)
+        # 4. 分析该作者的所有论文
+        print("\n3. 开始分析作者论文...")
+        analysis_result = pipeline.process_author_papers(author_index, top_n=1)
         
-        # 打印每篇引用论文的引用上下文
-        for i, paper in enumerate(result['citing_papers'], 1):
-            print(f"\n引用论文 {i}:")
-            print(f"DOI: {paper.doi}")
-            print("\n引用上下文:")
-            for j, context in enumerate(paper.citation_contexts, 1):
-                print(f"\n上下文 {j}:")
-                print(f"章节: {context['section']}")
-                print(f"内容: {context['full_context']}")
-            print("-"*50)
+        # 5. 打印结果摘要
+        print("\n4. 分析完成!")
+        print(f"- 作者: {analysis_result['author'].get('name')}")
+        print(f"- 分析论文数: {len(analysis_result['papers_results'])}")
+        print(f"- 分析报告保存在: {analysis_result['markdown_file']}")
+        
+        # 6. 打印每篇论文的基本信息
+        print("\n5. 论文分析结果摘要:")
+        for i, paper in enumerate(analysis_result['papers_results'], 1):
+            print(f"\n论文 {i}:")
+            print(f"标题: {paper['title']}")
+            print(f"年份: {paper.get('year', '未知')}")
+            print(f"引用数: {paper.get('citationCount', 0)}")
+            
+            # 获取引用分析结果
+            analysis = paper.get('analysis_result', {})
+            citing_papers = analysis.get('citing_papers', [])
+            print(f"找到引用论文: {len(citing_papers)} 篇")
+            
+        print("\n测试完成!")
+        print("="*50)
             
     except Exception as e:
-        print(f"错误: {str(e)}")
+        print(f"测试过程出错: {str(e)}")
 
-
-
+def main():
+    """主函数"""
+    test_author_papers_analysis()
 
 if __name__ == "__main__":
     main()

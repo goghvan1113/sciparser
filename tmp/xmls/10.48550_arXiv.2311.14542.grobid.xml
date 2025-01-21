@@ -1,0 +1,1753 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">TODDLERDIFFUSION: INTERACTIVE STRUCTURED IM-AGE GENERATION WITH CASCADED SCHRÖDINGER BRIDGE</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability  status="unknown">
+					<licence/>
+				</availability>
+				<date type="published" when="2024-10-05">5 Oct 2024</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Eslam</forename><surname>Abdelrahman</surname></persName>
+						</author>
+						<author>
+							<persName><forename type="first">Liangbing</forename><surname>Zhao</surname></persName>
+						</author>
+						<author>
+							<persName><forename type="first">Vincent</forename><forename type="middle">Tao</forename><surname>Hu</surname></persName>
+						</author>
+						<author>
+							<persName><forename type="first">Matthieu</forename><surname>Cord</surname></persName>
+						</author>
+						<author>
+							<persName><forename type="first">Patrick</forename><surname>Perez</surname></persName>
+						</author>
+						<author>
+							<persName><forename type="first">Mohamed</forename><surname>Elhoseiny</surname></persName>
+						</author>
+						<author>
+							<persName><surname>Lmu</surname></persName>
+						</author>
+						<author>
+							<persName><forename type="first">Valeo</forename><surname>Ai</surname></persName>
+						</author>
+						<title level="a" type="main">TODDLERDIFFUSION: INTERACTIVE STRUCTURED IM-AGE GENERATION WITH CASCADED SCHRÖDINGER BRIDGE</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date type="published" when="2024-10-05">5 Oct 2024</date>
+						</imprint>
+					</monogr>
+					<idno type="MD5">1525EF3FD5C1552435C342D8920B4256</idno>
+					<idno type="arXiv">arXiv:2311.14542v2[cs.CV]</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.2-SNAPSHOT" ident="GROBID" when="2025-01-21T07:33+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<textClass>
+				<keywords>
+					<term>Our method is robust against input condition perturbations</term>
+					<term>e.g.</term>
+					<term>sketch sparsity</term>
+				</keywords>
+			</textClass>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Figure 1: An overview of ToddlerDiffusion capabilities: 1) Speed-Up: Performing on the bar compared to LDM while being 2× faster, using 3× smaller architecture. 2) Interactivity: Producing intermediate outputs, e.g., sketch and palette. 3) Editing: Offering free, robust editing capabilities even for</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"> <ref type="bibr" target="#b51">Wolleb et al. (2022)</ref><p>, anomaly detection, and more. Diffusion models, such as Denoising Diffusion Probabilistic Models (DDPMs) <ref type="bibr" target="#b14">Ho et al. (2020)</ref>, draw inspiration from the diffusion process in physics, breaking down the intricate task of generating data from highdimensional distributions into a sequence of simpler denoising steps. In this framework, instead of generating an image in a single step, the task is reformulated as a gradual denoising process, where a noisy image is iteratively refined until the final, detailed image emerges. This step-by-step approach leverages the power of decomposition: by solving a series of simpler tasks, we can ultimately solve the original, more challenging problem.</p><p>Inspired by this philosophy, we propose ToddlerDiffusion, a novel method extending this decomposition principle beyond just noise removal. Instead of tackling the image generation problem in one go, we decompose it into modality-specific stages. Each stage focuses on generating a different aspect or modality of the image, such as abstract contours or sketches, followed by color palettes, and finally, the detailed RGB image. This approach mimics the learning process of a child developing artistic skills Stevens (2012); <ref type="bibr" target="#b29">Marr (2010;</ref><ref type="bibr" target="#b28">1974)</ref>, where the child first learns to draw basic outlines, then adds colors, and finally fills in the details. We use the term "ToddlerDiffusion" to reflect this gradual, step-by-step learning and generation process.</p><p>Despite the intuitive appeal of task decomposition, it introduces significant challenges. More stages mean more parameters, longer training times, and potentially slower sampling speeds. However, our hypothesis is that by addressing simpler tasks at each stage, we can leverage smaller architectures tailored to each modality, resulting in a more compact overall model compared to traditional singlestage architectures. Moreover, multi-stage frameworks often suffer from error accumulation <ref type="bibr" target="#b15">Ho et al. (2022)</ref>; <ref type="bibr" target="#b16">Huang et al. (2023)</ref>, where inaccuracies in earlier stages can propagate and amplify through subsequent stages. However, we showed that by using simple techniques such as condition truncation dropout, we can significantly mitigate the error accumulation, Appendix A.6 Additionally, learning these intermediate representations, e.g., counters, explicitly or implicitly is challenging, where the first requires paired data and the latter requires special complicated designs <ref type="bibr" target="#b39">Singh et al. (2019)</ref>; <ref type="bibr" target="#b24">Li et al. (2021)</ref>. To tackle the guidance challenge, we leverage pseudo GT and show that this noisy GT is enough to learn robust intermediate modalities.</p><p>To implement this framework, we considered two approaches. The first is the standard Latent Diffusion Model (LDM) <ref type="bibr" target="#b38">Rombach et al. (2022)</ref> conditioning mechanism, using techniques such as cross-attention and concatenation to link stages. Given our focus on spatial modalities like sketches, concatenation seemed more appropriate. However, this method proved insufficient for achieving our hypothesis due to its weak conditioning, which results in poor information transfer between stages. We instead adopt a more principled approach by employing the Schrödinger Bridge <ref type="bibr">Wang et al. (2021)</ref>; <ref type="bibr">Li et al. (2023a)</ref>, a method from stochastic optimal transport theory, to determine the optimal path between modalities at each stage. Unlike simple concatenation, which starts each stage from a state of pure noise, the Schrödinger Bridge enables us to begin each stage from a meaningful signal with a higher Signal-to-Noise Ratio (SNR) <ref type="bibr" target="#b20">Kingma et al. (2021)</ref>, as illustrated in Figure <ref type="figure" target="#fig_0">2</ref>. This leads to more effective and stable progression through the generation process, significantly reducing the denoising steps required during training and testing. This structured, multi-stage approach not only allows for a more efficient and stable generation process but also enables a range of emerging capabilities. ToddlerDiffusion supports consistent editing of both generated and real images and facilitates user interaction in both conditional and unconditional settings, as shown in Figure <ref type="figure">1</ref>. Moreover, while sampling efficiency was not our primary objective, our approach yields faster sampling and training convergence due to the shorter trajectories between stages (Figure <ref type="figure" target="#fig_0">2</ref>), resulting in fewer denoising steps and less computational cost (Figure <ref type="figure">1</ref>). For instance, LDM is trained using 1k steps; in contrast, ToddlerDiffusion could be trained using only 10 steps with minimal impact on generation fidelity. To the best of our knowledge, ToddlerDiffusion is the first work to successfully integrate and achieve advancements across multiple domains, including controllability, consistent editing, sampling and training efficiency, and interactivity, within a unified framework, as shown in Figure <ref type="figure">1</ref>. Our extensive experiments on datasets such as LSUN-Churches <ref type="bibr" target="#b53">Yu et al. (2015)</ref>, ImageNet, and CelebA-HQ <ref type="bibr" target="#b18">Karras et al. (2017)</ref> demonstrate the effectiveness of this approach, consistently outperforming existing methods. ToddlerDiffusion not only redefines the image generation process but also paves the way for future research into more structured, interpretable, and efficient generative models.</p><p>Our contributions can be succinctly summarized as follows:</p><p>• We introduce a cascaded structured image generation pipeline, denoted as ToddlerDiffusion, that systematically generates a chain of interpretable stages leading to the final image. • Leveraging the Schrödinger Bridge enables us to train the model from scratch using a minimal number of steps: 10 steps only, in addition to, performing on the bar compared to LDM while being 2× faster, using 3× smaller architecture. • ToddlerDiffusion provides robust editing and interaction capabilities for free; without requiring any manual annotations. • Introduce a novel formulation for sketch generation that achieves better performance than LDM while using 41× smaller architecture.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">TODDLERDIFFUSION</head><p>We introduce ToddlerDiffusion, which strategically decomposes the RGB image generation task into more straightforward and manageable subtasks, such as sketch/edge and palette modalities. In Section 2.1, we detail the formulation of each stage. By breaking down the generation process into simpler components, our model not only allows for a more compact architecture but also enables dynamic user interaction with the system, as illustrated in Figure <ref type="figure">1</ref>. Notably, these advancements are achieved without relying on manual ground truth annotations, instead utilizing human-free guidance for enhanced efficiency and practical applicability (Section 2.2). Lastly, we demonstrate how our method facilitates robust, consistent edits across stages (Section 2.4).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.1">TODDLER GROWTH</head><p>The development of our method is inspired by child's growth, where the learning process in their brains is decomposed into stages and developed step-by-step Stevens (2012); <ref type="bibr" target="#b29">Marr (2010;</ref><ref type="bibr" target="#b28">1974)</ref>. By analogy, we decompose the 2D image synthesis into different, more straightforward stages. We employ the sketch and palette as intermediate stages, resulting three cascaded stages approach. However, our approach is generic and seamlessly we can add or remove intermediate steps, based on the application needs. Mainly, the pipeline can be clustered into two main modules: 1) The unconditional module, that generates the first modality, e.g., sketches, based on pure noise. 2) The conditional module, that condition on the previous modality to generate the next intermediate modality, e.g., palette, or the final RGB image. Both modules can be implemented using Latent Diffusion Models (LDM), where unconditional LDM will start from noise to generate sketches, then by employing the concatenation conditioning mechanism we can condition on our spatial intermediate modalities; sketches and palettes. We instead adopt a more principled approach by employing the Schrödinger Bridge to determine the optimal path between modalities at each stage. Unlike simple concatenation, which starts each stage from a state of pure noise, the Schrödinger Bridge enables us to begin each stage from a meaningful signal with a higher Signal-to-Noise Ratio (SNR).</p><p>Schrödinger Bridge. The Schrödinger Bridge problem arises from an intriguing connection between statistical physics and probability theory. At its core, it addresses the task of finding the most likely stochastic process that evolves between two probability distributions over time, ρ 0 and ρ T , governed by Brownian motion, while minimizing the control cost. Mathematically, it could be written as:</p><formula xml:id="formula_0">P * = argmin P ∈P KL(P || W )</formula><p>, where P is the probability path that minimizes the Kullback-Leibler (KL)</p><p>divergence with respect to a reference Brownian motion W , and subject to marginal constrains; P 0 = ρ 0 and P T = ρ T . The process can be described as a stochastic differential equation (SDE):</p><formula xml:id="formula_1">dXt = v(t, Xt) dt + σ dWt,<label>(1)</label></formula><p>where X t represents the state at time t, v(t, X t ) is the optimal drift that minimizes the KL divergence and dW t is the Wiener process (Brownian motion).</p><p>Conditional Module. By analogy, the two probability distributions ρ T and ρ 0 represent the distributions of features from simpler (sketch) and more complex (RGB) modalities, respectively. In this context, the goal of the Schrödinger Bridge is to find the optimal stochastic process that transforms the simpler modality (e.g., sketch) into the more complex one (e.g., RGB image) while minimizing a divergence measure like KL divergence while respecting the boundaries. Given a condition y ∈ R H×W ×3 , that could be sketch, palette, or any other modality, we define the forward process as an image-to-image translation and formulate the problem using the discrete version of schrödinger bridge as follows:</p><formula xml:id="formula_2">xt = αtx i 0 + (1 -αt)y i + σ 2 t ϵt, : σ 2 t = αt -α 2 t , (<label>2</label></formula><formula xml:id="formula_3">)</formula><p>where i is the stage number, x 0 and y are the boundaries of the bridge, σ 2 t controls the noise term, and α t blends the two domains. In the SDE, the term "v(t, X t )" is the deterministic drift, while "dW t " represents the diffusion term. In contrast, we follow the DDPM formulation, which works in the discrete space. Therefore, by analogy, the terms "α t x 0 + (1 -α t )y" and "σ 2 t ϵ t " represent the drift and diffusion terms, respectively. σ 2 t represents uncertainties, following a sphere formulation that constructs a bridge between the two domains. Whereas, at the edge of the bridge, we are fully confident we are in one of the distributions ρ T and ρ 0 , thus σ 2 t = 0. In contrast, the uncertainties increase while moving away from the edges, reaching their maximum value in the middle between the two domains, forming the bridge shape. Eq. 2 forms the skeleton for 2 nd and 3 rd stages, where:</p><formula xml:id="formula_4">x i 0 = x p 0 = Fp(x rgb 0 ) : i = 2 (Palette) x rgb 0 : i = 3 (Detailed Image) y i = x s 0 = Fs(x rgb 0 ) : i = 2 (Palette) x p 0 = Fp(x rgb 0 ) : i = 3 (Detailed Image) (<label>3</label></formula><formula xml:id="formula_5">)</formula><p>where i is the stage number, F p and F s are palette and sketch functions that generate the pseudo-GT, respectively, detailed in Section 2.2.</p><p>Unconditional Module:</p><formula xml:id="formula_6">1 st Stage (Sketch).</formula><p>This stage aims to generate abstract contours x s 0 ∈ R H×W starting from just pure noise or label/text conditions. In both cases, we name this module unconditional as it does not condition on a previous modality because it will generate the first modality, the sketch. One possible solution is to utilize the original LDM, which is not aligned with the sketch nature, as shown in Figure <ref type="figure" target="#fig_1">3</ref>, case A. More specifically, we are starting from a pure noise distribution x T and want to learn the inverse mapping q (x t-1 | x t ) to be able to sample real data x s 0 . The issue relies upon the vast gap between the two domains: x T and x 0 . Following <ref type="bibr" target="#b20">Kingma et al. (2021)</ref>, this can be interpreted as signal-to-noise ratio (SNR), where SNR(t)= αt σ 2 t . Consequently, at the beginning (t = T ), α T yields to 0, therefore SNR(T )=0. On the contrary, to fill this gap, we propose a unique formulation tailored for sketch generation that adapts Eq. 2. Specifically, we introduced two changes to Eq. 2. First, we replaced the Gaussian distribution ϵ t with a discretized version, the Bernoulli distribution, as shown in case B, Figure <ref type="figure" target="#fig_1">3</ref>. However, this is not optimized enough for the sparsity nature of the sketch, where more than 80% of the sketch is black pixels. Thus, we set our initial condition to y = F d (x s 0 ), where F d is a dropout function that takes the GT sketch x s 0 and generates more sparse version. To align our design with the sketch nature, as shown in Figure <ref type="figure" target="#fig_1">3</ref>, part C, we changed σ 2 t to follow a linear trend instead of the bridge shape by setting the variance peak at x T . We have to make sure to set the variance peak to a small number due to the sparsity of the sketch. This could be interpreted as adding brighter points on a black canvas to act as control points during the progressive steps (T → 0) while converging to form the contours, as shown in Figure <ref type="figure" target="#fig_1">3,</ref><ref type="figure">part C</ref>. More details about the sparsity level importance are shown in Section 3.5.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.2">TODDLER GUIDANCE</head><p>A crucial factor for the success of our framework, ToddlerDiffusion, is obtaining accurate and human-free guidance for the intermediate stages. Two modules, F s and F p , are employed to generate contours/sketches and palettes, respectively.</p><p>Sketch. The first module, x s 0 = F s (x rgb 0 ), serves as a sketch or edge predictor, where x rgb 0 ∈ R H×W ×3 is the ground-truth RGB image, and x s 0 ∈ R H×W is the generated sketch. For instance, F s could be PidiNet <ref type="bibr" target="#b44">Su et al. (2021)</ref> or Edter <ref type="bibr" target="#b36">Pu et al. (2022)</ref> for sketch generation, or <ref type="bibr" target="#b2">Canny Canny (1986)</ref> and Laplacian <ref type="bibr" target="#b50">Wang (2007)</ref> edge detectors.</p><p>Palette. The palette can be obtained without human intervention by pixelating the ground-truth RGB image x p 0 = F p (x rgb 0 ), where x p 0 ∈ R H×W ×3 is the palette image, and F p will be the pixelation function. However, we introduce a more realistic way to have high-quality palettes for free by first generating the segments from the RGB image using FastSAM <ref type="bibr" target="#b56">Zhao et al. (2023)</ref>. Then, a simple color detector module is utilized to get the dominant color, e.g., the median color per segment. This design choice is further analyzed in Section 3.5. More details are mentioned in the Appendix.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.3">TRAINING OBJECTIVE &amp; REVERSE PROCESS</head><p>Training Formulation. We adapt the conventional diffusion models' learning objective <ref type="bibr" target="#b14">Ho et al. (2020);</ref><ref type="bibr" target="#b40">Sohl-Dickstein et al. (2015)</ref>, i.e., Variational Lower Bound (ELBO), to include our new condition y, whereas, each marginal distribution has to be conditioned on y, as follows:</p><formula xml:id="formula_7">L ELBO = -Eq D KL (q(x T |x i 0 , y i )||p(x T |y i )) + T t=2 D KL (q(xt-1|xt, x i 0 , y i )||p θ (xt-1|xt, y i )) -log p θ (x i 0 |x1, y i ) ,<label>(4)</label></formula><p>where p θ is a function approximator intended to predict from x t . Using Bayes'rule, we can formulate the reverse process as follows:</p><formula xml:id="formula_8">q xt-1 | xt, x i 0 , y i = N xt-1; μ xt, x i 0 , y i , σ2 t I (5) μt(xt, x i 0 , y i ) = σ 2 t-1 σ 2 t 1 -αt 1 -αt-1 xt + (1 -αt-1(1 - σ 2 t-1 (1 -αt) 2 σ 2 t (1 -αt-1) 2 ))x i 0 + (αt-1 -αt 1 -αt 1 -αt-1 σ 2 t-1 σ 2 t )y i (6) σ2 t = σ 2 t-1 - σ 4 t-1 σ 2 t (1 -αt) 2 (1 -αt-1) 2 (7)</formula><p>The derivation for Eq. 6 and Eq. 7 is detailed in Appendix A.1. The overall training and sampling pipelines are summarized in Appendix A.5 Algorithms 1 and 2, respectively.</p><p>Training Objectives. Previous work <ref type="bibr" target="#b38">Rombach et al. (2022)</ref> showed that learning directly the noise ϵ enhances the performance compared to predicting the x 0 directly. This is intuitive as predicting the difference ϵ t = x t -x 0 is easier than predicting the original complicated x 0 . However, in our case, this is not valid due to the conditioned domain y, which makes predicting the difference much harder, as shown in Eq. 8</p><formula xml:id="formula_9">xt -x0 = αt(y -x0) + σtϵt (8)</formula><p>Accordingly, we directly predict the x 0 . Please refer to Section 3.5 for a detailed analysis.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.4">TODDLER CONSISTENCY</head><p>Our novel framework, ToddlerDiffusion, inherently provides interactivity, allowing users to observe and engage with the intermediate outputs of various modalities. This interactivity is further strengthened by ensuring consistency, a crucial element for effective control and editing capabilities.</p><p>Generated Images Editing. To ensure consistency during editing, we store the noise ϵ t and the intermediate modalities used in generating the initial reference image, creating a memory that will help us achieve outstanding consistency. Throughout the editing session, the memory, that was constructed while generating the reference image, remains fixed until the user resets it by generating a new reference image. Figure <ref type="figure" target="#fig_8">10</ref> demonstrates our framework's editing capabilities, highlighting the strong consistency it achieves. Additional editing examples can be found in our demo.</p><p>Real Images Editing. Real image editing is much more challenging as we cannot access intermediate modalities and noise. Therefore, given a real image x rgb 0 , first, we run F s (x rgb 0 ) and F p (x rgb 0 ) to get the corresponding sketch x s 0 and palette x p 0 , respectively. Then, we utilize the recent DDPM inversion technique Huberman-Spiegelglas et al. ( <ref type="formula">2024</ref>) to store the noise ϵ t . More specifically, to get the noise, we have first to run our forward process, Eq. 2, using random noise ϵ t and store the corresponding intermediate states x t . Then, run our reverse process, Eq. 6, to try to recover the original image. During the reverse process, the model will predict μt (x t , x i 0 , y i ) using Eq. 6. Then, our goal is that given the predicted μt , the predicted conditions y and the stored intermediate states x t-1 , we want to estimate the noise ϵ t Following these two steps, we construct our memory, which will be used similarly to edit real images.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">EXPERIMENTAL RESULTS</head><p>To probe the effectiveness of our proposed framework, we first compare our approach against LDM when trained from scratch on unconditional datasets, LSUN-Churches and CelebHQ, and conditional ones, ImageNet. Then, we show that our approach can leverage from the high-quality SD-v1.5 weights, enabling the model to be conditional on new modalities seamlessly without adding additional modules <ref type="bibr" target="#b54">Zhang et al. (2023)</ref>; <ref type="bibr" target="#b55">Zhao et al. (2024)</ref> or adapters <ref type="bibr" target="#b31">Mou et al. (2024)</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1">TODDLERDIFFUSION FROM SCRATCH</head><p>In this section, first we will holistically compare our method, ToddlerDiffusion, against LDM regarding generation quality and efficiency, e.g., convergence rate and number of denoising steps. Then, we will compare our conditioning ability with ControlNet and SDEdit. Generally, ToddlerDiffusion consists of three cascaded stages: sketch, palette, and RGB generation. However, in the following section, we will show the versatility of our method by omitting the 1 st or the 2 nd stages, enabling our method to start from a reference sketch or palette, respectively, instead of generated ones.</p><p>Unconditional Generation. We evaluated our framework, ToddlerDiffusion, against LDM on two unconditional datasets, i.e., <ref type="bibr">LSUN-Churches Yu et al. (2015)</ref> and Celeb datasets <ref type="bibr" target="#b18">Karras et al. (2017)</ref>. For a fair comparison, and as we notice challenges in replicating LDM results<ref type="foot" target="#foot_0">foot_0</ref> , we have reproduced LDM results. As shown in Table <ref type="table" target="#tab_0">1</ref>, we boost the LDM performance by 1 FID point on the two datasets, using 3x smaller architecture and 2x faster sampling, as shown in Table <ref type="table" target="#tab_1">2</ref>.</p><p>Efficient Architecture. While the primary focus of this paper is not on designing an efficient architecture, our method inherently benefits from architectural efficiency due to the shorter trajectory between stages, as illustrated in Figure <ref type="figure" target="#fig_0">2</ref>. The key insight is that ToddlerDiffusion simplifies each generation task by breaking it into modality-specific stages (e.g., from sketch to palette). This approach allows us to leverage significantly smaller networks at each stage because solving the problem is easier, where the distributions of the domains, such as sketches and palettes, are much closer than the distribution between pure noise and RGB images. As a result, the neural network at each stage can be more lightweight. Furthermore, as shown in Table <ref type="table" target="#tab_1">2</ref>, we operate directly in the image space for the first two stages (i.e., noise to sketch and sketch to palette). This eliminates the need for complex encoder-decoder architectures, such as VQGAN, typically used to generate     detailed images from latent representations. Combining these factors, ToddlerDiffusion achieves a 3x reduction in network size despite cascading across three stages.</p><p>Faster Convergence. In addition to outperforming LDM across multiple datasets and metrics, as shown in Table <ref type="table" target="#tab_0">1</ref>, ToddlerDiffusion exhibits a significantly faster convergence rate. We analyzed the convergence behavior by reporting the FID score every 50 epochs, as shown in Figure <ref type="figure" target="#fig_2">4</ref>. Remarkably, our method achieves the same performance after just 50 epochs as LDM does after 150 epochs. Furthermore, after 150 epochs, ToddlerDiffusion matches the performance LDM achieves after 500 epochs. This substantial improvement in convergence speed highlights the strength of our approach in efficiently navigating the feature space between stages. It's important to note that faster convergence was not an explicit target of our method but rather an emergent property of the pipeline's design.</p><p>Other techniques tailored explicitly for improving convergence speed, e.g., <ref type="bibr" target="#b13">Hang et al. (2023)</ref>, can be considered orthogonal and complementary to our method.</p><p>Trimming Denoising Steps. Another unique characteristic of ToddlerDiffusion is its ability to reduce the number of denoising steps during both training and sampling without significantly impacting performance. As shown in Figure <ref type="figure" target="#fig_3">5</ref>, our framework maintains consistent and robust results when the number of steps is reduced from 1000 to 100. In contrast, the performance of LDM degrades drastically under the same conditions. ToddlerDiffusion can trim denoising steps while maintaining a good Signal-to-Noise Ratio (SNR), particularly for larger time steps, as further discussed in Section 2.1. Additionally, Figure <ref type="figure" target="#fig_4">6</ref> highlights another intriguing capability of our method: models trained with fewer denoising steps outperform those trained with larger step counts when later using techniques like DDIM <ref type="bibr">Song et al. (2020a)</ref> to reduce sampling steps. For example, as seen in Figure <ref type="figure" target="#fig_4">6</ref>, the blue curve (trained with 100 steps) achieves an FID score of around 60 when using only ten steps for sampling. However, if we initially train the model with just ten steps, as represented by the purple curve, the performance improves significantly, achieving an FID score of 15. This demonstrates the efficiency and adaptability of ToddlerDiffusion, even when minimizing the denoising process.</p><p>Class-Label Conditional Generation. To holistically evaluate the performance of ToddlerDiffusion, we tested it on the widely-used ImageNet dataset, where the condition type is a class label. Due to limited resources, we conducted our experiments on ImageNet-100, a subset of ImageNet containing 100 classes instead of the full 1,000. As shown in Table <ref type="table" target="#tab_0">1</ref>, ToddlerDiffusion performs better than LDM on key metrics such as FID, KID, Precision, and Recall.</p><p>Controllability. We evaluated our editing capabilities against two notable methods: SDEdit <ref type="bibr" target="#b30">Meng et al. (2021)</ref> and ControlNet <ref type="bibr" target="#b54">Zhang et al. (2023)</ref>. As illustrated in Figure <ref type="figure" target="#fig_5">7</ref>, SDEdit struggles when conditioned on binary sketches, which is expected given that it is a training-free approach designed to operate with conditions closer to the target domain (i.e., RGB images). Consequently, compared to ControlNet, a training-based method that adds an additional copy of the encoder network, our approach demonstrates superior faithfulness to the sketch condition, consistency across the generated   images, and overall realism. Despite ControlNet's larger model size, our method achieves these improvements without adding any additional parameters. Quantitatively, we achieved an FID score of 7, outperforming both SDEdit (15) and ControlNet, which achieved 15 and 9, respectively.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2">ROBUSTNESS ANALYSIS</head><p>Label Robustness. Beyond these quality comparisons, we also conducted a robustness analysis to assess our model's behavior when faced with inconsistencies between conditions. Specifically, we deliberately provided incorrect class labels for the same sketch.   <ref type="figure" target="#fig_6">8</ref> depicts our model's output using the 2 nd stage only (Sketch to RGB), while the right part demonstrates the output when using both the 2 nd and 3 rd stages. Even with significant variations in the sketches, ToddlerDiffusion maintains high fidelity to both the geometry and style, underscoring its ability to adapt to unseen input distortions without compromising output quality.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.3">EDITING CAPABILITIES</head><p>As discussed in Section 2.4, our approach provides consistent editing capabilities for both generated and real images.</p><p>Editing Generated Images. In Figure <ref type="figure" target="#fig_8">10</ref>, we showcase the editing capabilities starting from a generated sketch and RGB image (A). Our method allows for the removal of artifacts or unwanted elements, highlighted in red (B), the addition of new content, shown in yellow (C-D), and modifications to existing content, marked in green (E-F), simply by manipulating the underlying sketch. These consistent edits are supported in unconditional and conditional generation scenarios. While sketch-based conditional generation naturally lends itself to such control, ToddlerDiffusion extends this capability to unconditional settings and other conditional models like Text-to-Image. In these cases, we refer to this property as "interactivity," allowing users to seamlessly edit through intermediate modalities (sketch and palette) regardless of the original input format, whether class-label or text.    Editing Real Images. As explained in Section 2.4, we ensure consistent edits for real images by storing the noise used during the generation process for later edits. The primary challenge with real image editing is that we don't have access to the noise values at each denoising step, as our model didn't generate the image. To address this, we employ DDPM-inversion Huberman-Spiegelglas et al.</p><p>(2024) to reconstruct the intermediate noise. As illustrated in Figure <ref type="figure">1</ref>, our model achieves consistent edits on real reference images. In Appendix B.2, we compare against SEED-X Ge et al. ( <ref type="formula">2024</ref>), and our model achieves more consistent edits, as shown.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.4">INCORPORATING TODDLERDIFFUSION INTO STABLE DIFFUSION</head><p>In this section, we will answer an important question: "Can our method be integrated seamlessly into the existing powerful Stable-Diffusion architecture? This question is crucial as follows: 1) Despite our approach's great capabilities and performance, leveraging the available powerful weights trained on large-scale datasets such as SD is still important. 2) Our approach follows different forward and reverse processes, Eq. 2 and Eq. 6, respectively, which could make it challenging to leverage weights that are trained using different training objectives.</p><p>Integration Recipe. This section will detail the recipe for successfully integrating SD weights into our approach. First, we used x 0 as our default training objective and employed LoRA fine-tuning for efficiency. But these two variants are crucial to make it work. The original SD is trained to predict the difference, not x 0 . Thus, we must first try to match its conventional training objective and replace ours by predicting the difference. However, this will not solve the gap, as our new training objective still includes x 0 prediction. Due to this considerable gap in our formulation compared to SD, we must fine-tune the entire model instead of using LoRA, using a small learning rate, e.g., 1e-6.</p><p>Controllability. We convert our method to a "sketch2RGB" by omitting the 1 st stage to show our controllability capabilities. By doing this, we can compare our model against the vast tailored sketch-based models built on top of SD-v1.5. However, these methods have been trained for a long time on large-scale datasets. Thus, for a fair comparison, we retrain them using CelebHQ datasets for 5 epochs starting from SD-v1.5 weights. As demonstrated in Appendix B.5, despite this is not our main focus, our method outperforms conditioning conditioning methods without adding additional modules <ref type="bibr" target="#b54">Zhang et al. (2023)</ref>; <ref type="bibr" target="#b55">Zhao et al. (2024)</ref> or adapters <ref type="bibr" target="#b31">Mou et al. (2024)</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.5">ABLATIONS</head><p>1 st Stage Representation. In Section 2.2, we explore the versatility of the 3 rd stage (detailed image) by examining six input modalities, detailed in Figure <ref type="figure" target="#fig_9">11</ref>. Comparing different contours representations, namely Edges (using Laplacian edge detector Wang ( <ref type="formula">2007</ref>)), Sketch (utilizing PidiNet Su et al. ( <ref type="formula">2021</ref>)), and SAM-Edges (generated by SAM followed by Laplacian edge detector), we find that Sketch outperforms Edges, as edges tend to be noisier. However, SAM-Edges provides more detailed contours, yielding superior results. Notably, feeding SAM-Colored leads to significant performance degradation, likely due to color discrepancies, as observed in SAM in Figure <ref type="figure" target="#fig_9">11</ref>. While SAM-Edges achieves optimal results, its computational intensity renders it impractical. In contrast, Sketch and Edges are computationally inexpensive. Furthermore, Sketch's sparse and user-friendly nature makes it more suitable for editing, facilitating interpretation and modification than dense, noisy edges. Consequently, we adopt Sketch as the input modality for subsequent experiments.</p><p>Palette Effect. Adding more guidance will offer more editing abilities to the pipeline and enhance the performance. As shown in Figure <ref type="figure" target="#fig_9">11</ref>, rows b and d, when we incorporate the palette into the contours, i.e., edges and sketch, the performance improved by almost 1 and 1.5, respectively. In addition, Palette-2 outperforms Palette-1 by 1 FID score. A more detailed analysis of fusing the stages together and how to mitigate the error accumulation can be found in Appendix A.6. Concatenation v.s. Schrödinger Bridge. We formulate the generation problem as image-to-image translation. For instance, generating a palette given sketch or generating the final RGB image given overlaid palette and sketch. One possible approach is to utilize the conditioning mechanisms offered by <ref type="bibr">LDM Rombach et al. (2022)</ref>, e.g., cross-attention and concatenation. However, these mechanisms are inefficient as their SNR tends to 0 as t → T . In contrast, our formulation follows the Schrödinger bridge, which directly incorporates the condition y into x t during the forward process. Accordingly, the SNR≫ 0 at t = T , which allows reducing training steps from 1K to 50 (Figure <ref type="figure" target="#fig_3">5</ref>) and achieving faster convergence <ref type="bibr">(Figure. 4</ref>). Additionally, Table <ref type="table" target="#tab_4">3</ref> demonstrates a quantitative comparison between Schrödinger Bridge and concatenation. As shown in Table , 3, the schrödinger bridge (SB) combined with the concatenation mechanism achieves the best results; however, SB alone is better than using the naive concatenation.</p><p>Training Objectives. Previous work <ref type="bibr" target="#b38">Rombach et al. (2022)</ref> showed that learning directly the noise ϵ enhances the performance compared to predicting the x 0 . As, intuitively, predicting the difference ϵ t = x t -x 0 is easier than predicting the original complicated x 0 . However, this is not valid in our case due to the new term y, which makes predicting the difference much harder, as discussed in Section 2.1. Table <ref type="table" target="#tab_5">4</ref> shows the same conclusion reported in <ref type="bibr" target="#b38">Rombach et al. (2022)</ref>, that predicting the difference ϵ leads to better performance than x 0 , where the FID score is 8.7 and 15.1, respectively. On the contrary, our method achieves almost the same performance regardless of the training objective, which is expected, as predicting the difference involves predicting x 0 , Eq. 8.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">CONCLUSION</head><p>ToddlerDiffusion introduces a paradigm shift in image generation by breaking down the complex task into more manageable, modality-specific stages. Inspired by the natural learning process of a child, our framework elegantly mirrors how human artists progress from rough sketches to fully detailed images. This structured approach allows us to simplify each stage of the generation process, enabling the use of smaller architectures and achieving efficient, high-quality results. Despite the potential challenges introduced by multi-stage frameworks, such as increased parameter counts and error accumulation, ToddlerDiffusion overcomes these obstacles through the strategic use of the Schrödinger Bridge, which ensures smooth transitions between modalities. By maintaining a high Signal-to-Noise Ratio (SNR) at each stage, we enable stable, effective progression, minimizing the number of denoising steps required during both training and sampling. This results in faster convergence, lower computational cost, and enhanced sampling efficiency. Moreover, ToddlerDiffusion provides a level of control and interaction that is unprecedented in current diffusion-based models, offering consistent editing capabilities across both generated and real images. Through extensive experiments on multiple datasets, we have shown that ToddlerDiffusion outperforms existing state-of-the-art models like LDM in terms of quality, interactivity, and speed. The flexibility and versatility of our approach make it applicable to a wide range of tasks, and its emergent properties, such as faster convergence and improved editing control, further solidify its potential for real-world applications.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A TODDLERDIFFUSION METHOD (MORE DETAILS)</head><p>A.1 DERIVATIONS From the forward process, we have:</p><formula xml:id="formula_10">x t = (1 -α t )x 0 + α t y + σ t ϵ t (9) x t-1 = (1 -α t-1 )x 0 + α t-1 y + σ t-1 ϵ t-1<label>(10)</label></formula><p>From equation 10, we get:</p><formula xml:id="formula_11">x 0 = 1 1 -α t-1 x t-1 - α t-1 1 -α t-1 y - σ t-1 1 -α t-1 ϵ t-1<label>(11)</label></formula><p>Inserting equation into equation 9, we get:</p><formula xml:id="formula_12">q(x t | x t-1 , x 0 ) = 1 -α t 1 -α t-1 x t-1 - (1 -α t )α t-1 1 -α t-1 y +α t y - (1 -α t )σ t-1 1 -α t-1 ϵ t-1 + σ t ϵ t<label>(12)</label></formula><p>The reverse process follows:</p><formula xml:id="formula_13">q (x t-1 | x t , x 0 , y) = N x t-1 ; μ (x t , x 0 , y) , σ2 t I<label>(13)</label></formula><p>Using Bayes' rule:</p><formula xml:id="formula_14">q (x t-1 | x t , x 0 , y) = q(x t | x t-1 , x 0 ) q(x t-1 | x 0 ) q(x t | x 0 )<label>(14)</label></formula><p>Plugging equation 9, equation 10, and equation 12 into equation 14, yields:</p><formula xml:id="formula_15">μt (x t , x 0 , y) = σ 2 t-1 σ 2 t 1 -α t 1 -α t-1 x t + (1 -α t-1 1 - σ 2 t-1 σ 2 t (1 -α t ) 2 (1 -α t-1 ) 2 )x 0 +(α t-1 -α t (1 -α t ) (1 -α t-1 ) σ 2 t-1 σ 2 t )y<label>(15)</label></formula><formula xml:id="formula_16">σ2 t = σ 2 t-1 - σ 4 t-1 σ 2 t (1 -α t ) 2 (1 -α t-1 ) 2<label>(16)</label></formula><p>Finally, we can apply the DDIM non-Markovian forward processes.</p><p>In return, only the x 0 coefficient will be affected.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A.2 ARCHITECTURE DETAILS</head><p>Figure <ref type="figure" target="#fig_0">12</ref> depicts the details of our architecture. We adopt the LDM architecture, which consists of two main blocks: 1) VQGAN Encoder-Decoder to convert the image into low-cost latent space. 2) Unet that responsible for predicting x t-1 . Figure <ref type="figure" target="#fig_0">12</ref> shows that the condition y is encoded into x t . However, it could be optionally concatenated to x t . In addition, shown in orange and green are the σ 2 and α, respectively.</p><p>A.3 1 st STAGE: ABSTRACT STRUCTURE Sketch FID. A discrepancy exists between the reported conventional FID (RGB-FID), trained on ImageNet <ref type="bibr" target="#b5">Deng et al. (2009)</ref>, and qualitative results, as illustrated in Figure <ref type="figure" target="#fig_1">13</ref>. This discrepancy <ref type="bibr" target="#b10">Ge et al. (2020)</ref> may arise from differences between the training data (RGB images) and the evaluation data (binary images). To bridge this gap, we introduce Sketch-FID by re-training the inception   model <ref type="bibr" target="#b45">Szegedy et al. (2015)</ref> on a sketch version of the ImageNet dataset. We generate sketches for ImageNet RGB images using PidiNet <ref type="bibr" target="#b44">Su et al. (2021)</ref> and train the inception model on the conventional classification task.</p><formula xml:id="formula_17">𝑥 ! = 𝛼 * 𝑥 " + 1 -𝛼 * 𝑦 + 𝜎 # * 𝜖 Forward Process Reverse Process 𝑥 ! 𝑥 " t 𝑥 " 𝑥 $ 𝑥 " 𝑥 $ Forward Process 𝑥 ! = 𝛼 * 𝑥 " + 1 -𝛼 * 𝑦 + 𝜎 # * 𝜖 Reverse Process 𝑥 ! 𝑥 " t E D 𝛼 Image Space 𝜎 # Latent Space</formula><p>Noise Scheduler. In the 1 st stage, where our starting point y is a black image (Section 2.1), designing an appropriate noise scheduler is crucial. The bridge noise scheduler is intuitively unsuitable, as it eliminates randomness by adding no noise at both edges, fixing the starting point to a black image. This hypothesis is supported by empirical results in Figure <ref type="figure" target="#fig_1">13</ref>, row b, where the model outputs random patterns. We explored linear and logarithmic schedulers, finding the linear schedule superior, yielding Sketch-FID scores of 15.19 and 18.47, respectively (Figure <ref type="figure" target="#fig_1">13, rows c-d</ref>).</p><p>Ours vs. LDM. In Section 2.1, we propose an alternative way to generate sketches by leveraging <ref type="bibr">LDM Rombach et al. (2022)</ref>, as shown in Figure <ref type="figure" target="#fig_1">3</ref>, row A. However, this approach deviates from the nature of sketching. Our proposed formulation, aligned with the topology of sketches (Figure <ref type="figure" target="#fig_1">3</ref>, row C), resulted in significant improvements over LDM in both model complexity and performance, as depicted in Figure <ref type="figure" target="#fig_1">13</ref>. Our formulation (Section 2.1) allows direct operation on the image space (64 × 64) and compression of the Unet to a tiny variant without sacrificing performance. Despite the aggressive compression, our performance is significantly better than LDM, with respective Sketch-FID scores of 15.19 and 49, using a 41x smaller network. Sketch Intensity. Controlling the intensity is crucial. Thus, we conducted further analysis, as shown in Table <ref type="table" target="#tab_6">5</ref>, that probes for best performance, the intensity should follow the data distribution. We refer to the intensity as the ratio between the white pixels to the black ones in the sketch. The reported FID scores in Table <ref type="table" target="#tab_6">5</ref> are the overall FID using all stages, and the intensity numbers are the initial intensity at t = T . The GT intensity for CelebHQ and Lsun-Churches are 19.2% and 23.5%, respectively.</p><p>A.4 2 nd STAGE: PALETTE As depicted in Figure <ref type="figure" target="#fig_11">14</ref>, we introduce a more realistic way to have high-quality palettes for free by first generating the segments from the RGB image using FastSAM <ref type="bibr" target="#b56">Zhao et al. (2023)</ref>. Then, a simple color detector module is utilized to get the dominant color, e.g., the median color per segment.  The reported FID scores for the 1 st and the 2 nd stages, in Figure <ref type="figure" target="#fig_1">13</ref> and Figure <ref type="figure" target="#fig_9">11</ref>, respectively, are for each stage separately. In other words, in Figure <ref type="figure" target="#fig_9">11</ref>, row c, the 2 nd stage achieves an 8.6 FID score when a GT sketch is fed, which is obtained from PidiNet <ref type="bibr" target="#b44">Su et al. (2021)</ref>. However, when we fed the generated sketch from the 1 st stage, the performance drastically dropped from 8.6 to 16.1 (almost doubled), as shown in Table <ref type="table" target="#tab_9">7</ref>, row a, due to the domain gap between the generated and the GT sketches. To fill this gap, we explored two types of augmentations: 1) Cutout and Dropout augmentation. 2) Condition truncation augmentation.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A.5 TRAINING AND SAMPLING ALGORITHMS</head><p>Cutout and Dropout Augmentation. First, we explored the straightforward augmentation types, such as Cutout DeVries &amp; Taylor (2017) and Dropout augmentations. For the Cutout DeVries &amp; Taylor (2017), we apply a kernel to randomly blackout patches in the sketch. Additionally, regarding the Dropout augmentation, we randomly convert white pixels to black pixels, interpreted as dropping some white points from the sketch. As shown in Table <ref type="table" target="#tab_9">7</ref>, generally, augmentation leads to a drop in the 2 nd stage performance while helping fill the gap in the overall performance, as the FID score decreased from 16 to almost 14. However, as shown in rows b-d, increasing the amount of the applied augmentation gradually does not help much, as the performance remains almost the same. However, the overall accuracy, i.e., FID, drops significantly from 14 to 18 when an aggressive augmentation is applied.</p><p>Condition Truncation Augmentation. As shown in Table <ref type="table" target="#tab_9">7</ref>, the conventional augmentation techniques do not help much. Accordingly, we explored another augmentation variant tailored for the diffusion models, i.e., condition truncation <ref type="bibr" target="#b15">Ho et al. (2022)</ref>. During training the 2 nd stage, we apply a random Gaussian noise to the fed condition, i.e., the sketch. So now the 2 nd stage is trained on noisy sketches instead of pure ones, which makes it more robust to the variations between the real sketches and the generated ones from the 1 st stage. Typically, we progressively generate the sketch in T time steps; T → 0. However, This added noise could be interpreted as we stop the sketch generation (1 st stage) at a particular step s; T → s. Consequently, we search for it during sampling to determine which step s works best for the overall performance, as shown in Table <ref type="table" target="#tab_8">6</ref>. In other words, the 2 nd stage is trained on a wide range of perturbed sketches, e.g., pure sketch (s = 0), noisy one (0 &lt; s &lt; T ), and even pure noise (s = T ). The 1 st stage is trained for 200 steps, so s = 200 means we omit the sketch and feed pure noise. In contrast, s = 0 indicates that we feed the generated sketch as it is to the 2 n d stage. As shown in Table <ref type="table" target="#tab_8">6</ref>, following this truncation mechanism, the fusion of the two stages is performed more efficiently, where the overall performance drops from 16.1 to 10.6. Algorithm 2 is adapted in the supplementary materials to incorporate the condition truncation mechanism.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B MORE QUALITATIVE RESULTS</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B.1 DEMO</head><p>Please refer to our demo, which probes our controllability capabilities in performing consistent edits.</p><p>Our demo demonstrates a lot of use cases, including:</p><p>• </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B.2 REAL IMAGE EDITING</head><p>As explained in Section 2.4, we ensure consistent edits for real images by storing the noise used during the generation process for later edits. The primary challenge with real image editing is that we don't have access to the noise values at each denoising step, as our model didn't generate the image. To address this, we employ DDPM-inversion <ref type="bibr" target="#b17">Huberman-Spiegelglas et al. (2024)</ref> to reconstruct the intermediate noise. As illustrated in Figure <ref type="figure" target="#fig_13">15</ref>, we compare our model against SEED-X Ge et al. ( <ref type="formula">2024</ref>), and our model achieves consistent edits on real reference images better than SEED-X, despite being trained on much fewer data compared to SEED-X and using smaller architecture. Additionally, SEED-X fails to perform the edits correctly and keeps the rest of the image unedited, such as the rest of the face or the background. On the contrary, our method shows great faithfulness to the original image while performing the edits depicted in the sketch.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Ours</head><p>Input Inversion Sketch Edited Sketch Output</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>SEED-X</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Input Text Condition Output</head><p>Close the man's mouse</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Put wrinkles on his forehead</head><p>Remove the bangs from the woman's hair </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B.3 CLASS-LABEL ROBUSTNESS</head><p>Beyond these quality comparisons, we also conducted a robustness analysis to assess our model's behavior when faced with inconsistencies between conditions. Specifically, we deliberately provided incorrect class labels for the same sketch. This mismatched the sketch (geometry) and the desired class label (style). Despite the inconsistent conditions, as illustrated by the off-diagonal images in Figure <ref type="figure" target="#fig_14">16</ref>, our model consistently adheres to the geometry defined by the sketch while attempting to match the style of the misassigned category, demonstrating the robustness of our approach. Successful cases are highlighted in yellow, and even in failure cases (highlighted in red), our model avoids catastrophic errors, never hallucinating by completely ignoring either the geometry or the style.  </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B.4 EDITING CAPABILITIES</head><p>Our approach introduces an interpretable generation pipeline by decomposing the complex RGB generation task into a series of interpretable stages, inspired by the human generation system Stevens (2012); <ref type="bibr" target="#b29">Marr (2010;</ref><ref type="bibr" target="#b28">1974)</ref>. Unlike traditional models that generate the complete image in one complex stage, we break it into N simpler stages, starting with abstract contours, then an abstract palette, and concluding with the detailed RGB image. This decomposition not only enhances interpretability but also facilitates dynamic user interaction, offering unprecedented editing capabilities for unconditional generation, as shown in Figure <ref type="figure" target="#fig_5">17</ref>, Figure <ref type="figure" target="#fig_6">18</ref>, Figure <ref type="figure" target="#fig_7">19</ref>, and Figure <ref type="figure" target="#fig_0">20</ref>. We convert our method to a "sketch2RGB" by omitting the 1 st stage to show our controllability capabilities. By doing this, we can compare our model against the vast tailored sketch-based models built on top of SD-v1.5. However, these methods have been trained for a long time on large-scale datasets. Thus, for a fair comparison, we retrain them using CelebHQ datasets for 5 epochs starting from SD-v1.5 weights. As demonstrated in Figure <ref type="figure" target="#fig_0">21</ref>, despite this is not our main focus, our method outperforms conditioning methods without adding additional modules  <ref type="formula">2024</ref>) methods. The performance is worse than expected for the trained-based methods due to two reasons: 1) We train all the models for only 5 epochs; thus, some of this method, in contrast to us, needs more epochs to converge. 2) We apply augmentations to the input sketch, which shows that some of these methods are vulnerable to sketch perturbations.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 2 :</head><label>2</label><figDesc>Figure2: Trajectory comparison. We compare our approach (Top) against LDM (bottom) in terms of trajectory. Instead of starting from pure noise such as LDM, our approach, ToddlerDiffusion, leverages the intermediate stages to achieve a more steady and shorter trajectory.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 3 :</head><label>3</label><figDesc>Figure 3: Comparison between different formulations for the 1 st stage. This depicts the forward process for each formulation.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 4 :</head><label>4</label><figDesc>Figure 4: Training convergence comparison between ToddlerDiffusion and LDM.</figDesc><graphic coords="7,108.00,187.57,118.80,88.67" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 5 :</head><label>5</label><figDesc>Figure 5: Trimming denoising steps ablation study during training and sampling.</figDesc><graphic coords="7,245.35,187.55,118.80,88.72" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Figure 6 :</head><label>6</label><figDesc>Figure 6: Training steps ablation study on LSUN-Churches dataset.</figDesc><graphic coords="7,382.71,187.55,118.80,88.72" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Figure 7 :</head><label>7</label><figDesc>Figure 7: Comparison between our editing capabilities and SDEdit Meng et al. (2021).</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>Figure 8 :</head><label>8</label><figDesc>Figure 8: Sketch robustness analysis.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_7"><head>Figure 9 :</head><label>9</label><figDesc>Figure 9: Our results on the ImageNet dataset. The first column depicts the input sketch. The diagonal (green) represents the generated output that follows the sketch and the GT label. The off-diagonal images show the output given the sketch and inconsistent label. These adversarial labels show our model's robustness, where the successful cases are in yellow, and the failure ones are in red.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_8"><head>Figure 10 :</head><label>10</label><figDesc>Figure 10: Controllability ability of our framework, ToddlerDiffusion. Starting from the generated sketch and RGB image (A), we can remove artifacts or undesired parts in red (B), add new content in yellow (C-D), and edit the existing content in green (E-F) by manipulating the sketch.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_9"><head>Figure 11 :</head><label>11</label><figDesc>Figure 11: Ablation study for different input's types for the 2 nd stage on LSUN-Churches dataset Yu et al. (2015).</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_10"><head>Figure 12 :Figure 13 :</head><label>1213</label><figDesc>Figure 12: An overview of proposed architecture, dubbed ToddlerDiffusion. The first block demonstrates the first stage, which generates a sketch unconditionally. Due to our efficient formulation, this stage operates in the image space on 64 × 64 resolution. The bottom module depicts the third stage, which generates an RGB image given a sketch only or both sketch and palette.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_11"><head>Figure 14 :</head><label>14</label><figDesc>Figure 14: Palette generation pipeline. First, we employ FastSAM Zhao et al. (2023) to segment the image. Then, we get the dominant color for each segment.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_12"><head></head><label></label><figDesc>(0:00 -&gt; 0:20) [1st stage] Starting from noise generates a sketch by running only the 1st stage, which is unconditional generation. • (0:20 -&gt; 0:24) [2nd stage] Starting from a generated sketch generates a palette. This one is considered an unconditional generation as noise generates the sketch unconditionally. • (0:24 -&gt; 0:32) [3rd stage] Starting from a generated palette generates an RGB image. This one is also considered an unconditional generation. • (0:32 -&gt; 0:44) [Conditional Generation] Starting from the GT sketch, we generate an RGB image. • (0:44 -&gt; 1:15) [Editing] We show our sketch-based editing capabilities. • (1:15 -&gt; 1:46) [Editing] We show our palette-based editing capabilities.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_13"><head>Figure 15 :</head><label>15</label><figDesc>Figure 15: Comparison between our approach, ToddlerDiffusion and SEED-X Ge et al. (2024) in terms of the real images capabilities.</figDesc><graphic coords="19,418.54,493.58,69.03,69.03" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_14"><head>Figure 16 :</head><label>16</label><figDesc>Figure 16: Our results on the ImageNet dataset. The first column depicts the input sketch. The diagonal (green) represents the generated output that follows the sketch and the GT label. The off-diagonal images show the output given the sketch and inconsistent label. These adversarial labels show our model's robustness, where the successful cases are in yellow, and the failure ones are in red.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_15"><head>Figure 19 :Figure 20 :</head><label>1920</label><figDesc>Figure 19: Controllability ability of our framework, ToddlerDiffusion. Starting from generated sketch and RGB image (A), we can remove artifacts or undesired parts, in red, (B), add a new content, in yellow, (C-D), and edit the existing content, in green, (E-F) by manipulating the sketch.</figDesc><graphic coords="23,193.15,416.45,55.57,55.57" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_16"><head></head><label></label><figDesc><ref type="bibr" target="#b54">Zhang et al. (2023)</ref>;<ref type="bibr" target="#b55">Zhao et al. (2024)</ref> or adapters<ref type="bibr" target="#b31">Mou et al. (2024)</ref>. We compare training-free Tumanyan et al. (2023); Parmar et al. (2023) and training-based Li et al. (2023b); Zhang et al. (2023); Zhao et al. (</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head>Table 1 :</head><label>1</label><figDesc>Benchmark results on three datasets; CelebHQ Karras et al. (2017), LSUN-Churches Yu et al. (2015) and ImageNet Deng et al. (2009).</figDesc><table><row><cell>CelebHQ</cell><cell>LDM Ours</cell><cell>600 600</cell><cell>8.15 7.10</cell><cell>0.013 0.009</cell><cell>0.52 0.61</cell><cell>0.41 0.47</cell></row><row><cell>Churches</cell><cell>LDM Ours</cell><cell>250 250</cell><cell>7.30 6.19</cell><cell>0.009 0.005</cell><cell>0.59 0.71</cell><cell>0.39 0.44</cell></row><row><cell>ImageNet</cell><cell>LDM Ours</cell><cell>350 350</cell><cell>8.55 7.8</cell><cell>0.015 0.010</cell><cell>0.51 0.58</cell><cell>0.32 0.40</cell></row></table><note><p><p>Dataset</p>Method Epochs FID ↓ KID ↓ Prec. ↑ Recall ↑</p></note></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1"><head>Table 2 :</head><label>2</label><figDesc>A detailed analysis of our method complexities compared to LDM. We report the training and sampling throughput per each stage. For efficiency, the first two stages are operating on the pixel space. Therefore, the VQGAN encoder and decoder are not used (N/A). The training time is reported till convergence, i.e, 400 epochs, using 4 A100.</figDesc><table><row><cell></cell><cell>VQGAN</cell><cell>UNet</cell><cell cols="2">Train Samp.</cell></row><row><cell>Stage</cell><cell cols="3"># Param # Param Time</cell><cell>Time</cell></row><row><cell>1) Noise → Sketch</cell><cell>N/A</cell><cell>1.9M</cell><cell>1 hr</cell><cell>85 fps</cell></row><row><cell>2) Sketch → Palette</cell><cell>N/A</cell><cell>1.9M</cell><cell>1 hr</cell><cell>85 fps</cell></row><row><cell>3) Palette → RGB</cell><cell>55.3M</cell><cell>101M</cell><cell>24 hr</cell><cell>2.3 fps</cell></row><row><cell>Ours (3 Stages)</cell><cell>55.3M</cell><cell>104.8M</cell><cell cols="2">26hr 2.27fps</cell></row><row><cell>LDM</cell><cell>55.3M</cell><cell>263M</cell><cell cols="2">38 hr 1.21 fps</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_4"><head>Table 3 :</head><label>3</label><figDesc>Comparison of the LDM concatenation mechanism against the schrödinger bridge (SB) using CelebHQ dataset.</figDesc><table><row><cell>2 nd Stage</cell><cell>FID ↓</cell></row><row><cell>Concat</cell><cell>10.04</cell></row><row><cell>SB</cell><cell>9.45</cell></row><row><cell>SB + Concat</cell><cell>8.10</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_5"><head>Table 4 :</head><label>4</label><figDesc>Training objective ablation study on CelebHQ dataset Karras et al. (2017).</figDesc><table><row><cell>Epochs</cell><cell>LDM (xt -x0)</cell><cell>x0</cell><cell cols="2">Ours (xt -x0) x0</cell></row><row><cell>50</cell><cell>12.7</cell><cell>15.7</cell><cell>8.5</cell><cell>8.1</cell></row><row><cell>100</cell><cell>10.0</cell><cell>14.6</cell><cell>8.4</cell><cell>7.8</cell></row><row><cell>200</cell><cell>8.7</cell><cell>15.1</cell><cell>8.2</cell><cell>7.7</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_6"><head>Table 5 :</head><label>5</label><figDesc>Sketch Intensity Analysis.</figDesc><table><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>FastSAM</cell><cell>Color Extractor</cell></row><row><cell cols="6">Dataset/Intensity 19% 24% 31% 37% 43%</cell><cell>FastSAM</cell><cell>Color Extractor</cell></row><row><cell>CelebHQ</cell><cell>7.4</cell><cell>7.9</cell><cell>9.2</cell><cell cols="2">10.5 12.7</cell></row><row><cell>Lsun-Churches</cell><cell>7.8</cell><cell>6.9</cell><cell>8.3</cell><cell>8.9</cell><cell>10.1</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_8"><head>Table 6 :</head><label>6</label><figDesc>Systematic search for the best stopping step s for the condition truncation.</figDesc><table><row><cell>Metric/Steps (s)</cell><cell>0</cell><cell>10</cell><cell>20</cell><cell>40</cell><cell>80</cell><cell>120 160 200</cell></row><row><cell>2 nd stage FID ↓</cell><cell>6.1</cell><cell cols="3">7.4 7.9 8.6</cell><cell cols="2">9.9 10.4 10.8 11.2</cell></row><row><cell>Overall FID ↓</cell><cell cols="6">11.6 10.7 9.5 10.9 11.2 13.5 15.7 18.9</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_9"><head>Table 7 :</head><label>7</label><figDesc>Ablation study of the sketch augmentation effect on the overall performance after fusing the abstract and the detailed stages.</figDesc><table><row><cell></cell><cell>Cutout DeVries &amp; Taylor (2017)</cell><cell>Dropout</cell><cell>2 nd Stage</cell><cell>Overall</cell></row><row><cell></cell><cell>Percentage</cell><cell>Percentage</cell><cell>FID ↓</cell><cell>FID ↓</cell></row><row><cell>a)</cell><cell>0</cell><cell>0</cell><cell>8.6</cell><cell>16.10</cell></row><row><cell>b)</cell><cell>5-10</cell><cell>5-20</cell><cell>9.89</cell><cell>13.94</cell></row><row><cell>c)</cell><cell>10-20</cell><cell>20-40</cell><cell>9.77</cell><cell>13.98</cell></row><row><cell>d)</cell><cell>20-30</cell><cell>50-70</cell><cell>9.80</cell><cell>13.76</cell></row><row><cell>e)</cell><cell>30-40</cell><cell>70-90</cell><cell>11.68</cell><cell>17.99</cell></row></table></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="1" xml:id="foot_0"><p>See issues 325,</p></note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" xml:id="foot_1"><p>262, 90, 142, 30, and 138  in the LDM GitHub repository.</p></note>
+		</body>
+		<back>
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B.7 QUALITATIVE RESULTS FOR OUR SKETCH-CONDITIONAL GENERATION</head><p>In addition to our unconditional generation, our framework can be used as a conditional generation pipeline, where the user can omit the first stage and directly fed a reference sketch. As shown in Figure <ref type="figure">23</ref>, given the reference sketch, we run only the second stage, which is responsible for generating the RGB image given a sketch. Compared to the generated images in Figure <ref type="figure">22</ref>, the generated images in Figure <ref type="figure">23</ref> are much better as the reference sketches are much better than the generated ones. This observation is aliened with our discussion regarding the gap between the two stages. Therefore, improving the quality of the generated sketches will directly reflect on the overall images quality.  </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>C FAILURE CASES</head><p>The last column of Figure <ref type="figure">22</ref> and Figure <ref type="figure">23</ref> depicts failure cases, where the generated RGB is following the sketch but generates unrealistic image. Intuitively, the failure cases are more apparent in the unconditional generation due to the generated sketches quality.</p></div>			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Learning sparse masks for diffusion-based image inpainting</title>
+		<author>
+			<persName><forename type="first">Tobias</forename><surname>Alt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pascal</forename><surname>Peter</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Joachim</forename><surname>Weickert</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Iberian Conference on Pattern Recognition and Image Analysis</title>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page" from="528" to="539" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Renderdiffusion: Image diffusion for 3d reconstruction, inpainting and generation</title>
+		<author>
+			<persName><forename type="first">Titas</forename><surname>Anciukevičius</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zexiang</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Matthew</forename><surname>Fisher</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Paul</forename><surname>Henderson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hakan</forename><surname>Bilen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Niloy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Paul</forename><surname>Mitra</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Guerrero</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition</title>
+		<meeting>the IEEE/CVF Conference on Computer Vision and Pattern Recognition</meeting>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page" from="12608" to="12618" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">A computational approach to edge detection</title>
+		<author>
+			<persName><forename type="first">John</forename><surname>Canny</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Transactions on pattern analysis and machine intelligence</title>
+		<imprint>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="679" to="698" />
+			<date type="published" when="1986">1986</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Extracting training data from diffusion models</title>
+		<author>
+			<persName><forename type="first">Nicolas</forename><surname>Carlini</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jamie</forename><surname>Hayes</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Milad</forename><surname>Nasr</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Matthew</forename><surname>Jagielski</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Vikash</forename><surname>Sehwag</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Florian</forename><surname>Tramer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Borja</forename><surname>Balle</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Daphne</forename><surname>Ippolito</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Eric</forename><surname>Wallace</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">32nd USENIX Security Symposium (USENIX Security 23)</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page" from="5253" to="5270" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Mr image denoising and super-resolution using regularized reverse diffusion</title>
+		<author>
+			<persName><forename type="first">Hyungjin</forename><surname>Chung</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Eun</forename><forename type="middle">Sun</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jong</forename><surname>Chul</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ye</forename></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Transactions on Medical Imaging</title>
+		<imprint>
+			<biblScope unit="volume">42</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="922" to="934" />
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Imagenet: A large-scale hierarchical image database</title>
+		<author>
+			<persName><forename type="first">Jia</forename><surname>Deng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wei</forename><surname>Dong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Richard</forename><surname>Socher</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Li-Jia</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kai</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Li</forename><surname>Fei-Fei</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">IEEE conference on computer vision and pattern recognition</title>
+		<imprint>
+			<publisher>Ieee</publisher>
+			<date type="published" when="2009">2009. 2009</date>
+			<biblScope unit="page" from="248" to="255" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<monogr>
+		<title level="m" type="main">Improved regularization of convolutional neural networks with cutout</title>
+		<author>
+			<persName><forename type="first">Terrance</forename><surname>Devries</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Graham</forename><forename type="middle">W</forename><surname>Taylor</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1708.04552</idno>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Diffusion models beat gans on image synthesis</title>
+		<author>
+			<persName><forename type="first">Prafulla</forename><surname>Dhariwal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alexander</forename><surname>Nichol</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Advances in neural information processing systems</title>
+		<imprint>
+			<biblScope unit="volume">34</biblScope>
+			<biblScope unit="page" from="8780" to="8794" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Fast edge detection using structured forests</title>
+		<author>
+			<persName><forename type="first">Piotr</forename><surname>Dollár</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Lawrence</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zitnick</forename></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE transactions on pattern analysis and machine intelligence</title>
+		<imprint>
+			<biblScope unit="volume">37</biblScope>
+			<biblScope unit="issue">8</biblScope>
+			<biblScope unit="page" from="1558" to="1570" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Implicit diffusion models for continuous super-resolution</title>
+		<author>
+			<persName><forename type="first">Sicheng</forename><surname>Gao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xuhui</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bohan</forename><surname>Zeng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sheng</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yanjing</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiaoyan</forename><surname>Luo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jianzhuang</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiantong</forename><surname>Zhen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Baochang</forename><surname>Zhang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition</title>
+		<meeting>the IEEE/CVF Conference on Computer Vision and Pattern Recognition</meeting>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page" from="10021" to="10030" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<monogr>
+		<title level="m" type="main">Creative sketch generation</title>
+		<author>
+			<persName><forename type="first">Vedanuj</forename><surname>Songwei Ge</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Goswami</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Devi</forename><surname>Lawrence Zitnick</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Parikh</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2011.10039</idno>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<monogr>
+		<title level="m" type="main">Seed-x: Multimodal models with unified multi-granularity comprehension and generation</title>
+		<author>
+			<persName><forename type="first">Yuying</forename><surname>Ge</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sijie</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jinguo</forename><surname>Zhu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yixiao</forename><surname>Ge</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kun</forename><surname>Yi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lin</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chen</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiaohan</forename><surname>Ding</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ying</forename><surname>Shan</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2404.14396</idno>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Pet image denoising based on denoising diffusion probabilistic model</title>
+		<author>
+			<persName><forename type="first">Kuang</forename><surname>Gong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Keith</forename><surname>Johnson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Georges</forename><forename type="middle">El</forename><surname>Fakhri</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Quanzheng</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tinsu</forename><surname>Pan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">European Journal of Nuclear Medicine and Molecular Imaging</title>
+		<imprint>
+			<biblScope unit="page" from="1" to="11" />
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<monogr>
+		<title level="m" type="main">Efficient diffusion training via min-snr weighting strategy</title>
+		<author>
+			<persName><forename type="first">Tiankai</forename><surname>Hang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shuyang</forename><surname>Gu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chen</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jianmin</forename><surname>Bao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dong</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Han</forename><surname>Hu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xin</forename><surname>Geng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Baining</forename><surname>Guo</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2303.09556</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">Denoising diffusion probabilistic models</title>
+		<author>
+			<persName><forename type="first">Jonathan</forename><surname>Ho</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ajay</forename><surname>Jain</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pieter</forename><surname>Abbeel</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Advances in neural information processing systems</title>
+		<imprint>
+			<biblScope unit="volume">33</biblScope>
+			<biblScope unit="page" from="6840" to="6851" />
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">Cascaded diffusion models for high fidelity image generation</title>
+		<author>
+			<persName><forename type="first">Jonathan</forename><surname>Ho</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chitwan</forename><surname>Saharia</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">William</forename><surname>Chan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">David</forename><forename type="middle">J</forename><surname>Fleet</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mohammad</forename><surname>Norouzi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tim</forename><surname>Salimans</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Machine Learning Research</title>
+		<imprint>
+			<biblScope unit="volume">23</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="2249" to="2281" />
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<monogr>
+		<title level="m" type="main">Composer: Creative and controllable image synthesis with composable conditions</title>
+		<author>
+			<persName><forename type="first">Lianghua</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Di</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yu</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yujun</forename><surname>Shen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Deli</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jingren</forename><surname>Zhou</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2302.09778</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">An edit friendly ddpm noise space: Inversion and manipulations</title>
+		<author>
+			<persName><forename type="first">Inbar</forename><surname>Huberman-Spiegelglas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Vladimir</forename><surname>Kulikov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tomer</forename><surname>Michaeli</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition</title>
+		<meeting>the IEEE/CVF Conference on Computer Vision and Pattern Recognition</meeting>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+			<biblScope unit="page" from="12469" to="12478" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<monogr>
+		<author>
+			<persName><forename type="first">Tero</forename><surname>Karras</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Timo</forename><surname>Aila</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Samuli</forename><surname>Laine</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jaakko</forename><surname>Lehtinen</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1710.10196</idno>
+		<title level="m">Progressive growing of gans for improved quality, stability, and variation</title>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<monogr>
+		<title level="m" type="main">Diffusion models for medical image analysis: A comprehensive survey</title>
+		<author>
+			<persName><forename type="first">Amirhossein</forename><surname>Kazerouni</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ehsan</forename><surname>Khodapanah Aghdam</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Moein</forename><surname>Heidari</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Reza</forename><surname>Azad</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mohsen</forename><surname>Fayyaz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ilker</forename><surname>Hacihaliloglu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dorit</forename><surname>Merhof</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2211.07804</idno>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">Variational diffusion models</title>
+		<author>
+			<persName><forename type="first">Diederik</forename><surname>Kingma</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tim</forename><surname>Salimans</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ben</forename><surname>Poole</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jonathan</forename><surname>Ho</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Advances in neural information processing systems</title>
+		<imprint>
+			<biblScope unit="volume">34</biblScope>
+			<biblScope unit="page" from="21696" to="21707" />
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">Sinddm: A single image denoising diffusion model</title>
+		<author>
+			<persName><forename type="first">Vladimir</forename><surname>Kulikov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shahar</forename><surname>Yadin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Matan</forename><surname>Kleiner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tomer</forename><surname>Michaeli</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Machine Learning</title>
+		<imprint>
+			<publisher>PMLR</publisher>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page" from="17920" to="17930" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">Bbdm: Image-to-image translation with brownian bridge diffusion models</title>
+		<author>
+			<persName><forename type="first">Bo</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kaitao</forename><surname>Xue</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bin</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yu-Kun</forename><surname>Lai</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition</title>
+		<meeting>the IEEE/CVF Conference on Computer Vision and Pattern Recognition</meeting>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page" from="1952" to="1961" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">Srdiff: Single image super-resolution with diffusion probabilistic models</title>
+		<author>
+			<persName><forename type="first">Haoying</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yifan</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Meng</forename><surname>Chang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shiqi</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Huajun</forename><surname>Feng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhihai</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qi</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yueting</forename><surname>Chen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Neurocomputing</title>
+		<imprint>
+			<biblScope unit="volume">479</biblScope>
+			<biblScope unit="page" from="47" to="59" />
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<analytic>
+		<title level="a" type="main">Partgan: Weakly-supervised part decomposition for image generation and segmentation</title>
+		<author>
+			<persName><forename type="first">Yuheng</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Krishna</forename><forename type="middle">Kumar</forename><surname>Singh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yang</forename><surname>Xue</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yong Jae</forename><surname>Lee</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">British Machine Vision Conference (BMVC)</title>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<title level="a" type="main">Gligen: Open-set grounded text-to-image generation</title>
+		<author>
+			<persName><forename type="first">Yuheng</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Haotian</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qingyang</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Fangzhou</forename><surname>Mu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jianwei</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jianfeng</forename><surname>Gao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chunyuan</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yong Jae</forename><surname>Lee</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition</title>
+		<meeting>the IEEE/CVF Conference on Computer Vision and Pattern Recognition</meeting>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page" from="22511" to="22521" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<monogr>
+		<title level="m" type="main">Is synthetic data from diffusion models ready for knowledge distillation?</title>
+		<author>
+			<persName><forename type="first">Zheng</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yuxuan</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Penghai</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Renjie</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiang</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jian</forename><surname>Yang</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2305.12954</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<title level="a" type="main">Repaint: Inpainting using denoising diffusion probabilistic models</title>
+		<author>
+			<persName><forename type="first">Andreas</forename><surname>Lugmayr</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Martin</forename><surname>Danelljan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andres</forename><surname>Romero</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Fisher</forename><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Radu</forename><surname>Timofte</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Luc</forename><surname>Van Gool</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition</title>
+		<meeting>the IEEE/CVF Conference on Computer Vision and Pattern Recognition</meeting>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page" from="11461" to="11471" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<monogr>
+		<title level="m" type="main">On the purpose of low-level vision</title>
+		<author>
+			<persName><forename type="first">David</forename><surname>Marr</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1974">1974</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<monogr>
+		<title level="m" type="main">Vision: A computational investigation into the human representation and processing of visual information</title>
+		<author>
+			<persName><forename type="first">David</forename><surname>Marr</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2010">2010</date>
+			<publisher>MIT press</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<monogr>
+		<title level="m" type="main">Sdedit: Guided image synthesis and editing with stochastic differential equations</title>
+		<author>
+			<persName><forename type="first">Chenlin</forename><surname>Meng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yutong</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yang</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jiaming</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jiajun</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jun-Yan</forename><surname>Zhu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Stefano</forename><surname>Ermon</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2108.01073</idno>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<analytic>
+		<title level="a" type="main">T2iadapter: Learning adapters to dig out more controllable ability for text-to-image diffusion models</title>
+		<author>
+			<persName><forename type="first">Chong</forename><surname>Mou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xintao</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Liangbin</forename><surname>Xie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yanze</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jian</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhongang</forename><surname>Qi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ying</forename><surname>Shan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the AAAI Conference on Artificial Intelligence</title>
+		<meeting>the AAAI Conference on Artificial Intelligence</meeting>
+		<imprint>
+			<date type="published" when="2024">2024</date>
+			<biblScope unit="volume">38</biblScope>
+			<biblScope unit="page" from="4296" to="4304" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<analytic>
+		<title level="a" type="main">Improved denoising diffusion probabilistic models</title>
+		<author>
+			<persName><forename type="first">Alexander</forename><surname>Quinn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Nichol</forename></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Prafulla</forename><surname>Dhariwal</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Machine Learning</title>
+		<imprint>
+			<publisher>PMLR</publisher>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="page" from="8162" to="8171" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<analytic>
+		<title level="a" type="main">Zero-shot image-to-image translation</title>
+		<author>
+			<persName><forename type="first">Gaurav</forename><surname>Parmar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Krishna</forename><forename type="middle">Kumar</forename><surname>Singh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Richard</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yijun</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jingwan</forename><surname>Lu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jun-Yan</forename><surname>Zhu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ACM SIGGRAPH 2023 Conference Proceedings</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page" from="1" to="11" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<monogr>
+		<author>
+			<persName><forename type="first">Ben</forename><surname>Poole</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ajay</forename><surname>Jain</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jonathan</forename><forename type="middle">T</forename><surname>Barron</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ben</forename><surname>Mildenhall</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2209.14988</idno>
+		<title level="m">Dreamfusion: Text-to-3d using 2d diffusion</title>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<analytic>
+		<title level="a" type="main">Diffusion autoencoders: Toward a meaningful and decodable representation</title>
+		<author>
+			<persName><forename type="first">Konpat</forename><surname>Preechakul</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Nattanat</forename><surname>Chatthee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Suttisak</forename><surname>Wizadwongsa</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Supasorn</forename><surname>Suwajanakorn</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition</title>
+		<meeting>the IEEE/CVF Conference on Computer Vision and Pattern Recognition</meeting>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page" from="10619" to="10629" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b36">
+	<analytic>
+		<title level="a" type="main">Edter: Edge detection with transformer</title>
+		<author>
+			<persName><forename type="first">Mengyang</forename><surname>Pu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yaping</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yuming</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qingji</forename><surname>Guan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Haibin</forename><surname>Ling</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF conference on computer vision and pattern recognition</title>
+		<meeting>the IEEE/CVF conference on computer vision and pattern recognition</meeting>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page" from="1402" to="1412" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b37">
+	<monogr>
+		<author>
+			<persName><forename type="first">Guocheng</forename><surname>Qian</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jinjie</forename><surname>Mai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Abdullah</forename><surname>Hamdi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jian</forename><surname>Ren</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Aliaksandr</forename><surname>Siarohin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bing</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hsin-Ying</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ivan</forename><surname>Skorokhodov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Peter</forename><surname>Wonka</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sergey</forename><surname>Tulyakov</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2306.17843</idno>
+		<title level="m">Magic123: One image to high-quality 3d object generation using both 2d and 3d diffusion priors</title>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b38">
+	<analytic>
+		<title level="a" type="main">Highresolution image synthesis with latent diffusion models</title>
+		<author>
+			<persName><forename type="first">Robin</forename><surname>Rombach</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andreas</forename><surname>Blattmann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dominik</forename><surname>Lorenz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Patrick</forename><surname>Esser</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Björn</forename><surname>Ommer</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF conference on computer vision and pattern recognition</title>
+		<meeting>the IEEE/CVF conference on computer vision and pattern recognition</meeting>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page" from="10684" to="10695" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b39">
+	<analytic>
+		<title level="a" type="main">Finegan: Unsupervised hierarchical disentanglement for fine-grained object generation and discovery</title>
+		<author>
+			<persName><forename type="first">Krishna</forename><forename type="middle">Kumar</forename><surname>Singh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Utkarsh</forename><surname>Ojha</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yong Jae</forename><surname>Lee</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF conference on computer vision and pattern recognition</title>
+		<meeting>the IEEE/CVF conference on computer vision and pattern recognition</meeting>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="page" from="6490" to="6499" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b40">
+	<analytic>
+		<title level="a" type="main">Deep unsupervised learning using nonequilibrium thermodynamics</title>
+		<author>
+			<persName><forename type="first">Jascha</forename><surname>Sohl-Dickstein</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Eric</forename><surname>Weiss</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Niru</forename><surname>Maheswaranathan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Surya</forename><surname>Ganguli</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International conference on machine learning</title>
+		<imprint>
+			<publisher>PMLR</publisher>
+			<date type="published" when="2015">2015</date>
+			<biblScope unit="page" from="2256" to="2265" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b41">
+	<monogr>
+		<title level="m" type="main">Denoising diffusion implicit models</title>
+		<author>
+			<persName><forename type="first">Jiaming</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chenlin</forename><surname>Meng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Stefano</forename><surname>Ermon</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2010.02502</idno>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b42">
+	<monogr>
+		<title level="m" type="main">Score-based generative modeling through stochastic differential equations</title>
+		<author>
+			<persName><forename type="first">Yang</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jascha</forename><surname>Sohl-Dickstein</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Diederik</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Abhishek</forename><surname>Kingma</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Stefano</forename><surname>Kumar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ben</forename><surname>Ermon</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Poole</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2011.13456</idno>
+		<imprint>
+			<date type="published" when="2020">2020</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b43">
+	<analytic>
+		<title level="a" type="main">The vision of david marr</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Kent</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Stevens</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Perception</title>
+		<imprint>
+			<biblScope unit="volume">41</biblScope>
+			<biblScope unit="issue">9</biblScope>
+			<biblScope unit="page" from="1061" to="1072" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b44">
+	<analytic>
+		<title level="a" type="main">Pixel difference networks for efficient edge detection</title>
+		<author>
+			<persName><forename type="first">Zhuo</forename><surname>Su</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wenzhe</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zitong</forename><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dewen</forename><surname>Hu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qing</forename><surname>Liao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qi</forename><surname>Tian</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Matti</forename><surname>Pietikäinen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Li</forename><surname>Liu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF international conference on computer vision</title>
+		<meeting>the IEEE/CVF international conference on computer vision</meeting>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="page" from="5117" to="5127" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b45">
+	<analytic>
+		<title level="a" type="main">Going deeper with convolutions</title>
+		<author>
+			<persName><forename type="first">Christian</forename><surname>Szegedy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wei</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yangqing</forename><surname>Jia</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pierre</forename><surname>Sermanet</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Scott</forename><surname>Reed</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dragomir</forename><surname>Anguelov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dumitru</forename><surname>Erhan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Vincent</forename><surname>Vanhoucke</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andrew</forename><surname>Rabinovich</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE conference on computer vision and pattern recognition</title>
+		<meeting>the IEEE conference on computer vision and pattern recognition</meeting>
+		<imprint>
+			<date type="published" when="2015">2015</date>
+			<biblScope unit="page" from="1" to="9" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b46">
+	<analytic>
+		<title level="a" type="main">Plug-and-play diffusion features for text-driven image-to-image translation</title>
+		<author>
+			<persName><forename type="first">Narek</forename><surname>Tumanyan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Michal</forename><surname>Geyer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shai</forename><surname>Bagon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tali</forename><surname>Dekel</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition</title>
+		<meeting>the IEEE/CVF Conference on Computer Vision and Pattern Recognition</meeting>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page" from="1921" to="1930" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b47">
+	<monogr>
+		<title level="m" type="main">The big data myth: Using diffusion models for dataset generation to train deep detection models</title>
+		<author>
+			<persName><forename type="first">Roy</forename><surname>Voetman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Maya</forename><surname>Aghaei</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Klaas</forename><surname>Dijkstra</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2306.09762</idno>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b48">
+	<analytic>
+		<title level="a" type="main">Deep generative learning via schrödinger bridge</title>
+		<author>
+			<persName><forename type="first">Gefei</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yuling</forename><surname>Jiao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qian</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yang</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Can</forename><surname>Yang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Machine Learning</title>
+		<imprint>
+			<biblScope unit="page" from="10794" to="10804" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b49">
+	<monogr>
+		<title/>
+		<author>
+			<persName><surname>Pmlr</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2021">2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b50">
+	<analytic>
+		<title level="a" type="main">Laplacian operator-based edge detectors</title>
+		<author>
+			<persName><forename type="first">Xin</forename><surname>Wang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE transactions on pattern analysis and machine intelligence</title>
+		<imprint>
+			<biblScope unit="volume">29</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="886" to="890" />
+			<date type="published" when="2007">2007</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b51">
+	<analytic>
+		<title level="a" type="main">Diffusion models for medical anomaly detection</title>
+		<author>
+			<persName><forename type="first">Julia</forename><surname>Wolleb</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Florentin</forename><surname>Bieder</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Robin</forename><surname>Sandkühler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Philippe</forename><forename type="middle">C</forename><surname>Cattin</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Medical image computing and computer-assisted intervention</title>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page" from="35" to="45" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b52">
+	<monogr>
+		<title level="m" type="main">Medsegdiff: Medical image segmentation with diffusion probabilistic model</title>
+		<author>
+			<persName><forename type="first">Junde</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Huihui</forename><surname>Fang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yu</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yehui</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yanwu</forename><surname>Xu</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:2211.00611</idno>
+		<imprint>
+			<date type="published" when="2022">2022</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b53">
+	<monogr>
+		<title level="m" type="main">Lsun: Construction of a large-scale image dataset using deep learning with humans in the loop</title>
+		<author>
+			<persName><forename type="first">Fisher</forename><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ari</forename><surname>Seff</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yinda</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shuran</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Thomas</forename><surname>Funkhouser</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jianxiong</forename><surname>Xiao</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1506.03365</idno>
+		<imprint>
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b54">
+	<analytic>
+		<title level="a" type="main">Adding conditional control to text-to-image diffusion models</title>
+		<author>
+			<persName><forename type="first">Lvmin</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Anyi</forename><surname>Rao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Maneesh</forename><surname>Agrawala</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF International Conference on Computer Vision</title>
+		<meeting>the IEEE/CVF International Conference on Computer Vision</meeting>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page" from="3836" to="3847" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b55">
+	<analytic>
+		<title level="a" type="main">Uni-controlnet: All-in-one control to text-to-image diffusion models</title>
+		<author>
+			<persName><forename type="first">Shihao</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dongdong</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yen-Chun</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jianmin</forename><surname>Bao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shaozhe</forename><surname>Hao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lu</forename><surname>Yuan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kwan-Yee K</forename><surname>Wong</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Advances in Neural Information Processing Systems</title>
+		<imprint>
+			<biblScope unit="volume">36</biblScope>
+			<date type="published" when="2024">2024</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b56">
+	<monogr>
+		<title level="m" type="main">Fast segment anything</title>
+		<author>
+			<persName><forename type="first">Xu</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wenchao</forename><surname>Ding</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yongqi</forename><surname>An</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yinglong</forename><surname>Du</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tao</forename><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Min</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ming</forename><surname>Tang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jinqiao</forename><surname>Wang</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b57">
+	<analytic>
+		<title level="a" type="main">Denoising diffusion models for plug-and-play image restoration</title>
+		<author>
+			<persName><forename type="first">Yuanzhi</forename><surname>Zhu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kai</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jingyun</forename><surname>Liang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jiezhang</forename><surname>Cao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bihan</forename><surname>Wen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Radu</forename><surname>Timofte</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Luc</forename><surname>Van Gool</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition</title>
+		<meeting>the IEEE/CVF Conference on Computer Vision and Pattern Recognition</meeting>
+		<imprint>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page" from="1219" to="1229" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>
