@@ -240,7 +240,7 @@ class ResearchPipeline:
                 xml_path = os.path.join(self.xml_dir, f"{safe_citing_doi}.grobid.xml")
                 
                 # 提取引用信息
-                parser = ReferenceParser(xml_path, None, auxiliar_file='special_cases.json')
+                parser = ReferenceParser(xml_path, None)
                 references = parser.parse_references()
                 
                 # 创建CitingPaper对象
@@ -505,9 +505,9 @@ def main():
         print(f"开始处理论文: {test_title}")
         print("="*50)
         
-        result = pipeline.process_paper_from_pdf("tmp/papers/10.48550_arXiv.2308.14522.pdf")
+        # result = pipeline.process_paper_from_pdf("tmp/papers/10.48550_arXiv.2308.14522.pdf")
         # 处理论文
-        # result = pipeline.process_paper(test_title)
+        result = pipeline.process_paper(test_title)
         
         # 打印结果
         print(f"原始论文:")

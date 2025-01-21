@@ -143,6 +143,8 @@ class RefParserUI:
             # 修正XML文件路径
             xml_file = os.path.join(self.pipeline.xml_dir, 
                                   f"{os.path.basename(pdf_file.name).replace('.pdf', '')}.grobid.xml")
+            
+            # 不再传入auxiliar_file参数，使用默认路径
             parser = ReferenceParser(xml_file, "references.json")
             references = parser.parse_references()
             
